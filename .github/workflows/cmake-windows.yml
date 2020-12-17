@@ -1,0 +1,41 @@
+name: CMake (Windows)
+
+on: [push, pull_request]
+
+env:
+  BUILD_TYPE: RelWithDebInfo
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Prepare vcpkg and libraries
+      uses: lukka/run-vcpkg@v6
+      with:
+        vcpkgArguments: gtest:x64-windows openssl:x64-windows qt5-base[core]:x64-windows
+        vcpkgTriplet: x64-windows
+        vcpkgDirectory: ${{runner.workspace}}/vcpkg/
+        vcpkgGitCommitId: ec6fe06e8da05a8157dc8581fa96b36b571c1bd5
+
+    - name: Create build directory
+      run: mkdir build
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/build
+      run: cmake -A x64 "-DCMAKE_TOOLCHAIN_FILE=${{runner.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake" "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" ..
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      run: |
+        cmake --build . --config ${env:BUILD_TYPE}
+        cmake --build . --config ${env:BUILD_TYPE} --target installer
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -V -C ${env:BUILD_TYPE}

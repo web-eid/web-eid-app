@@ -1,0 +1,37 @@
+name: CMake (Ubuntu Linux)
+
+on: [push, pull_request]
+
+env:
+  BUILD_TYPE: RelWithDebInfo
+  QT_QPA_PLATFORM: offscreen
+  DEBIAN_FRONTEND: noninteractive
+  DEBFULLNAME: GitHub build
+  DEBEMAIL: github-action@github
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: mrts/qt-cmake-gtest-valgrind-ubuntu
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Create build directory
+      run: mkdir build
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/build
+      run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      run: |
+        cmake --build . --config $BUILD_TYPE
+        cmake --build . --config $BUILD_TYPE --target installer
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -V -C $BUILD_TYPE

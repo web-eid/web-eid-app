@@ -1,0 +1,75 @@
+# Assures that line endings are consistently normalized.
+#
+# Comments:
+# - use filter='...' to pass through external filters, e.g. clang-format
+
+# --- Source files
+*.c		text
+*.cc		text
+*.cpp		text
+*.cxx		text
+*.h		text
+*.hh		text
+*.hpp		text
+*.ipp		text
+
+*.js		text
+*.pl		text
+*.py		text
+
+# --- Resource files
+*.rc		text eol=crlf
+*.rc2		text eol=crlf
+
+# --- Windows and VS-specific files
+*.bat		text eol=crlf
+*.cmd		text eol=crlf
+*.cpy		text eol=crlf
+*.ddf		text eol=crlf
+*.def		text eol=crlf
+*.inf		text eol=crlf
+*.msbuild	text eol=crlf
+*.sln		text eol=crlf
+*.vcproj	text eol=crlf
+*.vcxproj	text eol=crlf
+
+# --- Text files
+*.htm		text
+*.html		text
+*.md		text
+*.properties	text
+*.rst		text
+*.txt		text
+*.xml		text
+
+# --- Binary files
+*.bmp		binary
+*.dll		binary
+*.exe		binary
+*.gif		binary
+*.ico		binary
+*.jpg		binary
+*.lib		binary
+*.png		binary
+
+# --- git files
+.gitignore	text eol=lf
+.gitattributes	text eol=lf
+.clang-format	text eol=lf
+
+# --- Makefiles
+Makefile 	text eol=lf
+Makefile.dep	text eol=lf
+
+# --- CMake files
+CMakeLists.txt	text
+
+# --- Qt files
+*.qml		text eol=lf
+*.qrc		text eol=lf
+*.pro		text eol=lf
+
+# --- Shell scripts, git hooks
+*.sh		text eol=lf
+commit-msg	text eol=lf
+pre-commit	text eol=lf

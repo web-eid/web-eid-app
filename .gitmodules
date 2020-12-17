@@ -1,0 +1,3 @@
+[submodule "lib/libelectronic-id"]
+	path = lib/libelectronic-id
+	url = ../libelectronic-id

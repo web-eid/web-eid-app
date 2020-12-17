@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+POLICIES=/usr/lib/firefox/distribution
+mkdir -p ${POLICIES}
+if [ ! -f ${POLICIES}/policies.json ]; then
+    JQARGS=-n;
+else
+    JQARGS=${POLICIES}/policies.json;
+fi
+jq '.policies.ExtensionSettings["{89bcad3c-5c95-4a6c-a5a5-64da932f6bf7}"] = {"installation_mode": "normal_installed", "install_url": "https://web-eid.eu/files/firefox/web-eid-webextension-latest.xpi"}' ${JQARGS} > ${POLICIES}/policies.tmp
+mv ${POLICIES}/policies.tmp ${POLICIES}/policies.json

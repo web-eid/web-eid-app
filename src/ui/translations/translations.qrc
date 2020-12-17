@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="translations">
+    <file alias="en">en.qm</file>
+    <file alias="et">et.qm</file>
+    <file alias="fi">fi.qm</file>
+    <file alias="ru">ru.qm</file>
+  </qresource>
+</RCC>

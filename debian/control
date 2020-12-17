@@ -1,0 +1,22 @@
+Source: web-eid
+Section: web
+Priority: extra
+Maintainer: RIA <info@ria.ee>
+Build-Depends:
+ cdbs,
+ jq,
+ clang-10,
+ debhelper (>= 10),
+ libpcsclite-dev,
+ qtbase5-dev
+Standards-Version: 3.9.8
+Homepage: https://github.com/open-eid/web-eid
+
+Package: web-eid
+Architecture: any
+Depends:
+ pcscd,
+ ${shlibs:Depends},
+ ${misc:Depends}
+Description: Browser helper
+ Browser helper..

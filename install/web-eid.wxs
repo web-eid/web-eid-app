@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<?ifndef Platform ?>
+<?define Platform="x64" ?>
+<?endif ?>
+
+<?ifndef qt_suffix ?>
+<?define qt_suffix="" ?>
+<?endif ?>
+
+<?ifndef env.VisualStudioVersion ?>
+<?define VCVER = "142" ?>
+<?elseif $(env.VisualStudioVersion) = "16.0" ?>
+<?define VCVER = "142" ?>
+<?elseif $(env.VisualStudioVersion) = "15.0" ?>
+<?define VCVER = "141" ?>
+<?endif?>
+
+<?if $(var.Platform) = x64 ?>
+  <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+  <?define ssl_suffix = "-x64" ?>
+<?else ?>
+  <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+  <?define ssl_suffix = "" ?>
+<?endif ?>
+
+<?if $(var.qt_suffix) = "d" ?>
+<?define VCPATH = "$(env.VCTOOLSREDISTDIR)\Debug_NonRedist\$(var.Platform)\Microsoft.VC$(var.VCVER).DebugCRT" ?>
+<?else ?>
+<?define VCPATH = "$(env.VCTOOLSREDISTDIR)\$(var.Platform)\Microsoft.VC$(var.VCVER).CRT" ?>
+<?endif ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Name="Web eID" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
+      Id="*" Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="RIA">
+    <Package Platform="$(var.Platform)" Keywords="Installer" InstallerVersion="405" Compressed="yes" InstallScope="perMachine"/>
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high"/>
+    <Icon Id="web_eid.exe" SourceFile="$(var.app_path)"/>
+    <Property Id="ARPPRODUCTICON" Value="web_eid.exe"/>
+    <Property Id="APPLICATIONNAME" Value="web-eid"/>
+    <MajorUpgrade AllowSameVersionUpgrades="yes" Schedule="afterInstallInitialize" DowngradeErrorMessage=
+      "A newer version of [ProductName] is already installed. If you are trying to downgrade, please uninstall the newer version first."/>
+    <Condition Message="[ProductName] requires Windows 8.1 or higher.">
+      <![CDATA[Installed OR (VersionNT >= 603)]]>
+    </Condition>
+    <!-- See https://github.com/open-eid/windows-installer/blob/master/FirefoxActionWix/README.md and
+         https://github.com/open-eid/windows-installer/blob/master/FirefoxActionWix/FirefoxAction.cs -->
+    <Binary Id="FirefoxAction.CA.dll" SourceFile="$(sys.SOURCEFILEDIR)FirefoxAction.CA.dll" />
+    <CustomAction Id="ExtensionSettingsInstall" Return="check" Execute="firstSequence"
+      BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsInstall" />
+    <CustomAction Id="ExtensionSettingsRemove" Return="check" Execute="firstSequence"
+      BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsRemove" />
+    <Property Id="EXTENSIONSETTINGS_URL" Value="$(var.FIREFOX_URL)" />
+    <Property Id="EXTENSIONSETTINGS_UUID" Value="$(var.FIREFOX_UUID)" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="APPLICATIONFOLDER" Name="Web eID">
+          <Component Id="Application" Guid="9b61583c-308f-435d-b221-c2f250271c7c">
+            <File Source="$(var.app_path)" KeyPath="yes"/>
+            <File Source="$(var.json)"/>
+            <File Source="$(var.jsonfirefox)"/>
+            <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll"/>
+            <File Source="$(var.VCPATH)\vcruntime140$(var.qt_suffix).dll"/>
+            <File Source="$(var.ssl_path)\libcrypto-1_1$(var.ssl_suffix).dll"/>
+            <File Source="$(var.ssl_path)\libssl-1_1$(var.ssl_suffix).dll"/>
+            <File Source="$(var.qt_path)\bin\Qt5Core$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\bin\Qt5Gui$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\bin\Qt5Network$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\bin\Qt5Widgets$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\bin\libEGL$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\bin\libGLESv2$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\bin\D3DCompiler_47.dll"/>
+            <File Source="$(var.qt_path)\bin\opengl32sw.dll" />
+            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.json"
+              Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\eu.webeid"/>
+            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.firefox.json"
+              Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" />
+          </Component>
+          <Directory Id="platforms" Name="platforms" FileSource="$(var.qt_path)\plugins\platforms">
+            <Component Id="qwindows.dll">
+              <File Name="qwindows$(var.qt_suffix).dll"/>
+            </Component>
+          </Directory>
+          <Directory Id="styles" Name="styles" FileSource="$(var.qt_path)\plugins\styles">
+            <Component Id="qwindowsvistastyle.dll">
+              <File Name="qwindowsvistastyle$(var.qt_suffix).dll"/>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Component Id="ChromeEdge" Guid="103dceaa-c535-445a-b27d-dcd19c74cd3e" Win64="no">
+        <RegistryValue Root="HKLM" Type="string" Name="update_url"
+          Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic"
+          Value="https://clients2.google.com/service/update2/crx"/>
+        <RegistryValue Root="HKLM" Type="string" Name="update_url"
+          Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido"
+          Value="https://edge.microsoft.com/extensionwebstorebase/v1/crx"/>
+      </Component>
+    </Directory>
+    <InstallExecuteSequence>
+      <Custom Action="ExtensionSettingsInstall" Before="WriteRegistryValues">NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
+      <Custom Action="ExtensionSettingsRemove" Before="InstallFinalize">(REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE)</Custom>
+    </InstallExecuteSequence>
+
+    <Feature Id="Install" Level="1" Title="Web eID" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER">
+      <ComponentRef Id="Application"/>
+      <ComponentRef Id="ChromeEdge"/>
+      <ComponentRef Id="qwindows.dll" />
+      <ComponentRef Id="qwindowsvistastyle.dll" />
+    </Feature>
+  </Product>
+</Wix>

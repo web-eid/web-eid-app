@@ -1,0 +1,8 @@
+#!/bin/sh
+
+PLIST=/Library/Preferences/org.mozilla.firefox.plist
+URL=@FIREFOX_URL@
+UUID=@FIREFOX_UUID@
+
+defaults write ${PLIST} EnterprisePoliciesEnabled -bool true
+defaults write ${PLIST} ExtensionSettings -dict-add "'${UUID}'" "{ 'installation_mode' = 'normal_installed'; 'install_url' = '${URL}'; }"

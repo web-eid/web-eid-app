@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>smartcard-chip.png</file>
+        <file>esteid.png</file>
+        <file>fineid.png</file>
+        <file>lateid.png</file>
+    </qresource>
+</RCC>
