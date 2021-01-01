@@ -79,8 +79,8 @@ PcscMock::ApduScript replaceCertValidUntilYear(const PcscMock::ApduScript& scrip
     }
 
     // Change the valid until year.
-    *(dateTimeTag + 2) = static_cast<const unsigned char>(twoDigitYear[0]);
-    *(dateTimeTag + 3) = static_cast<const unsigned char>(twoDigitYear[1]);
+    *(dateTimeTag + 2) = static_cast<unsigned char>(twoDigitYear[0]);
+    *(dateTimeTag + 3) = static_cast<unsigned char>(twoDigitYear[1]);
 
     return scriptCopy;
 }

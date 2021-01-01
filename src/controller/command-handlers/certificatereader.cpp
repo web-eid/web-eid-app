@@ -34,12 +34,11 @@ CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandH
 
 void CertificateReader::run(CardInfo::ptr cardInfo)
 {
-    // TODO: Run card commands in a separate thread and show a (delayed) spinner while they are
-    // running?
     static const QMap<ElectronicID::Type, QString> icons {
         {ElectronicID::EstEID, QStringLiteral(":/esteid.png")},
         {ElectronicID::FinEID, QStringLiteral(":/fineid.png")},
         {ElectronicID::LatEID, QStringLiteral(":/lateid.png")},
+        {ElectronicID::LitEID, QStringLiteral(":/liteid.png")},
     };
 
     const bool isAuthenticate = command.first == CommandType::AUTHENTICATE
@@ -72,15 +71,16 @@ void CertificateReader::run(CardInfo::ptr cardInfo)
                          certificate.subjectInfo(QSslCertificate::CommonName).join(' '),
                          certificate.issuerInfo(QSslCertificate::CommonName).join(' '),
                          certificate.effectiveDate().date().toString(Qt::ISODate),
-                         certificate.expiryDate().date().toString(Qt::ISODate),
-                         isAuthenticate ? cardInfo->eid().authPinMinMaxLength()
-                                        : cardInfo->eid().signingPinMinMaxLength(),
-                         isAuthenticate ? cardInfo->eid().authPinRetriesLeft()
-                                        : cardInfo->eid().signingPinRetriesLeft()};
+                         certificate.expiryDate().date().toString(Qt::ISODate)};
+    const auto pinInfo = PinInfo {isAuthenticate ? cardInfo->eid().authPinMinMaxLength()
+                                                 : cardInfo->eid().signingPinMinMaxLength(),
+                                  isAuthenticate ? cardInfo->eid().authPinRetriesLeft()
+                                                 : cardInfo->eid().signingPinRetriesLeft(),
+                                  cardInfo->eid().smartcard().readerHasPinPad()};
 
     // TODO: check invalid certs, what do they return for subject, issuer etc (probably default
     // values)?
-    emit certificateReady(origin.toString(), certificateStatus, certInfo);
+    emit certificateReady(origin, certificateStatus, certInfo, pinInfo);
 }
 
 // TODO: Command handler could also draw the UI now that the UI is refactored from Qt Quick to

@@ -26,6 +26,8 @@
 #include "registermetatypes.hpp"
 #include "command-handlers/getcertificate.hpp"
 
+#include "../ui/punycode.hpp"
+
 #include "mock-ui.hpp"
 #include "getcommandhandler-mock.hpp"
 
@@ -55,6 +57,8 @@ private slots:
     void getCertificate_outputsSupportedAlgos();
 
     void authenticate_validArgumentsResultInValidJwt();
+
+    void fromPunycode_decodesEeDomain();
 
 private:
     void runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy);
@@ -180,6 +184,12 @@ void WebEidTests::authenticate_validArgumentsResultInValidJwt()
             "I5WjFNMTJEZ3QreHpBTkJna3Foa2lHOXcwQkFRc0ZBREJyTVFzd0NRWURWUVFHRXdKRlJURWlNQ0FHQTFVRUNn"
             "d1pRVk1nVTJWeWRHbG1hWFJ6WldWeWFXMXBjMnRsYzJ0MWN6RVhNQlVHQTFVRVlRd09UbFJTUlVVdE1UQTNORG"
             "N3TVRNeEh6QWRCZ05WQkFNTUZsUkZVMVFnYjJZZ1JWTlVSVWxFTFZOTElE"));
+}
+
+void WebEidTests::fromPunycode_decodesEeDomain()
+{
+    QCOMPARE(fromPunycode(QUrl("https://xn--igusnunik-p7af.ee")),
+             QStringLiteral("https://õigusnõunik.ee"));
 }
 
 void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy)

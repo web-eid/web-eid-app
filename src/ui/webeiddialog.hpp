@@ -23,10 +23,14 @@
 #pragma once
 
 #include "ui.hpp"
-#include "certificateinfo.hpp"
+#include "certandpininfo.hpp"
 #include "qeid.hpp"
 
+#include <optional>
+
 class QLabel;
+class QLineEdit;
+class QProgressBar;
 
 namespace Ui
 {
@@ -56,18 +60,23 @@ public:
 
 public: // slots
     void onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason status) override;
-    void onCertificateReady(const QString& origin, const CertificateStatus certStatus,
-                            const CertificateInfo& certInfo) override;
+    void onCertificateReady(const QUrl& origin, const CertificateStatus certStatus,
+                            const CertificateInfo& certInfo, const PinInfo& pinInfo) override;
     void onDocumentHashReady(const QString& docHash) override;
     void onSigningCertificateHashMismatch() override;
+    void onRetry(const QString& error) override;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                            const quint8 retriesLeft) override;
 
 private:
     void makeOkButtonDefaultAndconnectSignals();
-    void setupPinInputValidator(const CertificateInfo::PinMinMaxLength& pinMinMaxLenght);
+    void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLenght);
+    void startPinTimeoutProgressBar();
     std::tuple<QLabel*, QLabel*, QLabel*, QLabel*> certificateLabelsOnPage();
     QLabel* pinErrorLabelOnPage();
+    QLabel* pinTitleLabelOnPage();
+    QLineEdit* pinInputOnPage();
+    QProgressBar* pinEntryTimeoutProgressBarOnPage();
     void displayFatalError(QLabel* label, const QString& message);
     void hidePinAndDocHashWidgets();
 
@@ -75,4 +84,5 @@ private:
     QPushButton* okButton; // non-owning pointer
     CommandType currentCommand = CommandType::NONE;
     int lineHeight = -1;
+    std::optional<bool> readerHasPinPad;
 };

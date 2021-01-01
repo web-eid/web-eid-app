@@ -39,7 +39,7 @@ signals:
     void certificateHashMismatch();
     void documentHashReady(const QString& hash);
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const uint8_t retriesLeft);
+                         const quint8 retriesLeft);
 
 private:
     void validateAndStoreDocHashAndHashAlgo(const QVariantMap& args);

@@ -1,5 +1,5 @@
 add_library(controller STATIC
-    certificateinfo.hpp
+    certandpininfo.hpp
     command-handlers/authenticate.cpp
     command-handlers/authenticate.hpp
     command-handlers/certificatereader.cpp
@@ -20,9 +20,12 @@ add_library(controller STATIC
     logging.hpp
     logging.cpp
     qeid.hpp
-    readermonitorthread.hpp
     registermetatypes.cpp
     registermetatypes.hpp
+    threads/commandhandlerconfirmthread.hpp
+    threads/commandhandlerrunthread.hpp
+    threads/controllerchildthread.hpp
+    threads/readermonitorthread.hpp
     ui.hpp
     utils.hpp
     writeresponse.cpp

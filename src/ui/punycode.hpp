@@ -22,36 +22,18 @@
 
 #pragma once
 
-#include <memory>
+#include <QString>
+#include <QUrl>
 
-#include <QMetaType>
-#include <QVariantMap>
-
-class CommandType
+inline QString fromPunycode(const QUrl& punycodeUrl)
 {
-public:
-    enum CommandTypeEnum { INSERT_CARD, GET_CERTIFICATE, AUTHENTICATE, SIGN, NONE = -1 };
-
-    CommandType() = default;
-    constexpr CommandType(const CommandTypeEnum _value) : value(_value) {}
-
-    constexpr bool operator==(CommandTypeEnum other) const { return value == other; }
-    constexpr bool operator!=(CommandTypeEnum other) const { return value != other; }
-    constexpr operator CommandTypeEnum() const { return value; }
-
-    operator std::string() const;
-
-private:
-    CommandTypeEnum value = NONE;
-};
-
-Q_DECLARE_METATYPE(CommandType)
-
-extern const QString CMDLINE_GET_CERTIFICATE;
-extern const QString CMDLINE_AUTHENTICATE;
-extern const QString CMDLINE_SIGN;
-
-CommandType commandNameToCommandType(const QString& cmdName);
-
-using CommandWithArguments = std::pair<CommandType, QVariantMap>;
-using CommandWithArgumentsPtr = std::unique_ptr<CommandWithArguments>;
+    QUrl url {punycodeUrl};
+    // QUrl::PrettyDecoded only decodes Punycode on select trusted domains like .com, .org etc.
+    // We need to work around that restriction in order to support EU national domains like .fi,
+    // .ee, .lv, .lt etc.
+    url.setHost(url.host() + QStringLiteral(".com"), QUrl::TolerantMode);
+    const auto host = url.host(QUrl::PrettyDecoded);
+    return QStringLiteral("%1://%2%3")
+        .arg(url.scheme(), host.mid(0, host.size() - 4),
+             url.port() == -1 ? QString() : QStringLiteral(":%1").arg(url.port()));
+}

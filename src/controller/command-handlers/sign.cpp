@@ -82,7 +82,7 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
 
 void Sign::run(electronic_id::CardInfo::ptr _cardInfo)
 {
-    requireNonNull(_cardInfo, "_cardInfo", "Sign::run");
+    REQUIRE_NON_NULL(_cardInfo);
     cardInfo = _cardInfo;
 
     if (!cardInfo->eid().isSupportedSigningHashAlgorithm(hashAlgo)) {
@@ -105,7 +105,7 @@ void Sign::run(electronic_id::CardInfo::ptr _cardInfo)
 
 QVariantMap Sign::onConfirm(WebEidUI* window)
 {
-    requireNonNull(cardInfo, "cardInfo", "Sign::onConfirm");
+    REQUIRE_NON_NULL(cardInfo);
 
     if (certificate.isNull()) {
         throw electronic_id::Error("Authenticate::onConfirm(): invalid certificate");
@@ -125,7 +125,7 @@ QVariantMap Sign::onConfirm(WebEidUI* window)
 
     } catch (const electronic_id::VerifyPinFailed& failure) {
         emit verifyPinFailed(failure.status(), failure.retries());
-        throw CommandHandlerRetriableError(failure.what());
+        throw CommandHandlerVerifyPinFailed(failure.what());
     }
 }
 

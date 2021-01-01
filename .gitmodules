@@ -1,3 +1,6 @@
 [submodule "lib/libelectronic-id"]
 	path = lib/libelectronic-id
 	url = ../libelectronic-id
+[submodule "src/mac/js"]
+	path = src/mac/js
+	url = ../web-eid-webextension

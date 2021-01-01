@@ -167,7 +167,7 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window)
 
     } catch (const electronic_id::VerifyPinFailed& failure) {
         emit verifyPinFailed(failure.status(), failure.retries());
-        throw CommandHandlerRetriableError(failure.what());
+        throw CommandHandlerVerifyPinFailed(failure.what());
     }
 }
 

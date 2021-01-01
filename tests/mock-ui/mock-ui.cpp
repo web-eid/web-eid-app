@@ -33,5 +33,5 @@ WebEidUI::ptr WebEidUI::createAndShowDialog(const CommandType /* command */)
     mockPinInput->setObjectName("authenticationPinInput");
     mockPinInput->setProperty("text", "0090");
 
-    return std::move(ui);
+    return ui;
 }

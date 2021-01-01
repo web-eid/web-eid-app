@@ -86,7 +86,7 @@ class Test(unittest.TestCase):
         # TODO: use a crypto library to validate the signature.
 
     def exchange_message_with_app(self, message):
-        print('Request:', message)
+        print('Request:', json.dumps(message))
         version_message = self._read_response()
         self.assertIn('version', version_message)
 
@@ -98,7 +98,7 @@ class Test(unittest.TestCase):
         self.process.stdin.flush()
 
         response = self._read_response()
-        print('Response:', response)
+        print('Response:', json.dumps(response))
         return response
 
     def _read_response(self):

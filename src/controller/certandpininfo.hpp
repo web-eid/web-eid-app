@@ -22,36 +22,37 @@
 
 #pragma once
 
-#include <memory>
+#include "qeid.hpp"
 
-#include <QMetaType>
-#include <QVariantMap>
+#include <QString>
 
-class CommandType
+enum class CertificateStatus { VALID, INVALID, NOT_YET_ACTIVE, EXPIRED };
+
+Q_DECLARE_METATYPE(CertificateStatus)
+
+struct CertificateInfo
 {
-public:
-    enum CommandTypeEnum { INSERT_CARD, GET_CERTIFICATE, AUTHENTICATE, SIGN, NONE = -1 };
+    electronic_id::CertificateType type;
+    QString icon;
 
-    CommandType() = default;
-    constexpr CommandType(const CommandTypeEnum _value) : value(_value) {}
-
-    constexpr bool operator==(CommandTypeEnum other) const { return value == other; }
-    constexpr bool operator!=(CommandTypeEnum other) const { return value != other; }
-    constexpr operator CommandTypeEnum() const { return value; }
-
-    operator std::string() const;
-
-private:
-    CommandTypeEnum value = NONE;
+    QString subject;
+    QString issuer;
+    QString effectiveDate;
+    QString expiryDate;
 };
 
-Q_DECLARE_METATYPE(CommandType)
+Q_DECLARE_METATYPE(CertificateInfo)
 
-extern const QString CMDLINE_GET_CERTIFICATE;
-extern const QString CMDLINE_AUTHENTICATE;
-extern const QString CMDLINE_SIGN;
+struct PinInfo
+{
+    using PinMinMaxLength = std::pair<size_t, size_t>;
+    using PinRetriesCount = std::pair<size_t, size_t>;
 
-CommandType commandNameToCommandType(const QString& cmdName);
+    PinMinMaxLength pinMinMaxLength;
+    PinRetriesCount pinRetriesCount;
+    bool readerHasPinPad;
 
-using CommandWithArguments = std::pair<CommandType, QVariantMap>;
-using CommandWithArgumentsPtr = std::unique_ptr<CommandWithArguments>;
+    static constexpr int PIN_PAD_PIN_ENTRY_TIMEOUT = pcsc_cpp::PIN_PAD_PIN_ENTRY_TIMEOUT;
+};
+
+Q_DECLARE_METATYPE(PinInfo)
