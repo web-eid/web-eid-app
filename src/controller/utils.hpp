@@ -22,14 +22,11 @@
 
 #pragma once
 
-#include <string>
-#include <stdexcept>
+#include "pcsc-cpp/pcsc-cpp-utils.hpp"
 
-template <typename T>
-void requireNonNull(const T& value, const std::string& variableName,
-                    const std::string& functionName)
-{
-    if (!value) {
-        throw std::logic_error("Null " + variableName + " in " + functionName + "()");
+#define REQUIRE_NON_NULL(val)                                                                      \
+    if (!val) {                                                                                    \
+        throw std::logic_error("Null " + std::string(#val) + " in "                                \
+                               + pcsc_cpp::removeAbsolutePathPrefix(__FILE__) + ':'                \
+                               + std::to_string(__LINE__) + ':' + __func__);                       \
     }
-}

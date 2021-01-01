@@ -46,7 +46,14 @@ protected:
 
 CommandHandler::ptr getCommandHandler(const CommandWithArguments& cmd);
 
-/** Exception that signals expected errors like invalid PIN that user can retry. */
+/** Exception that signals expected invalid PIN entry errors. */
+class CommandHandlerVerifyPinFailed : public std::runtime_error
+{
+public:
+    using std::runtime_error::runtime_error;
+};
+
+/** Exception that signals other errors that allow the user to retry the action. */
 class CommandHandlerRetriableError : public std::runtime_error
 {
 public:

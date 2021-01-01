@@ -23,7 +23,7 @@
 #pragma once
 
 #include "commands.hpp"
-#include "certificateinfo.hpp"
+#include "certandpininfo.hpp"
 
 #include <QDialog>
 
@@ -44,13 +44,18 @@ public:
 
     virtual void switchPage(const CommandType commandType) = 0;
 
+signals:
+    void waitingForPinPad();
+    void retry();
+
 public: // slots
     virtual void
     onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason status) = 0;
-    virtual void onCertificateReady(const QString& origin, const CertificateStatus certStatus,
-                                    const CertificateInfo& certInfo) = 0;
+    virtual void onCertificateReady(const QUrl& origin, const CertificateStatus certStatus,
+                                    const CertificateInfo& certInfo, const PinInfo& pinInfo) = 0;
     virtual void onDocumentHashReady(const QString& docHash) = 0;
     virtual void onSigningCertificateHashMismatch() = 0;
+    virtual void onRetry(const QString& error) = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                    const quint8 retriesLeft) = 0;
 };

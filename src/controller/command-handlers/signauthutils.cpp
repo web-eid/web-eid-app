@@ -70,7 +70,7 @@ QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QV
 
 pcsc_cpp::byte_vector getPin(QObject* window, const QString& pinInputName)
 {
-    requireNonNull(window, "window", "getPin");
+    REQUIRE_NON_NULL(window);
 
     // FIXME: keep PIN in secure memory, implement custom Qt widget.
     auto pinInput = window->findChild<QObject*>(pinInputName);

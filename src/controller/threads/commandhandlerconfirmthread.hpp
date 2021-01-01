@@ -22,36 +22,32 @@
 
 #pragma once
 
-#include <memory>
+#include "controllerchildthread.hpp"
 
-#include <QMetaType>
-#include <QVariantMap>
-
-class CommandType
+class CommandHandlerConfirmThread : public ControllerChildThread
 {
+    Q_OBJECT
+
 public:
-    enum CommandTypeEnum { INSERT_CARD, GET_CERTIFICATE, AUTHENTICATE, SIGN, NONE = -1 };
+    CommandHandlerConfirmThread(QObject* parent, CommandHandler& handler, WebEidUI* w) :
+        ControllerChildThread(parent), commandHandler(handler),
+        cmdType(commandHandler.commandType()), window(w)
+    {
+    }
 
-    CommandType() = default;
-    constexpr CommandType(const CommandTypeEnum _value) : value(_value) {}
-
-    constexpr bool operator==(CommandTypeEnum other) const { return value == other; }
-    constexpr bool operator!=(CommandTypeEnum other) const { return value != other; }
-    constexpr operator CommandTypeEnum() const { return value; }
-
-    operator std::string() const;
+signals:
+    void completed(const QVariantMap& result);
 
 private:
-    CommandTypeEnum value = NONE;
+    void doRun() override
+    {
+        const auto result = commandHandler.onConfirm(window);
+        emit completed(result);
+    }
+
+    const std::string& commandType() const override { return cmdType; }
+
+    CommandHandler& commandHandler;
+    const std::string cmdType;
+    WebEidUI* window;
 };
-
-Q_DECLARE_METATYPE(CommandType)
-
-extern const QString CMDLINE_GET_CERTIFICATE;
-extern const QString CMDLINE_AUTHENTICATE;
-extern const QString CMDLINE_SIGN;
-
-CommandType commandNameToCommandType(const QString& cmdName);
-
-using CommandWithArguments = std::pair<CommandType, QVariantMap>;
-using CommandWithArgumentsPtr = std::unique_ptr<CommandWithArguments>;

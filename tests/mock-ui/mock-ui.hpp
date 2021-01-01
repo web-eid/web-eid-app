@@ -34,8 +34,8 @@ public:
     void switchPage(const CommandType) override {}
 
 public: // slots
-    void onCertificateReady(const QString&, const CertificateStatus,
-                            const CertificateInfo&) override
+    void onCertificateReady(const QUrl&, const CertificateStatus, const CertificateInfo&,
+                            const PinInfo&) override
     {
         emit accepted();
     }
@@ -43,6 +43,8 @@ public: // slots
     void onDocumentHashReady(const QString&) override {}
 
     void onSigningCertificateHashMismatch() override {}
+
+    void onRetry(const QString&) override {}
 
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status, const quint8) override {}
 

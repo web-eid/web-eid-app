@@ -22,36 +22,10 @@
 
 #pragma once
 
-#include <memory>
+static NSString* WebEidApp = @"ee.ria.web-eid-safari";
+static NSString* WebEidExtension = @"ee.ria.web-eid-safari.web-eid-safari-extension";
+static NSString* WebEidShared = @"ee.ria.web-eid-safari.shared";
 
-#include <QMetaType>
-#include <QVariantMap>
-
-class CommandType
-{
-public:
-    enum CommandTypeEnum { INSERT_CARD, GET_CERTIFICATE, AUTHENTICATE, SIGN, NONE = -1 };
-
-    CommandType() = default;
-    constexpr CommandType(const CommandTypeEnum _value) : value(_value) {}
-
-    constexpr bool operator==(CommandTypeEnum other) const { return value == other; }
-    constexpr bool operator!=(CommandTypeEnum other) const { return value != other; }
-    constexpr operator CommandTypeEnum() const { return value; }
-
-    operator std::string() const;
-
-private:
-    CommandTypeEnum value = NONE;
-};
-
-Q_DECLARE_METATYPE(CommandType)
-
-extern const QString CMDLINE_GET_CERTIFICATE;
-extern const QString CMDLINE_AUTHENTICATE;
-extern const QString CMDLINE_SIGN;
-
-CommandType commandNameToCommandType(const QString& cmdName);
-
-using CommandWithArguments = std::pair<CommandType, QVariantMap>;
-using CommandWithArgumentsPtr = std::unique_ptr<CommandWithArguments>;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
+NSString* const SFExtensionMessageKey = @"message";
+#endif

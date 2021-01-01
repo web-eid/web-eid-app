@@ -60,7 +60,7 @@ bool openLogFile(QFile& logFile)
     return false;
 }
 
-const char* toString(QtMsgType type)
+inline const char* toString(QtMsgType type)
 {
     switch (type) {
     case QtDebugMsg:
@@ -77,6 +77,12 @@ const char* toString(QtMsgType type)
     return "UNKNOWN";
 }
 
+inline QString removeAbsolutePathPrefix(const QString& filePath)
+{
+    const auto lastSrc = filePath.lastIndexOf(QStringLiteral("src"));
+    return filePath.mid(lastSrc);
+}
+
 void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& message)
 {
     static QMutex mutex;
@@ -88,11 +94,11 @@ void messageHandler(QtMsgType type, const QMessageLogContext& context, const QSt
     std::cerr << toString(type) << ": " << message.toStdString() << std::endl;
 
     if (logFileIsOpen) {
-        logFile.write(QStringLiteral("%1 %2 %3:%4:%5() - %6\n")
+        logFile.write(QStringLiteral("%1 %2 %3:%4:%5 - %6\n")
                           .arg(QDateTime::currentDateTimeUtc().toString(
                               QStringLiteral("yyyy-MM-ddThh:mm:ss.zzzZ")))
                           .arg(toString(type))
-                          .arg(context.file)
+                          .arg(removeAbsolutePathPrefix(context.file))
                           .arg(context.line)
                           .arg(context.function)
                           .arg(message)

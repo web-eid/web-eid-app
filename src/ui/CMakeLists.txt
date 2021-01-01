@@ -9,6 +9,7 @@ add_library(ui STATIC
     ${SOURCES}
     ${CMAKE_CURRENT_BINARY_DIR}/translations.qrc
     ui.cpp
+    punycode.hpp
     webeiddialog.cpp
     webeiddialog.hpp
     web-eid-resources.qrc

@@ -22,36 +22,26 @@
 
 #pragma once
 
-#include <memory>
+#include "controllerchildthread.hpp"
 
-#include <QMetaType>
-#include <QVariantMap>
-
-class CommandType
+class CommandHandlerRunThread : public ControllerChildThread
 {
+    Q_OBJECT
+
 public:
-    enum CommandTypeEnum { INSERT_CARD, GET_CERTIFICATE, AUTHENTICATE, SIGN, NONE = -1 };
-
-    CommandType() = default;
-    constexpr CommandType(const CommandTypeEnum _value) : value(_value) {}
-
-    constexpr bool operator==(CommandTypeEnum other) const { return value == other; }
-    constexpr bool operator!=(CommandTypeEnum other) const { return value != other; }
-    constexpr operator CommandTypeEnum() const { return value; }
-
-    operator std::string() const;
+    CommandHandlerRunThread(QObject* parent, CommandHandler& handler,
+                            electronic_id::CardInfo::ptr c) :
+        ControllerChildThread(parent),
+        commandHandler(handler), cmdType(commandHandler.commandType()), card(c)
+    {
+    }
 
 private:
-    CommandTypeEnum value = NONE;
+    void doRun() override { commandHandler.run(card); }
+
+    const std::string& commandType() const override { return cmdType; }
+
+    CommandHandler& commandHandler;
+    const std::string cmdType;
+    electronic_id::CardInfo::ptr card;
 };
-
-Q_DECLARE_METATYPE(CommandType)
-
-extern const QString CMDLINE_GET_CERTIFICATE;
-extern const QString CMDLINE_AUTHENTICATE;
-extern const QString CMDLINE_SIGN;
-
-CommandType commandNameToCommandType(const QString& cmdName);
-
-using CommandWithArguments = std::pair<CommandType, QVariantMap>;
-using CommandWithArgumentsPtr = std::unique_ptr<CommandWithArguments>;
