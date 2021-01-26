@@ -3,5 +3,5 @@
 "description": "Web-eid native application",
 "path": "@WEBEID_PATH@",
 "type": "stdio",
-"allowed_extensions": [ "{89bcad3c-5c95-4a6c-a5a5-64da932f6bf7}" ]
+"allowed_extensions": [ "{e68418bc-f2b0-4459-a9ea-3e72b6751b07}" ]
 }

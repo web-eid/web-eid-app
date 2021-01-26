@@ -44,7 +44,10 @@
       <![CDATA[Installed OR (VersionNT >= 603)]]>
     </Condition>
     <!-- See https://github.com/open-eid/windows-installer/blob/master/FirefoxActionWix/README.md and
-         https://github.com/open-eid/windows-installer/blob/master/FirefoxActionWix/FirefoxAction.cs -->
+         https://github.com/open-eid/windows-installer/blob/master/FirefoxActionWix/FirefoxAction.cs
+
+    NB! TEMPORARILY DISABLED DUE TO ISSUES WITH PRIVILEGES.
+
     <Binary Id="FirefoxAction.CA.dll" SourceFile="$(sys.SOURCEFILEDIR)FirefoxAction.CA.dll" />
     <CustomAction Id="ExtensionSettingsInstall" Return="check" Execute="firstSequence"
       BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsInstall" />
@@ -52,6 +55,7 @@
       BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsRemove" />
     <Property Id="EXTENSIONSETTINGS_URL" Value="$(var.FIREFOX_URL)" />
     <Property Id="EXTENSIONSETTINGS_UUID" Value="$(var.FIREFOX_UUID)" />
+    -->
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.PlatformProgramFilesFolder)">
@@ -98,10 +102,15 @@
           Value="https://edge.microsoft.com/extensionwebstorebase/v1/crx"/>
       </Component>
     </Directory>
+
+    <!--
+    NB! TEMPORARILY DISABLED DUE TO ISSUES WITH PRIVILEGES.
+
     <InstallExecuteSequence>
       <Custom Action="ExtensionSettingsInstall" Before="WriteRegistryValues">NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
       <Custom Action="ExtensionSettingsRemove" Before="InstallFinalize">(REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE)</Custom>
     </InstallExecuteSequence>
+    -->
 
     <Feature Id="Install" Level="1" Title="Web eID" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER">
       <ComponentRef Id="Application"/>
