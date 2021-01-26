@@ -66,6 +66,7 @@
             <File Source="$(var.jsonfirefox)"/>
             <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll"/>
             <File Source="$(var.VCPATH)\vcruntime140$(var.qt_suffix).dll"/>
+            <File Source="$(var.VCPATH)\vcruntime140_1$(var.qt_suffix).dll"/>
             <File Source="$(var.ssl_path)\libcrypto-1_1$(var.ssl_suffix).dll"/>
             <File Source="$(var.ssl_path)\libssl-1_1$(var.ssl_suffix).dll"/>
             <File Source="$(var.qt_path)\bin\Qt5Core$(var.qt_suffix).dll"/>

@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 env:
   BUILD_TYPE: RelWithDebInfo
+  BUILD_NUMBER: ${{github.run_number}}
   OPENSSL_ROOT_DIR: /usr/local/opt/openssl
   Qt5_DIR: /usr/local/opt/qt
   QT_QPA_PLATFORM: offscreen
@@ -39,3 +40,10 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest -V -C ${BUILD_TYPE}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: macOS-build
+        path: build/
+
