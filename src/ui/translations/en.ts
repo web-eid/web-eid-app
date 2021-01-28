@@ -8,8 +8,8 @@
         <translation>Select a smart card device</translation>
     </message>
     <message>
-        <source>Connect a smart card</source>
-        <translation>Connect a smart card</translation>
+        <source>Insert a smart card</source>
+        <translation>Insert a smart card</translation>
     </message>
     <message>
         <source>By choosing the certificate, I agree to submit my name and personal identification number to the website</source>

@@ -8,7 +8,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Connect a smart card</source>
+        <source>Insert a smart card</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
