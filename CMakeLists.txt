@@ -10,7 +10,7 @@ elseif($ENV{CI_PIPELINE_IID})
 else()
     set(BUILD_NUMBER 0)
 endif()
-project(web-eid VERSION 0.9.3.${BUILD_NUMBER})
+project(web-eid VERSION 0.9.4.${BUILD_NUMBER})
 set(FIREFOX_UUID "{89bcad3c-5c95-4a6c-a5a5-64da932f6bf7}" CACHE STRING "Firefox Extension UUID")
 set(FIREFOX_URL "https://web-eid.eu/files/firefox/web-eid-webextension-latest.xpi" CACHE STRING "Mozilla AMO URL")
 
