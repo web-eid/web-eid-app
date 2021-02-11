@@ -94,7 +94,7 @@
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
-            <string>Connect a smart card</string>
+            <string>Insert a smart card</string>
            </property>
           </widget>
          </item>
@@ -114,7 +114,7 @@
             <string notr="true">color: darkred</string>
            </property>
            <property name="text">
-            <string>Connect a smart card</string>
+            <string>Insert a smart card</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>

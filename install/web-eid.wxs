@@ -44,7 +44,10 @@
       <![CDATA[Installed OR (VersionNT >= 603)]]>
     </Condition>
     <!-- See https://github.com/open-eid/windows-installer/blob/master/FirefoxActionWix/README.md and
-         https://github.com/open-eid/windows-installer/blob/master/FirefoxActionWix/FirefoxAction.cs -->
+         https://github.com/open-eid/windows-installer/blob/master/FirefoxActionWix/FirefoxAction.cs
+
+    NB! TEMPORARILY DISABLED DUE TO ISSUES WITH PRIVILEGES.
+
     <Binary Id="FirefoxAction.CA.dll" SourceFile="$(sys.SOURCEFILEDIR)FirefoxAction.CA.dll" />
     <CustomAction Id="ExtensionSettingsInstall" Return="check" Execute="firstSequence"
       BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsInstall" />
@@ -52,6 +55,7 @@
       BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsRemove" />
     <Property Id="EXTENSIONSETTINGS_URL" Value="$(var.FIREFOX_URL)" />
     <Property Id="EXTENSIONSETTINGS_UUID" Value="$(var.FIREFOX_UUID)" />
+    -->
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.PlatformProgramFilesFolder)">
@@ -62,6 +66,7 @@
             <File Source="$(var.jsonfirefox)"/>
             <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll"/>
             <File Source="$(var.VCPATH)\vcruntime140$(var.qt_suffix).dll"/>
+            <File Source="$(var.VCPATH)\vcruntime140_1$(var.qt_suffix).dll"/>
             <File Source="$(var.ssl_path)\libcrypto-1_1$(var.ssl_suffix).dll"/>
             <File Source="$(var.ssl_path)\libssl-1_1$(var.ssl_suffix).dll"/>
             <File Source="$(var.qt_path)\bin\Qt5Core$(var.qt_suffix).dll"/>
@@ -98,10 +103,15 @@
           Value="https://edge.microsoft.com/extensionwebstorebase/v1/crx"/>
       </Component>
     </Directory>
+
+    <!--
+    NB! TEMPORARILY DISABLED DUE TO ISSUES WITH PRIVILEGES.
+
     <InstallExecuteSequence>
       <Custom Action="ExtensionSettingsInstall" Before="WriteRegistryValues">NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
       <Custom Action="ExtensionSettingsRemove" Before="InstallFinalize">(REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE)</Custom>
     </InstallExecuteSequence>
+    -->
 
     <Feature Id="Install" Level="1" Title="Web eID" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER">
       <ComponentRef Id="Application"/>
