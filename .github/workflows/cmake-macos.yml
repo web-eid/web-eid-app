@@ -5,7 +5,7 @@ on: [push, pull_request]
 env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
-  OPENSSL_ROOT_DIR: /usr/local/opt/openssl
+  OPENSSL_ROOT_DIR: /usr/local/opt/openssl@1.1
   Qt5_DIR: /usr/local/opt/qt
   QT_QPA_PLATFORM: offscreen
 
@@ -20,9 +20,7 @@ jobs:
           submodules: recursive
 
       - name: Install libraries
-        run: |
-          brew install web-eid/gtest/gtest qt
-          ln -sf /usr/local/Cellar/openssl@1.1/1.1.1* /usr/local/opt/openssl
+        run: brew install web-eid/gtest/gtest qt
 
       - name: Create build directory
         run: mkdir build
