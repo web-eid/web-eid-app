@@ -14,36 +14,35 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        submodules: recursive
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
-    - name: Install libraries
-      run: |
-        brew install web-eid/gtest/gtest qt
-        ln -sf /usr/local/Cellar/openssl@1.1/1.1.1* /usr/local/opt/openssl
+      - name: Install libraries
+        run: |
+          brew install web-eid/gtest/gtest qt
+          ln -sf /usr/local/Cellar/openssl@1.1/1.1.1* /usr/local/opt/openssl
 
-    - name: Create build directory
-      run: mkdir build
+      - name: Create build directory
+        run: mkdir build
 
-    - name: Configure CMake
-      working-directory: ${{github.workspace}}/build
-      run: cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 ..
+      - name: Configure CMake
+        working-directory: ${{github.workspace}}/build
+        run: cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 ..
 
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      run: |
-        cmake --build . --config ${BUILD_TYPE}
-        cmake --build . --config ${BUILD_TYPE} --target installer
+      - name: Build
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake --build . --config ${BUILD_TYPE}
+          cmake --build . --config ${BUILD_TYPE} --target installer
 
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest -V -C ${BUILD_TYPE}
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -V -C ${BUILD_TYPE}
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: macOS-build
-        path: build/
-
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: macOS-build
+          path: build/

@@ -11,55 +11,52 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        submodules: recursive
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
-    - name: Prepare vcpkg and libraries
-      uses: lukka/run-vcpkg@v6
-      with:
-        vcpkgArguments: gtest openssl
-        vcpkgTriplet: x64-windows
-        vcpkgGitCommitId: 3c466eb80c705ec42dbb278351e2ef2f5253b622 # previously 2020.11-1, didn't work due to vcpkg/issues/15928
+      - name: Prepare vcpkg and libraries
+        uses: lukka/run-vcpkg@v6
+        with:
+          vcpkgArguments: gtest openssl
+          vcpkgTriplet: x64-windows
+          vcpkgGitCommitId: 3c466eb80c705ec42dbb278351e2ef2f5253b622 # previously 2020.11-1, didn't work due to vcpkg/issues/15928
 
-    - name: Setup MS Visual C++ dev env
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: x64
-        toolset: 14.16 # Latest MS VC 2017
+      - name: Setup MS Visual C++ dev env
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+          toolset: 14.16 # Latest MS VC 2017
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2
-      with:
-        version: '5.12.10'
-        arch: win64_msvc2017_64
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: "5.12.10"
+          arch: win64_msvc2017_64
 
-    - name: Create build directory
-      run: mkdir build
+      - name: Create build directory
+        run: mkdir build
 
-    - name: Configure CMake
-      working-directory: ${{github.workspace}}/build
-      env:
-        OPENSSL_ROOT_DIR: ${{env.VCPKG_ROOT}}\installed\x64-windows
-      run: |
-        cmake -A x64 `
-          "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
-          "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" ..
+      - name: Configure CMake
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake -A x64 `
+            "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
+            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" ..
 
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      run: |
-        cmake --build . --config ${env:BUILD_TYPE}
-        cmake --build . --config ${env:BUILD_TYPE} --target installer
+      - name: Build
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake --build . --config ${env:BUILD_TYPE}
+          cmake --build . --config ${env:BUILD_TYPE} --target installer
 
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest -V -C ${env:BUILD_TYPE}
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -V -C ${env:BUILD_TYPE}
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: Windows-build
-        path: build/
-
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows-build
+          path: build/
