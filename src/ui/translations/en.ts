@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Insert a smart card</source>
-        <translation>Insert a smart card</translation>
+        <translation>Insert a smart card into the reader</translation>
     </message>
     <message>
         <source>By choosing the certificate, I agree to submit my name and personal identification number to the website</source>
