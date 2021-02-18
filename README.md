@@ -39,7 +39,7 @@ Arguments:
 ### Get certificate
 
 Pass the certificate type (either `auth` or `sign`) and origin URL as
-JSON-encoded command-line arguments to the `get-certificate` 
+JSON-encoded command-line arguments to the `get-certificate`
 command to retrieve the certificate:
 
     web-eid -c get-certificate '{"type": "auth", "origin": "https://ria.ee"}'
@@ -56,7 +56,6 @@ with a symbolic error code. Successful output example:
 Error example:
 
     {"error": {"code": "ERR_WEBEID_NATIVE_FATAL", "message": "Invalid origin"}}
-
 
 ### Authenticate
 
@@ -113,7 +112,7 @@ JSON-encoded message to the application standard input:
 ```json
 {
   "command": "authenticate",
-  "arguments": {"nonce": "...", "origin": "...", "origin-cert": "..."}
+  "arguments": { "nonce": "...", "origin": "...", "origin-cert": "..." }
 }
 ```
 
@@ -128,7 +127,7 @@ output in input-output mode with the following message (actual version
 number varies):
 
 ```json
-{"version": "1.0.0"}
+{ "version": "1.0.0" }
 ```
 
 There is a Python script in `tests/input-output-mode/test.py` that demonstrates
@@ -155,32 +154,35 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 
 ### Windows
 
-- Download Visual Studio 2019 community installer from https://visualstudio.microsoft.com/ and install *Desktop C++ Development*
+- Download Visual Studio 2019 community installer from https://visualstudio.microsoft.com/ and install _Desktop C++ Development_
 - Download WIX toolset from https://wixtoolset.org/ and install version 3.11.2
 - Download and install Git for Windows from https://git-scm.com/download/win
-- Install *vcpkg* by running the following commands in Powershell:
+- Install _vcpkg_ by running the following commands in Powershell:
 
       git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
       cd C:\vcpkg
       .\bootstrap-vcpkg.bat
       .\vcpkg integrate install
 
-- Install *Google Test*, *OpenSSL* and *Qt* with *vcpkg*:
+- Install _Google Test_ and _OpenSSL_ with _vcpkg_:
 
-      .\vcpkg install gtest:x64-windows openssl:x64-windows qt5-base[core]:x64-windows
+      .\vcpkg install --recurse --triplet x64-windows --clean-after-build gtest openssl
+
+- Install _Qt_ with the official [_Qt Online Installer_](https://www.qt.io/download-qt-installer), choose _Default Qt 5.15 desktop installation_.
+  Export _Qt_ directory with e.g. `set Qt5_DIR=C:\qt` before building.
 
 ### macOS
 
-- Install *Homebrew* if not already installed:
+- Install _Homebrew_ if not already installed:
 
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
-- Install *CMake*, *Google Test*, *OpenSSL* and *Qt* with *Homebrew*:
+- Install _CMake_, _Google Test_, _OpenSSL_ and _Qt_ with _Homebrew_:
 
       brew install cmake web-eid/gtest/gtest openssl qt
 
-- Create symlink to *OpenSSL* location and setup environment variables required
-  by *CMake*:
+- Create symlink to _OpenSSL_ location and setup environment variables required
+  by _CMake_:
 
       ln -sf /usr/local/Cellar/openssl@1.1/1.1.1* /usr/local/opt/openssl
       export OPENSSL_ROOT_DIR=/usr/local/opt/openssl
@@ -193,4 +195,3 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
     ./build.sh
     ./test.sh
     ./build/src/app/web-eid -c get-certificate '{"type":"auth", "origin":"https://ria.ee"}'
-
