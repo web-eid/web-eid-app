@@ -58,5 +58,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Windows-build
+          name: web-eid-app-windows-build-${{github.run_number}}
           path: build/

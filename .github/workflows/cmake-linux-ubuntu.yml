@@ -42,5 +42,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Ubuntu-build
+          name: web-eid-app-ubuntu-build-${{github.run_number}}
           path: build/

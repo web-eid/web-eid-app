@@ -42,5 +42,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: macOS-build
+          name: web-eid-app-macos-build-${{github.run_number}}
           path: build/
