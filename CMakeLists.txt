@@ -13,6 +13,8 @@ endif()
 project(web-eid VERSION 0.9.4.${BUILD_NUMBER})
 set(FIREFOX_UUID "{89bcad3c-5c95-4a6c-a5a5-64da932f6bf7}" CACHE STRING "Firefox Extension UUID")
 set(FIREFOX_URL "https://web-eid.eu/files/firefox/web-eid-webextension-latest.xpi" CACHE STRING "Mozilla AMO URL")
+set(SIGNCERT "" CACHE STRING "Common name of certificate to used sign binaries, empty skip signing")
+set(CROSSSIGNCERT "" CACHE STRING "Common name of certificate to used cross sign binaries, empty skip signing")
 
 find_package(Qt5 COMPONENTS Core Widgets Network Test LinguistTools REQUIRED)
 
