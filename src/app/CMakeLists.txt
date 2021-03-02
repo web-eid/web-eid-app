@@ -36,7 +36,9 @@ if(WIN32)
             -djsonfirefox=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
             -dFIREFOX_URL="${FIREFOX_URL}" -dFIREFOX_UUID="${FIREFOX_UUID}"
             -dapp_path=$<TARGET_FILE:web-eid> ${CMAKE_SOURCE_DIR}/install/web-eid.wxs
-        COMMAND "$ENV{WIX}bin\\light.exe" -nologo -ext WixUIExtension web-eid.wixobj -o ${MSI_FILE}
+            ${CMAKE_SOURCE_DIR}/install/WelcomeDlg2.wxs ${CMAKE_SOURCE_DIR}/install/WixUI_Minimal2.wxs
+        COMMAND "$ENV{WIX}bin\\light.exe" -nologo -ext WixUIExtension -o ${MSI_FILE}
+            web-eid.wixobj WelcomeDlg2.wixobj WixUI_Minimal2.wixobj
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
     if(SIGNCERT)
@@ -76,7 +78,7 @@ elseif(APPLE)
     endif()
     add_custom_target(installer DEPENDS macdeployqt
         COMMAND make install DESTDIR=root
-        COMMAND pkgbuild --root root --scripts scripts --identifier "eu.web-eid.$<TARGET_FILE_NAME:web-eid>"
+        COMMAND pkgbuild --root root --scripts scripts --identifier "eu.web-eid.$<TARGET_NAME:web-eid>"
             "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
             --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-${PROJECT_VERSION}.pkg
         COMMAND_EXPAND_LISTS
@@ -100,7 +102,7 @@ else()
         DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/google-chrome/extensions")
     add_custom_target(installer
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        COMMAND dh_make --createorig --addmissing --defaultless -y -p $<TARGET_FILE_NAME:web-eid>_${PROJECT_VERSION}
+        COMMAND dh_make --createorig --addmissing --defaultless -y -p $<TARGET_NAME:web-eid>_${PROJECT_VERSION}
         COMMAND dch --distribution unstable -v ${PROJECT_VERSION} "Release: ${PROJECT_VERSION}."
         COMMAND dpkg-buildpackage -rfakeroot -us -uc
     )

@@ -43,6 +43,7 @@
     <Condition Message="[ProductName] requires Windows 8.1 or higher.">
       <![CDATA[Installed OR (VersionNT >= 603)]]>
     </Condition>
+    <UIRef Id="WixUI_Minimal2" />
 
     <!-- See https://github.com/web-eid/wix-custom-action-firefox-extension-install/blob/main/README.md and
          https://github.com/web-eid/wix-custom-action-firefox-extension-install/blob/main/src/FirefoxAction.cs
