@@ -2,7 +2,7 @@
 
 ![European Regional Development Fund](https://github.com/e-gov/RIHA-Frontend/raw/master/logo/EU/EU.png)
 
-The Web eID command-line application performs cryptographic digital signing and
+The Web eID application performs cryptographic digital signing and
 authentication operations with electronic ID smart cards for the Web eID
 browser extension (it is the [native messaging host](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging)
 for the extension). Also works standalone without the extension in command-line
@@ -179,16 +179,16 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 
 - Install _CMake_, _Google Test_, _OpenSSL_ and _Qt_ with _Homebrew_:
 
-      brew install cmake web-eid/gtest/gtest openssl qt
+      brew install cmake web-eid/gtest/gtest openssl qt@5
 
 - Create symlink to _OpenSSL_ location and setup environment variables required
   by _CMake_:
 
       ln -sf /usr/local/Cellar/openssl@1.1/1.1.1* /usr/local/opt/openssl
       export OPENSSL_ROOT_DIR=/usr/local/opt/openssl
-      export Qt5_DIR=/usr/local/opt/qt
+      export Qt5_DIR=/usr/local/opt/qt5
 
-## Building
+## Building and testing
 
     git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
     cd web-eid-app

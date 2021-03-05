@@ -59,4 +59,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: web-eid-app-windows-build-${{github.run_number}}
-          path: build/
+          path: build/src/app/RelWithDebInfo/*.msi # ${{ env:BUILD_TYPE }} didn't work, although it should
