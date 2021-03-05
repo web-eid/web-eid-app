@@ -43,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: web-eid-app-ubuntu-build-${{github.run_number}}
-          path: build/
+          path: build/src/app/*.deb
