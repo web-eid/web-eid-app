@@ -4,19 +4,21 @@ Priority: extra
 Maintainer: RIA <info@ria.ee>
 Build-Depends:
  cdbs,
- jq,
  clang-10,
  debhelper (>= 10),
  libpcsclite-dev,
  qtbase5-dev
 Standards-Version: 3.9.8
-Homepage: https://github.com/open-eid/web-eid
+Homepage: https://github.com/web-eid/web-eid-app
 
 Package: web-eid
 Architecture: any
 Depends:
  pcscd,
+ jq,
  ${shlibs:Depends},
  ${misc:Depends}
-Description: Browser helper
- Browser helper..
+Description: The Web eID browser extension helper application
+ The Web eID application performs cryptographic digital signing and
+ authentication operations with electronic ID smart cards for the Web eID
+ browser extension.
