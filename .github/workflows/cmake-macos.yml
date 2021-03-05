@@ -20,14 +20,14 @@ jobs:
           submodules: recursive
 
       - name: Install libraries
-        run: brew install web-eid/gtest/gtest qt
+        run: brew install web-eid/gtest/gtest qt@5
 
       - name: Create build directory
         run: mkdir build
 
       - name: Configure CMake
         working-directory: ${{github.workspace}}/build
-        run: cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 ..
+        run: cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DQt5_DIR=/usr/local/opt/qt5/lib/cmake/Qt5 ..
 
       - name: Build
         working-directory: ${{github.workspace}}/build
