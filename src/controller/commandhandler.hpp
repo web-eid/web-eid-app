@@ -34,7 +34,7 @@ public:
     using ptr = std::unique_ptr<CommandHandler>;
 
     virtual void run(electronic_id::CardInfo::ptr cardInfo) = 0;
-    virtual void connectSignals(WebEidUI* window) = 0;
+    virtual void connectSignals(const WebEidUI* window) = 0;
     virtual QVariantMap onConfirm(WebEidUI* window) = 0;
 
     CommandType commandType() const { return command.first; }

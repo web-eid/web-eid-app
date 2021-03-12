@@ -37,7 +37,7 @@ public:
         CertificateReader::run(cardInfo);
     }
 
-    void connectSignals(WebEidUI* window) override;
+    void connectSignals(const WebEidUI* window) override;
     QVariantMap onConfirm(WebEidUI* window) override;
 
 signals:

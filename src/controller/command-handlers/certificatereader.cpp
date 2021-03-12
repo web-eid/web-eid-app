@@ -86,7 +86,7 @@ void CertificateReader::run(CardInfo::ptr cardInfo)
 // TODO: Command handler could also draw the UI now that the UI is refactored from Qt Quick to
 // widgets.
 
-void CertificateReader::connectSignals(WebEidUI* window)
+void CertificateReader::connectSignals(const WebEidUI* window)
 {
     connect(this, &CertificateReader::certificateReady, window, &WebEidUI::onCertificateReady);
 }

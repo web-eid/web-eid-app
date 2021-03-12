@@ -32,7 +32,7 @@ public:
     explicit Sign(const CommandWithArguments& cmd);
 
     void run(electronic_id::CardInfo::ptr _cardInfo) override;
-    void connectSignals(WebEidUI* window) override;
+    void connectSignals(const WebEidUI* window) override;
     QVariantMap onConfirm(WebEidUI* window) override;
 
 signals:
