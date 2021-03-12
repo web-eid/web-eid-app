@@ -57,6 +57,7 @@ public:
     ~WebEidDialog() override;
 
     void switchPage(const CommandType commandType) override;
+    QString getPin() override;
 
 public: // slots
     void onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason status) override;
@@ -69,6 +70,8 @@ public: // slots
                            const quint8 retriesLeft) override;
 
 private:
+    void onOkButtonClicked(); // slot
+
     void makeOkButtonDefaultAndconnectSignals();
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLenght);
     void startPinTimeoutProgressBar();
@@ -85,4 +88,5 @@ private:
     CommandType currentCommand = CommandType::NONE;
     int lineHeight = -1;
     std::optional<bool> readerHasPinPad;
+    QString pin;
 };

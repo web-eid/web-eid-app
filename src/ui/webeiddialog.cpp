@@ -28,6 +28,7 @@
 #include <QPushButton>
 #include <QTimeLine>
 #include <QMessageBox>
+#include <QMutexLocker>
 #include <QRegularExpressionValidator>
 #include <QUrl>
 
@@ -63,6 +64,26 @@ WebEidDialog::~WebEidDialog()
     delete ui;
 }
 
+void WebEidDialog::onOkButtonClicked()
+{
+    if (currentCommand == CommandType::AUTHENTICATE || currentCommand == CommandType::SIGN) {
+        auto pinInput = pinInputOnPage();
+
+        // Cache the PIN in an instance variable for later use in getPin().
+        // This is required as accessing widgets from background threads is not allowed,
+        // so getPin() cannot access pinInput directly.
+        pin = pinInput->text();
+
+        // TODO: We need to erase the PIN in the widget buffer, this needs further work.
+        // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
+        // custom Qt widget.
+        // Clear the PIN input.
+        pinInput->setText(QString());
+    }
+
+    emit accepted();
+}
+
 void WebEidDialog::switchPage(const CommandType commandType)
 {
     currentCommand = commandType;
@@ -71,6 +92,15 @@ void WebEidDialog::switchPage(const CommandType commandType)
     okButton->setHidden(commandType == CommandType::INSERT_CARD);
 
     ui->pageStack->setCurrentIndex(int(commandType));
+}
+
+QString WebEidDialog::getPin()
+{
+    // getPin() is called from background threads and must be thread-safe.
+    static QMutex mutex;
+    QMutexLocker lock {&mutex};
+
+    return pin;
 }
 
 void WebEidDialog::onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason status)
@@ -260,7 +290,7 @@ void WebEidDialog::makeOkButtonDefaultAndconnectSignals()
 {
     auto cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
 
-    connect(okButton, &QPushButton::clicked, this, &WebEidDialog::accepted);
+    connect(okButton, &QPushButton::clicked, this, &WebEidDialog::onOkButtonClicked);
     connect(cancelButton, &QPushButton::clicked, this, &WebEidDialog::rejected);
 
     cancelButton->setDefault(false);

@@ -30,12 +30,14 @@
 
 #include <string>
 
+class WebEidUI;
+
 template <typename T>
 T validateAndGetArgument(const QString& argName, const QVariantMap& args, bool allowNull = false);
 
 QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QVariantMap& args,
                                             bool allowNull = false);
 
-pcsc_cpp::byte_vector getPin(QObject* window, const QString& pinInputName);
+pcsc_cpp::byte_vector getPin(WebEidUI* window);
 
 QVariantMap signatureAlgoToVariantMap(const electronic_id::SignatureAlgorithm signatureAlgo);

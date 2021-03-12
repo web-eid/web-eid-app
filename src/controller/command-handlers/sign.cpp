@@ -111,13 +111,14 @@ QVariantMap Sign::onConfirm(WebEidUI* window)
         throw electronic_id::Error("Authenticate::onConfirm(): invalid certificate");
     }
 
-    auto pin = getPin(window, QStringLiteral("signingPinInput"));
+    auto pin = getPin(window);
 
     try {
         const auto signature = signHash(cardInfo->eid(), pin, docHash, hashAlgo);
 
         // Erase PIN memory.
-        // FIXME: Use a scope guard. Discuss if zero-filling is OK or is random better.
+        // TODO: Use a scope guard. Verify that the buffers are actually zeroed
+        // and no copies remain.
         std::fill(pin.begin(), pin.end(), '\0');
 
         return {{QStringLiteral("signature"), signature.first},
@@ -129,7 +130,7 @@ QVariantMap Sign::onConfirm(WebEidUI* window)
     }
 }
 
-void Sign::connectSignals(WebEidUI* window)
+void Sign::connectSignals(const WebEidUI* window)
 {
     // TODO: DRY with Authenticate?
     CertificateReader::connectSignals(window);

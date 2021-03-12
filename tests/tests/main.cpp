@@ -189,7 +189,7 @@ void WebEidTests::authenticate_validArgumentsResultInValidJwt()
 void WebEidTests::fromPunycode_decodesEeDomain()
 {
     QCOMPARE(fromPunycode(QUrl("https://xn--igusnunik-p7af.ee")),
-             QStringLiteral("https://õigusnõunik.ee"));
+             QStringLiteral("https://\u00F5igusn\u00F5unik.ee"));
 }
 
 void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy)

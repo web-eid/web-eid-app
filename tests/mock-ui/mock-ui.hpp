@@ -33,6 +33,12 @@ public:
 
     void switchPage(const CommandType) override {}
 
+    QString getPin() override
+    {
+        static QString pin {"0090"};
+        return pin;
+    }
+
 public: // slots
     void onCertificateReady(const QUrl&, const CertificateStatus, const CertificateInfo&,
                             const PinInfo&) override
