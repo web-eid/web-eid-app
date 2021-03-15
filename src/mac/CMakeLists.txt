@@ -46,6 +46,6 @@ install(TARGETS web-eid-safari DESTINATION /Applications/Utilities)
 add_custom_target(safari-installer DEPENDS web-eid-safari
     COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid-safari>
     COMMAND make install DESTDIR=root
-    COMMAND pkgbuild --root root --identifier "eu.web-eid.$<TARGET_FILE_NAME:web-eid-safari>"
-        --version "${PROJECT_VERSION}" $<TARGET_FILE_NAME:web-eid-safari>-${PROJECT_VERSION}.pkg
+    COMMAND pkgbuild --root root --identifier "eu.web-eid.$<TARGET_NAME:web-eid-safari>"
+        --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid-safari>-${PROJECT_VERSION}.pkg
 )
