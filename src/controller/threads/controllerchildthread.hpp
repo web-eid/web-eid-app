@@ -52,7 +52,12 @@ public:
 
         } catch (const CommandHandlerRetriableError& error) {
             qWarning() << "Command" << commandType() << "retriable error:" << error;
-            emit retry(error.what());
+            emit retry(error.what(), false);
+
+        } catch (const CommandHandlerRerunFromStartError& error) {
+            qWarning() << "Command" << commandType()
+                       << "error that requires rerun from start:" << error;
+            emit retry(error.what(), true);
 
         } catch (const std::exception& error) {
             qCritical() << "Command" << commandType() << "fatal error:" << error;
@@ -62,7 +67,7 @@ public:
 
 signals:
     void failure(const QString& error);
-    void retry(const QString& error);
+    void retry(const QString& error, bool rerunFromStart);
 
 protected:
     explicit ControllerChildThread(QObject* parent) : QThread(parent) {}
