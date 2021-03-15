@@ -50,7 +50,7 @@ public: // slots
 
     void onSigningCertificateHashMismatch() override {}
 
-    void onRetry(const QString&) override {}
+    void onRetry(const QString&, bool) override {}
 
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status, const quint8) override {}
 

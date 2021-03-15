@@ -70,7 +70,6 @@ void Controller::run()
 
     try {
         if (isInStdinMode) {
-
             // In stdin/stdout mode we first output the version as required by the WebExtension
             // and then wait for the actual command.
             writeResponseToStdOut(isInStdinMode,
@@ -172,8 +171,7 @@ void Controller::connectOkCancelWaitingForPinPad()
 
     connect(window.get(), &WebEidUI::accepted, this, &Controller::onDialogOK);
     connect(window.get(), &WebEidUI::rejected, this, &Controller::onDialogCancel);
-    connect(window.get(), &WebEidUI::waitingForPinPad, this,
-            &Controller::onRunCommandHandlerConfirm);
+    connect(window.get(), &WebEidUI::waitingForPinPad, this, &Controller::onCommandHandlerConfirm);
 }
 
 void Controller::onCardReady(CardInfo::ptr card)
@@ -204,11 +202,13 @@ void Controller::onCardReady(CardInfo::ptr card)
 
 void Controller::onCommandHandlerRun()
 {
+    retryMethod = std::bind(&Controller::onCommandHandlerRun, this);
+
     try {
         CommandHandlerRunThread* commandHandlerRunThread =
             new CommandHandlerRunThread(this, *commandHandler, cardInfo);
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerRunThread);
-        connectRetry(commandHandlerRunThread, &Controller::onCommandHandlerRun);
+        connectRetry(commandHandlerRunThread);
 
         commandHandlerRunThread->start();
 
@@ -222,15 +222,17 @@ void Controller::onReaderMonitorStatusUpdate(const AutoSelectFailed::Reason reas
     emit statusUpdate(reason);
 }
 
-void Controller::onRunCommandHandlerConfirm()
+void Controller::onCommandHandlerConfirm()
 {
+    retryMethod = std::bind(&Controller::onCommandHandlerConfirm, this);
+
     try {
         CommandHandlerConfirmThread* commandHandlerConfirmThread =
             new CommandHandlerConfirmThread(this, *commandHandler, window.get());
         connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
                 &Controller::onCommandHandlerConfirmCompleted);
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerConfirmThread);
-        connectRetry(commandHandlerConfirmThread, &Controller::onRunCommandHandlerConfirm);
+        connectRetry(commandHandlerConfirmThread);
 
         commandHandlerConfirmThread->start();
 
@@ -251,8 +253,19 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
     exit();
 }
 
-template <typename Func>
-void Controller::connectRetry(ControllerChildThread* childThread, Func controllerSlot)
+void Controller::onRetry(bool rerunFromStart)
+{
+    if (rerunFromStart) {
+        // FIXME: need error handling here, encapsulate it somehow (in functional style probably) to
+        // reuse.
+        startCommandExecution();
+        return;
+    }
+
+    retryMethod();
+}
+
+void Controller::connectRetry(const ControllerChildThread* childThread)
 {
     REQUIRE_NON_NULL(childThread);
     REQUIRE_NON_NULL(window);
@@ -260,7 +273,7 @@ void Controller::connectRetry(ControllerChildThread* childThread, Func controlle
     disconnect(window.get(), &WebEidUI::retry, nullptr, nullptr);
 
     connect(childThread, &ControllerChildThread::retry, window.get(), &WebEidUI::onRetry);
-    connect(window.get(), &WebEidUI::retry, this, controllerSlot);
+    connect(window.get(), &WebEidUI::retry, this, &Controller::onRetry);
 }
 
 void Controller::disconnectRetry()
@@ -276,7 +289,7 @@ void Controller::disconnectRetry()
 void Controller::onDialogOK()
 {
     if (commandHandler) {
-        onRunCommandHandlerConfirm();
+        onCommandHandlerConfirm();
     } else {
         // This should not happen, and when it does, OK should be equivalent to cancel.
         onDialogCancel();

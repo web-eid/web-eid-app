@@ -48,7 +48,7 @@ public:
 
 signals:
     void waitingForPinPad();
-    void retry();
+    void retry(bool rerunFromStart);
 
 public: // slots
     virtual void
@@ -57,7 +57,9 @@ public: // slots
                                     const CertificateInfo& certInfo, const PinInfo& pinInfo) = 0;
     virtual void onDocumentHashReady(const QString& docHash) = 0;
     virtual void onSigningCertificateHashMismatch() = 0;
-    virtual void onRetry(const QString& error) = 0;
+    // FIXME: instead of string error, use enums that can be mapped to translatable strings that are
+    // understandable to the user.
+    virtual void onRetry(const QString& error, bool rerunFromStart) = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                    const quint8 retriesLeft) = 0;
 };

@@ -28,6 +28,7 @@
 
 #include "pcsc-cpp/pcsc-cpp.hpp"
 
+#include <functional>
 #include <unordered_map>
 #include <cstdint>
 
@@ -39,7 +40,11 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    explicit Controller(CommandWithArgumentsPtr cmd) : QObject(nullptr), command(std::move(cmd)) {}
+    explicit Controller(CommandWithArgumentsPtr cmd) :
+        QObject(nullptr), command(std::move(cmd)),
+        retryMethod(std::bind(&Controller::startCommandExecution, this))
+    {
+    }
 
     const QVariantMap& result() const { return _result; }
 
@@ -59,13 +64,16 @@ public: // slots
     // Reader and card events from monitor thread.
     void onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason reason);
 
-    // Called either directly from onDialogOK() or from dialog when waiting for PIN-pad.
-    void onRunCommandHandlerConfirm();
+    // Called either directly from onDialogOK() or from dialog when waiting for PIN-pad or on retry.
+    void onCommandHandlerConfirm();
 
     // Called from CommandHandlerConfirm thread.
     void onCommandHandlerConfirmCompleted(const QVariantMap& result);
 
-    // User events from dialog.
+    // Called from the dialog based on errors that happen in child threads.
+    void onRetry(bool rerunFromStart);
+
+    // User events from the dialog.
     void onDialogOK();
     void onDialogCancel();
 
@@ -80,8 +88,7 @@ private:
     void startCommandExecution();
     void waitUntilSupportedCardSelected();
     void connectOkCancelWaitingForPinPad();
-    template <typename Func>
-    void connectRetry(ControllerChildThread* childThread, Func controllerSlot);
+    void connectRetry(const ControllerChildThread* childThread);
     void disconnectRetry();
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
     void exit();
@@ -90,6 +97,10 @@ private:
     CommandType commandType();
 
     CommandWithArgumentsPtr command;
+    // Pointer to the Controller method that is called on retry, either
+    // onCommandHandlerRun() or onCommandHandlerConfirm() depending on the stage of the command
+    // handler.
+    std::function<void(void)> retryMethod;
     CommandHandler::ptr commandHandler = nullptr;
     std::unordered_map<uintptr_t, observer_ptr<ControllerChildThread>> childThreads;
     electronic_id::CardInfo::ptr cardInfo = nullptr;
