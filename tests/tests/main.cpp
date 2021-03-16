@@ -90,10 +90,8 @@ void WebEidTests::statusUpdate_withUnsupportedCard_hasExpectedStatus()
     runEventLoopVerifySignalsEmitted(statusUpdateSpy);
 
     // assert
-    const auto statusArgument =
-        qvariant_cast<electronic_id::AutoSelectFailed::Reason>(statusUpdateSpy.first().at(0));
-    QCOMPARE(statusArgument,
-             electronic_id::AutoSelectFailed::Reason::SINGLE_READER_UNSUPPORTED_CARD);
+    const auto statusArgument = qvariant_cast<RetriableError>(statusUpdateSpy.first().at(0));
+    QCOMPARE(statusArgument, RetriableError::UNSUPPORTED_CARD);
 }
 
 void WebEidTests::getCertificate_validCertificateHasExpectedCertificateSubject()

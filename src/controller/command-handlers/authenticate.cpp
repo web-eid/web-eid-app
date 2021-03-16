@@ -33,6 +33,8 @@
 
 #include <map>
 
+using namespace electronic_id;
+
 namespace
 {
 
@@ -59,7 +61,8 @@ QByteArray createAuthenticationToken(const QSslCertificate& certificate,
 
     auto tokenPayload = QJsonObject {
         {"iat", QString::number(QDateTime::currentDateTimeUtc().toSecsSinceEpoch())},
-        {"exp", QString::number(QDateTime::currentDateTimeUtc().addSecs(5 * 60).toSecsSinceEpoch())},
+        {"exp",
+         QString::number(QDateTime::currentDateTimeUtc().addSecs(5 * 60).toSecsSinceEpoch())},
         {"sub", certificate.subjectInfo(QSslCertificate::CommonName)[0]},
         {"nonce", nonce},
         {"iss", QStringLiteral("web-eid app %1").arg(qApp->applicationVersion())},
@@ -77,20 +80,20 @@ QByteArray createAuthenticationToken(const QSslCertificate& certificate,
     return jsonDocToBase64(tokenHeader) + '.' + jsonDocToBase64(QJsonDocument(tokenPayload));
 }
 
-QByteArray signToken(const electronic_id::ElectronicID& eid, const QByteArray& token,
+QByteArray signToken(const ElectronicID& eid, const QByteArray& token,
                      const pcsc_cpp::byte_vector& pin)
 {
     static const auto SIGNATURE_ALGO_TO_HASH =
-        std::map<electronic_id::JsonWebSignatureAlgorithm, QCryptographicHash::Algorithm> {
-            {electronic_id::JsonWebSignatureAlgorithm::RS256, QCryptographicHash::Sha256},
-            {electronic_id::JsonWebSignatureAlgorithm::PS256, QCryptographicHash::Sha256},
-            {electronic_id::JsonWebSignatureAlgorithm::ES384, QCryptographicHash::Sha384},
+        std::map<JsonWebSignatureAlgorithm, QCryptographicHash::Algorithm> {
+            {JsonWebSignatureAlgorithm::RS256, QCryptographicHash::Sha256},
+            {JsonWebSignatureAlgorithm::PS256, QCryptographicHash::Sha256},
+            {JsonWebSignatureAlgorithm::ES384, QCryptographicHash::Sha384},
         };
 
     if (!SIGNATURE_ALGO_TO_HASH.count(eid.authSignatureAlgorithm())) {
-        throw std::logic_error("Authenticate::onConfirm():signToken(): "
-                               "Hash algorithm mapping missing for signature algorithm "
-                               + std::string(eid.authSignatureAlgorithm()));
+        THROW(ProgrammingError,
+              "Hash algorithm mapping missing for signature algorithm "
+                  + std::string(eid.authSignatureAlgorithm()));
     }
 
     const auto hashAlgo = SIGNATURE_ALGO_TO_HASH.at(eid.authSignatureAlgorithm());
@@ -115,38 +118,33 @@ Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(
 {
     const auto arguments = cmd.second;
 
-    // FIXME: implement argument validation with custom exceptions that are sent back up.
     // nonce, origin, origin-cert
     if (arguments.size() != 3) {
-        throw std::invalid_argument("authenticate: argument must be '{"
-                                    "\"nonce\": \"<challenge nonce>\", "
-                                    "\"origin\": \"<origin URL>\", "
-                                    "\"origin-cert\": \"<Base64-encoded origin certificate>\"}'");
+        THROW(CommandHandlerInputDataError,
+              "Argument must be '{"
+              "\"nonce\": \"<challenge nonce>\", "
+              "\"origin\": \"<origin URL>\", "
+              "\"origin-cert\": \"<Base64-encoded origin certificate>\"}'");
     }
 
     nonce = validateAndGetArgument<QString>(QStringLiteral("nonce"), arguments);
-    // TODO: nonce must contain at least 256 bits of entropy, but what should the required byte
-    // length be considering encoding?
-    if (nonce.length() < 32) {
-        throw std::invalid_argument("authenticate: challenge nonce argument 'nonce' must be "
-                                    "at least 32 characters long");
+    // nonce must contain at least 256 bits of entropy and is usually Base-64-encoded, so the
+    // required byte length is 44, the length of 32 Base-64-encoded bytes.
+    if (nonce.length() < 44) {
+        THROW(CommandHandlerInputDataError,
+              "Challenge nonce argument 'nonce' must be at least 44 characters long");
     }
     if (nonce.length() > 128) {
-        throw std::invalid_argument("authenticate: challenge nonce argument 'nonce' must be "
-                                    "at maximum 128 characters long");
+        THROW(CommandHandlerInputDataError,
+              "Challenge nonce argument 'nonce' cannot be longer than 128 characters");
     }
     validateAndStoreOrigin(arguments);
-    validateAndStoreCertificate(arguments);
+    validateAndStoreOriginCertificate(arguments);
 }
 
 QVariantMap Authenticate::onConfirm(WebEidUI* window)
 {
-    if (certificate.isNull()) {
-        throw electronic_id::Error("Authenticate::onConfirm(): invalid certificate");
-    }
-    if (!cardInfo) {
-        throw std::logic_error("Authenticate::onConfirm(): null cardInfo");
-    }
+    requireValidCardInfoAndCertificate();
 
     const auto signatureAlgorithm =
         QString::fromStdString(cardInfo->eid().authSignatureAlgorithm());
@@ -166,7 +164,7 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window)
 
         return {{QStringLiteral("auth-token"), QString(signedToken)}};
 
-    } catch (const electronic_id::VerifyPinFailed& failure) {
+    } catch (const VerifyPinFailed& failure) {
         emit verifyPinFailed(failure.status(), failure.retries());
         if (failure.retries() > 0) {
             throw CommandHandlerVerifyPinFailed(failure.what());
@@ -182,7 +180,7 @@ void Authenticate::connectSignals(const WebEidUI* window)
     connect(this, &Authenticate::verifyPinFailed, window, &WebEidUI::onVerifyPinFailed);
 }
 
-void Authenticate::validateAndStoreCertificate(const QVariantMap& args)
+void Authenticate::validateAndStoreOriginCertificate(const QVariantMap& args)
 {
     originCertificate = parseAndValidateCertificate(QStringLiteral("origin-cert"), args, true);
     if (originCertificate.isNull()) {
@@ -191,10 +189,10 @@ void Authenticate::validateAndStoreCertificate(const QVariantMap& args)
 
     const auto certHostnames = originCertificate.subjectInfo(QSslCertificate::CommonName);
     if (certHostnames.size() != 1) {
-        // FIXME: add support for multi-domain certificates
-        throw std::invalid_argument("authenticate: origin certificate does not contain "
-                                    "exactly 1 host name (it contains "
-                                    + std::to_string(certHostnames.size()) + ")");
+        // TODO: add support for multi-domain certificates
+        THROW(CommandHandlerInputDataError,
+              "Origin certificate does not contain exactly 1 host name (it contains "
+                  + std::to_string(certHostnames.size()) + ")");
     }
     if (origin.host() != certHostnames[0]
         // Certificate hostname may be a wildcard, e.g. *.ria.ee, use QDir::match() for glob
@@ -202,8 +200,9 @@ void Authenticate::validateAndStoreCertificate(const QVariantMap& args)
         && !QDir::match(certHostnames[0], origin.host())
         // or ria.ee that needs an extra dot prefix to match.
         && !QDir::match(certHostnames[0], '.' + origin.host())) {
-        throw std::invalid_argument("authenticate: origin host name '" + origin.host().toStdString()
-                                    + "' does not match origin certificate host name '"
-                                    + certHostnames[0].toStdString() + "'");
+        THROW(CommandHandlerInputDataError,
+              "Origin host name '" + origin.host().toStdString()
+                  + "' does not match origin certificate host name '"
+                  + certHostnames[0].toStdString() + "'");
     }
 }

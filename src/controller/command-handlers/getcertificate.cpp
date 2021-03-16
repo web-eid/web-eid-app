@@ -31,55 +31,58 @@ namespace
 
 QVariantList supportedAuthAlgo(const ElectronicID& eid)
 {
-    try {
-        switch (eid.authSignatureAlgorithm()) {
-        case JsonWebSignatureAlgorithm::ES256:
-            return {signatureAlgoToVariantMap(SignatureAlgorithm::ES256)};
-        case JsonWebSignatureAlgorithm::ES384:
-            return {signatureAlgoToVariantMap(SignatureAlgorithm::ES384)};
-        case JsonWebSignatureAlgorithm::ES512:
-            return {signatureAlgoToVariantMap(SignatureAlgorithm::ES512)};
-        case JsonWebSignatureAlgorithm::PS256:
-            return {signatureAlgoToVariantMap(SignatureAlgorithm::PS256)};
-        case JsonWebSignatureAlgorithm::PS384:
-            return {signatureAlgoToVariantMap(SignatureAlgorithm::PS384)};
-        case JsonWebSignatureAlgorithm::PS512:
-            return {signatureAlgoToVariantMap(SignatureAlgorithm::PS512)};
-        case JsonWebSignatureAlgorithm::RS256:
-            return {signatureAlgoToVariantMap(SignatureAlgorithm::RS256)};
-        case JsonWebSignatureAlgorithm::RS384:
-            return {signatureAlgoToVariantMap(SignatureAlgorithm::RS384)};
-        case JsonWebSignatureAlgorithm::RS512:
-            return {signatureAlgoToVariantMap(SignatureAlgorithm::RS512)};
-        default:
-            throw std::logic_error("GetCertificate::onConfirm() unknown authentication algorithm");
-        }
-    } catch (const std::out_of_range&) {
-        throw std::logic_error("Missing authentication algorithm mapping in get-certificate for "
-                               + eid.name());
+    switch (eid.authSignatureAlgorithm()) {
+    case JsonWebSignatureAlgorithm::ES256:
+        return {signatureAlgoToVariantMap(SignatureAlgorithm::ES256)};
+    case JsonWebSignatureAlgorithm::ES384:
+        return {signatureAlgoToVariantMap(SignatureAlgorithm::ES384)};
+    case JsonWebSignatureAlgorithm::ES512:
+        return {signatureAlgoToVariantMap(SignatureAlgorithm::ES512)};
+    case JsonWebSignatureAlgorithm::PS256:
+        return {signatureAlgoToVariantMap(SignatureAlgorithm::PS256)};
+    case JsonWebSignatureAlgorithm::PS384:
+        return {signatureAlgoToVariantMap(SignatureAlgorithm::PS384)};
+    case JsonWebSignatureAlgorithm::PS512:
+        return {signatureAlgoToVariantMap(SignatureAlgorithm::PS512)};
+    case JsonWebSignatureAlgorithm::RS256:
+        return {signatureAlgoToVariantMap(SignatureAlgorithm::RS256)};
+    case JsonWebSignatureAlgorithm::RS384:
+        return {signatureAlgoToVariantMap(SignatureAlgorithm::RS384)};
+    case JsonWebSignatureAlgorithm::RS512:
+        return {signatureAlgoToVariantMap(SignatureAlgorithm::RS512)};
+    default:
+        THROW(ProgrammingError,
+              "Unknown authentication signature algorithm "
+                  + std::string(eid.authSignatureAlgorithm()));
     }
 }
 
 QVariantList supportedSigningAlgos(const ElectronicID& eid)
 {
-    try {
-        QVariantList algos;
-        for (const SignatureAlgorithm& signAlgo : eid.supportedSigningAlgorithms()) {
-            algos.push_back(signatureAlgoToVariantMap(signAlgo));
-        }
-        return algos;
-    } catch (const std::out_of_range&) {
-        throw std::logic_error("GetCertificate::onConfirm() unknown signature algorithm");
+    QVariantList algos;
+    for (const SignatureAlgorithm& signAlgo : eid.supportedSigningAlgorithms()) {
+        algos.push_back(signatureAlgoToVariantMap(signAlgo));
     }
+    return algos;
 }
 
 } // namespace
 
+GetCertificate::GetCertificate(const CommandWithArguments& cmd) : CertificateReader(cmd)
+{
+    const auto arguments = cmd.second;
+    if (arguments.size() != 2) {
+        THROW(CommandHandlerInputDataError,
+              "Argument must be '{\"type\": [\"auth\"|\"sign\"], \"origin\": \"<origin URL>\"}'");
+    }
+    if (arguments["type"] != "auth" && arguments["type"] != "sign") {
+        THROW(CommandHandlerInputDataError, "Argument type must be either 'auth' or 'sign'");
+    }
+}
+
 QVariantMap GetCertificate::onConfirm(WebEidUI* /* window */)
 {
-    if (certificate.isNull()) {
-        throw electronic_id::Error("Invalid certificate");
-    }
+    requireValidCardInfoAndCertificate();
 
     // Quoting https://tools.ietf.org/html/rfc7515#section-4.1.6:
     // Each string in the array is a base64-encoded (Section 4 of [RFC4648] -- not

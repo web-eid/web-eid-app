@@ -29,29 +29,7 @@ class GetCertificate : public CertificateReader
     Q_OBJECT
 
 public:
-    GetCertificate(const CommandWithArguments& cmd) : CertificateReader(cmd)
-    {
-        const auto arguments = cmd.second;
-        // FIXME: implement argument validation with custom exceptions that are sent back up.
-        if (arguments.size() != 2) {
-            throw std::invalid_argument("get-certificate: argument must be '{"
-                                        "\"type\": [\"auth\"|\"sign\"], "
-                                        "\"origin\": \"<origin URL>\"}'");
-        }
-        if (arguments["type"] != "auth" && arguments["type"] != "sign") {
-            throw std::invalid_argument("get-certificate: argument type must be "
-                                        "either 'auth' or 'sign'");
-        }
-    }
-
-    void run(electronic_id::CardInfo::ptr _cardInfo) override
-    {
-        cardInfo = _cardInfo;
-        CertificateReader::run(cardInfo);
-    }
+    GetCertificate(const CommandWithArguments& cmd);
 
     QVariantMap onConfirm(WebEidUI* window) override;
-
-private:
-    electronic_id::CardInfo::ptr cardInfo = nullptr;
 };

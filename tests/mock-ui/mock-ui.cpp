@@ -27,3 +27,5 @@ WebEidUI::ptr WebEidUI::createAndShowDialog(const CommandType /* command */)
 {
     return std::make_unique<MockUI>();
 }
+
+void WebEidUI::showFatalError() {}

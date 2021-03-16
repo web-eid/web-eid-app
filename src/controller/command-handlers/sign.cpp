@@ -25,12 +25,13 @@
 #include "signauthutils.hpp"
 #include "utils.hpp"
 
+using namespace electronic_id;
+
 namespace
 {
 
-QPair<QString, QVariantMap> signHash(const electronic_id::ElectronicID& eid,
-                                     const pcsc_cpp::byte_vector& pin, const QByteArray& docHash,
-                                     const electronic_id::HashAlgorithm hashAlgo)
+QPair<QString, QVariantMap> signHash(const ElectronicID& eid, const pcsc_cpp::byte_vector& pin,
+                                     const QByteArray& docHash, const HashAlgorithm hashAlgo)
 {
     const auto hashBytes = pcsc_cpp::byte_vector {docHash.begin(), docHash.end()};
     const auto signature = eid.signWithSigningKey(pin, hashBytes, hashAlgo);
@@ -60,17 +61,15 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
 {
     const auto arguments = cmd.second;
 
-    // FIXME: implement argument validation with custom exceptions that are sent back up.
     // doc-hash, origin
     if (arguments.size() != 4) {
-        throw std::invalid_argument("sign: argument must be '{"
-                                    "\"doc-hash\": \"<Base64-encoded document hash>\", "
-                                    "\"hash-algo\": \"<the hash algorithm that was used for "
-                                    "computing 'doc-hash', any of "
-                                    + electronic_id::HashAlgorithm::allSupportedAlgorithmNames()
-                                    + ">\", \"user-eid-cert\": \"<Base64-encoded user eID "
-                                      "certificate previously retrieved with get-cert>\", "
-                                      "\"origin\": \"<origin URL>\"}'");
+        THROW(CommandHandlerInputDataError,
+              "Argument must be '{\"doc-hash\": \"<Base64-encoded document hash>\", "
+              "\"hash-algo\": \"<the hash algorithm that was used for computing 'doc-hash', any of "
+                  + HashAlgorithm::allSupportedAlgorithmNames()
+                  + ">\", \"user-eid-cert\": \"<Base64-encoded user eID certificate previously "
+                    "retrieved with get-cert>\", "
+                    "\"origin\": \"<origin URL>\"}'");
     }
 
     validateAndStoreDocHashAndHashAlgo(arguments);
@@ -80,23 +79,21 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
     validateAndStoreOrigin(arguments);
 }
 
-void Sign::run(electronic_id::CardInfo::ptr _cardInfo)
+void Sign::run(CardInfo::ptr _cardInfo)
 {
     REQUIRE_NON_NULL(_cardInfo);
-    cardInfo = _cardInfo;
 
-    if (!cardInfo->eid().isSupportedSigningHashAlgorithm(hashAlgo)) {
-        // FIXME: implement argument validation with custom exceptions that are sent back up.
-        throw std::invalid_argument("Sign::run(): inserted electronic ID " + cardInfo->eid().name()
-                                    + " does not support hash algorithm " + std::string(hashAlgo));
+    if (!_cardInfo->eid().isSupportedSigningHashAlgorithm(hashAlgo)) {
+        THROW(SmartCardChangeRequiredError,
+              "Inserted electronic ID " + _cardInfo->eid().name()
+                  + " does not support hash algorithm " + std::string(hashAlgo));
     }
 
-    CertificateReader::run(cardInfo);
+    CertificateReader::run(_cardInfo);
 
-    // Assure that the certificate read from the eID card matches the certificate provided as
-    // argument.
-    if (certificate.digest(QCryptographicHash::Sha1)
-        == userEidCertificateFromArgs.digest(QCryptographicHash::Sha1)) {
+    // Assure that the certificate read from the eID matches the certificate provided as argument.
+    if (certificate.digest(QCryptographicHash::Sha256)
+        == userEidCertificateFromArgs.digest(QCryptographicHash::Sha256)) {
         emit documentHashReady(convertToFingerprintFormat(docHash));
     } else {
         emit certificateHashMismatch();
@@ -105,11 +102,7 @@ void Sign::run(electronic_id::CardInfo::ptr _cardInfo)
 
 QVariantMap Sign::onConfirm(WebEidUI* window)
 {
-    REQUIRE_NON_NULL(cardInfo);
-
-    if (certificate.isNull()) {
-        throw electronic_id::Error("Authenticate::onConfirm(): invalid certificate");
-    }
+    requireValidCardInfoAndCertificate();
 
     auto pin = getPin(window);
 
@@ -124,7 +117,7 @@ QVariantMap Sign::onConfirm(WebEidUI* window)
         return {{QStringLiteral("signature"), signature.first},
                 {QStringLiteral("signature-algo"), signature.second}};
 
-    } catch (const electronic_id::VerifyPinFailed& failure) {
+    } catch (const VerifyPinFailed& failure) {
         emit verifyPinFailed(failure.status(), failure.retries());
         if (failure.retries() > 0) {
             throw CommandHandlerVerifyPinFailed(failure.what());
@@ -135,7 +128,6 @@ QVariantMap Sign::onConfirm(WebEidUI* window)
 
 void Sign::connectSignals(const WebEidUI* window)
 {
-    // TODO: DRY with Authenticate?
     CertificateReader::connectSignals(window);
 
     connect(this, &Sign::documentHashReady, window, &WebEidUI::onDocumentHashReady);
@@ -151,14 +143,13 @@ void Sign::validateAndStoreDocHashAndHashAlgo(const QVariantMap& args)
 
     QString hashAlgoInput = validateAndGetArgument<QString>(QStringLiteral("hash-algo"), args);
     if (hashAlgoInput.size() > 8) {
-        throw std::invalid_argument("sign: hash-algo value is invalid");
+        THROW(CommandHandlerInputDataError, "hash-algo value is invalid");
     }
-    hashAlgo = electronic_id::HashAlgorithm(hashAlgoInput.toStdString());
+    hashAlgo = HashAlgorithm(hashAlgoInput.toStdString());
 
     if (docHash.length() != int(hashAlgo.hashByteLength())) {
-        throw std::invalid_argument("sign: " + std::string(hashAlgo) + " hash must be "
-                                    + std::to_string(hashAlgo.hashByteLength())
-                                    + " bytes long, but is " + std::to_string(docHash.length())
-                                    + " instead");
+        THROW(CommandHandlerInputDataError,
+              std::string(hashAlgo) + " hash must be " + std::to_string(hashAlgo.hashByteLength())
+                  + " bytes long, but is " + std::to_string(docHash.length()) + " instead");
     }
 }

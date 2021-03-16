@@ -50,12 +50,9 @@ public: // slots
 
     void onSigningCertificateHashMismatch() override {}
 
-    void onRetry(const QString&) override {}
+    void onRetry(const RetriableError) override {}
 
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status, const quint8) override {}
 
-    void onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason) override
-    {
-        emit rejected();
-    }
+    void onReaderMonitorStatusUpdate(const RetriableError) override { emit rejected(); }
 };

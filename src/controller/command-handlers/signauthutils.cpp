@@ -23,6 +23,7 @@
 #include "signauthutils.hpp"
 
 #include "ui.hpp"
+#include "commandhandler.hpp"
 #include "utils.hpp"
 
 using namespace electronic_id;
@@ -30,18 +31,15 @@ using namespace electronic_id;
 template <typename T>
 T validateAndGetArgument(const QString& argName, const QVariantMap& args, bool allowNull)
 {
-    // FIXME: implement argument validation with custom exceptions when adding stdin mode.
     if (!args.contains(argName)) {
-        throw std::invalid_argument("validateAndGetArgument(): argument '" + argName.toStdString()
-                                    + "' is missing");
+        THROW(CommandHandlerInputDataError, "Argument '" + argName.toStdString() + "' is missing");
     }
     if (allowNull && args[argName].isNull()) {
         return args[argName].value<T>();
     }
     const auto argValue = args[argName].value<T>();
     if (argValue.isEmpty()) {
-        throw std::invalid_argument("validateAndGetArgument(): argument '" + argName.toStdString()
-                                    + "' is empty");
+        THROW(CommandHandlerInputDataError, "Argument '" + argName.toStdString() + "' is empty");
     }
     return argValue;
 }
@@ -54,7 +52,6 @@ template QByteArray validateAndGetArgument<QByteArray>(const QString& argName,
 QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QVariantMap& args,
                                             bool allowNull)
 {
-    // FIXME: implement argument validation with custom exceptions when adding stdin mode.
     const auto certStr = validateAndGetArgument<QString>(certArgName, args, allowNull);
     if (allowNull && certStr.isNull()) {
         return QSslCertificate();
@@ -62,8 +59,7 @@ QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QV
     const auto cert =
         QSslCertificate(QByteArray::fromBase64(certStr.toUtf8()), QSsl::EncodingFormat::Der);
     if (cert.isNull()) {
-        throw std::invalid_argument(
-            "parseAndValidateCertificate: invalid certificate passed as argument");
+        THROW(CommandHandlerInputDataError, "Invalid certificate passed as argument");
     }
 
     return cert;
@@ -86,7 +82,7 @@ pcsc_cpp::byte_vector getPin(WebEidUI* window)
 
     auto pin = window->getPin();
     if (pin.isEmpty()) {
-        throw std::logic_error("Empty PIN in getPin()");
+        THROW(ProgrammingError, "Empty PIN");
     }
 
     // TODO: Avoid making copies of the PIN in memory.
@@ -111,8 +107,8 @@ QVariantMap signatureAlgoToVariantMap(const SignatureAlgorithm signatureAlgo)
 
     QVariant hashAlgo = HASHALGO_TO_VARIANT.value(signatureAlgo);
     if (hashAlgo.isNull()) {
-        throw std::logic_error("Unknown hash algorithm for signature algorithm "
-                               + std::string(signatureAlgo));
+        THROW(ProgrammingError,
+              "Unknown hash algorithm for signature algorithm " + std::string(signatureAlgo));
     }
 
     if (signatureAlgo & SignatureAlgorithm::ES)
@@ -121,5 +117,5 @@ QVariantMap signatureAlgoToVariantMap(const SignatureAlgorithm signatureAlgo)
         return {{"crypto-algo", "RSA"}, {"hash-algo", hashAlgo}, {"padding-algo", "PKCS1.5"}};
     if (signatureAlgo & SignatureAlgorithm::PS)
         return {{"crypto-algo", "RSA"}, {"hash-algo", hashAlgo}, {"padding-algo", "PSS"}};
-    throw std::logic_error("Unknown signature algorithm " + std::string(signatureAlgo));
+    THROW(ProgrammingError, "Unknown signature algorithm " + std::string(signatureAlgo));
 }

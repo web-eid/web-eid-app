@@ -45,7 +45,7 @@ public:
 
 signals:
     void quit();
-    void statusUpdate(const electronic_id::AutoSelectFailed::Reason status);
+    void statusUpdate(const RetriableError status);
 
 public: // slots
     void run();
@@ -54,10 +54,10 @@ public: // slots
     void onCardReady(electronic_id::CardInfo::ptr cardInfo);
 
     // Called on reader and card events from monitor thread.
-    void onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason reason);
+    void onReaderMonitorStatusUpdate(const RetriableError reason);
 
     // Called either directly from onDialogOK() or from the dialog when waiting for PIN-pad.
-    void onCommandHandlerConfirm();
+    void onConfirmCommandHandler();
 
     // Called from CommandHandlerConfirm thread.
     void onCommandHandlerConfirmCompleted(const QVariantMap& result);
@@ -79,6 +79,8 @@ private:
 
     void runCommandHandler();
     void startCommandExecution();
+    void warnAndWaitUntilSupportedCardSelected(const RetriableError errorCode,
+                                               const std::exception& error);
     void waitUntilSupportedCardSelected();
     void connectOkCancelWaitingForPinPad();
     void connectRetry(const ControllerChildThread* childThread);

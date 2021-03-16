@@ -43,16 +43,16 @@ using namespace electronic_id;
 namespace
 {
 
+// TODO: Should we use more detailed error codes? E.g. report input data error back to the website
+// etc.
 const QString RESP_TECH_ERROR = QStringLiteral("ERR_WEBEID_NATIVE_FATAL");
 const QString RESP_USER_CANCEL = QStringLiteral("ERR_WEBEID_USER_CANCELLED");
 
 QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessage)
 {
     const auto errorBody = QVariantMap {
-        {QStringLiteral("code"), errorCode}, {QStringLiteral("message"), errorMessage},
-        // TODO:
-        // {"location", "FILE:LINE:function"},
-        // {"nativeException", "sometype:message:FILE:LINE:function"},
+        {QStringLiteral("code"), errorCode},
+        {QStringLiteral("message"), errorMessage},
     };
     return {{QStringLiteral("error"), errorBody}};
 }
@@ -84,12 +84,7 @@ void Controller::run()
 
         startCommandExecution();
 
-        // TODO:
-        // 1. catch PCSC, libelectronic-id and controller errors separately
-        // 2. try to discern retriable errors from fatal errors
-        // 3. pass error code and message back to caller in stdin mode
     } catch (const std::exception& error) {
-        // FIXME: Pass errors back up to caller in stdin mode.
         onCriticalFailure(error.what());
     }
 }
@@ -109,16 +104,19 @@ void Controller::startCommandExecution()
         }
 
     } catch (const AutoSelectFailed& failure) {
-        qInfo() << "catch AutoSelectFailed:"
+        qInfo() << "Card autoselect failed:"
                 << std::string(magic_enum::enum_name(failure.reason()));
         waitUntilSupportedCardSelected();
-
-    } catch (const ScardError& error) {
-        // FIXME: add ScardCardRemovedError etc here
-        // TODO: some ScardErrors may be fatal, exit in this case. Investigate, think, discuss.
-        qWarning() << "catch ScardError:" << error;
-        waitUntilSupportedCardSelected();
     }
+    CATCH_PCSC_CPP_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardSelected)
+    CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardSelected)
+}
+
+void Controller::warnAndWaitUntilSupportedCardSelected(const RetriableError errorCode,
+                                                       const std::exception& error)
+{
+    WARN_RETRIABLE_ERROR(std::string(commandType()), errorCode, error);
+    waitUntilSupportedCardSelected();
 }
 
 void Controller::waitUntilSupportedCardSelected()
@@ -171,7 +169,7 @@ void Controller::connectOkCancelWaitingForPinPad()
 
     connect(window.get(), &WebEidUI::accepted, this, &Controller::onDialogOK);
     connect(window.get(), &WebEidUI::rejected, this, &Controller::onDialogCancel);
-    connect(window.get(), &WebEidUI::waitingForPinPad, this, &Controller::onCommandHandlerConfirm);
+    connect(window.get(), &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
 }
 
 void Controller::onCardReady(CardInfo::ptr card)
@@ -215,12 +213,12 @@ void Controller::runCommandHandler()
     }
 }
 
-void Controller::onReaderMonitorStatusUpdate(const AutoSelectFailed::Reason reason)
+void Controller::onReaderMonitorStatusUpdate(const RetriableError reason)
 {
     emit statusUpdate(reason);
 }
 
-void Controller::onCommandHandlerConfirm()
+void Controller::onConfirmCommandHandler()
 {
     try {
         CommandHandlerConfirmThread* commandHandlerConfirmThread =
@@ -280,7 +278,7 @@ void Controller::disconnectRetry()
 void Controller::onDialogOK()
 {
     if (commandHandler) {
-        onCommandHandlerConfirm();
+        onConfirmCommandHandler();
     } else {
         // This should not happen, and when it does, OK should be equivalent to cancel.
         onDialogCancel();
@@ -307,8 +305,13 @@ void Controller::onDialogCancel()
 void Controller::onCriticalFailure(const QString& error)
 {
     qCritical() << "Command" << std::string(commandType()) << "fatal error:" << error;
-    // TODO: use proper error codes instead of TECHNICAL_ERROR
     writeResponseToStdOut(isInStdinMode, makeErrorObject(RESP_TECH_ERROR, error), commandType());
+
+    if (window) {
+        window->close();
+    }
+    WebEidUI::showFatalError();
+
     exit();
 }
 

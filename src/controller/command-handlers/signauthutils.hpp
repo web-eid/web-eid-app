@@ -23,6 +23,7 @@
 #pragma once
 
 #include "electronic-id/enums.hpp"
+#include "pcsc-cpp/pcsc-cpp-utils.hpp"
 
 #include <QSslCertificate>
 #include <QVariantMap>
@@ -34,6 +35,11 @@ class WebEidUI;
 
 template <typename T>
 T validateAndGetArgument(const QString& argName, const QVariantMap& args, bool allowNull = false);
+
+extern template QString validateAndGetArgument<QString>(const QString& argName,
+                                                        const QVariantMap& args, bool allowNull);
+extern template QByteArray
+validateAndGetArgument<QByteArray>(const QString& argName, const QVariantMap& args, bool allowNull);
 
 QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QVariantMap& args,
                                             bool allowNull = false);

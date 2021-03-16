@@ -24,6 +24,7 @@
 
 #include "commands.hpp"
 #include "certandpininfo.hpp"
+#include "retriableerror.hpp"
 
 #include <QDialog>
 
@@ -42,6 +43,8 @@ public:
     // Factory function that creates and shows the dialog that implements this interface.
     static ptr createAndShowDialog(const CommandType command);
 
+    static void showFatalError();
+
     virtual void switchPage(const CommandType commandType) = 0;
     // getPin() is called from background threads and must be thread-safe.
     virtual QString getPin() = 0;
@@ -51,15 +54,12 @@ signals:
     void retry();
 
 public: // slots
-    virtual void
-    onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason status) = 0;
+    virtual void onReaderMonitorStatusUpdate(const RetriableError status) = 0;
     virtual void onCertificateReady(const QUrl& origin, const CertificateStatus certStatus,
                                     const CertificateInfo& certInfo, const PinInfo& pinInfo) = 0;
     virtual void onDocumentHashReady(const QString& docHash) = 0;
     virtual void onSigningCertificateHashMismatch() = 0;
-    // FIXME: instead of string error, use enums that can be mapped to translatable strings that are
-    // understandable to the user.
-    virtual void onRetry(const QString& error) = 0;
+    virtual void onRetry(const RetriableError error) = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                    const quint8 retriesLeft) = 0;
 };

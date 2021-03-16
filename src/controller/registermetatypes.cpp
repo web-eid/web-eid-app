@@ -24,6 +24,7 @@
 
 #include "commands.hpp"
 #include "certandpininfo.hpp"
+#include "retriableerror.hpp"
 
 void registerMetatypes()
 {
@@ -37,4 +38,6 @@ void registerMetatypes()
     qRegisterMetaType<CertificateStatus>();
     qRegisterMetaType<CertificateInfo>();
     qRegisterMetaType<PinInfo>();
+
+    qRegisterMetaType<RetriableError>();
 }

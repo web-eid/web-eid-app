@@ -103,43 +103,9 @@ QString WebEidDialog::getPin()
     return pin;
 }
 
-void WebEidDialog::onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason status)
+void WebEidDialog::onReaderMonitorStatusUpdate(const RetriableError status)
 {
-    using Reason = electronic_id::AutoSelectFailed::Reason;
-
-    switch (status) {
-    /** FIXME: SCARD_ERROR must be replaced by specific errors + a generic catch. */
-    case Reason::SCARD_ERROR:
-        ui->smartCardErrorLabel->setText(tr("Internal smart card service error occurred. "
-                                            "Please try restarting the smart card service."));
-        break;
-    case Reason::SERVICE_NOT_RUNNING:
-        ui->smartCardErrorLabel->setText(tr("Smart card service is not running. Please start it."));
-        break;
-    case Reason::NO_READERS:
-        ui->smartCardErrorLabel->setText(tr("No readers attached. "
-                                            "Please connect a smart card reader."));
-        break;
-    case Reason::SINGLE_READER_NO_CARD:
-    case Reason::MULTIPLE_READERS_NO_CARD:
-        // TODO: Handle unavailable vs no card separately.
-        ui->smartCardErrorLabel->setText(
-            tr("No smart card in reader. "
-               "Please insert an electronic ID card into the reader."));
-        break;
-    case Reason::SINGLE_READER_UNSUPPORTED_CARD:
-    case Reason::MULTIPLE_READERS_NO_SUPPORTED_CARD:
-        ui->smartCardErrorLabel->setText(
-            tr("Unsupported card in reader. "
-               "Please insert an electronic ID card into the reader."));
-        break;
-    case Reason::MULTIPLE_SUPPORTED_CARDS:
-        // TODO: Here we should display a multi-select prompt instead.
-        ui->smartCardErrorLabel->setText(
-            tr("Multiple electronic ID cards inserted. Please assure that "
-               "only single ID card is inserted."));
-        break;
-    }
+    ui->smartCardErrorLabel->setText(retriableErrorToString(status));
 
     if (ui->spinnerLabel->text() == "....") {
         ui->spinnerLabel->clear();
@@ -232,11 +198,15 @@ void WebEidDialog::onSigningCertificateHashMismatch()
                          "certificate provided as argument, cannot proceed"));
 }
 
-void WebEidDialog::onRetry(const QString& error)
+void WebEidDialog::onRetry(const RetriableError error)
 {
-    // FIXME: translation and user-friendly error messages instead of raw technical errors
+    onRetryImpl(retriableErrorToString(error));
+}
+
+void WebEidDialog::onRetryImpl(const QString& error)
+{
     const auto result =
-        QMessageBox::warning(this, tr("Retry?"), "Error occurred: " + error,
+        QMessageBox::warning(this, tr("Retry?"), tr("Error occurred: ") + error,
                              QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No));
     if (result == QMessageBox::Yes) {
         if (readerHasPinPad.value_or(false)) {
@@ -246,6 +216,52 @@ void WebEidDialog::onRetry(const QString& error)
     } else {
         emit reject();
     }
+}
+
+QString WebEidDialog::retriableErrorToString(const RetriableError error)
+{
+    switch (error) {
+    case RetriableError::SMART_CARD_SERVICE_IS_NOT_RUNNING:
+        return tr("Smart card service is not running. Please start it.");
+    case RetriableError::NO_SMART_CARD_READERS_FOUND:
+        return tr("No readers attached. Please connect a smart card reader.");
+    case RetriableError::NO_SMART_CARDS_FOUND:
+    case RetriableError::PKCS11_TOKEN_NOT_PRESENT:
+        return tr("No smart card in reader. "
+                  "Please insert an electronic ID card into the reader.");
+    case RetriableError::SMART_CARD_WAS_REMOVED:
+    case RetriableError::PKCS11_TOKEN_REMOVED:
+        return tr("The smart card was removed. "
+                  "Please insert an electronic ID card into the reader.");
+    case RetriableError::SMART_CARD_TRANSACTION_FAILED:
+        return tr("The smart card transaction failed. "
+                  "Please make sure that the smart card and reader are properly connected.");
+    case RetriableError::FAILED_TO_COMMUNICATE_WITH_CARD_OR_READER:
+        return tr("Failed to communicate with the smart card or reader. "
+                  "Please make sure that the smart card and reader are properly connected.");
+    case RetriableError::SMART_CARD_CHANGE_REQUIRED:
+        return tr("The smart card is malfunctioning, please change the smart card.");
+    case RetriableError::SMART_CARD_COMMAND_ERROR:
+        return tr("A smart card command failed."); // TODO: what action should the user take?
+                                                   // Should this be fatal?
+    case RetriableError::PKCS11_ERROR:
+        return tr("Smart card middleware error."); // TODO: what action should the user take?
+                                                   // Should this be fatal?
+    case RetriableError::SCARD_ERROR:
+        return tr("Internal smart card service error occurred. "
+                  "Please make sure that the smart card and reader are properly connected "
+                  "or try restarting the smart card service.");
+    case RetriableError::UNSUPPORTED_CARD:
+        return tr("Unsupported card in reader. "
+                  "Please insert an electronic ID card into the reader.");
+    case RetriableError::MULTIPLE_SUPPORTED_CARDS:
+        // TODO: Here we should display a multi-select prompt instead.
+        return tr("Multiple electronic ID cards inserted. Please assure that "
+                  "only a single ID card is inserted.");
+    case RetriableError::UNKNOWN_ERROR:
+        return tr("Unknown error");
+    }
+    return tr("Unknown error");
 }
 
 void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
@@ -282,7 +298,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     pinErrorLabel->setText(message);
 
     if (readerHasPinPad.value_or(false)) {
-        onRetry(message);
+        onRetryImpl(message);
     }
 }
 
