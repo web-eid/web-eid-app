@@ -232,7 +232,7 @@ void WebEidDialog::onSigningCertificateHashMismatch()
                          "certificate provided as argument, cannot proceed"));
 }
 
-void WebEidDialog::onRetry(const QString& error, bool rerunFromStart)
+void WebEidDialog::onRetry(const QString& error)
 {
     // FIXME: translation and user-friendly error messages instead of raw technical errors
     const auto result =
@@ -242,7 +242,7 @@ void WebEidDialog::onRetry(const QString& error, bool rerunFromStart)
         if (readerHasPinPad.value_or(false)) {
             startPinTimeoutProgressBar();
         }
-        emit retry(rerunFromStart);
+        emit retry();
     } else {
         emit reject();
     }
@@ -282,8 +282,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     pinErrorLabel->setText(message);
 
     if (readerHasPinPad.value_or(false)) {
-        // FIXME: handle rerun from start case here, discern UNKNOWN_ERRORs better.
-        onRetry(message, false);
+        onRetry(message);
     }
 }
 

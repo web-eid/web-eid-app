@@ -193,17 +193,15 @@ void Controller::onCardReady(CardInfo::ptr card)
 
         commandHandler->connectSignals(window.get());
 
-        onCommandHandlerRun();
+        runCommandHandler();
 
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
 }
 
-void Controller::onCommandHandlerRun()
+void Controller::runCommandHandler()
 {
-    retryMethod = std::bind(&Controller::onCommandHandlerRun, this);
-
     try {
         CommandHandlerRunThread* commandHandlerRunThread =
             new CommandHandlerRunThread(this, *commandHandler, cardInfo);
@@ -224,8 +222,6 @@ void Controller::onReaderMonitorStatusUpdate(const AutoSelectFailed::Reason reas
 
 void Controller::onCommandHandlerConfirm()
 {
-    retryMethod = std::bind(&Controller::onCommandHandlerConfirm, this);
-
     try {
         CommandHandlerConfirmThread* commandHandlerConfirmThread =
             new CommandHandlerConfirmThread(this, *commandHandler, window.get());
@@ -253,16 +249,11 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
     exit();
 }
 
-void Controller::onRetry(bool rerunFromStart)
+void Controller::onRetry()
 {
-    if (rerunFromStart) {
-        // FIXME: need error handling here, encapsulate it somehow (in functional style probably) to
-        // reuse.
-        startCommandExecution();
-        return;
-    }
-
-    retryMethod();
+    // FIXME: need error handling here, encapsulate it somehow (in functional style probably) for
+    // reuse.
+    startCommandExecution();
 }
 
 void Controller::connectRetry(const ControllerChildThread* childThread)

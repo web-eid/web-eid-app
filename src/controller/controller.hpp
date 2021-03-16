@@ -28,7 +28,6 @@
 
 #include "pcsc-cpp/pcsc-cpp.hpp"
 
-#include <functional>
 #include <unordered_map>
 #include <cstdint>
 
@@ -40,11 +39,7 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    explicit Controller(CommandWithArgumentsPtr cmd) :
-        QObject(nullptr), command(std::move(cmd)),
-        retryMethod(std::bind(&Controller::startCommandExecution, this))
-    {
-    }
+    explicit Controller(CommandWithArgumentsPtr cmd) : QObject(nullptr), command(std::move(cmd)) {}
 
     const QVariantMap& result() const { return _result; }
 
@@ -55,23 +50,20 @@ signals:
 public: // slots
     void run();
 
-    // Called either directly from run() or from monitor thread when card is ready.
+    // Called either directly from run() or from the monitor thread when the card is ready.
     void onCardReady(electronic_id::CardInfo::ptr cardInfo);
 
-    // Called either directly from onCardReady() or from dialog on retry
-    void onCommandHandlerRun();
-
-    // Reader and card events from monitor thread.
+    // Called on reader and card events from monitor thread.
     void onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason reason);
 
-    // Called either directly from onDialogOK() or from dialog when waiting for PIN-pad or on retry.
+    // Called either directly from onDialogOK() or from the dialog when waiting for PIN-pad.
     void onCommandHandlerConfirm();
 
     // Called from CommandHandlerConfirm thread.
     void onCommandHandlerConfirmCompleted(const QVariantMap& result);
 
-    // Called from the dialog based on errors that happen in child threads.
-    void onRetry(bool rerunFromStart);
+    // Called from the dialog when user chooses to retry errors that have occured in child threads.
+    void onRetry();
 
     // User events from the dialog.
     void onDialogOK();
@@ -85,6 +77,7 @@ private:
     template <typename T>
     using observer_ptr = T*;
 
+    void runCommandHandler();
     void startCommandExecution();
     void waitUntilSupportedCardSelected();
     void connectOkCancelWaitingForPinPad();
@@ -97,10 +90,6 @@ private:
     CommandType commandType();
 
     CommandWithArgumentsPtr command;
-    // Pointer to the Controller method that is called on retry, either
-    // onCommandHandlerRun() or onCommandHandlerConfirm() depending on the stage of the command
-    // handler.
-    std::function<void(void)> retryMethod;
     CommandHandler::ptr commandHandler = nullptr;
     std::unordered_map<uintptr_t, observer_ptr<ControllerChildThread>> childThreads;
     electronic_id::CardInfo::ptr cardInfo = nullptr;
