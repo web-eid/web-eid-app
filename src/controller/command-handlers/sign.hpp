@@ -44,7 +44,6 @@ signals:
 private:
     void validateAndStoreDocHashAndHashAlgo(const QVariantMap& args);
 
-    electronic_id::CardInfo::ptr cardInfo = nullptr;
     QByteArray docHash;
     electronic_id::HashAlgorithm hashAlgo;
     QSslCertificate userEidCertificateFromArgs;

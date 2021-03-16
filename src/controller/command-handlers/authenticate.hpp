@@ -31,12 +31,6 @@ class Authenticate : public CertificateReader
 public:
     explicit Authenticate(const CommandWithArguments& cmd);
 
-    void run(electronic_id::CardInfo::ptr _cardInfo) override
-    {
-        cardInfo = _cardInfo;
-        CertificateReader::run(cardInfo);
-    }
-
     void connectSignals(const WebEidUI* window) override;
     QVariantMap onConfirm(WebEidUI* window) override;
 
@@ -45,9 +39,8 @@ signals:
                          const quint8 retriesLeft);
 
 private:
-    void validateAndStoreCertificate(const QVariantMap& args);
+    void validateAndStoreOriginCertificate(const QVariantMap& args);
 
-    electronic_id::CardInfo::ptr cardInfo = nullptr;
     QString nonce;
     QSslCertificate originCertificate;
 };

@@ -60,12 +60,12 @@ public:
     QString getPin() override;
 
 public: // slots
-    void onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason status) override;
+    void onReaderMonitorStatusUpdate(const RetriableError status) override;
     void onCertificateReady(const QUrl& origin, const CertificateStatus certStatus,
                             const CertificateInfo& certInfo, const PinInfo& pinInfo) override;
     void onDocumentHashReady(const QString& docHash) override;
     void onSigningCertificateHashMismatch() override;
-    void onRetry(const QString& error) override;
+    void onRetry(const RetriableError error) override;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                            const quint8 retriesLeft) override;
 
@@ -82,6 +82,8 @@ private:
     QProgressBar* pinEntryTimeoutProgressBarOnPage();
     void displayFatalError(QLabel* label, const QString& message);
     void hidePinAndDocHashWidgets();
+    void onRetryImpl(const QString& error);
+    QString retriableErrorToString(const RetriableError error);
 
     Ui::WebEidDialog* ui;
     QPushButton* okButton; // non-owning pointer

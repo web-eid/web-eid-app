@@ -23,8 +23,8 @@
 #include "certificatereader.hpp"
 
 #include "signauthutils.hpp"
+#include "utils.hpp"
 
-using namespace pcsc_cpp;
 using namespace electronic_id;
 
 CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandHandler(cmd)
@@ -32,7 +32,7 @@ CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandH
     validateAndStoreOrigin(cmd.second);
 }
 
-void CertificateReader::run(CardInfo::ptr cardInfo)
+void CertificateReader::run(CardInfo::ptr _cardInfo)
 {
     static const QMap<ElectronicID::Type, QString> icons {
         {ElectronicID::EstEID, QStringLiteral(":/esteid.png")},
@@ -40,6 +40,9 @@ void CertificateReader::run(CardInfo::ptr cardInfo)
         {ElectronicID::LatEID, QStringLiteral(":/lateid.png")},
         {ElectronicID::LitEID, QStringLiteral(":/liteid.png")},
     };
+
+    REQUIRE_NON_NULL(_cardInfo);
+    cardInfo = _cardInfo;
 
     const bool isAuthenticate = command.first == CommandType::AUTHENTICATE
         || command.second[QStringLiteral("type")] == QStringLiteral("auth");
@@ -50,7 +53,8 @@ void CertificateReader::run(CardInfo::ptr cardInfo)
                                 int(certificateBytes.size()));
     certificate = QSslCertificate(certificateDer, QSsl::Der);
     if (certificate.isNull()) {
-        throw electronic_id::Error("Invalid certificate");
+        THROW(SmartCardChangeRequiredError,
+              "Invalid certificate returned by electronic ID " + cardInfo->eid().name());
     }
 
     auto certificateStatus = CertificateStatus::VALID;
@@ -83,9 +87,6 @@ void CertificateReader::run(CardInfo::ptr cardInfo)
     emit certificateReady(origin, certificateStatus, certInfo, pinInfo);
 }
 
-// TODO: Command handler could also draw the UI now that the UI is refactored from Qt Quick to
-// widgets.
-
 void CertificateReader::connectSignals(const WebEidUI* window)
 {
     connect(this, &CertificateReader::certificateReady, window, &WebEidUI::onCertificateReady);
@@ -95,20 +96,28 @@ void CertificateReader::validateAndStoreOrigin(const QVariantMap& arguments)
 {
     const auto originStr = validateAndGetArgument<QString>(QStringLiteral("origin"), arguments);
     if (originStr.size() > 255) {
-        throw std::invalid_argument("origin length cannot exceed 255 characters");
+        THROW(CommandHandlerInputDataError, "origin length cannot exceed 255 characters");
     }
 
     origin = QUrl(originStr, QUrl::ParsingMode::StrictMode);
 
-    // FIXME: implement argument validation with custom exceptions when adding stdin mode.
     if (!origin.isValid()) {
-        throw std::invalid_argument("origin is not a valid URL");
+        THROW(CommandHandlerInputDataError, "origin is not a valid URL");
     }
     if (origin.isRelative() || !origin.path().isEmpty() || origin.hasQuery()
         || origin.hasFragment()) {
-        throw std::invalid_argument("origin is not in <scheme>://<host>[:<port>] format");
+        THROW(CommandHandlerInputDataError, "origin is not in <scheme>://<host>[:<port>] format");
     }
     if (origin.scheme() != QStringLiteral("https") && origin.scheme() != QStringLiteral("wss")) {
-        throw std::invalid_argument("origin scheme has to be https or wss");
+        THROW(CommandHandlerInputDataError, "origin scheme has to be https or wss");
+    }
+}
+
+void CertificateReader::requireValidCardInfoAndCertificate()
+{
+    REQUIRE_NON_NULL(cardInfo);
+    if (certificate.isNull()) {
+        THROW(ProgrammingError,
+              "Invalid certificate, shouldn't happen as it has been validated before");
     }
 }

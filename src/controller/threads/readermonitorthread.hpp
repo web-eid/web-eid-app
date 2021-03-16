@@ -33,7 +33,7 @@ public:
 
 signals:
     void cardReady(electronic_id::CardInfo::ptr cardInfo);
-    void statusUpdate(electronic_id::AutoSelectFailed::Reason);
+    void statusUpdate(const RetriableError status);
 
 private:
     void doRun() override
@@ -57,13 +57,20 @@ private:
                 emit failure("Internal error: null selected card info");
             }
         } catch (const electronic_id::AutoSelectFailed& failure) {
-            emit statusUpdate(failure.reason());
+            emit statusUpdate(toRetriableError(failure.reason()));
             return false;
-            // FIXME: add ScardCardError here as needed
-        } catch (const std::exception& error) {
-            emit failure(error.what());
         }
+        CATCH_PCSC_CPP_RETRIABLE_ERRORS(return warnAndEmitStatusUpdate)
+        CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(return warnAndEmitStatusUpdate)
+        catch (const std::exception& error) { emit failure(error.what()); }
         return true;
+    }
+
+    bool warnAndEmitStatusUpdate(const RetriableError errorCode, const std::exception& error)
+    {
+        WARN_RETRIABLE_ERROR(commandType(), errorCode, error);
+        emit statusUpdate(errorCode);
+        return false;
     }
 
     const std::string& commandType() const override

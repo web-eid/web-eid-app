@@ -23,6 +23,7 @@
 #pragma once
 
 #include "commandhandler.hpp"
+#include "retriableerror.hpp"
 #include "qeid.hpp"
 #include "logging.hpp"
 
@@ -36,11 +37,11 @@ class ControllerChildThread : public QThread
 public:
     void run() override
     {
-        // Cannot use virtual calls in constructor, have to initialize the class name here.
-        className = metaObject()->className();
-
         static QMutex mutex;
         QMutexLocker lock {&mutex};
+
+        // Cannot use virtual calls in constructor, have to initialize the class name here.
+        className = metaObject()->className();
 
         try {
             qDebug() << "Starting" << className << "for command" << commandType();
@@ -49,20 +50,19 @@ public:
 
         } catch (const CommandHandlerVerifyPinFailed& error) {
             qWarning() << "Command" << commandType() << "PIN verification failed:" << error;
-
-        } catch (const CommandHandlerRetriableError& error) {
-            qWarning() << "Command" << commandType() << "retriable error:" << error;
-            emit retry(error.what());
-
-        } catch (const std::exception& error) {
+        }
+        CATCH_PCSC_CPP_RETRIABLE_ERRORS(warnAndEmitRetry)
+        CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(warnAndEmitRetry)
+        catch (const std::exception& error)
+        {
             qCritical() << "Command" << commandType() << "fatal error:" << error;
             emit failure(error.what());
         }
     }
 
 signals:
+    void retry(const RetriableError error);
     void failure(const QString& error);
-    void retry(const QString& error);
 
 protected:
     explicit ControllerChildThread(QObject* parent) : QThread(parent) {}
@@ -78,6 +78,12 @@ protected:
 private:
     virtual void doRun() = 0;
     virtual const std::string& commandType() const = 0;
+
+    void warnAndEmitRetry(const RetriableError errorCode, const std::exception& error)
+    {
+        WARN_RETRIABLE_ERROR(commandType(), errorCode, error);
+        emit retry(errorCode);
+    }
 
     QString className;
 };

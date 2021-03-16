@@ -20,36 +20,35 @@
  * SOFTWARE.
  */
 
-#pragma once
+#include "retriableerror.hpp"
 
-#include "commandhandler.hpp"
+#include <QDebug>
+#include "magic_enum/magic_enum.hpp"
 
-#include <QSslCertificate>
-#include <QUrl>
-
-class CertificateReader : public CommandHandler
+QDebug& operator<<(QDebug& d, const RetriableError e)
 {
-    Q_OBJECT
+    return d << magic_enum::enum_name(e).data();
+}
 
-public:
-    explicit CertificateReader(const CommandWithArguments& cmd);
+RetriableError toRetriableError(const electronic_id::AutoSelectFailed::Reason reason)
+{
+    using Reason = electronic_id::AutoSelectFailed::Reason;
 
-    void run(electronic_id::CardInfo::ptr cardInfo) override;
-    void connectSignals(const WebEidUI* window) override;
-
-signals:
-    void certificateReady(const QUrl& origin, const CertificateStatus certStatus,
-                          const CertificateInfo& certInfo, const PinInfo& pinInfo);
-
-protected:
-    void validateAndStoreOrigin(const QVariantMap& arguments);
-    // Only used in child classes to assert preconditions.
-    void requireValidCardInfoAndCertificate();
-
-    electronic_id::CardInfo::ptr cardInfo;
-
-    QByteArray certificateDer;
-    QSslCertificate certificate;
-    electronic_id::CertificateType certificateType = electronic_id::CertificateType::NONE;
-    QUrl origin;
-};
+    switch (reason) {
+    case Reason::SCARD_ERROR:
+        return RetriableError::SCARD_ERROR;
+    case Reason::SERVICE_NOT_RUNNING:
+        return RetriableError::SMART_CARD_SERVICE_IS_NOT_RUNNING;
+    case Reason::NO_READERS:
+        return RetriableError::NO_SMART_CARD_READERS_FOUND;
+    case Reason::SINGLE_READER_NO_CARD:
+    case Reason::MULTIPLE_READERS_NO_CARD:
+        return RetriableError::NO_SMART_CARDS_FOUND;
+    case Reason::SINGLE_READER_UNSUPPORTED_CARD:
+    case Reason::MULTIPLE_READERS_NO_SUPPORTED_CARD:
+        return RetriableError::UNSUPPORTED_CARD;
+    case Reason::MULTIPLE_SUPPORTED_CARDS:
+        return RetriableError::MULTIPLE_SUPPORTED_CARDS;
+    }
+    return RetriableError::UNKNOWN_ERROR;
+}

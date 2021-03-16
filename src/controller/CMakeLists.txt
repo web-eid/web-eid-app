@@ -22,6 +22,8 @@ add_library(controller STATIC
     qeid.hpp
     registermetatypes.cpp
     registermetatypes.hpp
+    retriableerror.cpp
+    retriableerror.hpp
     threads/commandhandlerconfirmthread.hpp
     threads/commandhandlerrunthread.hpp
     threads/controllerchildthread.hpp
