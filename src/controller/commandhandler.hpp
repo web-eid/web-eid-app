@@ -60,14 +60,6 @@ public:
     using std::runtime_error::runtime_error;
 };
 
-/** Exception that signals errors that allow the user to retry the action, but require rerun from
- * the start. */
-class CommandHandlerRerunFromStartError : public std::runtime_error
-{
-public:
-    using std::runtime_error::runtime_error;
-};
-
 /** Exception that signals errors in input data (from stdin or arguments), e.g. invalid origin or
  * certificate. */
 class CommandHandlerInputDataError : public std::runtime_error

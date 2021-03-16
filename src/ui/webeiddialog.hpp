@@ -65,7 +65,7 @@ public: // slots
                             const CertificateInfo& certInfo, const PinInfo& pinInfo) override;
     void onDocumentHashReady(const QString& docHash) override;
     void onSigningCertificateHashMismatch() override;
-    void onRetry(const QString& error, bool rerunFromStart) override;
+    void onRetry(const QString& error) override;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                            const quint8 retriesLeft) override;
 
