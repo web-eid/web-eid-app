@@ -151,7 +151,7 @@ where `scheme` must be `https`. Note that the `origin` URL must not end with a s
 All commands support an optional `lang` parameter that, if provided, must
 contain a two-letter ISO 639-1 language code. If translations exist for the given
 language, then the user interface will be displayed in this language.
-Currently, English, Estonian, Finnish and Russian translations are included.
+Currently, English, Estonian, Finnish, Croatian and Russian translations are included.
 
 The following example will display the user interface in Estonian:
 

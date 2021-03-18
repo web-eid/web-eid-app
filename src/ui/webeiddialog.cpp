@@ -299,7 +299,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         ui->pinTitleLabel->hide();
     } else {
         connectOkToCachePinAndEmitSelectedCertificate(certAndPin);
-        setupPinInputValidator(certAndPin.pinInfo.pinMinMaxLength);
+        setupPinInputValidator(certAndPin);
         displayPinRetriesRemaining(certAndPin.pinInfo.pinRetriesCount);
     }
 
@@ -460,12 +460,16 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPin
     emit waitingForPinPad(certAndPin);
 }
 
-void WebEidDialog::setupPinInputValidator(PinInfo::PinMinMaxLength pinMinMaxLength)
+void WebEidDialog::setupPinInputValidator(const CardCertificateAndPinInfo& certAndPin)
 {
-    const auto numericMinMaxRegexp = QRegularExpression(
-        QStringLiteral("[0-9]{%1,%2}").arg(pinMinMaxLength.first).arg(pinMinMaxLength.second));
+    const auto regexpWithOrWithoutLetters = certAndPin.cardInfo->eid().allowsUsingLettersInPin()
+        ? QStringLiteral("[0-9a-zA-Z]{%1,%2}")
+        : QStringLiteral("[0-9]{%1,%2}");
+    const auto numericMinMaxRegexp =
+        QRegularExpression(regexpWithOrWithoutLetters.arg(certAndPin.pinInfo.pinMinMaxLength.first)
+                               .arg(certAndPin.pinInfo.pinMinMaxLength.second));
     ui->pinInputValidator->setRegularExpression(numericMinMaxRegexp);
-    ui->pinInput->setMaxLength(int(pinMinMaxLength.second));
+    ui->pinInput->setMaxLength(int(certAndPin.pinInfo.pinMinMaxLength.second));
     ui->pinInput->show();
     ui->pinInput->setFocus();
 }
