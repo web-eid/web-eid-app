@@ -76,7 +76,7 @@ private:
     void
     setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
-    void setupPinInputValidator(PinInfo::PinMinMaxLength pinInfo);
+    void setupPinInputValidator(const CardCertificateAndPinInfo& certAndPin);
     void setupOK(const std::function<void()>& func, const QString& label = {},
                  bool enabled = false);
     void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);
