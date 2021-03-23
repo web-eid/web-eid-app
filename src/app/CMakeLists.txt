@@ -53,12 +53,12 @@ elseif(APPLE)
     configure_file(MacOSXBundleInfo.plist.in MacOSXBundleInfo.plist)
     set_target_properties(web-eid PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/MacOSXBundleInfo.plist)
     configure_file(${CMAKE_SOURCE_DIR}/install/macos-postinstall.in scripts/postinstall @ONLY)
-    install(TARGETS web-eid DESTINATION /Applications/Utilities)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
+    install(TARGETS web-eid DESTINATION /Applications/Utilities COMPONENT main)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json COMPONENT chrome
         DESTINATION "/Library/Google/Chrome/NativeMessagingHosts")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json COMPONENT firefox
         DESTINATION "/Library/Application Support/Mozilla/NativeMessagingHosts" RENAME eu.webeid.json)
-    install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
+    install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json COMPONENT chrome
         DESTINATION "/Library/Application Support/Google/Chrome/External Extensions")
     add_custom_target(macdeployqt DEPENDS web-eid
         COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
@@ -71,13 +71,25 @@ elseif(APPLE)
                 $<TARGET_BUNDLE_DIR:web-eid>
         )
     endif()
-    add_custom_target(installer DEPENDS macdeployqt
-        COMMAND make install DESTDIR=root
-        COMMAND pkgbuild --root root --scripts scripts --identifier "eu.web-eid.$<TARGET_NAME:web-eid>"
+    add_custom_target(installer-firefox DEPENDS macdeployqt
+        COMMAND rm -rf root_firefox
+        COMMAND DESTDIR=root_firefox ${CMAKE_COMMAND} --install . --component main
+        COMMAND DESTDIR=root_firefox ${CMAKE_COMMAND} --install . --component firefox
+        COMMAND pkgbuild --root root_firefox --scripts scripts --identifier "eu.web-eid.$<TARGET_NAME:web-eid>-firefox"
             "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
-            --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-${PROJECT_VERSION}.pkg
+            --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-firefox_${PROJECT_VERSION}.pkg
         COMMAND_EXPAND_LISTS
     )
+    add_custom_target(installer-chrome DEPENDS macdeployqt
+        COMMAND rm -rf root_chrome
+        COMMAND DESTDIR=root_chrome ${CMAKE_COMMAND} --install . --component main
+        COMMAND DESTDIR=root_chrome ${CMAKE_COMMAND} --install . --component chrome
+        COMMAND pkgbuild --root root_chrome --identifier "eu.web-eid.$<TARGET_NAME:web-eid>-chrome"
+            "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
+            --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-chrome_${PROJECT_VERSION}.pkg
+        COMMAND_EXPAND_LISTS
+    )
+    add_custom_target(installer DEPENDS installer-firefox installer-chrome)
 else()
     include(GNUInstallDirs)
     set(WEBEID_PATH ${CMAKE_INSTALL_FULL_BINDIR}/web-eid)
