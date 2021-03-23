@@ -55,7 +55,7 @@
     return result;
 }
 
-+ (id)toID:(QVariant)data {
++ (id)toID:(const QVariant&)data {
     switch (data.type()) {
         case QVariant::String: return data.toString().toNSString();
         case QVariant::Map: return [NSApplication toNSDictionary:data.toMap()];
@@ -64,7 +64,7 @@
     }
 }
 
-+ (NSArray*)toNSArray:(QVariantList)data {
++ (NSArray*)toNSArray:(const QVariantList&)data {
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for (const QVariant &item: data) {
         [result addObject:[NSApplication toID:item]];
@@ -72,7 +72,7 @@
     return result;
 }
 
-+ (NSDictionary*)toNSDictionary:(QVariantMap)data {
++ (NSDictionary*)toNSDictionary:(const QVariantMap&)data {
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     for (QVariantMap::const_iterator i = data.cbegin(); i != data.cend(); ++i) {
         result[i.key().toNSString()] = [NSApplication toID:i.value()];
@@ -85,6 +85,9 @@
     NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:WebEidShared];
     NSDictionary *req = [defaults dictionaryForKey:nonce];
     NSLog(@"web-eid-safari: msg from extension nonce (%@) request: %@", nonce, req);
+    if (req == nil) {
+        return;
+    }
     [defaults removeObjectForKey:nonce];
     [defaults synchronize];
 
@@ -103,15 +106,9 @@
     }
 
     NSLog(@"web-eid-safari: msg to extension nonce (%@) request: %@", nonce, resp);
-#if 1
     [defaults setObject:resp forKey:nonce];
     [defaults synchronize];
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:WebEidExtension object:nonce userInfo:nil deliverImmediately:YES];
-#else
-    [SFSafariApplication dispatchMessageWithName:SFExtensionMessageKey toExtensionWithIdentifier:WebEidExtension userInfo:resp completionHandler:^(NSError *error) {
-        NSLog(@"web-eid-safari: response: %@", error);
-    }];
-#endif
 }
 
 @end
@@ -124,12 +121,12 @@ static void checkAppAutostart()
     LSSharedFileListRef list = LSSharedFileListCreate(kCFAllocatorDefault, kLSSharedFileListSessionLoginItems, nil);
     if (list) {
         bool found = false;
-        CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+        NSURL *url = NSBundle.mainBundle.bundleURL;
         UInt32 seedValue = 0;
         NSArray *loginItemsArray = CFBridgingRelease(LSSharedFileListCopySnapshot(list, &seedValue));
         for (id item in loginItemsArray) {
             if (NSURL *tmp = CFBridgingRelease(LSSharedFileListItemCopyResolvedURL((__bridge LSSharedFileListItemRef)item, 0, nil))) {
-                if ([tmp.path isEqualToString:[(__bridge NSURL*)url path]])
+                if ([tmp isEqual:url])
                     found = true;
             }
         }
@@ -137,12 +134,11 @@ static void checkAppAutostart()
         if (!found) {
             NSDictionary *props = @{(__bridge id)kLSSharedFileListLoginItemHidden: @(YES)};
             LSSharedFileListItemRef item = LSSharedFileListInsertItemURL(
-                list, kLSSharedFileListItemLast, nil, nil, url, (__bridge CFDictionaryRef)props, nil);
+                list, kLSSharedFileListItemLast, nil, nil, (__bridge CFURLRef)url, (__bridge CFDictionaryRef)props, nil);
             if (item) {
                 CFRelease(item);
             }
         }
-        CFRelease(url);
         CFRelease(list);
     }
 #pragma clang diagnostic pop
@@ -165,8 +161,8 @@ int main(int argc, char* argv[])
     Q_INIT_RESOURCE(translations);
 
     QApplication app(argc, argv);
-    app.setApplicationName("web-eid-safari");
-    app.setApplicationDisplayName("Web eID Safari");
+    app.setApplicationName(QStringLiteral("web-eid-safari"));
+    app.setApplicationDisplayName(QStringLiteral("Web eID Safari"));
     app.setApplicationVersion(QStringLiteral(PROJECT_VERSION));
     app.setOrganizationDomain(QStringLiteral("web-eid.eu"));
     app.setOrganizationName(QStringLiteral("RIA"));

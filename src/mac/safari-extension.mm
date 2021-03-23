@@ -29,21 +29,18 @@
     NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:WebEidShared];
     NSDictionary *resp = [defaults dictionaryForKey:nonce];
     NSLog(@"web-eid-safari-extension: from app nonce (%@) request: %@", nonce, resp);
+    if (resp == nil) {
+        return;
+    }
     [defaults removeObjectForKey:nonce];
     [defaults synchronize];
 
-#if 1
     // Forward to background script
     NSExtensionContext *context = contexts[nonce];
     [contexts removeObjectForKey:nonce];
     NSExtensionItem *response = [[NSExtensionItem alloc] init];
     response.userInfo = @{ SFExtensionMessageKey: resp };
     [context completeRequestReturningItems:@[ response ] completionHandler:nil];
-#else
-    [SFSafariApplication dispatchMessageWithName:SFExtensionMessageKey toExtensionWithIdentifier:WebEidExtension userInfo:req completionHandler:^(NSError *error) {
-        NSLog(@"web-eid-safari-extension: from app response: %@", error);
-    }];
-#endif
 }
 
 - (void)beginRequestWithExtensionContext:(NSExtensionContext *)context
@@ -65,13 +62,6 @@
 
     id message = [context.inputItems.firstObject userInfo][SFExtensionMessageKey];
     NSLog(@"web-eid-safari-extension: msg from background.js %@", message);
-
-#if 0
-    // Responses back to background script even with port connection
-    NSExtensionItem *response = [[NSExtensionItem alloc] init];
-    response.userInfo = @{ SFExtensionMessageKey: @{ @"Response to": message } };
-    [context completeRequestReturningItems:@[ response ] completionHandler:nil];
-#endif
 
     // Save context
     NSString *nonce = [[[NSUUID alloc] init] UUIDString];
