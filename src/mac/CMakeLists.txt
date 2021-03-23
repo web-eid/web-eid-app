@@ -43,9 +43,26 @@ add_custom_command(TARGET web-eid-safari POST_BUILD
 )
 
 install(TARGETS web-eid-safari DESTINATION /Applications/Utilities)
-add_custom_target(safari-installer DEPENDS web-eid-safari
+
+add_custom_target(macdeployqt-safari DEPENDS web-eid-safari
     COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid-safari>
+)
+if(SIGNCERT)
+    add_custom_command(TARGET macdeployqt-safari POST_BUILD
+        COMMAND codesign -f -s "Developer ID Application: ${SIGNCERT}"
+            --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-extension.entitlements
+            $<TARGET_BUNDLE_DIR:web-eid-safari-extension>
+        COMMAND codesign -f -s "Developer ID Application: ${SIGNCERT}"
+            --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements
+            $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/Frameworks/*.*
+            $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns/*/*
+            $<TARGET_BUNDLE_DIR:web-eid-safari>
+    )
+endif()
+add_custom_target(installer-safari DEPENDS macdeployqt-safari
     COMMAND make install DESTDIR=root
     COMMAND pkgbuild --root root --identifier "eu.web-eid.$<TARGET_NAME:web-eid-safari>"
-        --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid-safari>-${PROJECT_VERSION}.pkg
+        "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
+        --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid-safari>_${PROJECT_VERSION}.pkg
 )
+add_dependencies(installer installer-safari)
