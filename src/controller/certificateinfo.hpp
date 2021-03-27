@@ -28,7 +28,7 @@
 
 enum class CertificateStatus { VALID, INVALID, NOT_YET_ACTIVE, EXPIRED };
 
-Q_DECLARE_METATYPE(CertificateStatus);
+Q_DECLARE_METATYPE(CertificateStatus)
 
 struct CertificateInfo
 {
@@ -47,4 +47,4 @@ struct CertificateInfo
     PinRetriesCount pinRetriesCount;
 };
 
-Q_DECLARE_METATYPE(CertificateInfo);
+Q_DECLARE_METATYPE(CertificateInfo)
