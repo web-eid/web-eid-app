@@ -30,14 +30,9 @@ jobs:
       - name: Build
         working-directory: ${{github.workspace}}/build
         run: |
-          cmake --build . --config $BUILD_TYPE
           cmake --build . --config $BUILD_TYPE --target installer
           # Debian creates artifacts outside of project dir, copy them back to make them available in the build artifacts
           cp -r ../../web-eid*.* src/app
-
-      - name: Test
-        working-directory: ${{github.workspace}}/build
-        run: ctest -V -C $BUILD_TYPE
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
