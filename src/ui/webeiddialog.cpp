@@ -32,19 +32,11 @@
 #include <QRegularExpressionValidator>
 #include <QUrl>
 
-namespace
-{
-
-void makeLabelForegroundDarkRed(QLabel* label)
-{
-    label->setStyleSheet("color: darkred");
-}
-
-} // namespace
-
 WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Ui::WebEidDialog)
 {
     ui->setupUi(this);
+    ui->authenticatePageLayout->setAlignment(ui->authenticationPinInput, Qt::AlignCenter);
+    ui->signPageLayout->setAlignment(ui->signingPinInput, Qt::AlignCenter);
 
     okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
     makeOkButtonDefaultAndconnectSignals();
@@ -153,7 +145,7 @@ void WebEidDialog::onCertificateReady(const QUrl& origin, const CertificateStatu
 {
     readerHasPinPad = pinInfo.readerHasPinPad;
 
-    auto [descriptionLabel, originLabel, certInfoLabel, icon] = certificateLabelsOnPage();
+    auto [descriptionLabel, originLabel, certInfoLabel] = certificateLabelsOnPage();
 
     const auto certType = certInfo.type.isAuthentication() ? QStringLiteral("Authentication")
                                                            : QStringLiteral("Signature");
@@ -162,7 +154,6 @@ void WebEidDialog::onCertificateReady(const QUrl& origin, const CertificateStatu
                                .arg(certType, certInfo.subject, certInfo.issuer,
                                     certInfo.effectiveDate, certInfo.expiryDate));
     originLabel->setText(fromPunycode(origin));
-    icon->setPixmap(certInfo.icon);
 
     if (pinInfo.pinRetriesCount.first == 0) {
         displayFatalError(descriptionLabel, tr("PIN is blocked, cannot proceed"));
@@ -225,7 +216,7 @@ void WebEidDialog::onDocumentHashReady(const QString& docHash)
 
 void WebEidDialog::onSigningCertificateHashMismatch()
 {
-    auto [descriptionLabel, originLabel, certInfoLabel, icon] = certificateLabelsOnPage();
+    auto [descriptionLabel, originLabel, certInfoLabel] = certificateLabelsOnPage();
     // TODO: Better error message/explanation.
     displayFatalError(descriptionLabel,
                       tr("Certificate on card does not match the "
@@ -369,18 +360,17 @@ void WebEidDialog::startPinTimeoutProgressBar()
     pinTimeoutTimer->start();
 }
 
-std::tuple<QLabel*, QLabel*, QLabel*, QLabel*> WebEidDialog::certificateLabelsOnPage()
+std::tuple<QLabel*, QLabel*, QLabel*> WebEidDialog::certificateLabelsOnPage()
 {
     switch (currentCommand) {
     case CommandType::GET_CERTIFICATE:
         return {ui->selectCertificateDescriptionLabel, ui->selectCertificateOriginLabel,
-                ui->selectCertificateCertificateInfoLabel, ui->selectCertificateIcon};
+                ui->selectCertificateInfoLabel};
     case CommandType::AUTHENTICATE:
         return {ui->authenticateDescriptionLabel, ui->authenticateOriginLabel,
-                ui->authenticateCertificateInfoLabel, ui->authenticateElectronicIdIcon};
+                ui->authenticateCertificateInfoLabel};
     case CommandType::SIGN:
-        return {ui->signDescriptionLabel, ui->signOriginLabel, ui->signCertificateInfoLabel,
-                ui->signElectronicIdIcon};
+        return {ui->signDescriptionLabel, ui->signOriginLabel, ui->signCertificateInfoLabel};
     default:
         throw std::logic_error("WebEidDialog::certificateLabelsOnPage() applies only to "
                                "GET_CERTIFICATE, AUTHENTICATE or SIGN");
@@ -443,7 +433,7 @@ void WebEidDialog::displayFatalError(QLabel* descriptionLabel, const QString& me
 {
     okButton->setEnabled(false);
     hidePinAndDocHashWidgets();
-    makeLabelForegroundDarkRed(descriptionLabel);
+    descriptionLabel->setStyleSheet(QStringLiteral("color: darkred"));
     descriptionLabel->setText(message);
 }
 

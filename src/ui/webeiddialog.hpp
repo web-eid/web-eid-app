@@ -75,7 +75,7 @@ private:
     void makeOkButtonDefaultAndconnectSignals();
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLenght);
     void startPinTimeoutProgressBar();
-    std::tuple<QLabel*, QLabel*, QLabel*, QLabel*> certificateLabelsOnPage();
+    std::tuple<QLabel*, QLabel*, QLabel*> certificateLabelsOnPage();
     QLabel* pinErrorLabelOnPage();
     QLabel* pinTitleLabelOnPage();
     QLineEdit* pinInputOnPage();

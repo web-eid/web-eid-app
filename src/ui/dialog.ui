@@ -7,30 +7,102 @@
     <x>0</x>
     <y>0</y>
     <width>520</width>
-    <height>350</height>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Web eID</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+background-color: white;
+font-size: 14px;
+}
+QPushButton {
+font-size: 17px;
+border: 0px;
+border-radius: 3px;
+height: 45px;
+padding-left: 19px;
+padding-right: 19px;
+min-width: 30px;
+background-color: #EFEFEF;
+}
+QPushButton::hover, QPushButton::focus {
+background-color: #DEDEDE;
+}
+#page1TitleLabel , #page2TitleLabel, #page3TitleLabel, #page4TitleLabel {
+color: #003168;
+font-size: 32px;
+font-weight: bold;
+}
+#smartCardErrorLabel {
+border: 1px solid rgba(240,78,35,0.1);
+border-radius: 3px;
+padding: 10px;
+color: #F04E23;
+}
+#selectCertificateInfoLabel, #authenticateCertificateInfoLabel, #signCertificateInfoLabel {
+border: 1px solid rgba(0,49,104,0.1);
+border-radius: 35px;
+min-height: 70px;
+padding: 0px 20px 0px 28px;
+}
+#authenticationPinInput, #signingPinInput {
+border: 1px solid #113F8E;
+border-radius: 3px;
+min-width: 165px;
+min-height: 45px;
+max-width: 165px;
+max-height: 45px;
+font-size: 20px;
+font-weight: bold;
+}
+#authenticationPinErrorLabel, #signingPinErrorLabel {
+color: #F04E23;
+}
+#selectCertificateOriginLabel, #authenticateOriginLabel, #signOriginLabel {
+color: #003168;
+font-weight: bold;
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
    <item>
     <widget class="QStackedWidget" name="pageStack">
      <property name="currentIndex">
       <number>0</number>
      </property>
      <widget class="QWidget" name="selectCardPage">
-      <layout class="QVBoxLayout" name="page1VerticalLayout1">
+      <layout class="QVBoxLayout" name="selectCardPageLayout">
        <property name="spacing">
         <number>10</number>
        </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QLabel" name="page1TitleLabel">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -101,27 +173,17 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="page1HorizontalLayout3">
-         <property name="topMargin">
-          <number>15</number>
+        <widget class="QLabel" name="smartCardErrorLabel">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
          </property>
-         <item>
-          <widget class="QLabel" name="smartCardErrorLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color: darkred</string>
-           </property>
-           <property name="text">
-            <string>Insert a smart card</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+         <property name="text">
+          <string>Insert a smart card</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="page1VerticalSpacer">
@@ -139,17 +201,24 @@
       </layout>
      </widget>
      <widget class="QWidget" name="selectCertificatePage">
-      <layout class="QVBoxLayout" name="page2VerticalLayout1">
+      <layout class="QVBoxLayout" name="selectCertificatePageLayout">
        <property name="spacing">
         <number>10</number>
        </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QLabel" name="page2TitleLabel">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -176,44 +245,22 @@
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
-         <property name="styleSheet">
-          <string notr="true">font-weight: bold</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="page2HorizontalLayout1">
-         <property name="spacing">
-          <number>10</number>
+        <widget class="QLabel" name="selectCertificateInfoLabel">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
          </property>
-         <item>
-          <widget class="QLabel" name="selectCertificateIcon"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="selectCertificateCertificateInfoLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string notr="true">Authentication:
+         <property name="text">
+          <string notr="true">Authentication:
 Issuer:
 Valid:</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="page2VerticalSpacer">
@@ -231,17 +278,24 @@ Valid:</string>
       </layout>
      </widget>
      <widget class="QWidget" name="authenticatePage">
-      <layout class="QVBoxLayout" name="page3VerticalLayout1">
+      <layout class="QVBoxLayout" name="authenticatePageLayout">
        <property name="spacing">
         <number>10</number>
        </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QLabel" name="page3TitleLabel">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -268,55 +322,37 @@ Valid:</string>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
-         <property name="styleSheet">
-          <string notr="true">font-weight: bold</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="page3HorizontalLayout1">
-         <property name="spacing">
-          <number>10</number>
+        <widget class="QLabel" name="authenticateCertificateInfoLabel">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
          </property>
-         <item>
-          <widget class="QLabel" name="authenticateElectronicIdIcon"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="authenticateCertificateInfoLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string notr="true">Authentication:
+         <property name="text">
+          <string notr="true">Authentication:
 Issuer:
 Valid:</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="authenticationPinTitleLabel">
          <property name="font">
           <font>
+           <pointsize>-1</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
          <property name="text">
           <string>Please enter authentication PIN (PIN 1):</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
          <property name="buddy">
           <cstring>authenticationPinInput</cstring>
@@ -331,34 +367,24 @@ Valid:</string>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="page3HorizontalLayout2">
-         <item>
-          <widget class="QLineEdit" name="authenticationPinInput">
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="maxLength">
-            <number>12</number>
-           </property>
-           <property name="echoMode">
-            <enum>QLineEdit::Password</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="authenticationPinErrorLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color: darkred</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QLineEdit" name="authenticationPinInput">
+         <property name="maxLength">
+          <number>12</number>
+         </property>
+         <property name="echoMode">
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="authenticationPinErrorLabel">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="page3VerticalSpacer">
@@ -376,17 +402,24 @@ Valid:</string>
       </layout>
      </widget>
      <widget class="QWidget" name="signPage">
-      <layout class="QVBoxLayout" name="page4VerticalLayout1">
+      <layout class="QVBoxLayout" name="signPageLayout">
        <property name="spacing">
         <number>10</number>
        </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QLabel" name="page4TitleLabel">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -413,44 +446,22 @@ Valid:</string>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
-         <property name="styleSheet">
-          <string notr="true">font-weight: bold</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="page4HorizontalLayout1">
-         <property name="spacing">
-          <number>10</number>
+        <widget class="QLabel" name="signCertificateInfoLabel">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
          </property>
-         <item>
-          <widget class="QLabel" name="signElectronicIdIcon"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="signCertificateInfoLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string notr="true">Signature:
+         <property name="text">
+          <string notr="true">Signature:
 Issuer:
 Valid:</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="docHashFingerprintToggleButton">
@@ -485,12 +496,16 @@ Valid:</string>
         <widget class="QLabel" name="signingPinTitleLabel">
          <property name="font">
           <font>
+           <pointsize>-1</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
          <property name="text">
           <string>Please enter signing PIN (PIN 2):</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
          <property name="buddy">
           <cstring>signingPinInput</cstring>
@@ -505,34 +520,24 @@ Valid:</string>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="page4HorizontalLayout2">
-         <item>
-          <widget class="QLineEdit" name="signingPinInput">
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="maxLength">
-            <number>12</number>
-           </property>
-           <property name="echoMode">
-            <enum>QLineEdit::Password</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="signingPinErrorLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color: darkred</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QLineEdit" name="signingPinInput">
+         <property name="maxLength">
+          <number>12</number>
+         </property>
+         <property name="echoMode">
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="signingPinErrorLabel">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="page4VerticalSpacer">
