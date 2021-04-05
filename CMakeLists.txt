@@ -22,7 +22,7 @@ set(FIREFOX_URL "https://addons.mozilla.org/firefox/downloads/latest/web-eid-web
 set(SIGNCERT "" CACHE STRING "Common name of certificate to used sign binaries, empty skip signing")
 set(CROSSSIGNCERT "" CACHE STRING "Common name of certificate to used cross sign binaries, empty skip signing")
 
-find_package(Qt5 COMPONENTS Core Widgets Network Test LinguistTools REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Network Test LinguistTools Svg REQUIRED)
 
 add_subdirectory(lib/libelectronic-id)
 

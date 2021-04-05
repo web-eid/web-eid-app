@@ -4,14 +4,6 @@
 <context>
     <name>WebEidDialog</name>
     <message>
-        <source>Select a smart card device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Insert a smart card</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>By choosing the certificate, I agree to submit my name and personal identification number to the website</source>
         <translation type="unfinished"></translation>
     </message>
@@ -21,10 +13,6 @@
     </message>
     <message>
         <source>By confirming signing, I agree to submit my name and personal identification number to the website</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show document fingerprint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -40,25 +28,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No smart card in reader. Please insert a smart card into the reader.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1: %2
-Issuer: %3
-Valid: from %4 to %5</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Certificate is %1, cannot proceed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide document fingerprint</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Certificate on card does not match the certificate provided as argument</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -90,10 +60,6 @@ Valid: from %4 to %5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Smart Card</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Select Certificate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -114,14 +80,6 @@ Valid: from %4 to %5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unsupported card in reader. Please insert Electronic ID card into the reader.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Multiple Electronic ID cards inserted. Please assure that only single ID card is inserted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PIN is blocked, cannot proceed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -138,6 +96,54 @@ Valid: from %4 to %5</source>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
+    </message>
+    <message>
+        <source>No smart card in reader. Please insert an electronic ID card into the reader.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsupported card in reader. Please insert an electronic ID card into the reader.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple electronic ID cards inserted. Please assure that only single ID card is inserted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authentication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Signature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate on card does not match the certificate provided as argument, cannot proceed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retry?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PIN pad PIN entry timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PIN pad PIN entry cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect Card Reader</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert Smart Card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1: &lt;b&gt;%2&lt;/b&gt;&lt;br/&gt;Issuer: %3&lt;br/&gt;Valid: from %4 to %5</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

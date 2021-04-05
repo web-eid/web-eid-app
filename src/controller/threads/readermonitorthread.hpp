@@ -38,10 +38,8 @@ signals:
 private:
     void doRun() override
     {
-        auto isFinished = attemptCardSelection();
-        while (!isFinished && !isInterruptionRequested()) {
+        while (!attemptCardSelection() && !isInterruptionRequested()) {
             msleep(500); // sleep for half a second
-            isFinished = attemptCardSelection();
         }
     }
 
