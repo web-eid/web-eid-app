@@ -57,7 +57,6 @@ public: // slots
     virtual void onReaderMonitorStatusUpdate(const RetriableError status) = 0;
     virtual void onCertificateReady(const QUrl& origin, const CertificateStatus certStatus,
                                     const CertificateInfo& certInfo, const PinInfo& pinInfo) = 0;
-    virtual void onDocumentHashReady(const QString& docHash) = 0;
     virtual void onSigningCertificateHashMismatch(const QString& subjectOfUserCertFromArgs) = 0;
 
     virtual void onRetry(const RetriableError error) = 0;

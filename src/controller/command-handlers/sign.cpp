@@ -44,17 +44,6 @@ QPair<QString, QVariantMap> signHash(const ElectronicID& eid, const pcsc_cpp::by
     return {signatureBase64, signatureAlgoToVariantMap(signature.second)};
 }
 
-// Convert the hash into fingerprint quadruplets separated by blanks.
-QString convertToFingerprintFormat(const QByteArray& docHash)
-{
-    const auto fingerprint = QString(docHash.toHex(':'));
-    QStringList result;
-    for (int i = 0; i < fingerprint.length(); i += 4) {
-        result.append(fingerprint.section(':', i, i + 3));
-    }
-    return result.join(' ');
-}
-
 } // namespace
 
 Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
@@ -93,9 +82,7 @@ void Sign::run(CardInfo::ptr _cardInfo)
 
     // Assure that the certificate read from the eID matches the certificate provided as argument.
     if (certificate.digest(QCryptographicHash::Sha256)
-        == userEidCertificateFromArgs.digest(QCryptographicHash::Sha256)) {
-        emit documentHashReady(convertToFingerprintFormat(docHash));
-    } else {
+        != userEidCertificateFromArgs.digest(QCryptographicHash::Sha256)) {
         const auto certSubject =
             userEidCertificateFromArgs.subjectInfo(QSslCertificate::CommonName).join(' ');
         emit certificateHashMismatch(certSubject);
@@ -132,7 +119,6 @@ void Sign::connectSignals(const WebEidUI* window)
 {
     CertificateReader::connectSignals(window);
 
-    connect(this, &Sign::documentHashReady, window, &WebEidUI::onDocumentHashReady);
     connect(this, &Sign::certificateHashMismatch, window,
             &WebEidUI::onSigningCertificateHashMismatch);
     connect(this, &Sign::verifyPinFailed, window, &WebEidUI::onVerifyPinFailed);

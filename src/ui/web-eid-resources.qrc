@@ -1,9 +1,23 @@
 <RCC>
     <qresource prefix="/">
-        <file>smartcard-chip.png</file>
-        <file>esteid.png</file>
-        <file>fineid.png</file>
-        <file>lateid.png</file>
-        <file>liteid.png</file>
+        <file>images/esteid.png</file>
+        <file>images/fineid.png</file>
+        <file>images/lateid.png</file>
+        <file>images/liteid.png</file>
+        <file>images/cardreader.svg</file>
+        <file>images/id-kaart.svg</file>
+        <file>images/origin.svg</file>
+        <file>fonts/Roboto-Black.ttf</file>
+        <file>fonts/Roboto-BlackItalic.ttf</file>
+        <file>fonts/Roboto-Bold.ttf</file>
+        <file>fonts/Roboto-BoldItalic.ttf</file>
+        <file>fonts/Roboto-Italic.ttf</file>
+        <file>fonts/Roboto-Light.ttf</file>
+        <file>fonts/Roboto-LightItalic.ttf</file>
+        <file>fonts/Roboto-Medium.ttf</file>
+        <file>fonts/Roboto-MediumItalic.ttf</file>
+        <file>fonts/Roboto-Regular.ttf</file>
+        <file>fonts/Roboto-Thin.ttf</file>
+        <file>fonts/Roboto-ThinItalic.ttf</file>
     </qresource>
 </RCC>

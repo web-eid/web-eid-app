@@ -25,6 +25,8 @@
 #include "registermetatypes.hpp"
 #include "logging.hpp"
 
+#include <QDir>
+#include <QFontDatabase>
 #include <QTimer>
 #include <QTranslator>
 
@@ -34,8 +36,8 @@ int main(int argc, char* argv[])
     Q_INIT_RESOURCE(translations);
 
     QApplication app(argc, argv);
-    app.setApplicationName("web-eid");
-    app.setApplicationDisplayName("Web eID");
+    app.setApplicationName(QStringLiteral("web-eid"));
+    app.setApplicationDisplayName(QStringLiteral("Web eID"));
     app.setApplicationVersion(QStringLiteral(PROJECT_VERSION));
     app.setOrganizationDomain(QStringLiteral("web-eid.eu"));
     app.setOrganizationName(QStringLiteral("RIA"));
@@ -43,6 +45,10 @@ int main(int argc, char* argv[])
     QTranslator* translator = new QTranslator(&app);
     translator->load(QLocale(), QStringLiteral(":/translations/"));
     QApplication::installTranslator(translator);
+
+    for (const QString& font : QDir(QStringLiteral(":/fonts")).entryList()) {
+        QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/%1").arg(font));
+    }
 
     registerMetatypes();
 

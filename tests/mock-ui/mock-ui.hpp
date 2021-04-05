@@ -46,8 +46,6 @@ public: // slots
         emit accepted();
     }
 
-    void onDocumentHashReady(const QString&) override {}
-
     void onSigningCertificateHashMismatch(const QString&) override {}
 
     void onRetry(const RetriableError) override {}

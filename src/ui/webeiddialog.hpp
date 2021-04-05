@@ -27,6 +27,7 @@
 #include "qeid.hpp"
 
 #include <optional>
+#include <utility>
 
 class QLabel;
 class QLineEdit;
@@ -63,7 +64,6 @@ public: // slots
     void onReaderMonitorStatusUpdate(const RetriableError status) override;
     void onCertificateReady(const QUrl& origin, const CertificateStatus certStatus,
                             const CertificateInfo& certInfo, const PinInfo& pinInfo) override;
-    void onDocumentHashReady(const QString& docHash) override;
     void onSigningCertificateHashMismatch(const QString& subjectOfUserCertFromArgs) override;
     void onRetry(const RetriableError error) override;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
@@ -75,7 +75,7 @@ private:
     void makeOkButtonDefaultAndconnectSignals();
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLenght);
     void startPinTimeoutProgressBar();
-    std::tuple<QLabel*, QLabel*, QLabel*, QLabel*> certificateLabelsOnPage();
+    std::tuple<QLabel*, QLabel*, QLabel*> certificateLabelsOnPage();
     QLabel* pinErrorLabelOnPage();
     QLabel* pinTitleLabelOnPage();
     QLineEdit* pinInputOnPage();
@@ -83,7 +83,9 @@ private:
     void displayFatalError(QLabel* label, const QString& message);
     void hidePinAndDocHashWidgets();
     void onRetryImpl(const QString& error);
-    QString retriableErrorToString(const RetriableError error);
+
+    std::pair<QString, std::pair<QString, QString>>
+    retriableErrorToTextTitleAndIcon(const RetriableError error);
 
     Ui::WebEidDialog* ui;
     QPushButton* okButton; // non-owning pointer

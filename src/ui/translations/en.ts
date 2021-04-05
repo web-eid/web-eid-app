@@ -4,14 +4,6 @@
 <context>
     <name>WebEidDialog</name>
     <message>
-        <source>Select a smart card device</source>
-        <translation>Select a smart card device</translation>
-    </message>
-    <message>
-        <source>Insert a smart card</source>
-        <translation>Insert a smart card</translation>
-    </message>
-    <message>
         <source>By choosing the certificate, I agree to submit my name and personal identification number to the website</source>
         <translation>By choosing the certificate, I agree to submit my name and personal identification number to the website</translation>
     </message>
@@ -22,10 +14,6 @@
     <message>
         <source>By confirming signing, I agree to submit my name and personal identification number to the website</source>
         <translation>By confirming signing, I agree to submit my name and personal identification number to the website</translation>
-    </message>
-    <message>
-        <source>Show document fingerprint</source>
-        <translation>Show document fingerprint</translation>
     </message>
     <message>
         <source>Internal smart card service error occurred. Please try restarting the smart card service.</source>
@@ -40,28 +28,8 @@
         <translation>No readers attached. Please connect a smart card reader.</translation>
     </message>
     <message>
-        <source>No smart card in reader. Please insert a smart card into the reader.</source>
-        <translation>No smart card in reader. Please insert a smart card into the reader.</translation>
-    </message>
-    <message>
-        <source>%1: %2
-Issuer: %3
-Valid: from %4 to %5</source>
-        <translation>%1: %2
-Issuer: %3
-Valid: from %4 to %5</translation>
-    </message>
-    <message>
         <source>Certificate is %1, cannot proceed</source>
         <translation>Certificate is %1, cannot proceed</translation>
-    </message>
-    <message>
-        <source>Hide document fingerprint</source>
-        <translation>Hide document fingerprint</translation>
-    </message>
-    <message>
-        <source>Certificate on card does not match the certificate provided as argument</source>
-        <translation>Certificate on card does not match the certificate provided as argument</translation>
     </message>
     <message>
         <source>PIN blocked</source>
@@ -92,10 +60,6 @@ Valid: from %4 to %5</translation>
         <translation>Please enter signing PIN (PIN 2):</translation>
     </message>
     <message>
-        <source>Smart Card</source>
-        <translation>Smart Card</translation>
-    </message>
-    <message>
         <source>Select Certificate</source>
         <translation>Select Certificate</translation>
     </message>
@@ -116,14 +80,6 @@ Valid: from %4 to %5</translation>
         <translation>Invalid</translation>
     </message>
     <message>
-        <source>Unsupported card in reader. Please insert Electronic ID card into the reader.</source>
-        <translation>Unsupported card in reader. Please insert Electronic ID card into the reader.</translation>
-    </message>
-    <message>
-        <source>Multiple Electronic ID cards inserted. Please assure that only single ID card is inserted.</source>
-        <translation>Multiple Electronic ID cards inserted. Please assure that only single ID card is inserted.</translation>
-    </message>
-    <message>
         <source>PIN is blocked, cannot proceed</source>
         <translation>PIN is blocked, cannot proceed</translation>
     </message>
@@ -140,6 +96,54 @@ Valid: from %4 to %5</translation>
             <numerusform>Incorrect PIN, %n retry left</numerusform>
             <numerusform>Incorrect PIN, %n retries left</numerusform>
         </translation>
+    </message>
+    <message>
+        <source>No smart card in reader. Please insert an electronic ID card into the reader.</source>
+        <translation>No smart card in reader. Please insert an electronic ID card into the reader.</translation>
+    </message>
+    <message>
+        <source>Unsupported card in reader. Please insert an electronic ID card into the reader.</source>
+        <translation>Unsupported card in reader. Please insert an electronic ID card into the reader.</translation>
+    </message>
+    <message>
+        <source>Multiple electronic ID cards inserted. Please assure that only single ID card is inserted.</source>
+        <translation>Multiple electronic ID cards inserted. Please assure that only single ID card is inserted.</translation>
+    </message>
+    <message>
+        <source>Authentication</source>
+        <translation>Authentication</translation>
+    </message>
+    <message>
+        <source>Signature</source>
+        <translation>Signature</translation>
+    </message>
+    <message>
+        <source>Certificate on card does not match the certificate provided as argument, cannot proceed</source>
+        <translation>Certificate on card does not match the certificate provided as argument, cannot proceed</translation>
+    </message>
+    <message>
+        <source>Retry?</source>
+        <translation>Retry?</translation>
+    </message>
+    <message>
+        <source>PIN pad PIN entry timeout</source>
+        <translation>PIN pad PIN entry timeout</translation>
+    </message>
+    <message>
+        <source>PIN pad PIN entry cancelled</source>
+        <translation>PIN pad PIN entry cancelled</translation>
+    </message>
+    <message>
+        <source>Connect Card Reader</source>
+        <translation>Connect Card Reader</translation>
+    </message>
+    <message>
+        <source>Insert Smart Card</source>
+        <translation>Insert Smart Card</translation>
+    </message>
+    <message>
+        <source>%1: &lt;b&gt;%2&lt;/b&gt;&lt;br/&gt;Issuer: %3&lt;br/&gt;Valid: from %4 to %5</source>
+        <translation>%1: &lt;b&gt;%2&lt;/b&gt;&lt;br/&gt;Issuer: %3&lt;br/&gt;Valid: from %4 to %5</translation>
     </message>
 </context>
 </TS>

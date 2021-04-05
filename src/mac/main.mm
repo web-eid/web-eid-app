@@ -3,6 +3,8 @@
 #include "logging.hpp"
 
 #include <QApplication>
+#include <QDir>
+#include <QFontDatabase>
 #include <QTranslator>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -170,6 +172,10 @@ int main(int argc, char* argv[])
     QTranslator* translator = new QTranslator(&app);
     translator->load(QLocale(), QStringLiteral(":/translations/"));
     QApplication::installTranslator(translator);
+
+    for (const QString& font : QDir(QStringLiteral(":/fonts")).entryList()) {
+        QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/%1").arg(font));
+    }
 
     registerMetatypes();
     setupLogging();
