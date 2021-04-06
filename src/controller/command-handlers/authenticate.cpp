@@ -58,8 +58,8 @@ QByteArray createAuthenticationToken(const QSslCertificate& certificate,
     });
 
     auto tokenPayload = QJsonObject {
-        {"iat", QString::number(QDateTime::currentDateTime().toTime_t())},
-        {"exp", QString::number(QDateTime::currentDateTime().addSecs(5 * 60).toTime_t())},
+        {"iat", QString::number(QDateTime::currentDateTimeUtc().toSecsSinceEpoch())},
+        {"exp", QString::number(QDateTime::currentDateTimeUtc().addSecs(5 * 60).toSecsSinceEpoch())},
         {"sub", certificate.subjectInfo(QSslCertificate::CommonName)[0]},
         {"nonce", nonce},
         {"iss", QStringLiteral("web-eid app %1").arg(qApp->applicationVersion())},
