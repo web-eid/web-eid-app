@@ -126,7 +126,10 @@ QVariantMap Sign::onConfirm(WebEidUI* window)
 
     } catch (const electronic_id::VerifyPinFailed& failure) {
         emit verifyPinFailed(failure.status(), failure.retries());
-        throw CommandHandlerVerifyPinFailed(failure.what());
+        if (failure.retries() > 0) {
+            throw CommandHandlerVerifyPinFailed(failure.what());
+        }
+        throw;
     }
 }
 
