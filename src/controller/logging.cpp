@@ -22,11 +22,13 @@
 
 #include "logging.hpp"
 
+#include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QSettings>
 #include <QStandardPaths>
 
 #include <iostream>
@@ -34,30 +36,26 @@
 namespace
 {
 
-const QString LOG_FILENAME = QStringLiteral("web-eid.log");
-
 bool openLogFile(QFile& logFile)
 {
     const auto logFilePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-    if (!logFilePath.isEmpty()) {
-        QDir logFileDir {logFilePath};
-        if (logFileDir.mkpath(logFileDir.absolutePath())) {
-            const auto filePath = logFileDir.filePath(LOG_FILENAME);
-            logFile.setFileName(filePath);
-            if (logFile.open(QIODevice::Append | QIODevice::Text)) {
-                return true;
-            } else {
-                std::cerr << "Unable to open logfile '" << filePath.toStdString() << '\''
-                          << std::endl;
-            }
-        } else {
-            std::cerr << "Unable to create logifile directory '"
-                      << logFileDir.absolutePath().toStdString() << '\'' << std::endl;
-        }
-    } else {
+    if (logFilePath.isEmpty()) {
         std::cerr << "Unable to determine logfile location path" << std::endl;
+        return false;
     }
-    return false;
+    QDir logFileDir {logFilePath};
+    if (!logFileDir.mkpath(logFileDir.absolutePath())) {
+        std::cerr << "Unable to create logifile directory '"
+                  << logFileDir.absolutePath().toStdString() << '\'' << std::endl;
+        return false;
+    }
+    logFile.setFileName(logFileDir.filePath(QStringLiteral("%1.log").arg(qApp->applicationName())));
+    if (!logFile.open(QIODevice::Append | QIODevice::Text)) {
+        std::cerr << "Unable to open logfile '" << logFile.fileName().toStdString() << '\''
+                  << std::endl;
+        return false;
+    }
+    return true;
 }
 
 inline const char* toString(QtMsgType type)
@@ -88,10 +86,15 @@ void messageHandler(QtMsgType type, const QMessageLogContext& context, const QSt
     static QMutex mutex;
     QMutexLocker lock(&mutex);
 
+    std::cerr << toString(type) << ": " << message.toStdString() << std::endl;
+
+    static bool isLoggingDisabled = !QSettings().value(QStringLiteral("logging"), false).toBool();
+    if (isLoggingDisabled) {
+        return;
+    }
+
     static QFile logFile;
     static bool logFileIsOpen = openLogFile(logFile);
-
-    std::cerr << toString(type) << ": " << message.toStdString() << std::endl;
 
     if (logFileIsOpen) {
         logFile.write(QStringLiteral("%1 %2 %3:%4:%5 - %6\n")
