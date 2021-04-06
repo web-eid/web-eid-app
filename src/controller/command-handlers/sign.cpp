@@ -82,7 +82,7 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
 
 void Sign::run(electronic_id::CardInfo::ptr _cardInfo)
 {
-    requireNonNull(_cardInfo, "_cardInfo", "Sign::run");
+    REQUIRE_NON_NULL(_cardInfo);
     cardInfo = _cardInfo;
 
     if (!cardInfo->eid().isSupportedSigningHashAlgorithm(hashAlgo)) {
@@ -105,19 +105,20 @@ void Sign::run(electronic_id::CardInfo::ptr _cardInfo)
 
 QVariantMap Sign::onConfirm(WebEidUI* window)
 {
-    requireNonNull(cardInfo, "cardInfo", "Sign::onConfirm");
+    REQUIRE_NON_NULL(cardInfo);
 
     if (certificate.isNull()) {
         throw electronic_id::Error("Authenticate::onConfirm(): invalid certificate");
     }
 
-    auto pin = getPin(window, QStringLiteral("signingPinInput"));
+    auto pin = getPin(window);
 
     try {
         const auto signature = signHash(cardInfo->eid(), pin, docHash, hashAlgo);
 
         // Erase PIN memory.
-        // FIXME: Use a scope guard. Discuss if zero-filling is OK or is random better.
+        // TODO: Use a scope guard. Verify that the buffers are actually zeroed
+        // and no copies remain.
         std::fill(pin.begin(), pin.end(), '\0');
 
         return {{QStringLiteral("signature"), signature.first},
@@ -126,13 +127,13 @@ QVariantMap Sign::onConfirm(WebEidUI* window)
     } catch (const electronic_id::VerifyPinFailed& failure) {
         emit verifyPinFailed(failure.status(), failure.retries());
         if (failure.retries() > 0) {
-            throw CommandHandlerRetriableError(failure.what());
+            throw CommandHandlerVerifyPinFailed(failure.what());
         }
         throw;
     }
 }
 
-void Sign::connectSignals(WebEidUI* window)
+void Sign::connectSignals(const WebEidUI* window)
 {
     // TODO: DRY with Authenticate?
     CertificateReader::connectSignals(window);

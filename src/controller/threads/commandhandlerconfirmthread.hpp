@@ -22,32 +22,32 @@
 
 #pragma once
 
-#include "certificatereader.hpp"
+#include "controllerchildthread.hpp"
 
-class Authenticate : public CertificateReader
+class CommandHandlerConfirmThread : public ControllerChildThread
 {
     Q_OBJECT
 
 public:
-    explicit Authenticate(const CommandWithArguments& cmd);
-
-    void run(electronic_id::CardInfo::ptr _cardInfo) override
+    CommandHandlerConfirmThread(QObject* parent, CommandHandler& handler, WebEidUI* w) :
+        ControllerChildThread(parent), commandHandler(handler),
+        cmdType(commandHandler.commandType()), window(w)
     {
-        cardInfo = _cardInfo;
-        CertificateReader::run(cardInfo);
     }
 
-    void connectSignals(const WebEidUI* window) override;
-    QVariantMap onConfirm(WebEidUI* window) override;
-
 signals:
-    void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const quint8 retriesLeft);
+    void completed(const QVariantMap& result);
 
 private:
-    void validateAndStoreCertificate(const QVariantMap& args);
+    void doRun() override
+    {
+        const auto result = commandHandler.onConfirm(window);
+        emit completed(result);
+    }
 
-    electronic_id::CardInfo::ptr cardInfo = nullptr;
-    QString nonce;
-    QSslCertificate originCertificate;
+    const std::string& commandType() const override { return cmdType; }
+
+    CommandHandler& commandHandler;
+    const std::string cmdType;
+    WebEidUI* window;
 };

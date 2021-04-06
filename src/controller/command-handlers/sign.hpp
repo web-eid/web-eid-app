@@ -32,14 +32,14 @@ public:
     explicit Sign(const CommandWithArguments& cmd);
 
     void run(electronic_id::CardInfo::ptr _cardInfo) override;
-    void connectSignals(WebEidUI* window) override;
+    void connectSignals(const WebEidUI* window) override;
     QVariantMap onConfirm(WebEidUI* window) override;
 
 signals:
     void certificateHashMismatch();
     void documentHashReady(const QString& hash);
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const uint8_t retriesLeft);
+                         const quint8 retriesLeft);
 
 private:
     void validateAndStoreDocHashAndHashAlgo(const QVariantMap& args);

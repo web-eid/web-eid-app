@@ -45,7 +45,7 @@ private:
     CommandTypeEnum value = NONE;
 };
 
-Q_DECLARE_METATYPE(CommandType);
+Q_DECLARE_METATYPE(CommandType)
 
 extern const QString CMDLINE_GET_CERTIFICATE;
 extern const QString CMDLINE_AUTHENTICATE;

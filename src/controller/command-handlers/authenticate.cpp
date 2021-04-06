@@ -154,27 +154,28 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window)
     const auto token = createAuthenticationToken(certificate, certificateDer, signatureAlgorithm,
                                                  nonce, origin.url(), originCertificate);
 
-    auto pin = getPin(window, QStringLiteral("authenticationPinInput"));
+    auto pin = getPin(window);
 
     try {
         const auto signedToken = signToken(cardInfo->eid(), token, pin);
 
-        // Erase PIN memory.
-        // FIXME: Use a scope guard. Discuss if zero-filling is OK or is random better.
+        // Erase the PIN memory.
+        // TODO: Use a scope guard. Verify that the buffers are actually zeroed
+        // and no copies remain.
         std::fill(pin.begin(), pin.end(), '\0');
 
         return {{QStringLiteral("auth-token"), QString(signedToken)}};
 
     } catch (const electronic_id::VerifyPinFailed& failure) {
         emit verifyPinFailed(failure.status(), failure.retries());
-        if(failure.retries() > 0) {
-            throw CommandHandlerRetriableError(failure.what());
+        if (failure.retries() > 0) {
+            throw CommandHandlerVerifyPinFailed(failure.what());
         }
         throw;
     }
 }
 
-void Authenticate::connectSignals(WebEidUI* window)
+void Authenticate::connectSignals(const WebEidUI* window)
 {
     CertificateReader::connectSignals(window);
 

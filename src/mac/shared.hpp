@@ -22,32 +22,10 @@
 
 #pragma once
 
-#include "certificatereader.hpp"
+static NSString* WebEidApp = @"ee.ria.web-eid-safari";
+static NSString* WebEidExtension = @"ee.ria.web-eid-safari.web-eid-safari-extension";
+static NSString* WebEidShared = @"ee.ria.web-eid-safari.shared";
 
-class Authenticate : public CertificateReader
-{
-    Q_OBJECT
-
-public:
-    explicit Authenticate(const CommandWithArguments& cmd);
-
-    void run(electronic_id::CardInfo::ptr _cardInfo) override
-    {
-        cardInfo = _cardInfo;
-        CertificateReader::run(cardInfo);
-    }
-
-    void connectSignals(const WebEidUI* window) override;
-    QVariantMap onConfirm(WebEidUI* window) override;
-
-signals:
-    void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const quint8 retriesLeft);
-
-private:
-    void validateAndStoreCertificate(const QVariantMap& args);
-
-    electronic_id::CardInfo::ptr cardInfo = nullptr;
-    QString nonce;
-    QSslCertificate originCertificate;
-};
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
+NSString* const SFExtensionMessageKey = @"message";
+#endif

@@ -23,7 +23,7 @@
 #include "registermetatypes.hpp"
 
 #include "commands.hpp"
-#include "certificateinfo.hpp"
+#include "certandpininfo.hpp"
 
 void registerMetatypes()
 {
@@ -36,4 +36,5 @@ void registerMetatypes()
 
     qRegisterMetaType<CertificateStatus>();
     qRegisterMetaType<CertificateInfo>();
+    qRegisterMetaType<PinInfo>();
 }

@@ -22,6 +22,7 @@
 
 #include "signauthutils.hpp"
 
+#include "ui.hpp"
 #include "utils.hpp"
 
 using namespace electronic_id;
@@ -68,29 +69,33 @@ QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QV
     return cert;
 }
 
-pcsc_cpp::byte_vector getPin(QObject* window, const QString& pinInputName)
+template <typename T, typename C>
+inline void eraseData(T& data)
 {
-    requireNonNull(window, "window", "getPin");
-
-    // FIXME: keep PIN in secure memory, implement custom Qt widget.
-    auto pinInput = window->findChild<QObject*>(pinInputName);
-    if (!pinInput) {
-        throw std::logic_error("getPin(): " + pinInputName.toStdString()
-                               + " not found in window object");
+    // According to docs, constData() never causes a deep copy to occur, so we can abuse it
+    // to overwrite the underlying buffer since the underlying data is not really const.
+    C* chars = const_cast<C*>(data.constData());
+    for (int i = 0; i < data.length(); ++i) {
+        chars[i] = '\0';
     }
-    auto pin = pinInput->property("text").toString();
+}
 
-    // FIXME: Overwrite PIN memory in widget properly, this is really just a placeholder.
-    pinInput->setProperty("text", QStringLiteral("123456789012345678901234567890"));
-    // Clear PIN input so that it does not show placeholders.
-    pinInput->setProperty("text", QString());
+pcsc_cpp::byte_vector getPin(WebEidUI* window)
+{
+    REQUIRE_NON_NULL(window);
 
-    // FIXME: Avoid making copies of the PIN in memory.
+    auto pin = window->getPin();
+    if (pin.isEmpty()) {
+        throw std::logic_error("Empty PIN in getPin()");
+    }
+
+    // TODO: Avoid making copies of the PIN in memory.
     auto pinQByteArray = pin.toUtf8();
     auto pinBytes = pcsc_cpp::byte_vector {pinQByteArray.begin(), pinQByteArray.end()};
 
-    pin.fill('\0');
-    pinQByteArray.fill('\0');
+    // TODO: Verify that the buffers are actually zeroed and no copies remain.
+    eraseData<QString, QChar>(pin);
+    eraseData<QByteArray, char>(pinQByteArray);
 
     return pinBytes;
 }

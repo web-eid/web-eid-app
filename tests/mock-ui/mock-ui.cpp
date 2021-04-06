@@ -25,13 +25,5 @@
 
 WebEidUI::ptr WebEidUI::createAndShowDialog(const CommandType /* command */)
 {
-    auto ui = std::make_unique<MockUI>();
-
-    // Add mock pin input as a child to UI.
-    auto mockPinInput = new QObject(ui.get());
-    // objectName is used for locating pin input with findChild() in authenticate.cpp.
-    mockPinInput->setObjectName("authenticationPinInput");
-    mockPinInput->setProperty("text", "0090");
-
-    return std::move(ui);
+    return std::make_unique<MockUI>();
 }

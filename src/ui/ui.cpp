@@ -27,7 +27,9 @@ WebEidUI::ptr WebEidUI::createAndShowDialog(const CommandType command)
 {
     auto dialog = std::make_unique<WebEidDialog>();
     dialog->switchPage(command);
+    dialog->activateWindow();
     dialog->show();
+    dialog->raise();
 
-    return std::move(dialog);
+    return dialog;
 }

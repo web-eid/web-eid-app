@@ -22,32 +22,18 @@
 
 #pragma once
 
-#include "certificatereader.hpp"
+#include <QString>
+#include <QUrl>
 
-class Authenticate : public CertificateReader
+inline QString fromPunycode(const QUrl& punycodeUrl)
 {
-    Q_OBJECT
-
-public:
-    explicit Authenticate(const CommandWithArguments& cmd);
-
-    void run(electronic_id::CardInfo::ptr _cardInfo) override
-    {
-        cardInfo = _cardInfo;
-        CertificateReader::run(cardInfo);
-    }
-
-    void connectSignals(const WebEidUI* window) override;
-    QVariantMap onConfirm(WebEidUI* window) override;
-
-signals:
-    void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const quint8 retriesLeft);
-
-private:
-    void validateAndStoreCertificate(const QVariantMap& args);
-
-    electronic_id::CardInfo::ptr cardInfo = nullptr;
-    QString nonce;
-    QSslCertificate originCertificate;
-};
+    QUrl url {punycodeUrl};
+    // QUrl::PrettyDecoded only decodes Punycode on select trusted domains like .com, .org etc.
+    // We need to work around that restriction in order to support EU national domains like .fi,
+    // .ee, .lv, .lt etc.
+    url.setHost(url.host() + QStringLiteral(".com"), QUrl::TolerantMode);
+    const auto host = url.host(QUrl::PrettyDecoded);
+    return QStringLiteral("%1://%2%3")
+        .arg(url.scheme(), host.mid(0, host.size() - 4),
+             url.port() == -1 ? QString() : QStringLiteral(":%1").arg(url.port()));
+}

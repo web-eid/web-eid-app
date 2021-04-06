@@ -28,6 +28,11 @@
 
 #include "pcsc-cpp/pcsc-cpp.hpp"
 
+#include <unordered_map>
+#include <cstdint>
+
+class ControllerChildThread;
+
 /** Controller coordinates the execution flow and interaction between all other components. */
 class Controller : public QObject
 {
@@ -48,8 +53,17 @@ public: // slots
     // Called either directly from run() or from monitor thread when card is ready.
     void onCardReady(electronic_id::CardInfo::ptr cardInfo);
 
+    // Called either directly from onCardReady() or from dialog on retry
+    void onCommandHandlerRun();
+
     // Reader and card events from monitor thread.
     void onReaderMonitorStatusUpdate(const electronic_id::AutoSelectFailed::Reason reason);
+
+    // Called either directly from onDialogOK() or from dialog when waiting for PIN-pad.
+    void onRunCommandHandlerConfirm();
+
+    // Called from CommandHandlerConfirm thread.
+    void onCommandHandlerConfirmCompleted(const QVariantMap& result);
 
     // User events from dialog.
     void onDialogOK();
@@ -59,14 +73,25 @@ public: // slots
     void onCriticalFailure(const QString& error);
 
 private:
+    // Non-owning observing pointer.
+    template <typename T>
+    using observer_ptr = T*;
+
     void startCommandExecution();
     void waitUntilSupportedCardSelected();
-    void connectOkCancel();
+    void connectOkCancelWaitingForPinPad();
+    template <typename Func>
+    void connectRetry(ControllerChildThread* childThread, Func controllerSlot);
+    void disconnectRetry();
+    void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
+    void exit();
+    void waitForChildThreads();
     void setCard(electronic_id::CardInfo::ptr cardInfo);
     CommandType commandType();
 
     CommandWithArgumentsPtr command;
     CommandHandler::ptr commandHandler = nullptr;
+    std::unordered_map<uintptr_t, observer_ptr<ControllerChildThread>> childThreads;
     electronic_id::CardInfo::ptr cardInfo = nullptr;
     WebEidUI::ptr window = nullptr;
     QVariantMap _result;

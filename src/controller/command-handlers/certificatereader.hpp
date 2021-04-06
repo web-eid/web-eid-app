@@ -35,11 +35,11 @@ public:
     explicit CertificateReader(const CommandWithArguments& cmd);
 
     void run(electronic_id::CardInfo::ptr cardInfo) override;
-    void connectSignals(WebEidUI* window) override;
+    void connectSignals(const WebEidUI* window) override;
 
 signals:
-    void certificateReady(const QString& origin, const CertificateStatus certStatus,
-                          const CertificateInfo& certInfo);
+    void certificateReady(const QUrl& origin, const CertificateStatus certStatus,
+                          const CertificateInfo& certInfo, const PinInfo& pinInfo);
 
 protected:
     void validateAndStoreOrigin(const QVariantMap& arguments);

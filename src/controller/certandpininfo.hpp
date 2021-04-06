@@ -22,32 +22,37 @@
 
 #pragma once
 
-#include "certificatereader.hpp"
+#include "qeid.hpp"
 
-class Authenticate : public CertificateReader
+#include <QString>
+
+enum class CertificateStatus { VALID, INVALID, NOT_YET_ACTIVE, EXPIRED };
+
+Q_DECLARE_METATYPE(CertificateStatus)
+
+struct CertificateInfo
 {
-    Q_OBJECT
+    electronic_id::CertificateType type;
+    QString icon;
 
-public:
-    explicit Authenticate(const CommandWithArguments& cmd);
-
-    void run(electronic_id::CardInfo::ptr _cardInfo) override
-    {
-        cardInfo = _cardInfo;
-        CertificateReader::run(cardInfo);
-    }
-
-    void connectSignals(const WebEidUI* window) override;
-    QVariantMap onConfirm(WebEidUI* window) override;
-
-signals:
-    void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const quint8 retriesLeft);
-
-private:
-    void validateAndStoreCertificate(const QVariantMap& args);
-
-    electronic_id::CardInfo::ptr cardInfo = nullptr;
-    QString nonce;
-    QSslCertificate originCertificate;
+    QString subject;
+    QString issuer;
+    QString effectiveDate;
+    QString expiryDate;
 };
+
+Q_DECLARE_METATYPE(CertificateInfo)
+
+struct PinInfo
+{
+    using PinMinMaxLength = std::pair<size_t, size_t>;
+    using PinRetriesCount = std::pair<size_t, size_t>;
+
+    PinMinMaxLength pinMinMaxLength;
+    PinRetriesCount pinRetriesCount;
+    bool readerHasPinPad;
+
+    static constexpr int PIN_PAD_PIN_ENTRY_TIMEOUT = pcsc_cpp::PIN_PAD_PIN_ENTRY_TIMEOUT;
+};
+
+Q_DECLARE_METATYPE(PinInfo)
