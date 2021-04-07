@@ -8,6 +8,8 @@ qt5_add_translation(SOURCES
 add_library(ui STATIC
     ${SOURCES}
     ${CMAKE_CURRENT_BINARY_DIR}/translations.qrc
+    CertificateWidget.hpp
+    CertificateWidget.cpp
     ui.cpp
     punycode.hpp
     webeiddialog.cpp

@@ -51,7 +51,10 @@ public: // slots
     void run();
 
     // Called either directly from run() or from the monitor thread when the card is ready.
-    void onCardReady(electronic_id::CardInfo::ptr cardInfo);
+    void onAvailableCards(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
+
+    // Called either directly from run() or from monitor thread when card is ready.
+    void onCardReady(const electronic_id::CardInfo::ptr& cardInfo);
 
     // Called on reader and card events from monitor thread.
     void onReaderMonitorStatusUpdate(const RetriableError reason);

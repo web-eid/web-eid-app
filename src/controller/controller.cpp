@@ -79,7 +79,7 @@ void Controller::run()
             command = readCommandFromStdin();
         }
 
-        REQUIRE_NON_NULL(command);
+        REQUIRE_NON_NULL(command)
         commandHandler = getCommandHandler(*command);
 
         startCommandExecution();
@@ -92,15 +92,19 @@ void Controller::run()
 void Controller::startCommandExecution()
 {
     try {
-        const auto selectedCardInfo = autoSelectSupportedCard();
+        const auto availableCardInfos = availableSupportedCards();
 
-        if (selectedCardInfo) {
+        if (availableCardInfos.empty()) {
+            waitUntilSupportedCardSelected();
+        } else if (availableCardInfos.size() == 1) {
+            const auto selectedCardInfo = availableCardInfos[0];
             qInfo() << "Reader" << selectedCardInfo->reader().name << "has supported card"
                     << selectedCardInfo->eid().name();
 
             onCardReady(selectedCardInfo);
         } else {
-            waitUntilSupportedCardSelected();
+            qInfo() << "Readers" << availableCardInfos.size() << "has supported cards";
+            onAvailableCards(availableCardInfos);
         }
 
     } catch (const AutoSelectFailed& failure) {
@@ -126,6 +130,7 @@ void Controller::waitUntilSupportedCardSelected()
     connect(readerMonitorThread, &ReaderMonitorThread::statusUpdate, this,
             &Controller::onReaderMonitorStatusUpdate);
     connect(readerMonitorThread, &ReaderMonitorThread::cardReady, this, &Controller::onCardReady);
+    connect(readerMonitorThread, &ReaderMonitorThread::availableCardInfos, this, &Controller::onAvailableCards);
     saveChildThreadPtrAndConnectFailureFinish(readerMonitorThread);
 
     // UI setup.
@@ -139,7 +144,7 @@ void Controller::waitUntilSupportedCardSelected()
 
 void Controller::saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread)
 {
-    REQUIRE_NON_NULL(childThread);
+    REQUIRE_NON_NULL(childThread)
     // Save the thread pointer in child thread tracking map to request interruption and wait for
     // it to quit in waitForChildThreads().
     childThreads[uintptr_t(childThread)] = childThread;
@@ -165,17 +170,22 @@ void Controller::saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread
 
 void Controller::connectOkCancelWaitingForPinPad()
 {
-    REQUIRE_NON_NULL(window);
+    REQUIRE_NON_NULL(window)
 
     connect(window.get(), &WebEidUI::accepted, this, &Controller::onDialogOK);
     connect(window.get(), &WebEidUI::rejected, this, &Controller::onDialogCancel);
     connect(window.get(), &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
 }
 
-void Controller::onCardReady(CardInfo::ptr card)
+void Controller::onAvailableCards(const std::vector<electronic_id::CardInfo::ptr> &/*availableCards*/)
+{
+
+}
+
+void Controller::onCardReady(const CardInfo::ptr& card)
 {
     try {
-        REQUIRE_NON_NULL(commandHandler);
+        REQUIRE_NON_NULL(commandHandler)
 
         setCard(card);
         const auto protocol =
@@ -258,8 +268,8 @@ void Controller::onRetry()
 
 void Controller::connectRetry(const ControllerChildThread* childThread)
 {
-    REQUIRE_NON_NULL(childThread);
-    REQUIRE_NON_NULL(window);
+    REQUIRE_NON_NULL(childThread)
+    REQUIRE_NON_NULL(window)
 
     disconnect(window.get(), &WebEidUI::retry, nullptr, nullptr);
 
@@ -345,7 +355,7 @@ void Controller::waitForChildThreads()
 
 void Controller::setCard(CardInfo::ptr card)
 {
-    REQUIRE_NON_NULL(card);
+    REQUIRE_NON_NULL(card)
     this->cardInfo = card;
 }
 
