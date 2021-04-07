@@ -39,6 +39,7 @@ void CertificateReader::run(CardInfo::ptr cardInfo)
         {ElectronicID::FinEID, QStringLiteral(":/fineid.png")},
         {ElectronicID::LatEID, QStringLiteral(":/lateid.png")},
         {ElectronicID::LitEID, QStringLiteral(":/liteid.png")},
+        {ElectronicID::HrvEID, QStringLiteral(":/hrveid.png")},
     };
 
     const bool isAuthenticate = command.first == CommandType::AUTHENTICATE

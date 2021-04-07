@@ -330,7 +330,7 @@ void WebEidDialog::setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMin
         pinInput->setMaxLength(int(pinMinMaxLenght.second));
 
         const auto numericMinMaxRegexp = QRegularExpression(
-            QStringLiteral("[0-9]{%1,%2}").arg(pinMinMaxLenght.first).arg(pinMinMaxLenght.second));
+            QStringLiteral("[0-9a-zA-Z]{%1,%2}").arg(pinMinMaxLenght.first).arg(pinMinMaxLenght.second));
         pinInput->setValidator(new QRegularExpressionValidator(numericMinMaxRegexp, pinInput));
 
         connect(pinInput, &QLineEdit::textChanged, okButton,

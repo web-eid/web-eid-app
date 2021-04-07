@@ -5,5 +5,6 @@
         <file>fineid.png</file>
         <file>lateid.png</file>
         <file>liteid.png</file>
+        <file>hrveid.png</file>
     </qresource>
 </RCC>
