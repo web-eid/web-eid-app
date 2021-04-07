@@ -242,19 +242,7 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="selectCertificateInfoLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string notr="true">Authentication:
-Issuer:
-Valid:</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
+        <widget class="CertificateWidget" name="selectCertificateInfo" native="true"/>
        </item>
        <item>
         <spacer name="selectCertificatePageSpacer">
@@ -336,19 +324,7 @@ Valid:</string>
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="authenticateCertificateInfoLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string notr="true">Authentication:
-Issuer:
-Valid:</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
+        <widget class="CertificateWidget" name="authenticationCertificateInfo" native="true"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="authenticatePinLayout">
@@ -501,19 +477,7 @@ Valid:</string>
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="signCertificateInfoLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string notr="true">Signature:
-Issuer:
-Valid:</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
+         <widget class="CertificateWidget" name="signingCertificateInfo" native="true"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="signingPinLayout">
@@ -612,6 +576,14 @@ Valid:</string>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CertificateWidget</class>
+   <extends>QWidget</extends>
+   <header>CertificateWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="web-eid-resources.qrc"/>
  </resources>

@@ -73,7 +73,7 @@ void WebEidDialog::onOkButtonClicked()
         // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
         // custom Qt widget.
         // Clear the PIN input.
-        pinInput->setText(QString());
+        pinInput->setText({});
     }
 
     emit accepted();
@@ -113,13 +113,10 @@ void WebEidDialog::onCertificateReady(const QUrl& origin, const CertificateStatu
 {
     readerHasPinPad = pinInfo.readerHasPinPad;
 
-    auto [descriptionLabel, originLabel, certInfoLabel] = certificateLabelsOnPage();
+    auto [descriptionLabel, originLabel, certificateWidget] = certificateLabelsOnPage();
 
-    const auto certType = certInfo.type.isAuthentication() ? tr("Authentication") : tr("Signature");
 
-    certInfoLabel->setText(tr("%1: <b>%2</b><br/>Issuer: %3<br/>Valid: from %4 to %5")
-                               .arg(certType, certInfo.subject, certInfo.issuer,
-                                    certInfo.effectiveDate, certInfo.expiryDate));
+    certificateWidget->setCertificateInfo(certInfo);
     originLabel->setText(fromPunycode(origin));
 
     if (pinInfo.pinRetriesCount.first == 0) {
@@ -381,17 +378,15 @@ void WebEidDialog::startPinTimeoutProgressBar()
     pinTimeoutTimer->start();
 }
 
-std::tuple<QLabel*, QLabel*, QLabel*> WebEidDialog::certificateLabelsOnPage()
+std::tuple<QLabel*, QLabel*, CertificateWidget*> WebEidDialog::certificateLabelsOnPage()
 {
     switch (currentCommand) {
     case CommandType::GET_CERTIFICATE:
-        return {ui->selectCertificateDescriptionLabel, ui->selectCertificateOriginLabel,
-                ui->selectCertificateInfoLabel};
+        return {ui->selectCertificateDescriptionLabel, ui->selectCertificateOriginLabel, ui->selectCertificateInfo};
     case CommandType::AUTHENTICATE:
-        return {ui->authenticateDescriptionLabel, ui->authenticateOriginLabel,
-                ui->authenticateCertificateInfoLabel};
+        return {ui->authenticateDescriptionLabel, ui->authenticateOriginLabel, ui->authenticationCertificateInfo};
     case CommandType::SIGN:
-        return {ui->signDescriptionLabel, ui->signOriginLabel, ui->signCertificateInfoLabel};
+        return {ui->signDescriptionLabel, ui->signOriginLabel, ui->signingCertificateInfo};
     default:
         throw std::logic_error("WebEidDialog::certificateLabelsOnPage() applies only to "
                                "GET_CERTIFICATE, AUTHENTICATE or SIGN");

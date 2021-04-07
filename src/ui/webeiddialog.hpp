@@ -29,6 +29,7 @@
 #include <optional>
 #include <utility>
 
+class CertificateWidget;
 class QLabel;
 class QLineEdit;
 class QProgressBar;
@@ -75,7 +76,7 @@ private:
     void makeOkButtonDefaultRemoveIconsAndconnectSignals();
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLenght);
     void startPinTimeoutProgressBar();
-    std::tuple<QLabel*, QLabel*, QLabel*> certificateLabelsOnPage();
+    std::tuple<QLabel*, QLabel*, CertificateWidget*> certificateLabelsOnPage();
     QLabel* pinErrorLabelOnPage();
     QLabel* pinTitleLabelOnPage();
     QLineEdit* pinInputOnPage();
