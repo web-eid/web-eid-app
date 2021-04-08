@@ -139,9 +139,9 @@ how to use input-output mode, it can be run with:
 
 The application writes logs to
 
-- `~/.local/share/web-eid/web-eid.log` in Linux
-- `~/Library/Application Support/web-eid/web-eid.log` in macOS
-- `C:/Users/<USER>/AppData/Local/web-eid/web-eid.log` in Windows.
+- `~/.local/share/RIA/web-eid/web-eid.log` in Linux
+- `~/Library/Application Support/RIA/web-eid/web-eid.log` in macOS
+- `C:/Users/<USER>/AppData/Local/RIA/web-eid/web-eid.log` in Windows.
 
 ## Build environment setup
 
