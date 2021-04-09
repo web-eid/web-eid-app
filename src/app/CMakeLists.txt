@@ -109,7 +109,7 @@ else()
         DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/google-chrome/extensions")
     add_custom_target(installer
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        COMMAND dh_make --createorig --addmissing --defaultless -y -p $<TARGET_NAME:web-eid>_${PROJECT_VERSION}
+        COMMAND dh_make -c mit --createorig --addmissing --defaultless -y -p $<TARGET_NAME:web-eid>_${PROJECT_VERSION}
         COMMAND dch --distribution unstable -v ${PROJECT_VERSION} "Release: ${PROJECT_VERSION}."
         COMMAND dpkg-buildpackage -rfakeroot -us -uc
     )
