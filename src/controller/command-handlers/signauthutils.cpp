@@ -76,8 +76,13 @@ inline void eraseData(T& data)
     }
 }
 
-pcsc_cpp::byte_vector getPin(WebEidUI* window)
+pcsc_cpp::byte_vector getPin(const pcsc_cpp::SmartCard& card, WebEidUI* window)
 {
+    // Doesn't apply to PIN pads.
+    if (card.readerHasPinPad()) {
+        return {};
+    }
+
     REQUIRE_NON_NULL(window);
 
     auto pin = window->getPin();

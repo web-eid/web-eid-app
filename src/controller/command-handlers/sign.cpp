@@ -104,7 +104,7 @@ QVariantMap Sign::onConfirm(WebEidUI* window)
 {
     requireValidCardInfoAndCertificate();
 
-    auto pin = getPin(window);
+    auto pin = getPin(cardInfo->eid().smartcard(), window);
 
     try {
         const auto signature = signHash(cardInfo->eid(), pin, docHash, hashAlgo);
