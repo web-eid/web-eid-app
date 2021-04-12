@@ -152,7 +152,7 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window)
     const auto token = createAuthenticationToken(certificate, certificateDer, signatureAlgorithm,
                                                  nonce, origin.url(), originCertificate);
 
-    auto pin = getPin(window);
+    auto pin = getPin(cardInfo->eid().smartcard(), window);
 
     try {
         const auto signedToken = signToken(cardInfo->eid(), token, pin);

@@ -44,6 +44,6 @@ validateAndGetArgument<QByteArray>(const QString& argName, const QVariantMap& ar
 QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QVariantMap& args,
                                             bool allowNull = false);
 
-pcsc_cpp::byte_vector getPin(WebEidUI* window);
+pcsc_cpp::byte_vector getPin(const pcsc_cpp::SmartCard& card, WebEidUI* window);
 
 QVariantMap signatureAlgoToVariantMap(const electronic_id::SignatureAlgorithm signatureAlgo);
