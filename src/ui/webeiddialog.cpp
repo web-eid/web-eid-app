@@ -189,13 +189,12 @@ void WebEidDialog::onDocumentHashReady(const QString& docHash)
     connect(ui->docHashFingerprintToggleButton, &QToolButton::toggled, this, toggleHashFingerprint);
 }
 
-void WebEidDialog::onSigningCertificateHashMismatch()
+void WebEidDialog::onSigningCertificateHashMismatch(const QString& certificateSubject)
 {
-    auto [descriptionLabel, originLabel, certInfoLabel, icon] = certificateLabelsOnPage();
-    // TODO: Better error message/explanation.
-    displayFatalError(descriptionLabel,
-                      tr("Certificate on card does not match the "
-                         "certificate provided as argument, cannot proceed"));
+    onRetryImpl(tr("The signature certificate from the electronic ID card does not match the "
+                   "certificate provided as argument. Please insert the electronic ID card "
+                   "that belongs to %1")
+                    .arg(certificateSubject));
 }
 
 void WebEidDialog::onRetry(const RetriableError error)

@@ -36,7 +36,7 @@ public:
     QVariantMap onConfirm(WebEidUI* window) override;
 
 signals:
-    void certificateHashMismatch();
+    void certificateHashMismatch(const QString& userEidCertificateFromArgsSubject);
     void documentHashReady(const QString& hash);
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                          const quint8 retriesLeft);

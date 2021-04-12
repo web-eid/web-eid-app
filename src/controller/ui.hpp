@@ -58,7 +58,9 @@ public: // slots
     virtual void onCertificateReady(const QUrl& origin, const CertificateStatus certStatus,
                                     const CertificateInfo& certInfo, const PinInfo& pinInfo) = 0;
     virtual void onDocumentHashReady(const QString& docHash) = 0;
-    virtual void onSigningCertificateHashMismatch() = 0;
+    virtual void
+    onSigningCertificateHashMismatch(const QString& userEidCertificateFromArgsSubject) = 0;
+
     virtual void onRetry(const RetriableError error) = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                    const quint8 retriesLeft) = 0;

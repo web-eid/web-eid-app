@@ -96,7 +96,9 @@ void Sign::run(CardInfo::ptr _cardInfo)
         == userEidCertificateFromArgs.digest(QCryptographicHash::Sha256)) {
         emit documentHashReady(convertToFingerprintFormat(docHash));
     } else {
-        emit certificateHashMismatch();
+        const auto certSubject =
+            userEidCertificateFromArgs.subjectInfo(QSslCertificate::CommonName).join(' ');
+        emit certificateHashMismatch(certSubject);
     }
 }
 
