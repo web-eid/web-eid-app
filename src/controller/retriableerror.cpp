@@ -27,7 +27,7 @@
 
 QDebug& operator<<(QDebug& d, const RetriableError e)
 {
-    return d << magic_enum::enum_name(e).data();
+    return d << QString::fromStdString(std::string(magic_enum::enum_name(e)));
 }
 
 RetriableError toRetriableError(const electronic_id::AutoSelectFailed::Reason reason)

@@ -85,8 +85,8 @@ QVariantMap GetCertificate::onConfirm(WebEidUI* /* window */)
     requireValidCardInfoAndCertificate();
 
     // Quoting https://tools.ietf.org/html/rfc7515#section-4.1.6:
-    // Each string in the array is a base64-encoded (Section 4 of [RFC4648] -- not
-    // base64url-encoded) DER [ITU.X690.2008] PKIX certificate value.
+    // Each string in the array is a Base64-encoded (Section 4 of [RFC4648] -- not
+    // Base64url-encoded) DER [ITU.X690.2008] PKIX certificate value.
     auto certPem = certificateDer.toBase64();
 
     auto algos = certificateType.isAuthentication() ? supportedAuthAlgo(cardInfo->eid())
