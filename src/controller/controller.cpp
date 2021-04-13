@@ -249,9 +249,11 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
 
 void Controller::onRetry()
 {
-    // FIXME: need error handling here, encapsulate it somehow (in functional style probably) for
-    // reuse.
-    startCommandExecution();
+    try {
+        startCommandExecution();
+    } catch (const std::exception& error) {
+        onCriticalFailure(error.what());
+    }
 }
 
 void Controller::connectRetry(const ControllerChildThread* childThread)
@@ -304,10 +306,12 @@ void Controller::onDialogCancel()
 
 void Controller::onCriticalFailure(const QString& error)
 {
-    qCritical() << "Command" << std::string(commandType()) << "fatal error:" << error;
+    qCritical() << "Exiting due to command" << std::string(commandType())
+                << "fatal error:" << error;
     writeResponseToStdOut(isInStdinMode, makeErrorObject(RESP_TECH_ERROR, error), commandType());
 
     if (window) {
+        window->disconnect();
         window->close();
     }
     WebEidUI::showFatalError();

@@ -107,6 +107,5 @@ RetriableError toRetriableError(const electronic_id::AutoSelectFailed::Reason re
     }
 
 #define WARN_RETRIABLE_ERROR(commandType, errorCode, error)                                        \
-    qWarning() << "Command" << commandType << "retriable error:" << errorCode << ":" << error      \
-               << "in" << pcsc_cpp::removeAbsolutePathPrefix(__FILE__) << ':' << __LINE__ << ':'   \
-               << __func__
+    qWarning().nospace() << "Command " << commandType << " retriable error " << errorCode << ": "  \
+                         << error

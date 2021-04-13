@@ -128,8 +128,8 @@ Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(
     }
 
     nonce = validateAndGetArgument<QString>(QStringLiteral("nonce"), arguments);
-    // nonce must contain at least 256 bits of entropy and is usually Base-64-encoded, so the
-    // required byte length is 44, the length of 32 Base-64-encoded bytes.
+    // nonce must contain at least 256 bits of entropy and is usually Base64-encoded, so the
+    // required byte length is 44, the length of 32 Base64-encoded bytes.
     if (nonce.length() < 44) {
         THROW(CommandHandlerInputDataError,
               "Challenge nonce argument 'nonce' must be at least 44 characters long");
