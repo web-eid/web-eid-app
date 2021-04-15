@@ -89,6 +89,7 @@ void CertificateReader::run(CardInfo::ptr _cardInfo)
 
 void CertificateReader::connectSignals(const WebEidUI* window)
 {
+    window->disconnect(this);
     connect(this, &CertificateReader::certificateReady, window, &WebEidUI::onCertificateReady);
 }
 
