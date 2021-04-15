@@ -9,6 +9,14 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x86, x64]
+        include:
+        - arch: x86
+          qt: win32_msvc2017
+        - arch: x64
+          qt: win64_msvc2017_64
 
     steps:
       - name: Checkout code
@@ -17,23 +25,23 @@ jobs:
           submodules: recursive
 
       - name: Prepare vcpkg and libraries
-        uses: lukka/run-vcpkg@v6
+        uses: lukka/run-vcpkg@v7
         with:
           vcpkgArguments: gtest openssl
-          vcpkgTriplet: x64-windows
-          vcpkgGitCommitId: 3c466eb80c705ec42dbb278351e2ef2f5253b622 # previously 2020.11-1, didn't work due to vcpkg/issues/15928
-
-      - name: Setup MS Visual C++ dev env
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
-          toolset: 14.16 # Latest MS VC 2017
+          vcpkgTriplet: ${{ matrix.arch }}-windows
+          vcpkgGitCommitId: 18376a2f2ce989e022db5c1199b468e43f7c1a79
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
           version: "5.12.10"
-          arch: win64_msvc2017_64
+          arch: ${{ matrix.qt }}
+
+      - name: Setup MS Visual C++ dev env
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+          toolset: 14.16 # Latest MS VC 2017
 
       - name: Create build directory
         run: mkdir build
@@ -41,7 +49,7 @@ jobs:
       - name: Configure CMake
         working-directory: ${{github.workspace}}/build
         run: |
-          cmake -A x64 `
+          cmake "-GNinja" `
             "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
             "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" ..
 
@@ -52,6 +60,7 @@ jobs:
           cmake --build . --config ${env:BUILD_TYPE} --target installer
 
       - name: Test
+        if: matrix.arch == 'x64'
         working-directory: ${{github.workspace}}/build
         run: ctest -V -C ${env:BUILD_TYPE}
 
@@ -59,4 +68,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: web-eid-app-windows-build-${{github.run_number}}
-          path: build/src/app/RelWithDebInfo/*.msi # ${{ env:BUILD_TYPE }} didn't work, although it should
+          path: build/src/app/*.msi
