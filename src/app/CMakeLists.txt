@@ -23,17 +23,30 @@ if(WIN32)
     get_filename_component(SSL_PATH "${OPENSSL_CRYPTO_LIBRARY}" DIRECTORY)
     get_filename_component(SSL_PATH "${SSL_PATH}/../bin" ABSOLUTE)
     set(WEBEID_PATH web-eid.exe)
-    set(MSI_FILE $<TARGET_NAME:web-eid>-${PROJECT_VERSION}.${PLATFORM}.msi)
+    set(MSI_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.${PLATFORM})
+    list(APPEND CANDLE_CMD "$ENV{WIX}bin\\candle.exe" -nologo -arch ${PLATFORM}
+        -dMSI_VERSION=${PROJECT_VERSION}
+        -dPlatform=${PLATFORM}
+        -dssl_path="${SSL_PATH}"
+        -dqt_suffix="$<$<CONFIG:Debug>:d>"
+        -djson=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
+        -djsonfirefox=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
+        -dFIREFOX_URL="${FIREFOX_URL}"
+        -dFIREFOX_UUID="${FIREFOX_UUID}"
+        -dapp_path=$<TARGET_FILE:web-eid>
+        ${CMAKE_SOURCE_DIR}/install/web-eid.wxs
+        ${CMAKE_SOURCE_DIR}/install/WelcomeDlg2.wxs
+        ${CMAKE_SOURCE_DIR}/install/WixUI_Minimal2.wxs
+    )
+    list(APPEND LIGHT_CMD "$ENV{WIX}bin\\light.exe" -nologo -ext WixUIExtension
+        web-eid.wixobj WelcomeDlg2.wixobj WixUI_Minimal2.wixobj
+    )
     add_custom_target(installer DEPENDS web-eid
-        COMMAND "$ENV{WIX}bin\\candle.exe" -nologo -arch ${PLATFORM} -dMSI_VERSION=${PROJECT_VERSION} -dPlatform=${PLATFORM}
-            -dssl_path="${SSL_PATH}" -dqt_suffix="$<$<CONFIG:Debug>:d>" -dqt_path=${_qt5Core_install_prefix}
-            -djson=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
-            -djsonfirefox=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
-            -dFIREFOX_URL="${FIREFOX_URL}" -dFIREFOX_UUID="${FIREFOX_UUID}"
-            -dapp_path=$<TARGET_FILE:web-eid> ${CMAKE_SOURCE_DIR}/install/web-eid.wxs
-            ${CMAKE_SOURCE_DIR}/install/WelcomeDlg2.wxs ${CMAKE_SOURCE_DIR}/install/WixUI_Minimal2.wxs
-        COMMAND "$ENV{WIX}bin\\light.exe" -nologo -ext WixUIExtension -o ${MSI_FILE}
-            web-eid.wixobj WelcomeDlg2.wixobj WixUI_Minimal2.wixobj
+        COMMAND ${CANDLE_CMD}
+        COMMAND ${LIGHT_CMD} -o "${MSI_FILE}.msi"
+        #Build MSI with QT
+        COMMAND ${CANDLE_CMD} -dqt_path=${_qt5Core_install_prefix}
+        COMMAND ${LIGHT_CMD} -o "${MSI_FILE}.qt.msi"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
     if(SIGNCERT)
@@ -44,7 +57,7 @@ if(WIN32)
             COMMAND_EXPAND_LISTS
         )
         add_custom_command(TARGET installer POST_BUILD
-            COMMAND ${SIGNCMD} ${MSI_FILE}
+            COMMAND ${SIGNCMD} "${MSI_FILE}.msi" "${MSI_FILE}.qt.msi"
             WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
         )
     endif()

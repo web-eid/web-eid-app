@@ -38,6 +38,9 @@
     <Icon Id="web_eid.exe" SourceFile="$(var.app_path)"/>
     <Property Id="ARPPRODUCTICON" Value="web_eid.exe"/>
     <Property Id="APPLICATIONNAME" Value="web-eid"/>
+    <Property Id="CHROMEINSTALL" Value="1"/>
+    <Property Id="EDGEINSTALL" Value="1"/>
+    <Property Id="FIREFOXINSTALL" Value="1"/>
     <MajorUpgrade AllowSameVersionUpgrades="yes" Schedule="afterInstallInitialize" DowngradeErrorMessage=
       "A newer version of [ProductName] is already installed. If you are trying to downgrade, please uninstall the newer version first."/>
     <Condition Message="[ProductName] requires Windows 8.1 or higher.">
@@ -51,6 +54,8 @@
     <Binary Id="FirefoxAction.CA.dll" SourceFile="$(sys.SOURCEFILEDIR)FirefoxAction.CA.dll" />
     <CustomAction Id="ExtensionSettingsInstall" Return="check" Execute="deferred" Impersonate="no"
       BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsInstall" />
+    <CustomAction Id="ExtensionSettingsNoInstall" Return="check" Execute="deferred" Impersonate="no"
+      BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsRemove" />
     <CustomAction Id="ExtensionSettingsRemove" Return="check" Execute="deferred" Impersonate="no"
       BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsRemove" />
 
@@ -61,8 +66,9 @@
 
     <InstallExecuteSequence>
       <Custom Action="SetExtensionSettingsForInstall" Before="InstallInitialize" />
-      <Custom Action="ExtensionSettingsInstall" Before="InstallFinalize">NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
       <Custom Action="SetExtensionSettingsForRemove" Before="InstallInitialize" />
+      <Custom Action="ExtensionSettingsInstall" Before="InstallFinalize">FIREFOXINSTALL=1 AND NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
+      <Custom Action="ExtensionSettingsNoInstall" Before="InstallFinalize">NOT (FIREFOXINSTALL=1) AND NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
       <Custom Action="ExtensionSettingsRemove" Before="InstallFinalize">(REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE)</Custom>
     </InstallExecuteSequence>
 
@@ -71,11 +77,12 @@
         <Directory Id="APPLICATIONFOLDER" Name="Web eID">
           <Component Id="Application" Guid="9b61583c-308f-435d-b221-c2f250271c7c">
             <File Source="$(var.app_path)" KeyPath="yes"/>
-            <File Source="$(var.json)"/>
-            <File Source="$(var.jsonfirefox)"/>
+<?ifdef var.qt_path ?>
             <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll"/>
             <File Source="$(var.VCPATH)\vcruntime140$(var.qt_suffix).dll"/>
+<?if $(var.Platform) = x64 ?>
             <File Source="$(var.VCPATH)\vcruntime140_1$(var.qt_suffix).dll"/>
+<?endif?>
             <File Source="$(var.ssl_path)\libcrypto-1_1$(var.ssl_suffix).dll"/>
             <File Source="$(var.ssl_path)\libssl-1_1$(var.ssl_suffix).dll"/>
             <File Source="$(var.qt_path)\bin\Qt5Core$(var.qt_suffix).dll"/>
@@ -87,11 +94,21 @@
             <File Source="$(var.qt_path)\bin\libGLESv2$(var.qt_suffix).dll"/>
             <File Source="$(var.qt_path)\bin\D3DCompiler_47.dll"/>
             <File Source="$(var.qt_path)\bin\opengl32sw.dll" />
+<?endif?>
+          </Component>
+          <Component Id="ChromeEdge" Transitive="yes" >
+            <Condition><![CDATA[(CHROMEINSTALL = 1 OR EDGEINSTALL = 1)]]></Condition>
+            <File Source="$(var.json)"/>
             <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.json"
               Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\eu.webeid"/>
+          </Component>
+          <Component Id="Firefox" Transitive="yes" >
+            <Condition><![CDATA[(FIREFOXINSTALL = 1)]]></Condition>
+            <File Source="$(var.jsonfirefox)"/>
             <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.firefox.json"
               Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" />
           </Component>
+<?ifdef var.qt_path ?>
           <Directory Id="platforms" Name="platforms" FileSource="$(var.qt_path)\plugins\platforms">
             <Component Id="qwindows.dll">
               <File Name="qwindows$(var.qt_suffix).dll"/>
@@ -102,12 +119,17 @@
               <File Name="qwindowsvistastyle$(var.qt_suffix).dll"/>
             </Component>
           </Directory>
+<?endif?>
         </Directory>
       </Directory>
-      <Component Id="ChromeEdge" Guid="103dceaa-c535-445a-b27d-dcd19c74cd3e" Win64="no">
+      <Component Id="Chrome" Win64="no">
+        <Condition><![CDATA[(CHROMEINSTALL = 1)]]></Condition>
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic"
           Value="https://clients2.google.com/service/update2/crx"/>
+      </Component>
+      <Component Id="Edge" Win64="no">
+        <Condition><![CDATA[(EDGEINSTALL = 1)]]></Condition>
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido"
           Value="https://edge.microsoft.com/extensionwebstorebase/v1/crx"/>
@@ -117,8 +139,13 @@
     <Feature Id="Install" Level="1" Title="Web eID" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER">
       <ComponentRef Id="Application"/>
       <ComponentRef Id="ChromeEdge"/>
+      <ComponentRef Id="Chrome"/>
+      <ComponentRef Id="Edge"/>
+      <ComponentRef Id="Firefox"/>
+<?ifdef var.qt_path ?>
       <ComponentRef Id="qwindows.dll" />
       <ComponentRef Id="qwindowsvistastyle.dll" />
+<?endif?>
     </Feature>
   </Product>
 </Wix>
