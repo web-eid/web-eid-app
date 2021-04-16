@@ -72,7 +72,7 @@ public: // slots
 private:
     void onOkButtonClicked(); // slot
 
-    void makeOkButtonDefaultAndconnectSignals();
+    void makeOkButtonDefaultRemoveIconsAndconnectSignals();
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLenght);
     void startPinTimeoutProgressBar();
     std::tuple<QLabel*, QLabel*, QLabel*> certificateLabelsOnPage();
@@ -83,6 +83,7 @@ private:
     void displayFatalError(QLabel* label, const QString& message);
     void hidePinAndDocHashWidgets();
     void onRetryImpl(const QString& error);
+    void resizeHeight();
 
     std::pair<QString, std::pair<QString, QString>>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
