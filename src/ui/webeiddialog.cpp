@@ -41,7 +41,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Ui::WebEi
     ui->signingPinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
 
     okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
-    makeOkButtonDefaultAndconnectSignals();
+    makeOkButtonDefaultRemoveIconsAndconnectSignals();
 
     lineHeight = ui->authenticateOriginLabel->height();
 
@@ -87,8 +87,7 @@ void WebEidDialog::switchPage(const CommandType commandType)
     okButton->setHidden(commandType == CommandType::INSERT_CARD);
 
     ui->pageStack->setCurrentIndex(int(commandType));
-    ui->pageStack->setFixedHeight(ui->pageStack->currentWidget()->sizeHint().height());
-    adjustSize();
+    resizeHeight();
 }
 
 QString WebEidDialog::getPin()
@@ -147,7 +146,9 @@ void WebEidDialog::onCertificateReady(const QUrl& origin, const CertificateStatu
     } else if (currentCommand != CommandType::GET_CERTIFICATE) {
         setupPinInputValidator(pinInfo.pinMinMaxLength);
         if (pinInfo.pinRetriesCount.first != pinInfo.pinRetriesCount.second) {
-            pinErrorLabelOnPage()->setText(
+            auto pinErrorLabel = pinErrorLabelOnPage();
+            pinErrorLabel->show();
+            pinErrorLabel->setText(
                 tr("%n retries left", nullptr, int(pinInfo.pinRetriesCount.first)));
         }
     }
@@ -181,6 +182,12 @@ void WebEidDialog::onRetryImpl(const QString& error)
     }
 }
 
+void WebEidDialog::resizeHeight()
+{
+    ui->pageStack->setFixedHeight(ui->pageStack->currentWidget()->sizeHint().height());
+    adjustSize();
+}
+
 // Returns a tuple of error message, and title and icon.
 std::pair<QString, std::pair<QString, QString>>
 WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
@@ -197,70 +204,67 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     case RetriableError::PKCS11_TOKEN_NOT_PRESENT:
         return {tr("No smart card in reader. "
                    "Please insert an electronic ID card into the reader."),
-                {tr("Insert an ID card"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("Insert an ID card"), QStringLiteral(":/images/id-card.svg")}};
     case RetriableError::SMART_CARD_WAS_REMOVED:
     case RetriableError::PKCS11_TOKEN_REMOVED:
         return {tr("The smart card was removed. "
                    "Please insert an electronic ID card into the reader."),
-                {tr("Insert an ID card"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("Insert an ID card"), QStringLiteral(":/images/id-card.svg")}};
 
     case RetriableError::SMART_CARD_TRANSACTION_FAILED:
         return {tr("The smart card transaction failed. "
                    "Please make sure that the smart card and reader are properly connected."),
-                {tr("Check the ID card connection"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("Check the ID card connection"), QStringLiteral(":/images/id-card.svg")}};
     case RetriableError::FAILED_TO_COMMUNICATE_WITH_CARD_OR_READER:
         return {tr("Failed to communicate with the smart card or reader. "
                    "Please make sure that the smart card and reader are properly connected."),
-                {tr("Check the ID card connection"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("Check the ID card connection"), QStringLiteral(":/images/id-card.svg")}};
 
     case RetriableError::SMART_CARD_CHANGE_REQUIRED:
         return {tr("The smart card is malfunctioning, please change the smart card."),
-                {tr("Change the ID card"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("Change the ID card"), QStringLiteral(":/images/id-card.svg")}};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
         return {tr("A smart card command failed."),
-                {tr("ID card failure"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("ID card failure"), QStringLiteral(":/images/id-card.svg")}};
         // TODO: what action should the user take? Should this be fatal?
     case RetriableError::PKCS11_ERROR:
         return {tr("Smart card middleware error."),
-                {tr("ID card middleware failure"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("ID card middleware failure"), QStringLiteral(":/images/id-card.svg")}};
         // TODO: what action should the user take? Should this be fatal?
     case RetriableError::SCARD_ERROR:
         return {tr("Internal smart card service error occurred. "
                    "Please make sure that the smart card and reader are properly connected "
                    "or try restarting the smart card service."),
-                {tr("ID card failure"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("ID card failure"), QStringLiteral(":/images/id-card.svg")}};
 
     case RetriableError::UNSUPPORTED_CARD:
         return {tr("Unsupported smart card in reader. "
                    "Please insert a supported electronic ID card into the reader."),
-                {tr("Change the ID card"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("Change the ID card"), QStringLiteral(":/images/id-card.svg")}};
 
     case RetriableError::MULTIPLE_SUPPORTED_CARDS:
         // TODO: Here we should display a multi-select prompt instead.
         return {tr("Multiple electronic ID cards inserted. Please assure that "
                    "only a single ID card is inserted."),
-                {tr("Change the ID card"), QStringLiteral(":/images/id-kaart.svg")}};
+                {tr("Change the ID card"), QStringLiteral(":/images/id-card.svg")}};
 
     case RetriableError::UNKNOWN_ERROR:
-        return {tr("Unknown error"),
-                {tr("Unknown error"), QStringLiteral(":/images/id-kaart.svg")}};
+        return {tr("Unknown error"), {tr("Unknown error"), QStringLiteral(":/images/id-card.svg")}};
     }
-    return {tr("Unknown error"), {tr("Unknown error"), QStringLiteral(":/images/id-kaart.svg")}};
+    return {tr("Unknown error"), {tr("Unknown error"), QStringLiteral(":/images/id-card.svg")}};
 }
 
 void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                      const quint8 retriesLeft)
 {
     using Status = electronic_id::VerifyPinFailed::Status;
-    auto pinErrorLabel = pinErrorLabelOnPage();
 
     QString message;
 
     // FIXME: don't allow retry in case of PIN_BLOCKED, UNKNOWN_ERROR
     switch (status) {
     case Status::RETRY_ALLOWED:
-        // Windows: An incorrect PIN was presented to the smart card: 2 retries left.
         message = tr("Incorrect PIN, %n retries left", nullptr, retriesLeft);
         break;
     case Status::PIN_BLOCKED:
@@ -280,6 +284,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
         break;
     }
 
+    auto pinErrorLabel = pinErrorLabelOnPage();
     pinErrorLabel->setHidden(message.isEmpty());
     pinErrorLabel->setText(message);
 
@@ -288,7 +293,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     }
 }
 
-void WebEidDialog::makeOkButtonDefaultAndconnectSignals()
+void WebEidDialog::makeOkButtonDefaultRemoveIconsAndconnectSignals()
 {
     auto cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
 
@@ -299,6 +304,9 @@ void WebEidDialog::makeOkButtonDefaultAndconnectSignals()
     cancelButton->setAutoDefault(false);
     okButton->setDefault(true);
     okButton->setAutoDefault(true);
+
+    cancelButton->setIcon(QIcon());
+    okButton->setIcon(QIcon());
 }
 
 void WebEidDialog::setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLenght)
@@ -341,8 +349,7 @@ void WebEidDialog::setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMin
         pinInput->setFocus();
     }
 
-    ui->pageStack->setFixedHeight(ui->pageStack->currentWidget()->sizeHint().height());
-    adjustSize();
+    resizeHeight();
 }
 
 void WebEidDialog::startPinTimeoutProgressBar()

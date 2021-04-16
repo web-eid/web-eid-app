@@ -143,7 +143,7 @@ font-weight: bold;
             </size>
            </property>
            <property name="pixmap">
-            <pixmap resource="web-eid-resources.qrc">:/images/id-kaart.svg</pixmap>
+            <pixmap resource="web-eid-resources.qrc">:/images/id-card.svg</pixmap>
            </property>
           </widget>
          </item>
