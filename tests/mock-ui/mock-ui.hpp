@@ -40,10 +40,9 @@ public:
     }
 
 public: // slots
-    void onCertificateReady(const QUrl&, const CertificateStatus, const CertificateInfo&,
-                            const PinInfo&) override
+    void onCertificatesReady(const QUrl&, const std::vector<CertificateAndPinInfo>&) override
     {
-        emit accepted();
+        emit accepted(0);
     }
 
     void onSigningCertificateHashMismatch(const QString&) override {}

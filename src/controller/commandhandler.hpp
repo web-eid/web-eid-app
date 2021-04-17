@@ -33,9 +33,9 @@ class CommandHandler : public QObject
 public:
     using ptr = std::unique_ptr<CommandHandler>;
 
-    virtual void run(electronic_id::CardInfo::ptr cardInfo) = 0;
+    virtual void run(const std::vector<electronic_id::CardInfo::ptr>& cards) = 0;
     virtual void connectSignals(const WebEidUI* window) = 0;
-    virtual QVariantMap onConfirm(WebEidUI* window) = 0;
+    virtual QVariantMap onConfirm(WebEidUI* window, const size_t selectedCardIndex) = 0;
 
     CommandType commandType() const { return command.first; }
 

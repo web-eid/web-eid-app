@@ -32,7 +32,7 @@ public:
     explicit Authenticate(const CommandWithArguments& cmd);
 
     void connectSignals(const WebEidUI* window) override;
-    QVariantMap onConfirm(WebEidUI* window) override;
+    QVariantMap onConfirm(WebEidUI* window, const size_t selectedCardIndex) override;
 
 signals:
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,

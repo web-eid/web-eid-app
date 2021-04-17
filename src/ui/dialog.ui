@@ -477,7 +477,7 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-         <widget class="CertificateWidget" name="signingCertificateInfo" native="true"/>
+        <widget class="CertificateWidget" name="signingCertificateInfo" native="true"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="signingPinLayout">

@@ -31,5 +31,5 @@ class GetCertificate : public CertificateReader
 public:
     GetCertificate(const CommandWithArguments& cmd);
 
-    QVariantMap onConfirm(WebEidUI* window) override;
+    QVariantMap onConfirm(WebEidUI* window, const size_t selectedCardIndex) override;
 };

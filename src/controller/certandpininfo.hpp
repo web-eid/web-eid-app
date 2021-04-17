@@ -56,3 +56,12 @@ struct PinInfo
 };
 
 Q_DECLARE_METATYPE(PinInfo)
+
+struct CertificateAndPinInfo
+{
+    CertificateStatus certStatus;
+    CertificateInfo certInfo;
+    PinInfo pinInfo;
+};
+
+Q_DECLARE_METATYPE(CertificateAndPinInfo)

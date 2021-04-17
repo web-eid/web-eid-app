@@ -92,25 +92,22 @@ void Controller::run()
 void Controller::startCommandExecution()
 {
     try {
-        const auto availableCardInfos = availableSupportedCards();
+        const auto availableCards = availableSupportedCards();
 
-        if (availableCardInfos.empty()) {
-            waitUntilSupportedCardSelected();
-        } else if (availableCardInfos.size() == 1) {
-            const auto selectedCardInfo = availableCardInfos[0];
-            qInfo() << "Reader" << selectedCardInfo->reader().name << "has supported card"
-                    << selectedCardInfo->eid().name();
-
-            onCardReady(selectedCardInfo);
+        if (availableCards.empty()) {
+            waitUntilSupportedCardAvailable();
         } else {
-            qInfo() << "Readers" << availableCardInfos.size() << "has supported cards";
-            onAvailableCards(availableCardInfos);
+            for (const auto& card : availableCards) {
+                qInfo() << "Reader" << card->reader().name << "has supported card"
+                        << card->eid().name();
+            }
+            onCardsAvailable(availableCards);
         }
 
     } catch (const AutoSelectFailed& failure) {
         qInfo() << "Card autoselect failed:"
                 << std::string(magic_enum::enum_name(failure.reason()));
-        waitUntilSupportedCardSelected();
+        waitUntilSupportedCardAvailable();
     }
     CATCH_PCSC_CPP_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardSelected)
     CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardSelected)
@@ -120,17 +117,17 @@ void Controller::warnAndWaitUntilSupportedCardSelected(const RetriableError erro
                                                        const std::exception& error)
 {
     WARN_RETRIABLE_ERROR(std::string(commandType()), errorCode, error);
-    waitUntilSupportedCardSelected();
+    waitUntilSupportedCardAvailable();
 }
 
-void Controller::waitUntilSupportedCardSelected()
+void Controller::waitUntilSupportedCardAvailable()
 {
     // Reader monitor thread setup.
     ReaderMonitorThread* readerMonitorThread = new ReaderMonitorThread(this);
     connect(readerMonitorThread, &ReaderMonitorThread::statusUpdate, this,
             &Controller::onReaderMonitorStatusUpdate);
-    connect(readerMonitorThread, &ReaderMonitorThread::cardReady, this, &Controller::onCardReady);
-    connect(readerMonitorThread, &ReaderMonitorThread::availableCardInfos, this, &Controller::onAvailableCards);
+    connect(readerMonitorThread, &ReaderMonitorThread::cardsAvailable, this,
+            &Controller::onCardsAvailable);
     saveChildThreadPtrAndConnectFailureFinish(readerMonitorThread);
 
     // UI setup.
@@ -177,20 +174,17 @@ void Controller::connectOkCancelWaitingForPinPad()
     connect(window.get(), &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
 }
 
-void Controller::onAvailableCards(const std::vector<electronic_id::CardInfo::ptr> &/*availableCards*/)
-{
-
-}
-
-void Controller::onCardReady(const CardInfo::ptr& card)
+void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& availableCards)
 {
     try {
         REQUIRE_NON_NULL(commandHandler)
 
-        setCard(card);
-        const auto protocol =
-            card->eid().smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
-        qInfo() << "Using smart card protocol" << protocol;
+        setCards(availableCards);
+        for (const auto& card : availableCards) {
+            const auto protocol =
+                card->eid().smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
+            qInfo() << "Using smart card protocol" << protocol << "for card" << card->eid().name();
+        }
 
         if (!window) {
             window = WebEidUI::createAndShowDialog(commandHandler->commandType());
@@ -212,7 +206,7 @@ void Controller::runCommandHandler()
 {
     try {
         CommandHandlerRunThread* commandHandlerRunThread =
-            new CommandHandlerRunThread(this, *commandHandler, cardInfo);
+            new CommandHandlerRunThread(this, *commandHandler, cards);
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerRunThread);
         connectRetry(commandHandlerRunThread);
 
@@ -228,11 +222,11 @@ void Controller::onReaderMonitorStatusUpdate(const RetriableError reason)
     emit statusUpdate(reason);
 }
 
-void Controller::onConfirmCommandHandler()
+void Controller::onConfirmCommandHandler(const size_t selectedCardIndex)
 {
     try {
         CommandHandlerConfirmThread* commandHandlerConfirmThread =
-            new CommandHandlerConfirmThread(this, *commandHandler, window.get());
+            new CommandHandlerConfirmThread(this, *commandHandler, window.get(), selectedCardIndex);
         connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
                 &Controller::onCommandHandlerConfirmCompleted);
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerConfirmThread);
@@ -287,10 +281,10 @@ void Controller::disconnectRetry()
     }
 }
 
-void Controller::onDialogOK()
+void Controller::onDialogOK(const size_t selectedCardIndex)
 {
     if (commandHandler) {
-        onConfirmCommandHandler();
+        onConfirmCommandHandler(selectedCardIndex);
     } else {
         // This should not happen, and when it does, OK should be equivalent to cancel.
         onDialogCancel();
@@ -353,10 +347,10 @@ void Controller::waitForChildThreads()
     }
 }
 
-void Controller::setCard(CardInfo::ptr card)
+void Controller::setCards(std::vector<CardInfo::ptr> availableCards)
 {
-    REQUIRE_NON_NULL(card)
-    this->cardInfo = card;
+    REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableCards)
+    this->cards = availableCards;
 }
 
 CommandType Controller::commandType()

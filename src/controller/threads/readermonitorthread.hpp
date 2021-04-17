@@ -32,7 +32,7 @@ public:
     explicit ReaderMonitorThread(QObject* parent) : ControllerChildThread(parent) {}
 
 Q_SIGNALS:
-    void availableCardInfos(std::vector<electronic_id::CardInfo::ptr>& cardInfo);
+    void cardsAvailable(std::vector<electronic_id::CardInfo::ptr>& cardInfo);
     void cardReady(const electronic_id::CardInfo::ptr& cardInfo);
     void statusUpdate(const RetriableError status);
 

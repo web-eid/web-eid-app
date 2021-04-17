@@ -142,9 +142,10 @@ Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(
     validateAndStoreOriginCertificate(arguments);
 }
 
-QVariantMap Authenticate::onConfirm(WebEidUI* window)
+QVariantMap Authenticate::onConfirm(WebEidUI* window, const size_t selectedCardIndex)
 {
-    requireValidCardInfoAndCertificate();
+    auto [cardInfo, certificate, certificateDer] =
+        requireValidCardInfoAndCertificate(selectedCardIndex);
 
     const auto signatureAlgorithm =
         QString::fromStdString(cardInfo->eid().authSignatureAlgorithm());

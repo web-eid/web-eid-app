@@ -29,9 +29,11 @@ class CommandHandlerConfirmThread : public ControllerChildThread
     Q_OBJECT
 
 public:
-    CommandHandlerConfirmThread(QObject* parent, CommandHandler& handler, WebEidUI* w) :
-        ControllerChildThread(parent), commandHandler(handler),
-        cmdType(commandHandler.commandType()), window(w)
+    CommandHandlerConfirmThread(QObject* parent, CommandHandler& handler, WebEidUI* w,
+                                const size_t cardIndex) :
+        ControllerChildThread(parent),
+        commandHandler(handler), cmdType(commandHandler.commandType()), window(w),
+        selectedCardIndex(cardIndex)
     {
     }
 
@@ -41,7 +43,7 @@ signals:
 private:
     void doRun() override
     {
-        const auto result = commandHandler.onConfirm(window);
+        const auto result = commandHandler.onConfirm(window, selectedCardIndex);
         emit completed(result);
     }
 
@@ -50,4 +52,5 @@ private:
     CommandHandler& commandHandler;
     const std::string cmdType;
     WebEidUI* window;
+    const size_t selectedCardIndex;
 };

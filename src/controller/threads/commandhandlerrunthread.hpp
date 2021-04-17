@@ -30,18 +30,18 @@ class CommandHandlerRunThread : public ControllerChildThread
 
 public:
     CommandHandlerRunThread(QObject* parent, CommandHandler& handler,
-                            electronic_id::CardInfo::ptr c) :
+                            const std::vector<electronic_id::CardInfo::ptr>& cs) :
         ControllerChildThread(parent),
-        commandHandler(handler), cmdType(commandHandler.commandType()), card(c)
+        commandHandler(handler), cmdType(commandHandler.commandType()), cards(cs)
     {
     }
 
 private:
-    void doRun() override { commandHandler.run(card); }
+    void doRun() override { commandHandler.run(cards); }
 
     const std::string& commandType() const override { return cmdType; }
 
     CommandHandler& commandHandler;
     const std::string cmdType;
-    electronic_id::CardInfo::ptr card;
+    std::vector<electronic_id::CardInfo::ptr> cards;
 };

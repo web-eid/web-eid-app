@@ -80,9 +80,10 @@ GetCertificate::GetCertificate(const CommandWithArguments& cmd) : CertificateRea
     }
 }
 
-QVariantMap GetCertificate::onConfirm(WebEidUI* /* window */)
+QVariantMap GetCertificate::onConfirm(WebEidUI* /* window */, const size_t selectedCardIndex)
 {
-    requireValidCardInfoAndCertificate();
+    auto [cardInfo, certificate, certificateDer] =
+        requireValidCardInfoAndCertificate(selectedCardIndex);
 
     // Quoting https://tools.ietf.org/html/rfc7515#section-4.1.6:
     // Each string in the array is a Base64-encoded (Section 4 of [RFC4648] -- not
