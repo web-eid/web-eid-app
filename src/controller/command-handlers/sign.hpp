@@ -31,9 +31,9 @@ class Sign : public CertificateReader
 public:
     explicit Sign(const CommandWithArguments& cmd);
 
-    void run(electronic_id::CardInfo::ptr _cardInfo) override;
+    void run(const std::vector<electronic_id::CardInfo::ptr>& cards) override;
     void connectSignals(const WebEidUI* window) override;
-    QVariantMap onConfirm(WebEidUI* window) override;
+    QVariantMap onConfirm(WebEidUI* window, const size_t selectedCardIndex) override;
 
 signals:
     void certificateHashMismatch(const QString& subjectOfUserCertFromArgs);

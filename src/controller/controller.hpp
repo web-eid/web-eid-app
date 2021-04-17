@@ -51,16 +51,16 @@ public: // slots
     void run();
 
     // Called either directly from run() or from the monitor thread when the card is ready.
-    void onAvailableCards(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
+    void onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
 
     // Called either directly from run() or from monitor thread when card is ready.
-    void onCardReady(const electronic_id::CardInfo::ptr& cardInfo);
+    void onCardReady(const electronic_id::CardInfo::ptr& cards);
 
     // Called on reader and card events from monitor thread.
     void onReaderMonitorStatusUpdate(const RetriableError reason);
 
     // Called either directly from onDialogOK() or from the dialog when waiting for PIN-pad.
-    void onConfirmCommandHandler();
+    void onConfirmCommandHandler(const size_t selectedCard);
 
     // Called from CommandHandlerConfirm thread.
     void onCommandHandlerConfirmCompleted(const QVariantMap& result);
@@ -69,7 +69,7 @@ public: // slots
     void onRetry();
 
     // User events from the dialog.
-    void onDialogOK();
+    void onDialogOK(const size_t selectedCardIndex);
     void onDialogCancel();
 
     // Failure handler, reports the error and quits the application.
@@ -84,20 +84,20 @@ private:
     void startCommandExecution();
     void warnAndWaitUntilSupportedCardSelected(const RetriableError errorCode,
                                                const std::exception& error);
-    void waitUntilSupportedCardSelected();
+    void waitUntilSupportedCardAvailable();
     void connectOkCancelWaitingForPinPad();
     void connectRetry(const ControllerChildThread* childThread);
     void disconnectRetry();
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
     void exit();
     void waitForChildThreads();
-    void setCard(electronic_id::CardInfo::ptr cardInfo);
+    void setCards(std::vector<electronic_id::CardInfo::ptr> cards);
     CommandType commandType();
 
     CommandWithArgumentsPtr command;
     CommandHandler::ptr commandHandler = nullptr;
     std::unordered_map<uintptr_t, observer_ptr<ControllerChildThread>> childThreads;
-    electronic_id::CardInfo::ptr cardInfo = nullptr;
+    std::vector<electronic_id::CardInfo::ptr> cards;
     WebEidUI::ptr window = nullptr;
     QVariantMap _result;
     bool isInStdinMode = true;

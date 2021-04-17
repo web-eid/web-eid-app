@@ -63,8 +63,9 @@ public:
 
 public: // slots
     void onReaderMonitorStatusUpdate(const RetriableError status) override;
-    void onCertificateReady(const QUrl& origin, const CertificateStatus certStatus,
-                            const CertificateInfo& certInfo, const PinInfo& pinInfo) override;
+    void
+    onCertificatesReady(const QUrl& origin,
+                        const std::vector<CertificateAndPinInfo>& certificateAndPinInfos) override;
     void onSigningCertificateHashMismatch(const QString& subjectOfUserCertFromArgs) override;
     void onRetry(const RetriableError error) override;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
@@ -86,7 +87,7 @@ private:
     void onRetryImpl(const QString& error);
     void resizeHeight();
 
-    std::pair<QString, std::pair<QString, QString>>
+    std::tuple<QString, QString, QString>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
 
     Ui::WebEidDialog* ui;

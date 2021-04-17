@@ -27,34 +27,28 @@
 
 using namespace electronic_id;
 
-CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandHandler(cmd)
+namespace
 {
-    validateAndStoreOrigin(cmd.second);
-}
 
-void CertificateReader::run(CardInfo::ptr _cardInfo)
+const QMap<ElectronicID::Type, QString> ICONS {
+    {ElectronicID::EstEID, QStringLiteral(":/images/esteid.png")},
+    {ElectronicID::FinEID, QStringLiteral(":/images/fineid.png")},
+    {ElectronicID::LatEID, QStringLiteral(":/images/lateid.png")},
+    {ElectronicID::LitEID, QStringLiteral(":/images/liteid.png")},
+};
+
+std::pair<CertificateReader::CerificateAndDer, CertificateAndPinInfo>
+getCertificateWithInfo(CardInfo::ptr card, const CertificateType certificateType,
+                       const bool isAuthenticate)
 {
-    static const QMap<ElectronicID::Type, QString> icons {
-        {ElectronicID::EstEID, QStringLiteral(":/esteid.png")},
-        {ElectronicID::FinEID, QStringLiteral(":/fineid.png")},
-        {ElectronicID::LatEID, QStringLiteral(":/lateid.png")},
-        {ElectronicID::LitEID, QStringLiteral(":/liteid.png")},
-    };
+    const auto certificateBytes = card->eid().getCertificate(certificateType);
 
-    REQUIRE_NON_NULL(_cardInfo);
-    cardInfo = _cardInfo;
-
-    const bool isAuthenticate = command.first == CommandType::AUTHENTICATE
-        || command.second[QStringLiteral("type")] == QStringLiteral("auth");
-    certificateType = isAuthenticate ? CertificateType::AUTHENTICATION : CertificateType::SIGNING;
-
-    const auto certificateBytes = cardInfo->eid().getCertificate(certificateType);
-    certificateDer = QByteArray(reinterpret_cast<const char*>(certificateBytes.data()),
-                                int(certificateBytes.size()));
-    certificate = QSslCertificate(certificateDer, QSsl::Der);
+    auto certificateDer = QByteArray(reinterpret_cast<const char*>(certificateBytes.data()),
+                                     int(certificateBytes.size()));
+    auto certificate = QSslCertificate(certificateDer, QSsl::Der);
     if (certificate.isNull()) {
         THROW(SmartCardChangeRequiredError,
-              "Invalid certificate returned by electronic ID " + cardInfo->eid().name());
+              "Invalid certificate returned by electronic ID " + card->eid().name());
     }
 
     auto certificateStatus = CertificateStatus::VALID;
@@ -69,28 +63,53 @@ void CertificateReader::run(CardInfo::ptr _cardInfo)
         certificateStatus = CertificateStatus::EXPIRED;
     }
 
-    const auto certInfo =
-        CertificateInfo {certificateType,
-                         icons.value(cardInfo->eid().type()),
-                         certificate.subjectInfo(QSslCertificate::CommonName).join(' '),
-                         certificate.issuerInfo(QSslCertificate::CommonName).join(' '),
-                         certificate.effectiveDate().date().toString(Qt::ISODate),
-                         certificate.expiryDate().date().toString(Qt::ISODate)};
-    const auto pinInfo = PinInfo {isAuthenticate ? cardInfo->eid().authPinMinMaxLength()
-                                                 : cardInfo->eid().signingPinMinMaxLength(),
-                                  isAuthenticate ? cardInfo->eid().authPinRetriesLeft()
-                                                 : cardInfo->eid().signingPinRetriesLeft(),
-                                  cardInfo->eid().smartcard().readerHasPinPad()};
+    auto certInfo = CertificateInfo {certificateType,
+                                     ICONS.value(card->eid().type()),
+                                     certificate.subjectInfo(QSslCertificate::CommonName).join(' '),
+                                     certificate.issuerInfo(QSslCertificate::CommonName).join(' '),
+                                     certificate.effectiveDate().date().toString(Qt::ISODate),
+                                     certificate.expiryDate().date().toString(Qt::ISODate)};
+    auto pinInfo = PinInfo {
+        isAuthenticate ? card->eid().authPinMinMaxLength() : card->eid().signingPinMinMaxLength(),
+        isAuthenticate ? card->eid().authPinRetriesLeft() : card->eid().signingPinRetriesLeft(),
+        card->eid().smartcard().readerHasPinPad()};
+
+    return {{certificate, certificateDer}, {certificateStatus, certInfo, pinInfo}};
+}
+
+} // namespace
+
+CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandHandler(cmd)
+{
+    validateAndStoreOrigin(cmd.second);
+}
+
+void CertificateReader::run(const std::vector<CardInfo::ptr>& availableCards)
+{
+    REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableCards);
+    cards = availableCards;
+
+    const bool isAuthenticate = command.first == CommandType::AUTHENTICATE
+        || command.second[QStringLiteral("type")] == QStringLiteral("auth");
+    certificateType = isAuthenticate ? CertificateType::AUTHENTICATION : CertificateType::SIGNING;
+
+    std::vector<CertificateAndPinInfo> certInfos;
+
+    for (const auto& card : cards) {
+        auto certWithInfo = getCertificateWithInfo(card, certificateType, isAuthenticate);
+        certificates.emplace_back(certWithInfo.first);
+        certInfos.emplace_back(certWithInfo.second);
+    }
 
     // TODO: check invalid certs, what do they return for subject, issuer etc (probably default
     // values)?
-    emit certificateReady(origin, certificateStatus, certInfo, pinInfo);
+    emit certificatesReady(origin, certInfos);
 }
 
 void CertificateReader::connectSignals(const WebEidUI* window)
 {
     window->disconnect(this);
-    connect(this, &CertificateReader::certificateReady, window, &WebEidUI::onCertificateReady);
+    connect(this, &CertificateReader::certificatesReady, window, &WebEidUI::onCertificatesReady);
 }
 
 void CertificateReader::validateAndStoreOrigin(const QVariantMap& arguments)
@@ -114,11 +133,30 @@ void CertificateReader::validateAndStoreOrigin(const QVariantMap& arguments)
     }
 }
 
-void CertificateReader::requireValidCardInfoAndCertificate()
+std::tuple<CardInfo::ptr&, const QSslCertificate&, const QByteArray&>
+CertificateReader::requireValidCardInfoAndCertificate(const size_t selectedCardIndex)
 {
-    REQUIRE_NON_NULL(cardInfo);
-    if (certificate.isNull()) {
+    REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(cards)
+
+    if (selectedCardIndex >= cards.size()) {
         THROW(ProgrammingError,
-              "Invalid certificate, shouldn't happen as it has been validated before");
+              "Selected card index " + std::to_string(selectedCardIndex)
+                  + " is out of bounds of cards vector size " + std::to_string(cards.size()));
     }
+    if (cards.size() != certificates.size()) {
+        THROW(ProgrammingError,
+              "Cards vector size " + std::to_string(cards.size())
+                  + " is not equal to certificates vector size "
+                  + std::to_string(certificates.size()));
+    }
+    for (const auto& certificate : certificates) {
+        if (certificate.first.isNull() || certificate.second.isEmpty()) {
+            THROW(ProgrammingError,
+                  "Invalid certificate in certificate vector, shouldn't happen as it has been "
+                  "validated before");
+        }
+    }
+
+    return {cards[selectedCardIndex], certificates[selectedCardIndex].first,
+            certificates[selectedCardIndex].second};
 }

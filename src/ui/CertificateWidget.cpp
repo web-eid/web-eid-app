@@ -4,31 +4,37 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QListWidget>
 
-CertificateWidget::CertificateWidget(QWidget *parent)
-    : QWidget(parent),
-    layout(new QHBoxLayout(this)),
-    icon(new QLabel(this)),
-    label(new QLabel(this))
+CertificateWidget::CertificateWidget(QWidget* parent) :
+    QWidget(parent), layout(new QHBoxLayout(this)), certificateList(new QListWidget(this))
 {
-    label->setFocusPolicy(Qt::TabFocus);
-    label->setWordWrap(true);
-    layout->addWidget(icon);
-    layout->addWidget(label);
+    certificateList->setFocusPolicy(Qt::TabFocus);
+    layout->addWidget(certificateList);
     layout->setSpacing(10);
     layout->setStretch(1, 1);
 }
 
-CertificateWidget::CertificateWidget(const CertificateInfo &certInfo, QWidget *parent): CertificateWidget(parent) {
-    setCertificateInfo(certInfo);
+void CertificateWidget::setCertificateInfo(
+    const std::vector<CertificateAndPinInfo>& certAndPinInfos)
+{
+    for (const auto& certAndPinInfo : certAndPinInfos) {
+        addCertificateListItem(certAndPinInfo.certInfo);
+    }
 }
 
-void CertificateWidget::setCertificateInfo(const CertificateInfo &certInfo)
+size_t CertificateWidget::selectedCertificateIndex() const
+{
+    return size_t(certificateList->currentRow());
+}
+
+void CertificateWidget::addCertificateListItem(const CertificateInfo& certInfo)
 {
     const auto certType = certInfo.type.isAuthentication() ? QStringLiteral("Authentication")
                                                            : QStringLiteral("Signature");
-    icon->setPixmap(certInfo.icon);
-    label->setText(tr("%1: %2\nIssuer: %3\nValid: from %4 to %5")
-                       .arg(certType, certInfo.subject, certInfo.issuer,
-                            certInfo.effectiveDate, certInfo.expiryDate));
+    new QListWidgetItem(QIcon(certInfo.icon),
+                        tr("%1: %2\nIssuer: %3\nValid: from %4 to %5")
+                            .arg(certType, certInfo.subject, certInfo.issuer,
+                                 certInfo.effectiveDate, certInfo.expiryDate),
+                        certificateList);
 }

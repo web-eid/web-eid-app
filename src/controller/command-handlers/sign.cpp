@@ -68,8 +68,9 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
     validateAndStoreOrigin(arguments);
 }
 
-void Sign::run(CardInfo::ptr _cardInfo)
+void Sign::run(const std::vector<CardInfo::ptr>& _cards)
 {
+    /* FIXME: put validation back when refactoring finished
     REQUIRE_NON_NULL(_cardInfo);
 
     if (!_cardInfo->eid().isSupportedSigningHashAlgorithm(hashAlgo)) {
@@ -77,9 +78,11 @@ void Sign::run(CardInfo::ptr _cardInfo)
               "Inserted electronic ID " + _cardInfo->eid().name()
                   + " does not support hash algorithm " + std::string(hashAlgo));
     }
+    */
 
-    CertificateReader::run(_cardInfo);
+    CertificateReader::run(_cards);
 
+    /* FIXME: put validation back when refactoring finished
     // Assure that the certificate read from the eID matches the certificate provided as argument.
     if (certificate.digest(QCryptographicHash::Sha256)
         != userEidCertificateFromArgs.digest(QCryptographicHash::Sha256)) {
@@ -87,11 +90,13 @@ void Sign::run(CardInfo::ptr _cardInfo)
             userEidCertificateFromArgs.subjectInfo(QSslCertificate::CommonName).join(' ');
         emit certificateHashMismatch(certSubject);
     }
+    */
 }
 
-QVariantMap Sign::onConfirm(WebEidUI* window)
+QVariantMap Sign::onConfirm(WebEidUI* window, const size_t selectedCardIndex)
 {
-    requireValidCardInfoAndCertificate();
+    auto [cardInfo, certificate, certificateDer] =
+        requireValidCardInfoAndCertificate(selectedCardIndex);
 
     auto pin = getPin(cardInfo->eid().smartcard(), window);
 

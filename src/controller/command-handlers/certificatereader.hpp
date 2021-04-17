@@ -26,30 +26,33 @@
 
 #include <QSslCertificate>
 #include <QUrl>
+#include <utility>
 
 class CertificateReader : public CommandHandler
 {
     Q_OBJECT
 
 public:
+    using CerificateAndDer = std::pair<QSslCertificate, QByteArray>;
+
     explicit CertificateReader(const CommandWithArguments& cmd);
 
-    void run(electronic_id::CardInfo::ptr cardInfo) override;
+    void run(const std::vector<electronic_id::CardInfo::ptr>& cards) override;
     void connectSignals(const WebEidUI* window) override;
 
 signals:
-    void certificateReady(const QUrl& origin, const CertificateStatus certStatus,
-                          const CertificateInfo& certInfo, const PinInfo& pinInfo);
+    void certificatesReady(const QUrl& origin,
+                           const std::vector<CertificateAndPinInfo>& certificateAndPinInfos);
 
 protected:
     void validateAndStoreOrigin(const QVariantMap& arguments);
-    // Only used in child classes to assert preconditions.
-    void requireValidCardInfoAndCertificate();
+    // Used in child classes to access select card and corresponding certificates.
+    std::tuple<electronic_id::CardInfo::ptr&, const QSslCertificate&, const QByteArray&>
+    requireValidCardInfoAndCertificate(const size_t selectedCardIndex);
 
-    electronic_id::CardInfo::ptr cardInfo;
+    std::vector<electronic_id::CardInfo::ptr> cards;
+    std::vector<CerificateAndDer> certificates;
 
-    QByteArray certificateDer;
-    QSslCertificate certificate;
     electronic_id::CertificateType certificateType = electronic_id::CertificateType::NONE;
     QUrl origin;
 };

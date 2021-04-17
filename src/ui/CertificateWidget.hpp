@@ -1,21 +1,26 @@
 #pragma once
 
+#include "certandpininfo.hpp"
+
 #include <QWidget>
 
 struct CertificateInfo;
 class QHBoxLayout;
-class QLabel;
+class QListWidget;
 
-class CertificateWidget: public QWidget {
+class CertificateWidget : public QWidget
+{
     Q_OBJECT
-public:
-    CertificateWidget(QWidget *parent = nullptr);
-    CertificateWidget(const CertificateInfo &certInfo, QWidget *parent = nullptr);
 
-    void setCertificateInfo(const CertificateInfo &certInfo);
+public:
+    CertificateWidget(QWidget* parent = nullptr);
+
+    void setCertificateInfo(const std::vector<CertificateAndPinInfo>& certificateAndPinInfos);
+    size_t selectedCertificateIndex() const;
 
 private:
-    QHBoxLayout *layout;
-    QLabel *icon;
-    QLabel *label;
+    void addCertificateListItem(const CertificateInfo& certInfo);
+
+    QHBoxLayout* layout;
+    QListWidget* certificateList;
 };
