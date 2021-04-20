@@ -45,23 +45,26 @@ public:
 
     static void showFatalError();
 
-    virtual void switchPage(const CommandType commandType) = 0;
+    virtual void showWaitingForCardPage(const CommandType commandType) = 0;
     // getPin() is called from background threads and must be thread-safe.
     virtual QString getPin() = 0;
 
 signals:
-    void waitingForPinPad(const size_t selectedCardIndex);
-    void accepted(const size_t selectedCardIndex);
+    void waitingForPinPad(const CardCertificateAndPinInfo& cardCertAndPinInfo);
+    void accepted(const CardCertificateAndPinInfo& cardCertAndPinInfo);
     void retry();
+    void failure(const QString& error);
 
 public: // slots
-    virtual void onReaderMonitorStatusUpdate(const RetriableError status) = 0;
-    virtual void
-    onCertificatesReady(const QUrl& origin,
-                        const std::vector<CertificateAndPinInfo>& certificateAndPinInfos) = 0;
-    virtual void onSigningCertificateHashMismatch(const QString& subjectOfUserCertFromArgs) = 0;
+    virtual void onSmartCardStatusUpdate(const RetriableError status) = 0;
+    virtual void onMultipleCertificatesReady(
+        const QUrl& origin, const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) = 0;
+    virtual void onSingleCertificateReady(const QUrl& origin,
+                                          const CardCertificateAndPinInfo& cardCertAndPinInfo) = 0;
 
     virtual void onRetry(const RetriableError error) = 0;
+
+    virtual void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                    const quint8 retriesLeft) = 0;
 };

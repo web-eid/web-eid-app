@@ -47,8 +47,6 @@ RetriableError toRetriableError(const electronic_id::AutoSelectFailed::Reason re
     case Reason::SINGLE_READER_UNSUPPORTED_CARD:
     case Reason::MULTIPLE_READERS_NO_SUPPORTED_CARD:
         return RetriableError::UNSUPPORTED_CARD;
-    case Reason::MULTIPLE_SUPPORTED_CARDS:
-        return RetriableError::MULTIPLE_SUPPORTED_CARDS;
     }
     return RetriableError::UNKNOWN_ERROR;
 }

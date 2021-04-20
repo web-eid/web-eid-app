@@ -35,9 +35,13 @@ public:
 
     virtual void run(const std::vector<electronic_id::CardInfo::ptr>& cards) = 0;
     virtual void connectSignals(const WebEidUI* window) = 0;
-    virtual QVariantMap onConfirm(WebEidUI* window, const size_t selectedCardIndex) = 0;
+    virtual QVariantMap onConfirm(WebEidUI* window,
+                                  const CardCertificateAndPinInfo& cardCertAndPin) = 0;
 
     CommandType commandType() const { return command.first; }
+
+signals:
+    void retry(const RetriableError error);
 
 protected:
     CommandHandler(const CommandWithArguments& cmd) : command(cmd) {}

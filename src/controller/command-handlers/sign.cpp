@@ -68,40 +68,42 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
     validateAndStoreOrigin(arguments);
 }
 
-void Sign::run(const std::vector<CardInfo::ptr>& _cards)
+void Sign::emitCertificatesReady(const QUrl& origin,
+                                 const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos)
 {
-    /* FIXME: put validation back when refactoring finished
-    REQUIRE_NON_NULL(_cardInfo);
+    const CardCertificateAndPinInfo* cardWithCertificateFromArgs = nullptr;
 
-    if (!_cardInfo->eid().isSupportedSigningHashAlgorithm(hashAlgo)) {
-        THROW(SmartCardChangeRequiredError,
-              "Inserted electronic ID " + _cardInfo->eid().name()
-                  + " does not support hash algorithm " + std::string(hashAlgo));
+    for (const auto& cardCertAndPin : cardCertAndPinInfos) {
+        // Check if the certificate read from the eID matches the certificate provided as argument.
+        if (cardCertAndPin.certificate.digest(QCryptographicHash::Sha256)
+            == userEidCertificateFromArgs.digest(QCryptographicHash::Sha256)) {
+            cardWithCertificateFromArgs = &cardCertAndPin;
+        }
     }
-    */
 
-    CertificateReader::run(_cards);
-
-    /* FIXME: put validation back when refactoring finished
-    // Assure that the certificate read from the eID matches the certificate provided as argument.
-    if (certificate.digest(QCryptographicHash::Sha256)
-        != userEidCertificateFromArgs.digest(QCryptographicHash::Sha256)) {
+    // No eID had the certificate provided as argument.
+    if (!cardWithCertificateFromArgs) {
         const auto certSubject =
             userEidCertificateFromArgs.subjectInfo(QSslCertificate::CommonName).join(' ');
-        emit certificateHashMismatch(certSubject);
+        emit certificateNotFound(certSubject);
+        return;
     }
-    */
+
+    if (!cardWithCertificateFromArgs->cardInfo->eid().isSupportedSigningHashAlgorithm(hashAlgo)) {
+        THROW(ArgumentFatalError,
+              "Electronic ID " + cardWithCertificateFromArgs->cardInfo->eid().name()
+                  + " does not support hash algorithm " + std::string(hashAlgo));
+    }
+
+    emit singleCertificateReady(origin, *cardWithCertificateFromArgs);
 }
 
-QVariantMap Sign::onConfirm(WebEidUI* window, const size_t selectedCardIndex)
+QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& cardCertAndPin)
 {
-    auto [cardInfo, certificate, certificateDer] =
-        requireValidCardInfoAndCertificate(selectedCardIndex);
-
-    auto pin = getPin(cardInfo->eid().smartcard(), window);
+    auto pin = getPin(cardCertAndPin.cardInfo->eid().smartcard(), window);
 
     try {
-        const auto signature = signHash(cardInfo->eid(), pin, docHash, hashAlgo);
+        const auto signature = signHash(cardCertAndPin.cardInfo->eid(), pin, docHash, hashAlgo);
 
         // Erase PIN memory.
         // TODO: Use a scope guard. Verify that the buffers are actually zeroed
@@ -124,8 +126,7 @@ void Sign::connectSignals(const WebEidUI* window)
 {
     CertificateReader::connectSignals(window);
 
-    connect(this, &Sign::certificateHashMismatch, window,
-            &WebEidUI::onSigningCertificateHashMismatch);
+    connect(this, &Sign::certificateNotFound, window, &WebEidUI::onCertificateNotFound);
     connect(this, &Sign::verifyPinFailed, window, &WebEidUI::onVerifyPinFailed);
 }
 

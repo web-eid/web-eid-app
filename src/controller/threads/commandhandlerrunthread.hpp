@@ -34,6 +34,8 @@ public:
         ControllerChildThread(parent),
         commandHandler(handler), cmdType(commandHandler.commandType()), cards(cs)
     {
+        // Connect retry signal to retry signal to pass it up from the command handler.
+        connect(&commandHandler, &CommandHandler::retry, this, &ControllerChildThread::retry);
     }
 
 private:

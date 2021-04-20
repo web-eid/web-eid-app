@@ -37,11 +37,8 @@ void registerMetatypes()
 
     qRegisterMetaType<CommandType>();
 
-    qRegisterMetaType<CertificateStatus>();
-    qRegisterMetaType<CertificateInfo>();
-    qRegisterMetaType<PinInfo>();
-    qRegisterMetaType<CertificateAndPinInfo>();
-    qRegisterMetaType<std::vector<CertificateAndPinInfo>>();
+    qRegisterMetaType<CardCertificateAndPinInfo>();
+    qRegisterMetaType<std::vector<CardCertificateAndPinInfo>>();
 
     qRegisterMetaType<RetriableError>();
 }

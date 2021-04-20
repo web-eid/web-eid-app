@@ -29,7 +29,7 @@
 #include <optional>
 #include <utility>
 
-class CertificateWidget;
+class CertificateListWidget;
 class QLabel;
 class QLineEdit;
 class QProgressBar;
@@ -55,36 +55,57 @@ class WebEidDialog : public WebEidUI
     Q_OBJECT
 
 public:
+    enum class Page { WAITING, INSERT_CARD, SELECT_CERTIFICATE, AUTHENTICATE, SIGN };
+
     explicit WebEidDialog(QWidget* parent = nullptr);
     ~WebEidDialog() override;
 
-    void switchPage(const CommandType commandType) override;
+    void showWaitingForCardPage(const CommandType commandType) override;
     QString getPin() override;
 
 public: // slots
-    void onReaderMonitorStatusUpdate(const RetriableError status) override;
-    void
-    onCertificatesReady(const QUrl& origin,
-                        const std::vector<CertificateAndPinInfo>& certificateAndPinInfos) override;
-    void onSigningCertificateHashMismatch(const QString& subjectOfUserCertFromArgs) override;
+    void onSmartCardStatusUpdate(const RetriableError status) override;
+    void onMultipleCertificatesReady(
+        const QUrl& origin,
+        const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) override;
+    void onSingleCertificateReady(const QUrl& origin,
+                                  const CardCertificateAndPinInfo& cardCertAndPinInfo) override;
+
     void onRetry(const RetriableError error) override;
+
+    void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) override;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                            const quint8 retriesLeft) override;
 
 private:
-    void onOkButtonClicked(); // slot
+    void showPage(const WebEidDialog::Page page);
 
     void makeOkButtonDefaultRemoveIconsAndconnectSignals();
-    void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLenght);
+    void connectOkToEmitSelectedCertificate(CertificateListWidget* certificateWidget);
+    void connectOkToCachePinAndEmitSelectedCertificate(QLineEdit* pinInput,
+                                                       CertificateListWidget* certificateWidget);
+
+    void setupPinInputValidator(const PinInfo& pinInfo);
+
     void startPinTimeoutProgressBar();
-    std::tuple<QLabel*, QLabel*, CertificateWidget*> certificateLabelsOnPage();
+
+    void emitSelectedCertificate(CertificateListWidget* certificateWidget);
+
+    std::pair<QLabel*, CertificateListWidget*>
+    originLabelAndCertificateListOnPage(const CommandType commandType);
+    std::pair<QLabel*, CertificateListWidget*> originLabelAndCertificateListOnPage();
+    QLabel* descriptionLabelOnPage();
     QLabel* pinErrorLabelOnPage();
     QLabel* pinTitleLabelOnPage();
     QLineEdit* pinInputOnPage();
     QProgressBar* pinEntryTimeoutProgressBarOnPage();
-    void displayFatalError(QLabel* label, const QString& message);
-    void hidePinAndDocHashWidgets();
+
     void onRetryImpl(const QString& error);
+
+    void displayPinBlockedError(QLabel* label, const QString& message);
+    void hidePinWidgets();
+    void disableOKUntilCertificateSelected(const CertificateListWidget* certificateWidget);
+
     void resizeHeight();
 
     std::tuple<QString, QString, QString>

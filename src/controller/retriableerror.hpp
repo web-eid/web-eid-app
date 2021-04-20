@@ -45,7 +45,8 @@ enum class RetriableError {
     // AutoSelectFailed::Reason
     SCARD_ERROR,
     UNSUPPORTED_CARD,
-    MULTIPLE_SUPPORTED_CARDS,
+    // CertificateReader::run
+    NO_VALID_CERTIFICATE_AVAILABLE,
     // default
     UNKNOWN_ERROR
 };

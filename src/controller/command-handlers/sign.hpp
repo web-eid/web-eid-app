@@ -31,16 +31,19 @@ class Sign : public CertificateReader
 public:
     explicit Sign(const CommandWithArguments& cmd);
 
-    void run(const std::vector<electronic_id::CardInfo::ptr>& cards) override;
     void connectSignals(const WebEidUI* window) override;
-    QVariantMap onConfirm(WebEidUI* window, const size_t selectedCardIndex) override;
+    QVariantMap onConfirm(WebEidUI* window,
+                          const CardCertificateAndPinInfo& cardCertAndPin) override;
 
 signals:
-    void certificateHashMismatch(const QString& subjectOfUserCertFromArgs);
+    void certificateNotFound(const QString& subjectOfUserCertFromArgs);
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                          const quint8 retriesLeft);
 
 private:
+    void emitCertificatesReady(
+        const QUrl& origin,
+        const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) override;
     void validateAndStoreDocHashAndHashAlgo(const QVariantMap& args);
 
     QByteArray docHash;
