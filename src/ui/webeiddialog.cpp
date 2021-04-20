@@ -104,7 +104,7 @@ void WebEidDialog::onReaderMonitorStatusUpdate(const RetriableError status)
     const auto errorTextTitleAndIcon = retriableErrorToTextTitleAndIcon(status);
 
     ui->connectCardLabel->setText(errorTextTitleAndIcon.first);
-    ui->page1TitleLabel->setText(errorTextTitleAndIcon.second.first);
+    ui->selectCardPageTitleLabel->setText(errorTextTitleAndIcon.second.first);
     ui->cardChipIcon->setPixmap(errorTextTitleAndIcon.second.second);
 }
 
