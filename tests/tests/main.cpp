@@ -45,11 +45,11 @@ QT_WARNING_POP
 namespace
 {
 
-CertificateAndPinInfo getCertAndPinInfoFromSignalSpy(const QSignalSpy& certificateReadySpy)
+CertificateInfo getCertAndPinInfoFromSignalSpy(const QSignalSpy& certificateReadySpy)
 {
     const auto certInfosArgument =
-        qvariant_cast<std::vector<CertificateAndPinInfo>>(certificateReadySpy.first().at(1));
-    return certInfosArgument[0];
+        qvariant_cast<CardCertificateAndPinInfo>(certificateReadySpy.first().at(1));
+    return certInfosArgument.certInfo;
 }
 
 } // namespace
@@ -113,13 +113,13 @@ void WebEidTests::getCertificate_validCertificateHasExpectedCertificateSubject()
     initGetCert();
 
     QSignalSpy certificateReadySpy(g_cached_GetCertificate.get(),
-                                   &GetCertificate::certificatesReady);
+                                   &GetCertificate::singleCertificateReady);
 
     // act
     runEventLoopVerifySignalsEmitted(certificateReadySpy);
 
     // assert
-    const auto certInfo = getCertAndPinInfoFromSignalSpy(certificateReadySpy).certInfo;
+    const auto certInfo = getCertAndPinInfoFromSignalSpy(certificateReadySpy);
     QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
 
     const auto certBytes =
@@ -139,16 +139,14 @@ void WebEidTests::getCertificate_expiredCertificateHasExpiredStatus()
 
     initGetCert();
 
-    QSignalSpy certificateReadySpy(g_cached_GetCertificate.get(),
-                                   &GetCertificate::certificatesReady);
+    QSignalSpy certificateFailureSpy(g_cached_GetCertificate.get(), &GetCertificate::retry);
 
     // act
-    runEventLoopVerifySignalsEmitted(certificateReadySpy);
+    runEventLoopVerifySignalsEmitted(certificateFailureSpy);
 
     // assert
-    const auto certAndPinInfo = getCertAndPinInfoFromSignalSpy(certificateReadySpy);
-    QCOMPARE(certAndPinInfo.certInfo.expiryDate, QStringLiteral("2010-09-20"));
-    QCOMPARE(certAndPinInfo.certStatus, CertificateStatus::EXPIRED);
+    const auto failure = qvariant_cast<RetriableError>(certificateFailureSpy.first().at(0));
+    QCOMPARE(failure, RetriableError::NO_VALID_CERTIFICATE_AVAILABLE);
 }
 
 void WebEidTests::getCertificate_outputsSupportedAlgos()
@@ -158,7 +156,7 @@ void WebEidTests::getCertificate_outputsSupportedAlgos()
     initGetCert();
 
     QSignalSpy certificateReadySpy(g_cached_GetCertificate.get(),
-                                   &GetCertificate::certificatesReady);
+                                   &GetCertificate::singleCertificateReady);
     QVariantMap ES384_ALGO {
         {"crypto-algo", "ECC"}, {"hash-algo", "SHA-384"}, {"padding-algo", "NONE"}};
 
@@ -175,13 +173,14 @@ void WebEidTests::authenticate_validArgumentsResultInValidJwt()
     initCard();
     initAuthenticate();
 
-    QSignalSpy authenticateSpy(g_cached_Authenticate.get(), &GetCertificate::certificatesReady);
+    QSignalSpy authenticateSpy(g_cached_Authenticate.get(),
+                               &GetCertificate::singleCertificateReady);
 
     // act
     runEventLoopVerifySignalsEmitted(authenticateSpy);
 
     // assert
-    const auto certInfo = getCertAndPinInfoFromSignalSpy(authenticateSpy).certInfo;
+    const auto certInfo = getCertAndPinInfoFromSignalSpy(authenticateSpy);
     QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
 
     QCOMPARE(

@@ -8,10 +8,12 @@ qt5_add_translation(SOURCES
 add_library(ui STATIC
     ${SOURCES}
     ${CMAKE_CURRENT_BINARY_DIR}/translations.qrc
-    CertificateWidget.hpp
-    CertificateWidget.cpp
-    ui.cpp
+    certificatelistwidget.cpp
+    certificatelistwidget.hpp
     punycode.hpp
+    ui.cpp
+    waitingspinner/waitingspinnerwidget.cpp
+    waitingspinner/waitingspinnerwidget.hpp
     webeiddialog.cpp
     webeiddialog.hpp
     web-eid-resources.qrc

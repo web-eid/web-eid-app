@@ -60,7 +60,7 @@ public: // slots
     void onReaderMonitorStatusUpdate(const RetriableError reason);
 
     // Called either directly from onDialogOK() or from the dialog when waiting for PIN-pad.
-    void onConfirmCommandHandler(const size_t selectedCard);
+    void onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCertAndPinInfo);
 
     // Called from CommandHandlerConfirm thread.
     void onCommandHandlerConfirmCompleted(const QVariantMap& result);
@@ -69,7 +69,7 @@ public: // slots
     void onRetry();
 
     // User events from the dialog.
-    void onDialogOK(const size_t selectedCardIndex);
+    void onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo);
     void onDialogCancel();
 
     // Failure handler, reports the error and quits the application.
@@ -80,24 +80,23 @@ private:
     template <typename T>
     using observer_ptr = T*;
 
-    void runCommandHandler();
     void startCommandExecution();
     void warnAndWaitUntilSupportedCardSelected(const RetriableError errorCode,
                                                const std::exception& error);
     void waitUntilSupportedCardAvailable();
+    void runCommandHandler(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
     void connectOkCancelWaitingForPinPad();
     void connectRetry(const ControllerChildThread* childThread);
     void disconnectRetry();
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
+    void disposeUI();
     void exit();
     void waitForChildThreads();
-    void setCards(std::vector<electronic_id::CardInfo::ptr> cards);
     CommandType commandType();
 
     CommandWithArgumentsPtr command;
     CommandHandler::ptr commandHandler = nullptr;
     std::unordered_map<uintptr_t, observer_ptr<ControllerChildThread>> childThreads;
-    std::vector<electronic_id::CardInfo::ptr> cards;
     WebEidUI::ptr window = nullptr;
     QVariantMap _result;
     bool isInStdinMode = true;

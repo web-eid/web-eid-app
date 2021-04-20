@@ -25,14 +25,11 @@
 #include "qeid.hpp"
 
 #include <QString>
-
-enum class CertificateStatus { VALID, INVALID, NOT_YET_ACTIVE, EXPIRED };
-
-Q_DECLARE_METATYPE(CertificateStatus)
+#include <QSslCertificate>
 
 struct CertificateInfo
 {
-    electronic_id::CertificateType type;
+    electronic_id::CertificateType type = electronic_id::CertificateType::NONE;
     QString icon;
 
     QString subject;
@@ -41,27 +38,26 @@ struct CertificateInfo
     QString expiryDate;
 };
 
-Q_DECLARE_METATYPE(CertificateInfo)
-
 struct PinInfo
 {
     using PinMinMaxLength = std::pair<size_t, size_t>;
     using PinRetriesCount = std::pair<size_t, size_t>;
 
-    PinMinMaxLength pinMinMaxLength;
-    PinRetriesCount pinRetriesCount;
-    bool readerHasPinPad;
+    PinMinMaxLength pinMinMaxLength = {0, 0};
+    PinRetriesCount pinRetriesCount = {0, 0};
+    bool readerHasPinPad = false;
+    bool pinIsBlocked = false;
 
     static constexpr int PIN_PAD_PIN_ENTRY_TIMEOUT = pcsc_cpp::PIN_PAD_PIN_ENTRY_TIMEOUT;
 };
 
-Q_DECLARE_METATYPE(PinInfo)
-
-struct CertificateAndPinInfo
+struct CardCertificateAndPinInfo
 {
-    CertificateStatus certStatus;
+    electronic_id::CardInfo::ptr cardInfo;
+    QByteArray certificateBytesInDer;
+    QSslCertificate certificate;
     CertificateInfo certInfo;
     PinInfo pinInfo;
 };
 
-Q_DECLARE_METATYPE(CertificateAndPinInfo)
+Q_DECLARE_METATYPE(CardCertificateAndPinInfo)

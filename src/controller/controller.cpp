@@ -132,7 +132,7 @@ void Controller::waitUntilSupportedCardAvailable()
 
     // UI setup.
     window = WebEidUI::createAndShowDialog(CommandType::INSERT_CARD);
-    connect(this, &Controller::statusUpdate, window.get(), &WebEidUI::onReaderMonitorStatusUpdate);
+    connect(this, &Controller::statusUpdate, window.get(), &WebEidUI::onSmartCardStatusUpdate);
     connectOkCancelWaitingForPinPad();
 
     // Finally, start the thread to wait for card insertion after everything is wired up.
@@ -171,6 +171,7 @@ void Controller::connectOkCancelWaitingForPinPad()
 
     connect(window.get(), &WebEidUI::accepted, this, &Controller::onDialogOK);
     connect(window.get(), &WebEidUI::rejected, this, &Controller::onDialogCancel);
+    connect(window.get(), &WebEidUI::failure, this, &Controller::onCriticalFailure);
     connect(window.get(), &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
 }
 
@@ -178,8 +179,8 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
 {
     try {
         REQUIRE_NON_NULL(commandHandler)
+        REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableCards)
 
-        setCards(availableCards);
         for (const auto& card : availableCards) {
             const auto protocol =
                 card->eid().smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
@@ -190,23 +191,23 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
             window = WebEidUI::createAndShowDialog(commandHandler->commandType());
             connectOkCancelWaitingForPinPad();
         } else {
-            window->switchPage(commandHandler->commandType());
+            window->showWaitingForCardPage(commandHandler->commandType());
         }
 
         commandHandler->connectSignals(window.get());
 
-        runCommandHandler();
+        runCommandHandler(availableCards);
 
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
 }
 
-void Controller::runCommandHandler()
+void Controller::runCommandHandler(const std::vector<electronic_id::CardInfo::ptr>& availableCards)
 {
     try {
         CommandHandlerRunThread* commandHandlerRunThread =
-            new CommandHandlerRunThread(this, *commandHandler, cards);
+            new CommandHandlerRunThread(this, *commandHandler, availableCards);
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerRunThread);
         connectRetry(commandHandlerRunThread);
 
@@ -222,11 +223,11 @@ void Controller::onReaderMonitorStatusUpdate(const RetriableError reason)
     emit statusUpdate(reason);
 }
 
-void Controller::onConfirmCommandHandler(const size_t selectedCardIndex)
+void Controller::onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCertAndPinInfo)
 {
     try {
-        CommandHandlerConfirmThread* commandHandlerConfirmThread =
-            new CommandHandlerConfirmThread(this, *commandHandler, window.get(), selectedCardIndex);
+        CommandHandlerConfirmThread* commandHandlerConfirmThread = new CommandHandlerConfirmThread(
+            this, *commandHandler, window.get(), cardCertAndPinInfo);
         connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
                 &Controller::onCommandHandlerConfirmCompleted);
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerConfirmThread);
@@ -254,6 +255,7 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
 void Controller::onRetry()
 {
     try {
+        disposeUI();
         startCommandExecution();
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
@@ -281,10 +283,10 @@ void Controller::disconnectRetry()
     }
 }
 
-void Controller::onDialogOK(const size_t selectedCardIndex)
+void Controller::onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo)
 {
     if (commandHandler) {
-        onConfirmCommandHandler(selectedCardIndex);
+        onConfirmCommandHandler(cardCertAndPinInfo);
     } else {
         // This should not happen, and when it does, OK should be equivalent to cancel.
         onDialogCancel();
@@ -298,9 +300,9 @@ void Controller::onDialogCancel()
     // Don't handle retry after user has cancelled.
     disconnectRetry();
     // Disconnect all signals from dialog to controller to avoid catching reject() twice.
-    window.get()->disconnect(this);
+    window->disconnect(this);
     // Close the dialog.
-    window.get()->close();
+    window->close();
 
     writeResponseToStdOut(isInStdinMode,
                           makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled")),
@@ -314,13 +316,21 @@ void Controller::onCriticalFailure(const QString& error)
                 << "fatal error:" << error;
     writeResponseToStdOut(isInStdinMode, makeErrorObject(RESP_TECH_ERROR, error), commandType());
 
-    if (window) {
-        window->disconnect();
-        window->close();
-    }
+    disposeUI();
+
     WebEidUI::showFatalError();
 
     exit();
+}
+
+void Controller::disposeUI()
+{
+    if (window) {
+        window->disconnect();
+        window->close();
+        window->deleteLater();
+        window = nullptr;
+    }
 }
 
 void Controller::exit()
@@ -345,12 +355,6 @@ void Controller::waitForChildThreads()
             }
         }
     }
-}
-
-void Controller::setCards(std::vector<CardInfo::ptr> availableCards)
-{
-    REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableCards)
-    this->cards = availableCards;
 }
 
 CommandType Controller::commandType()

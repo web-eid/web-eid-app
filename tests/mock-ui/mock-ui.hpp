@@ -31,7 +31,7 @@ class MockUI : public WebEidUI
 public:
     explicit MockUI(QWidget* parent = nullptr) : WebEidUI(parent) {}
 
-    void switchPage(const CommandType) override {}
+    void showWaitingForCardPage(const CommandType) override {}
 
     QString getPin() override
     {
@@ -40,16 +40,22 @@ public:
     }
 
 public: // slots
-    void onCertificatesReady(const QUrl&, const std::vector<CertificateAndPinInfo>&) override
+    void onMultipleCertificatesReady(
+        const QUrl&, const std::vector<CardCertificateAndPinInfo>& cardCertAndPin) override
     {
-        emit accepted(0);
+        emit accepted(cardCertAndPin[0]);
+    }
+    void onSingleCertificateReady(const QUrl&,
+                                  const CardCertificateAndPinInfo& cardCertAndPin) override
+    {
+        emit accepted(cardCertAndPin);
     }
 
-    void onSigningCertificateHashMismatch(const QString&) override {}
+    void onCertificateNotFound(const QString&) override {}
 
-    void onRetry(const RetriableError) override {}
+    void onRetry(const RetriableError) override { emit rejected(); }
 
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status, const quint8) override {}
 
-    void onReaderMonitorStatusUpdate(const RetriableError) override { emit rejected(); }
+    void onSmartCardStatusUpdate(const RetriableError) override { emit rejected(); }
 };

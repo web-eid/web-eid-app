@@ -32,8 +32,7 @@ public:
     explicit ReaderMonitorThread(QObject* parent) : ControllerChildThread(parent) {}
 
 Q_SIGNALS:
-    void cardsAvailable(std::vector<electronic_id::CardInfo::ptr>& cardInfo);
-    void cardReady(const electronic_id::CardInfo::ptr& cardInfo);
+    void cardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& cardInfo);
     void statusUpdate(const RetriableError status);
 
 private:
@@ -49,10 +48,10 @@ private:
         try {
             const auto availableCardInfos = electronic_id::availableSupportedCards();
 
-            if (availableCardInfos.size() == 1) {
-                emit cardReady(availableCardInfos[0]);
+            if (!availableCardInfos.empty()) {
+                emit cardsAvailable(availableCardInfos);
             } else {
-                emit failure("Internal error: null selected card info");
+                emit failure(QString(__func__) + ": empty available supported card list");
             }
         } catch (const electronic_id::AutoSelectFailed& failure) {
             emit statusUpdate(toRetriableError(failure.reason()));

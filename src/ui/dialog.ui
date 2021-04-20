@@ -39,7 +39,7 @@ background-color: #EFEFEF;
 QPushButton::hover, QPushButton::focus {
 background-color: #DEDEDE;
 }
-#selectCardPageTitleLabel, #selectCertificatePageTitleLabel, #authenticatePageTitleLabel, #signPageTitleLabel {
+#waitingPageTitleLabel, #selectCardPageTitleLabel, #selectCertificatePageTitleLabel, #authenticatePageTitleLabel, #signPageTitleLabel {
 color: #003168;
 font-size: 32px;
 font-weight: bold;
@@ -56,6 +56,27 @@ border-radius: 35px;
 min-height: 70px;
 padding: 0px 20px 0px 28px;
 }
+
+QListWidget {
+border: 0;
+}
+QListWidget::item {
+border: 1px solid rgba(0,49,104,0.1);
+background-color: #F5F5F5;
+color: black;
+border-radius: 25px;
+margin-bottom: 6px;
+padding: 6px;
+}
+QListWidget::item:selected {
+border: 2px solid #113F8E;
+background-color: #F5F5F5;
+color: black;
+border-radius: 25px;
+margin-bottom: 6px;
+padding: 6px;
+}
+
 #selectCertificateInfoLabel {
 background-color: #F5F5F5;
 border: 2px solid #113F8E;
@@ -96,6 +117,71 @@ font-weight: bold;
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <widget class="QWidget" name="waitingPage">
+      <layout class="QVBoxLayout" name="waitingPageLayout">
+       <property name="spacing">
+        <number>20</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="waitingPageTitleLabel">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
+         <property name="text">
+          <string>Waiting for card</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="waitingPageHorizontalLayout" stretch="0,1">
+         <property name="spacing">
+          <number>20</number>
+         </property>
+         <item>
+          <widget class="WaitingSpinnerWidget" name="waitingPageSpinner" native="true"/>
+         </item>
+         <item>
+          <widget class="QLabel" name="waitingPageLabel">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="text">
+            <string notr="true">Please wait until the card operation completes</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="waitingPageVerticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="selectCardPage">
       <layout class="QVBoxLayout" name="selectCardPageLayout">
        <property name="spacing">
@@ -242,7 +328,7 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-        <widget class="CertificateWidget" name="selectCertificateInfo" native="true"/>
+        <widget class="CertificateListWidget" name="selectCertificateInfo" native="true"/>
        </item>
        <item>
         <spacer name="selectCertificatePageSpacer">
@@ -324,7 +410,7 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-        <widget class="CertificateWidget" name="authenticationCertificateInfo" native="true"/>
+        <widget class="CertificateListWidget" name="authenticationCertificateInfo" native="true"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="authenticatePinLayout">
@@ -477,7 +563,7 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-        <widget class="CertificateWidget" name="signingCertificateInfo" native="true"/>
+        <widget class="CertificateListWidget" name="signingCertificateInfo" native="true"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="signingPinLayout">
@@ -578,9 +664,15 @@ font-weight: bold;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CertificateWidget</class>
+   <class>CertificateListWidget</class>
    <extends>QWidget</extends>
-   <header>CertificateWidget.hpp</header>
+   <header>certificatelistwidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WaitingSpinnerWidget</class>
+   <extends>QWidget</extends>
+   <header>waitingspinner/waitingspinnerwidget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

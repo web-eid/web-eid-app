@@ -142,21 +142,20 @@ Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(
     validateAndStoreOriginCertificate(arguments);
 }
 
-QVariantMap Authenticate::onConfirm(WebEidUI* window, const size_t selectedCardIndex)
+QVariantMap Authenticate::onConfirm(WebEidUI* window,
+                                    const CardCertificateAndPinInfo& cardCertAndPin)
 {
-    auto [cardInfo, certificate, certificateDer] =
-        requireValidCardInfoAndCertificate(selectedCardIndex);
-
     const auto signatureAlgorithm =
-        QString::fromStdString(cardInfo->eid().authSignatureAlgorithm());
+        QString::fromStdString(cardCertAndPin.cardInfo->eid().authSignatureAlgorithm());
 
-    const auto token = createAuthenticationToken(certificate, certificateDer, signatureAlgorithm,
-                                                 nonce, origin.url(), originCertificate);
+    const auto token =
+        createAuthenticationToken(cardCertAndPin.certificate, cardCertAndPin.certificateBytesInDer,
+                                  signatureAlgorithm, nonce, origin.url(), originCertificate);
 
-    auto pin = getPin(cardInfo->eid().smartcard(), window);
+    auto pin = getPin(cardCertAndPin.cardInfo->eid().smartcard(), window);
 
     try {
-        const auto signedToken = signToken(cardInfo->eid(), token, pin);
+        const auto signedToken = signToken(cardCertAndPin.cardInfo->eid(), token, pin);
 
         // Erase the PIN memory.
         // TODO: Use a scope guard. Verify that the buffers are actually zeroed
