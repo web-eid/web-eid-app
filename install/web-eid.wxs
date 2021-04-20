@@ -81,6 +81,7 @@
             <File Source="$(var.qt_path)\bin\Qt5Core$(var.qt_suffix).dll"/>
             <File Source="$(var.qt_path)\bin\Qt5Gui$(var.qt_suffix).dll"/>
             <File Source="$(var.qt_path)\bin\Qt5Network$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\bin\Qt5Svg$(var.qt_suffix).dll"/>
             <File Source="$(var.qt_path)\bin\Qt5Widgets$(var.qt_suffix).dll"/>
             <File Source="$(var.qt_path)\bin\libEGL$(var.qt_suffix).dll"/>
             <File Source="$(var.qt_path)\bin\libGLESv2$(var.qt_suffix).dll"/>

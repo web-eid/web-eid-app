@@ -39,7 +39,7 @@ background-color: #EFEFEF;
 QPushButton::hover, QPushButton::focus {
 background-color: #DEDEDE;
 }
-#page1TitleLabel , #page2TitleLabel, #page3TitleLabel, #page4TitleLabel {
+#selectCardPageTitleLabel, #selectCertificatePageTitleLabel, #authenticatePageTitleLabel, #signPageTitleLabel {
 color: #003168;
 font-size: 32px;
 font-weight: bold;
@@ -114,7 +114,7 @@ font-weight: bold;
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="page1TitleLabel">
+        <widget class="QLabel" name="selectCardPageTitleLabel">
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -124,7 +124,7 @@ font-weight: bold;
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="page1HorizontalLayout2" stretch="0,1">
+        <layout class="QHBoxLayout" name="selectCardInfoLayout" stretch="0,1">
          <property name="spacing">
           <number>20</number>
          </property>
@@ -163,7 +163,7 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-        <spacer name="page1VerticalSpacer">
+        <spacer name="selectCardPageSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -195,7 +195,7 @@ font-weight: bold;
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="page2TitleLabel">
+        <widget class="QLabel" name="selectCertificatePageTitleLabel">
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -257,7 +257,7 @@ Valid:</string>
         </widget>
        </item>
        <item>
-        <spacer name="page2VerticalSpacer">
+        <spacer name="selectCertificatePageSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -289,7 +289,7 @@ Valid:</string>
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="page3TitleLabel">
+        <widget class="QLabel" name="authenticatePageTitleLabel">
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -421,6 +421,19 @@ Valid:</string>
          </item>
         </layout>
        </item>
+       <item>
+        <spacer name="authenticatePageSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="signPage">
@@ -441,7 +454,7 @@ Valid:</string>
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="page4TitleLabel">
+        <widget class="QLabel" name="signPageTitleLabel">
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -572,6 +585,19 @@ Valid:</string>
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="signPageSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
