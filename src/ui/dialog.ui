@@ -26,6 +26,9 @@ font-size: 14px;
 font-family: &quot;Roboto&quot;;
 color: black;
 }
+QDialogButtonBox {
+dialogbuttonbox-buttons-have-icons: 0;
+}
 QPushButton {
 font-size: 17px;
 border: 0px;
