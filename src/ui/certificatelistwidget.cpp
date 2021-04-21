@@ -38,7 +38,8 @@ CardCertificateAndPinInfo CertificateListWidget::selectedCertificate() const
         THROW(electronic_id::ProgrammingError, "No certificate selected from the list");
     }
     QVariant certData = currentItem->data(Qt::UserRole);
-    if (!certData.isValid() || !certData.canConvert<CardCertificateAndPinInfo>() || certData.isNull()) {
+    if (!certData.isValid() || !certData.canConvert<CardCertificateAndPinInfo>()
+        || certData.isNull()) {
         THROW(electronic_id::ProgrammingError, "Unable to retrieve item certificate data");
     }
     return certData.value<CardCertificateAndPinInfo>();
