@@ -31,7 +31,7 @@ class ReaderMonitorThread : public ControllerChildThread
 public:
     explicit ReaderMonitorThread(QObject* parent) : ControllerChildThread(parent) {}
 
-Q_SIGNALS:
+signals:
     void cardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& cardInfo);
     void statusUpdate(const RetriableError status);
 
@@ -51,6 +51,7 @@ private:
             if (!availableCardInfos.empty()) {
                 emit cardsAvailable(availableCardInfos);
             } else {
+                // This should never happen.
                 emit failure(QString(__func__) + ": empty available supported card list");
             }
         } catch (const electronic_id::AutoSelectFailed& failure) {

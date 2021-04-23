@@ -59,7 +59,6 @@ WebEidDialog::Page commandToPage(const CommandType command)
     case CommandType::SIGN:
         return Page::SIGN;
     default:
-        // Careful, throwing is not good, very bad inside Qt event handlers.
         THROW(ProgrammingError, "No page exists for command " + std::string(command));
     }
 }
@@ -177,7 +176,7 @@ void WebEidDialog::onMultipleCertificatesReady(
 }
 
 /** This slot is used by all commands in case there is only a single certificate available. It
- * displays the certificate confirmation view and, in case of authenticate or sign, the pin input
+ * displays the certificate confirmation view and, in case of authenticate or sign, the PIN input
  * widgets.
  *
  * Authenticate enters here also from onCertificatesReady() after a certificate has been selected.

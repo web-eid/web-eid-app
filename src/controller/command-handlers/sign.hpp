@@ -42,7 +42,6 @@ signals:
 
 private:
     void emitCertificatesReady(
-        const QUrl& origin,
         const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) override;
     void validateAndStoreDocHashAndHashAlgo(const QVariantMap& args);
 

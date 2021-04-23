@@ -22,20 +22,15 @@
 
 #include "registermetatypes.hpp"
 
-#include "commands.hpp"
 #include "certandpininfo.hpp"
 #include "retriableerror.hpp"
 
 void registerMetatypes()
 {
-    // FIXME: only register signal parameter metatypes, too much stuff at the moment
     qRegisterMetaType<electronic_id::AutoSelectFailed::Reason>();
     qRegisterMetaType<electronic_id::CardInfo::ptr>();
     qRegisterMetaType<std::vector<electronic_id::CardInfo::ptr>>();
-    qRegisterMetaType<electronic_id::CertificateType>();
     qRegisterMetaType<electronic_id::VerifyPinFailed::Status>();
-
-    qRegisterMetaType<CommandType>();
 
     qRegisterMetaType<CardCertificateAndPinInfo>();
     qRegisterMetaType<std::vector<CardCertificateAndPinInfo>>();

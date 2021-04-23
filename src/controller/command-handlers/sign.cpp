@@ -68,8 +68,7 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
     validateAndStoreOrigin(arguments);
 }
 
-void Sign::emitCertificatesReady(const QUrl& origin,
-                                 const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos)
+void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos)
 {
     const CardCertificateAndPinInfo* cardWithCertificateFromArgs = nullptr;
 

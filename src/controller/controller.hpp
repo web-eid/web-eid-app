@@ -50,11 +50,8 @@ signals:
 public: // slots
     void run();
 
-    // Called either directly from run() or from the monitor thread when the card is ready.
+    // Called either directly from run() or from the monitor thread when cards are available.
     void onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
-
-    // Called either directly from run() or from monitor thread when card is ready.
-    void onCardReady(const electronic_id::CardInfo::ptr& cards);
 
     // Called on reader and card events from monitor thread.
     void onReaderMonitorStatusUpdate(const RetriableError reason);
