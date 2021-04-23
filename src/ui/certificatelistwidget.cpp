@@ -37,11 +37,11 @@ CardCertificateAndPinInfo CertificateListWidget::selectedCertificate() const
         // Should not happen as OK button is disabled until certificateSelected() has been emitted.
         THROW(electronic_id::ProgrammingError, "No certificate selected from the list");
     }
-    QVariant data = currentItem->data(Qt::UserRole);
-    if (!data.isValid() || !data.canConvert<CardCertificateAndPinInfo>() || data.isNull()) {
+    QVariant certData = currentItem->data(Qt::UserRole);
+    if (!certData.isValid() || !certData.canConvert<CardCertificateAndPinInfo>() || certData.isNull()) {
         THROW(electronic_id::ProgrammingError, "Unable to retrieve item certificate data");
     }
-    return data.value<CardCertificateAndPinInfo>();
+    return certData.value<CardCertificateAndPinInfo>();
 }
 
 void CertificateListWidget::selectFirstRow()
