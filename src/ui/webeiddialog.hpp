@@ -84,12 +84,19 @@ private:
     void connectOkToEmitSelectedCertificate(CertificateListWidget* certificateWidget);
     void connectOkToCachePinAndEmitSelectedCertificate(QLineEdit* pinInput,
                                                        CertificateListWidget* certificateWidget);
+    void emitSelectedCertificate(CertificateListWidget* certificateWidget);
+
+    void onRetryImpl(const QString& error);
 
     void setupPinInputValidator(const PinInfo& pinInfo);
 
     void startPinTimeoutProgressBar();
+    void hidePinWidgets();
+    void enableAndShowOK();
+    void disableOKUntilCertificateSelected(const CertificateListWidget* certificateWidget);
+    void displayPinBlockedError(QLabel* label, const QString& message);
 
-    void emitSelectedCertificate(CertificateListWidget* certificateWidget);
+    void resizeHeight();
 
     std::pair<QLabel*, CertificateListWidget*>
     originLabelAndCertificateListOnPage(const CommandType commandType);
@@ -99,14 +106,6 @@ private:
     QLabel* pinTitleLabelOnPage();
     QLineEdit* pinInputOnPage();
     QProgressBar* pinEntryTimeoutProgressBarOnPage();
-
-    void onRetryImpl(const QString& error);
-
-    void displayPinBlockedError(QLabel* label, const QString& message);
-    void hidePinWidgets();
-    void disableOKUntilCertificateSelected(const CertificateListWidget* certificateWidget);
-
-    void resizeHeight();
 
     std::tuple<QString, QString, QString>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
