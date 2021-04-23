@@ -46,8 +46,7 @@ signals:
 
 protected:
     virtual void
-    emitCertificatesReady(const QUrl& origin,
-                          const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
+    emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
     void validateAndStoreOrigin(const QVariantMap& arguments);
 
     electronic_id::CertificateType certificateType = electronic_id::CertificateType::NONE;

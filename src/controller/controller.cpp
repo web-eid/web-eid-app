@@ -329,6 +329,9 @@ void Controller::disposeUI()
         window->disconnect();
         window->close();
         window->deleteLater();
+        // unique_ptr must release ownership of the window object without deleting to avoid double
+        // free, as deleteLater() has been already called.
+        window.release();
         window = nullptr;
     }
 }

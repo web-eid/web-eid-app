@@ -121,7 +121,7 @@ void CertificateReader::run(const std::vector<CardInfo::ptr>& cards)
     if (certInfos.empty()) {
         emit retry(RetriableError::NO_VALID_CERTIFICATE_AVAILABLE);
     } else {
-        emitCertificatesReady(origin, certInfos);
+        emitCertificatesReady(certInfos);
     }
 }
 
@@ -135,7 +135,7 @@ void CertificateReader::connectSignals(const WebEidUI* window)
 }
 
 void CertificateReader::emitCertificatesReady(
-    const QUrl& origin, const std::vector<CardCertificateAndPinInfo>& certInfos)
+    const std::vector<CardCertificateAndPinInfo>& certInfos)
 {
     if (certInfos.size() == 1) {
         emit singleCertificateReady(origin, certInfos[0]);
