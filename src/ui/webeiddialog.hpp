@@ -96,14 +96,13 @@ private:
     void enableAndShowOK();
     void disableOKUntilCertificateSelected(const CertificateListWidget* certificateWidget);
     void displayPinRetriesRemaining(const PinInfo::PinRetriesCount& pinRetriesCount);
-    void displayPinBlockedError(QLabel* label, const QString& message);
+    void displayPinBlockedError();
 
     void resizeHeight();
 
     std::pair<QLabel*, CertificateListWidget*>
     originLabelAndCertificateListOnPage(const CommandType commandType);
     std::pair<QLabel*, CertificateListWidget*> originLabelAndCertificateListOnPage();
-    QLabel* descriptionLabelOnPage();
     QLabel* pinErrorLabelOnPage();
     QLabel* pinTitleLabelOnPage();
     QLineEdit* pinInputOnPage();

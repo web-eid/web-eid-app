@@ -206,9 +206,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             enableAndShowOK();
 
         } else if (certAndPin.pinInfo.pinIsBlocked) {
-            auto descriptionLabel = descriptionLabelOnPage();
-            displayPinBlockedError(descriptionLabel, tr("PIN is blocked, cannot proceed"));
-            okButton->hide();
+            displayPinBlockedError();
 
         } else if (certAndPin.pinInfo.readerHasPinPad) {
             setupPinPadProgressBarAndEmitWait();
@@ -457,12 +455,13 @@ void WebEidDialog::displayPinRetriesRemaining(const PinInfo::PinRetriesCount& pi
     }
 }
 
-void WebEidDialog::displayPinBlockedError(QLabel* descriptionLabel, const QString& message)
+void WebEidDialog::displayPinBlockedError()
 {
-    okButton->setEnabled(false);
+    okButton->hide();
     hidePinWidgets();
-    descriptionLabel->setStyleSheet(QStringLiteral("color: darkred"));
-    descriptionLabel->setText(message);
+    auto errorLabel = pinErrorLabelOnPage();
+    errorLabel->setText(tr("PIN is blocked, cannot proceed"));
+    errorLabel->show();
 }
 
 void WebEidDialog::resizeHeight()
@@ -489,18 +488,6 @@ WebEidDialog::originLabelAndCertificateListOnPage(const CommandType commandType)
 std::pair<QLabel*, CertificateListWidget*> WebEidDialog::originLabelAndCertificateListOnPage()
 {
     return originLabelAndCertificateListOnPage(currentCommand);
-}
-
-QLabel* WebEidDialog::descriptionLabelOnPage()
-{
-    switch (currentCommand) {
-    case CommandType::AUTHENTICATE:
-        return ui->authenticateDescriptionLabel;
-    case CommandType::SIGN:
-        return ui->signDescriptionLabel;
-    default:
-        THROW(ProgrammingError, "Only AUTHENTICATE or SIGN allowed");
-    }
 }
 
 QLabel* WebEidDialog::pinErrorLabelOnPage()
