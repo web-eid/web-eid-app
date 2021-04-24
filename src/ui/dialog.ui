@@ -319,7 +319,7 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-        <widget class="CertificateListWidget" name="selectCertificateInfo" native="true"/>
+        <widget class="CertificateListWidget" name="selectCertificateInfo"/>
        </item>
        <item>
         <spacer name="selectCertificatePageSpacer">
@@ -401,7 +401,7 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-        <widget class="CertificateListWidget" name="pinInputCertificateInfo" native="true"/>
+        <widget class="CertificateListWidget" name="pinInputCertificateInfo"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="pinLayout">
@@ -502,16 +502,15 @@ font-weight: bold;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CertificateListWidget</class>
-   <extends>QWidget</extends>
-   <header>certificatelistwidget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>WaitingSpinnerWidget</class>
    <extends>QWidget</extends>
    <header>waitingspinner/waitingspinnerwidget.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CertificateListWidget</class>
+   <extends>QListWidget</extends>
+   <header>certificatelistwidget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -358,10 +358,10 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait()
     okButton->hide();
     cancelButton->hide();
     ui->pinEntryTimeoutProgressBar->show();
-
-    // FIXME: translation
-    const auto text = ui->pinTitleLabel->text().replace(':', QStringLiteral(" using PIN-pad"));
-    ui->pinTitleLabel->setText(text);
+    ui->pinTitleLabel->setText(tr("Please enter %1 using PIN pad")
+                                   .arg(currentCommand == CommandType::AUTHENTICATE
+                                            ? tr("authentication PIN (PIN 1)")
+                                            : tr("signing PIN (PIN 2)")));
 
     startPinTimeoutProgressBar();
 
