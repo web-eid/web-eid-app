@@ -95,7 +95,7 @@ private:
     void hidePinWidgets();
     void enableAndShowOK();
     void disableOKUntilCertificateSelected(const CertificateListWidget* certificateWidget);
-    void displayPinRetriesRemaining(const PinInfo::PinRetriesCount& pinRetriesCount);
+    void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);
     void displayPinBlockedError();
 
     void resizeHeight();
@@ -118,7 +118,6 @@ private:
     QPushButton* cancelButton;
 
     CommandType currentCommand = CommandType::NONE;
-    int lineHeight = -1;
     std::optional<bool> readerHasPinPad;
     QString pin;
 };

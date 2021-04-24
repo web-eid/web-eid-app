@@ -37,7 +37,7 @@
 #define CATCH_AND_EMIT_FAILURE_AND_RETURN()                                                        \
     catch (std::exception & e)                                                                     \
     {                                                                                              \
-        emit failure(e.what());                                                                    \
+        Q_EMIT failure(e.what());                                                                  \
         return;                                                                                    \
     }
 
@@ -77,6 +77,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Ui::WebEi
 {
     ui->setupUi(this);
     setWindowFlag(Qt::CustomizeWindowHint);
+    setWindowFlag(Qt::WindowTitleHint);
     ui->authenticatePinLayout->setAlignment(ui->authenticationPinInput, Qt::AlignCenter);
     ui->signingPinLayout->setAlignment(ui->signingPinInput, Qt::AlignCenter);
     ui->authenticationPinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
@@ -85,8 +86,6 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Ui::WebEi
     okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
     cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
     makeOkButtonDefaultAndconnectSignals();
-
-    lineHeight = ui->authenticateOriginLabel->height();
 
     // Hide PIN-related widgets by default.
     ui->authenticationPinErrorLabel->hide();
@@ -308,7 +307,7 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
     QLineEdit* pinInput, CertificateListWidget* certificateWidget)
 {
     okButton->disconnect();
-    connect(okButton, &QPushButton::clicked, this, [this, pinInput, certificateWidget]() {
+    connect(okButton, &QPushButton::clicked, this, [this, pinInput, certificateWidget] {
         // Cache the PIN in an instance variable for later use in getPin().
         // This is required as accessing widgets from background threads is not allowed,
         // so getPin() cannot access pinInput directly.
@@ -328,7 +327,7 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
 void WebEidDialog::emitSelectedCertificate(CertificateListWidget* certificateWidget)
 {
     try {
-        emit accepted(certificateWidget->selectedCertificate());
+        Q_EMIT accepted(certificateWidget->selectedCertificate());
     }
     CATCH_AND_EMIT_FAILURE_AND_RETURN()
 }
@@ -340,18 +339,16 @@ void WebEidDialog::onRetryImpl(const QString& error)
     const auto result =
         QMessageBox::warning(this, tr("Retry?"), tr("Error occurred: ") + error,
                              QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No));
-    emit result == QMessageBox::Yes ? retry() : reject();
+    Q_EMIT result == QMessageBox::Yes ? retry() : reject();
 }
 
 void WebEidDialog::setupPinPadProgressBarAndEmitWait()
 {
+    hide();
+    setWindowFlag(Qt::WindowCloseButtonHint, false);
+    show();
     okButton->hide();
     cancelButton->hide();
-    /* FIXME: These don't work in macOS or Linux, needs more investigation.
-     * In Linux, the window disappears on setWindowFlag(Qt::WindowCloseButtonHint, false).
-        setWindowFlag(Qt::WindowCloseButtonHint, false);
-        setWindowFlag(Qt::WindowMinimizeButtonHint, false);
-    */
     pinEntryTimeoutProgressBarOnPage()->show();
 
     auto pinTitleLabel = pinTitleLabelOnPage();
@@ -363,7 +360,7 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait()
     startPinTimeoutProgressBar();
 
     auto certificateWidget = originLabelAndCertificateListOnPage().second;
-    emit waitingForPinPad(certificateWidget->selectedCertificate());
+    Q_EMIT waitingForPinPad(certificateWidget->selectedCertificate());
 }
 
 void WebEidDialog::setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLength)
@@ -443,10 +440,10 @@ void WebEidDialog::disableOKUntilCertificateSelected(const CertificateListWidget
     okButton->setEnabled(false);
     certificateWidget->disconnect();
     connect(certificateWidget, &CertificateListWidget::certificateSelected, this,
-            [this]() { okButton->setEnabled(true); });
+            [this] { okButton->setEnabled(true); });
 }
 
-void WebEidDialog::displayPinRetriesRemaining(const PinInfo::PinRetriesCount& pinRetriesCount)
+void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount)
 {
     if (pinRetriesCount.first != pinRetriesCount.second) {
         auto pinErrorLabel = pinErrorLabelOnPage();
