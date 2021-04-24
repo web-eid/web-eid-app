@@ -235,3 +235,9 @@ Use _Powershell_ to run the following commands to build the project.
 - Run tests:
 
       ctest -V -C ${BUILD_TYPE}
+
+## Updating translations
+
+Run the following command to update Qt Linguist TS files:
+
+      lupdate src/ -ts ./src/ui/translations/*.ts

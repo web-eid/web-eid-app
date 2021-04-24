@@ -23,8 +23,6 @@
 #pragma once
 
 #include "ui.hpp"
-#include "certandpininfo.hpp"
-#include "qeid.hpp"
 
 #include <optional>
 #include <utility>

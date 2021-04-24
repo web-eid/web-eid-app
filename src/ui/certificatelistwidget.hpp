@@ -2,13 +2,11 @@
 
 #include "certandpininfo.hpp"
 
-#include <QWidget>
+#include <QListWidget>
 
 struct CertificateInfo;
-class QHBoxLayout;
-class QListWidget;
 
-class CertificateListWidget : public QWidget
+class CertificateListWidget : public QListWidget
 {
     Q_OBJECT
 
@@ -25,7 +23,4 @@ signals:
 private:
     void addCertificateListItem(const CardCertificateAndPinInfo& cardCertPinInfo);
     void resizeHeight();
-
-    QHBoxLayout* layout;
-    QListWidget* certificateList;
 };
