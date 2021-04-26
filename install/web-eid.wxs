@@ -119,6 +119,11 @@
               <File Name="qwindowsvistastyle$(var.qt_suffix).dll"/>
             </Component>
           </Directory>
+          <Directory Id="imageformats" Name="imageformats" FileSource="$(var.qt_path)\plugins\imageformats">
+            <Component Id="imageformats.dll">
+              <File Name="qsvg.dll"/>
+            </Component>
+          </Directory>
 <?endif?>
         </Directory>
       </Directory>
@@ -145,6 +150,7 @@
 <?ifdef var.qt_path ?>
       <ComponentRef Id="qwindows.dll" />
       <ComponentRef Id="qwindowsvistastyle.dll" />
+      <ComponentRef Id="imageformats.dll" />
 <?endif?>
     </Feature>
   </Product>
