@@ -70,4 +70,5 @@ jobs:
           name: web-eid-app-windows-build-${{github.run_number}}
           path: |
             build/src/app/*.msi
-            build/src/app/**/*.pdb
+            build/src/**/*.pdb
+            build/lib/**/*.pdb
