@@ -73,7 +73,7 @@ private:
 
     const std::string& commandType() const override
     {
-        static const std::string cmdType {CommandType::INSERT_CARD};
+        static const std::string cmdType = CommandType(CommandType::INSERT_CARD);
         return cmdType;
     }
 };
