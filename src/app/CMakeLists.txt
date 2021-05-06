@@ -10,7 +10,6 @@ set_property(SOURCE web-eid.rc APPEND PROPERTY COMPILE_DEFINITIONS
     PROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
     PROJECT_VERSION_TWEAK=${PROJECT_VERSION_TWEAK}
 )
-set_property(SOURCE main.cpp APPEND PROPERTY COMPILE_DEFINITIONS PROJECT_VERSION="${SEMVER_VERSION_STRING}")
 target_link_libraries(web-eid controller ui pcsc)
 
 if(WIN32)
@@ -122,9 +121,8 @@ else()
         DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/google-chrome/extensions")
     add_custom_target(installer
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        COMMAND dh_make -c mit --createorig --addmissing --defaultless -y -p $<TARGET_NAME:web-eid>_${PROJECT_VERSION}
         COMMAND dch --distribution unstable -v ${PROJECT_VERSION} "Release: ${PROJECT_VERSION}."
-        COMMAND dpkg-buildpackage -rfakeroot -us -uc
+        COMMAND dpkg-buildpackage -us -uc
     )
 endif()
 configure_file(${CMAKE_SOURCE_DIR}/install/eu.webeid.json.cmake eu.webeid.json @ONLY)

@@ -22,8 +22,8 @@
 
 // https://bugreports.qt.io/browse/QTBUG-72073
 #define QT_NO_FLOAT16_OPERATORS
+#include "application.hpp"
 #include "controller.hpp"
-#include "registermetatypes.hpp"
 #include "command-handlers/getcertificate.hpp"
 
 #include "../ui/punycode.hpp"
@@ -83,7 +83,7 @@ private:
 
 void WebEidTests::initTestCase()
 {
-    registerMetatypes();
+    Application::registerMetatypes();
 }
 
 void WebEidTests::init()

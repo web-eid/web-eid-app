@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Web eID Project
+ * Copyright (c) 2021 The Web eID Project
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,4 +22,13 @@
 
 #pragma once
 
-void registerMetatypes();
+#include <QApplication>
+
+class Application final : public QApplication
+{
+    Q_OBJECT
+public:
+    Application(int& argc, char** argv, const QString& name, const QString& display);
+
+    static void registerMetatypes();
+};
