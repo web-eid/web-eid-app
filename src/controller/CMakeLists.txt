@@ -1,4 +1,6 @@
 add_library(controller STATIC
+    application.cpp
+    application.hpp
     certandpininfo.hpp
     command-handlers/authenticate.cpp
     command-handlers/authenticate.hpp
@@ -20,8 +22,6 @@ add_library(controller STATIC
     logging.hpp
     logging.cpp
     qeid.hpp
-    registermetatypes.cpp
-    registermetatypes.hpp
     retriableerror.cpp
     retriableerror.hpp
     threads/commandhandlerconfirmthread.hpp
@@ -34,8 +34,8 @@ add_library(controller STATIC
     writeresponse.hpp
 )
 
+set_property(SOURCE application.cpp APPEND PROPERTY COMPILE_DEFINITIONS PROJECT_VERSION="${SEMVER_VERSION_STRING}")
 target_include_directories(controller PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
 target_link_libraries(controller electronic-id Qt5::Network Qt5::Widgets)
 
 # %{function}:%{file}:%{line} works in Qt log message pattern only if code

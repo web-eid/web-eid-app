@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Web eID Project
+ * Copyright (c) 2021 The Web eID Project
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,37 @@
  * SOFTWARE.
  */
 
-#include "registermetatypes.hpp"
-
+#include "application.hpp"
 #include "certandpininfo.hpp"
+#include "logging.hpp"
 #include "retriableerror.hpp"
 
-void registerMetatypes()
+#include <QDir>
+#include <QFontDatabase>
+#include <QTranslator>
+
+Application::Application(int& argc, char** argv, const QString& name, const QString& display) :
+    QApplication(argc, argv)
+{
+    setApplicationName(name);
+    setApplicationDisplayName(display);
+    setApplicationVersion(QStringLiteral(PROJECT_VERSION));
+    setOrganizationDomain(QStringLiteral("web-eid.eu"));
+    setOrganizationName(QStringLiteral("RIA"));
+
+    QTranslator* translator = new QTranslator(this);
+    translator->load(QLocale(), QStringLiteral(":/translations/"));
+    QApplication::installTranslator(translator);
+
+    for (const QString& font : QDir(QStringLiteral(":/fonts")).entryList()) {
+        QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/%1").arg(font));
+    }
+
+    registerMetatypes();
+    setupLogging();
+}
+
+void Application::registerMetatypes()
 {
     qRegisterMetaType<electronic_id::AutoSelectFailed::Reason>();
     qRegisterMetaType<electronic_id::CardInfo::ptr>();
