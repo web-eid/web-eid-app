@@ -42,7 +42,7 @@ background-color: #EFEFEF;
 QPushButton::hover, QPushButton::focus {
 background-color: #DEDEDE;
 }
-#waitingPageTitleLabel, #selectCardPageTitleLabel, #selectCertificatePageTitleLabel, #authenticatePageTitleLabel, #signPageTitleLabel {
+#waitingPageTitleLabel, #selectCardPageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel {
 color: #003168;
 font-size: 32px;
 font-weight: bold;
@@ -53,13 +53,6 @@ border-radius: 3px;
 padding: 10px;
 color: #F04E23;
 }
-#selectCertificateInfoLabel, #authenticateCertificateInfoLabel, #signCertificateInfoLabel {
-border: 1px solid rgba(0,49,104,0.1);
-border-radius: 35px;
-min-height: 70px;
-padding: 0px 20px 0px 28px;
-}
-
 QListWidget {
 border: 0;
 }
@@ -79,12 +72,7 @@ border-radius: 25px;
 margin-bottom: 6px;
 padding: 6px;
 }
-
-#selectCertificateInfoLabel {
-background-color: #F5F5F5;
-border: 2px solid #113F8E;
-}
-#authenticationPinInput, #signingPinInput {
+#pinInput {
 border: 2px solid #113F8E;
 border-radius: 3px;
 min-width: 161px;
@@ -94,10 +82,10 @@ max-height: 41px;
 font-size: 20px;
 font-weight: bold;
 }
-#authenticationPinErrorLabel, #signingPinErrorLabel {
+#pinErrorLabel {
 color: #F04E23;
 }
-#selectCertificateOriginLabel, #authenticateOriginLabel, #signOriginLabel {
+#selectCertificateOriginLabel, #pinInputOriginLabel {
 color: #003168;
 font-weight: bold;
 }</string>
@@ -348,8 +336,8 @@ font-weight: bold;
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="authenticatePage">
-      <layout class="QVBoxLayout" name="authenticatePageLayout">
+     <widget class="QWidget" name="pinInputPage">
+      <layout class="QVBoxLayout" name="pinInputPageLayout">
        <property name="spacing">
         <number>20</number>
        </property>
@@ -366,7 +354,7 @@ font-weight: bold;
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="authenticatePageTitleLabel">
+        <widget class="QLabel" name="pinInputPageTitleLabel">
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -376,7 +364,7 @@ font-weight: bold;
         </widget>
        </item>
        <item>
-        <layout class="QGridLayout" name="authenticateLabelLayout" columnstretch="0,1">
+        <layout class="QGridLayout" name="pinInputLabelLayout" columnstretch="0,1">
          <property name="horizontalSpacing">
           <number>10</number>
          </property>
@@ -384,21 +372,21 @@ font-weight: bold;
           <number>9</number>
          </property>
          <item row="1" column="1">
-          <widget class="QLabel" name="authenticateOriginLabel">
+          <widget class="QLabel" name="pinInputOriginLabel">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="authenticateOriginLabelIcon">
+          <widget class="QLabel" name="pinInputOriginLabelIcon">
            <property name="pixmap">
             <pixmap resource="web-eid-resources.qrc">:/images/origin.svg</pixmap>
            </property>
           </widget>
          </item>
          <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="authenticateDescriptionLabel">
+          <widget class="QLabel" name="pinInputDescriptionLabel">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
@@ -413,15 +401,15 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-        <widget class="CertificateListWidget" name="authenticationCertificateInfo" native="true"/>
+        <widget class="CertificateListWidget" name="pinInputCertificateInfo" native="true"/>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="authenticatePinLayout">
+        <layout class="QVBoxLayout" name="pinLayout">
          <property name="spacing">
           <number>10</number>
          </property>
          <item>
-          <widget class="QLabel" name="authenticationPinTitleLabel">
+          <widget class="QLabel" name="pinTitleLabel">
            <property name="font">
             <font>
              <family>Roboto</family>
@@ -437,19 +425,19 @@ font-weight: bold;
             <set>Qt::AlignCenter</set>
            </property>
            <property name="buddy">
-            <cstring>authenticationPinInput</cstring>
+            <cstring>pinInput</cstring>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QProgressBar" name="authenticatePinEntryTimeoutProgressBar">
+          <widget class="QProgressBar" name="pinEntryTimeoutProgressBar">
            <property name="textVisible">
             <bool>false</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="authenticationPinInput">
+          <widget class="QLineEdit" name="pinInput">
            <property name="maxLength">
             <number>12</number>
            </property>
@@ -459,7 +447,7 @@ font-weight: bold;
           </widget>
          </item>
          <item>
-          <spacer name="authenticationPinInputHelperSpacer">
+          <spacer name="pinInputHelperSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -475,7 +463,7 @@ font-weight: bold;
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="authenticationPinErrorLabel">
+          <widget class="QLabel" name="pinErrorLabel">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
@@ -488,159 +476,6 @@ font-weight: bold;
        </item>
        <item>
         <spacer name="authenticatePageSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="signPage">
-      <layout class="QVBoxLayout" name="signPageLayout">
-       <property name="spacing">
-        <number>20</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="signPageTitleLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string>Sign</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="signLabelLayout" columnstretch="0,1">
-         <property name="horizontalSpacing">
-          <number>10</number>
-         </property>
-         <property name="verticalSpacing">
-          <number>9</number>
-         </property>
-         <item row="1" column="0">
-          <widget class="QLabel" name="signOriginLabelIcon">
-           <property name="pixmap">
-            <pixmap resource="web-eid-resources.qrc">:/images/origin.svg</pixmap>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="signOriginLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="signDescriptionLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string>By confirming signing, I agree to submit my name and personal identification number to the website</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="CertificateListWidget" name="signingCertificateInfo" native="true"/>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="signingPinLayout">
-         <property name="spacing">
-          <number>10</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="signingPinTitleLabel">
-           <property name="font">
-            <font>
-             <family>Roboto</family>
-             <pointsize>-1</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Please enter signing PIN (PIN 2):</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-           <property name="buddy">
-            <cstring>signingPinInput</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QProgressBar" name="signingPinEntryTimeoutProgressBar">
-           <property name="textVisible">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="signingPinInput">
-           <property name="maxLength">
-            <number>12</number>
-           </property>
-           <property name="echoMode">
-            <enum>QLineEdit::Password</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="signingPinInputHelperSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QLabel" name="signingPinErrorLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="signPageSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

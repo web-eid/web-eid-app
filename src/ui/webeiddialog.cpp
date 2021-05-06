@@ -55,9 +55,8 @@ WebEidDialog::Page commandToPage(const CommandType command)
     case CommandType::GET_CERTIFICATE:
         return Page::SELECT_CERTIFICATE;
     case CommandType::AUTHENTICATE:
-        return Page::AUTHENTICATE;
     case CommandType::SIGN:
-        return Page::SIGN;
+        return Page::PININPUT;
     default:
         THROW(ProgrammingError, "No page exists for command " + std::string(command));
     }
@@ -77,24 +76,18 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Ui::WebEi
 {
     ui->setupUi(this);
     setWindowFlag(Qt::CustomizeWindowHint);
-    ui->authenticatePinLayout->setAlignment(ui->authenticationPinInput, Qt::AlignCenter);
-    ui->signingPinLayout->setAlignment(ui->signingPinInput, Qt::AlignCenter);
-    ui->authenticationPinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
-    ui->signingPinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
+    setWindowFlag(Qt::WindowTitleHint);
+    ui->pinLayout->setAlignment(ui->pinInput, Qt::AlignCenter);
+    ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
 
     okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
     cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
     makeOkButtonDefaultAndconnectSignals();
 
-    lineHeight = ui->authenticateOriginLabel->height();
-
     // Hide PIN-related widgets by default.
-    ui->authenticationPinErrorLabel->hide();
-    ui->signingPinErrorLabel->hide();
-    ui->authenticationPinInput->hide();
-    ui->signingPinInput->hide();
-    ui->authenticatePinEntryTimeoutProgressBar->hide();
-    ui->signingPinEntryTimeoutProgressBar->hide();
+    ui->pinErrorLabel->hide();
+    ui->pinInput->hide();
+    ui->pinEntryTimeoutProgressBar->hide();
 }
 
 WebEidDialog::~WebEidDialog()
@@ -112,6 +105,24 @@ void WebEidDialog::showWaitingForCardPage(const CommandType commandType)
     const auto pageIndex =
         commandType == CommandType::INSERT_CARD ? int(Page::INSERT_CARD) : int(Page::WAITING);
     ui->pageStack->setCurrentIndex(pageIndex);
+    switch (commandType) {
+    case CommandType::AUTHENTICATE:
+        ui->pinInputPageTitleLabel->setText(tr("Authenticate"));
+        ui->pinInputDescriptionLabel->setText(
+            tr("By confirming authentication, I agree to submit my name and personal "
+               "identification number to the website"));
+        ui->pinTitleLabel->setText(tr("Please enter authentication PIN (PIN 1):"));
+        break;
+    case CommandType::SIGN:
+        ui->pinInputPageTitleLabel->setText(tr("Sign"));
+        ui->pinInputDescriptionLabel->setText(
+            tr("By confirming signing, I agree to submit my name and personal identification "
+               "number to the website"));
+        ui->pinTitleLabel->setText(tr("Please enter signing PIN (PIN 2):"));
+        break;
+    default:
+        break;
+    }
 
     resizeHeight();
 }
@@ -148,24 +159,21 @@ void WebEidDialog::onMultipleCertificatesReady(
     okButton->setEnabled(false);
 
     try {
-        auto [originLabel, certificateWidget] =
-            originLabelAndCertificateListOnPage(CommandType::GET_CERTIFICATE);
-        fillOriginAndCertificateList(originLabel, certificateWidget, origin,
-                                     certificateAndPinInfos);
+        fillOriginAndCertificateList(ui->selectCertificateOriginLabel, ui->selectCertificateInfo,
+                                     origin, certificateAndPinInfos);
 
-        disableOKUntilCertificateSelected(certificateWidget);
+        disableOKUntilCertificateSelected(ui->selectCertificateInfo);
 
         switch (currentCommand) {
         case CommandType::GET_CERTIFICATE:
-            connectOkToEmitSelectedCertificate(certificateWidget);
+            connectOkToEmitSelectedCertificate(ui->selectCertificateInfo);
             break;
         case CommandType::AUTHENTICATE:
             // Authenticate continues with the selected certificate to onSingleCertificateReady().
             okButton->disconnect();
-            connect(okButton, &QPushButton::clicked, this,
-                    [this, origin, certificateWidget = certificateWidget]() {
-                        onSingleCertificateReady(origin, certificateWidget->selectedCertificate());
-                    });
+            connect(okButton, &QPushButton::clicked, this, [this, origin] {
+                onSingleCertificateReady(origin, ui->selectCertificateInfo->selectedCertificate());
+            });
             break;
         default:
             THROW(ProgrammingError, "Command " + std::string(currentCommand) + " not allowed here");
@@ -213,8 +221,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             displayPinRetriesRemaining(certAndPin.pinInfo.pinRetriesCount);
 
         } else {
-            auto pinInput = pinInputOnPage();
-            connectOkToCachePinAndEmitSelectedCertificate(pinInput, certificateWidget);
+            connectOkToCachePinAndEmitSelectedCertificate(certificateWidget);
             setupPinInputValidator(certAndPin.pinInfo.pinMinMaxLength);
             displayPinRetriesRemaining(certAndPin.pinInfo.pinRetriesCount);
 
@@ -268,9 +275,8 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
             break;
         }
 
-        auto pinErrorLabel = pinErrorLabelOnPage();
-        pinErrorLabel->setHidden(message.isEmpty());
-        pinErrorLabel->setText(message);
+        ui->pinErrorLabel->setHidden(message.isEmpty());
+        ui->pinErrorLabel->setText(message);
 
         if (readerHasPinPad.value_or(false)) {
             onRetryImpl(message);
@@ -301,25 +307,25 @@ void WebEidDialog::connectOkToEmitSelectedCertificate(CertificateListWidget* cer
 {
     okButton->disconnect();
     connect(okButton, &QPushButton::clicked, this,
-            [this, certificateWidget]() { emitSelectedCertificate(certificateWidget); });
+            [this, certificateWidget] { emitSelectedCertificate(certificateWidget); });
 }
 
 void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
-    QLineEdit* pinInput, CertificateListWidget* certificateWidget)
+    CertificateListWidget* certificateWidget)
 {
     okButton->disconnect();
-    connect(okButton, &QPushButton::clicked, this, [this, pinInput, certificateWidget]() {
+    connect(okButton, &QPushButton::clicked, this, [this, certificateWidget] {
         // Cache the PIN in an instance variable for later use in getPin().
         // This is required as accessing widgets from background threads is not allowed,
         // so getPin() cannot access pinInput directly.
         // QString uses QAtomicPointer internally and is thread-safe.
-        pin = pinInput->text();
+        pin = ui->pinInput->text();
 
         // TODO: We need to erase the PIN in the widget buffer, this needs further work.
         // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
         // custom Qt widget.
         // Clear the PIN input.
-        pinInput->setText({});
+        ui->pinInput->setText({});
 
         emitSelectedCertificate(certificateWidget);
     });
@@ -345,20 +351,17 @@ void WebEidDialog::onRetryImpl(const QString& error)
 
 void WebEidDialog::setupPinPadProgressBarAndEmitWait()
 {
+    hide();
+    setWindowFlag(Qt::WindowCloseButtonHint, false);
+    show();
+
     okButton->hide();
     cancelButton->hide();
-    /* FIXME: These don't work in macOS or Linux, needs more investigation.
-     * In Linux, the window disappears on setWindowFlag(Qt::WindowCloseButtonHint, false).
-        setWindowFlag(Qt::WindowCloseButtonHint, false);
-        setWindowFlag(Qt::WindowMinimizeButtonHint, false);
-    */
-    pinEntryTimeoutProgressBarOnPage()->show();
-
-    auto pinTitleLabel = pinTitleLabelOnPage();
+    ui->pinEntryTimeoutProgressBar->show();
 
     // FIXME: translation
-    const auto text = pinTitleLabel->text().replace(':', QStringLiteral(" using PIN-pad"));
-    pinTitleLabel->setText(text);
+    const auto text = ui->pinTitleLabel->text().replace(':', QStringLiteral(" using PIN-pad"));
+    ui->pinTitleLabel->setText(text);
 
     startPinTimeoutProgressBar();
 
@@ -369,20 +372,19 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait()
 void WebEidDialog::setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMinMaxLength)
 {
     try {
-        auto pinInput = pinInputOnPage();
-
-        pinInput->setMaxLength(int(pinMinMaxLength.second));
+        ui->pinInput->setMaxLength(int(pinMinMaxLength.second));
 
         const auto numericMinMaxRegexp = QRegularExpression(
             QStringLiteral("[0-9]{%1,%2}").arg(pinMinMaxLength.first).arg(pinMinMaxLength.second));
-        pinInput->setValidator(new QRegularExpressionValidator(numericMinMaxRegexp, pinInput));
+        ui->pinInput->setValidator(
+            new QRegularExpressionValidator(numericMinMaxRegexp, ui->pinInput));
 
-        pinInput->disconnect();
-        connect(pinInput, &QLineEdit::textChanged, okButton,
-                [this, pinInput] { okButton->setEnabled(pinInput->hasAcceptableInput()); });
+        ui->pinInput->disconnect();
+        connect(ui->pinInput, &QLineEdit::textChanged, okButton,
+                [this] { okButton->setEnabled(ui->pinInput->hasAcceptableInput()); });
 
-        pinInput->show();
-        pinInput->setFocus();
+        ui->pinInput->show();
+        ui->pinInput->setFocus();
 
         resizeHeight();
     }
@@ -392,22 +394,21 @@ void WebEidDialog::setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMin
 void WebEidDialog::startPinTimeoutProgressBar()
 {
     try {
-        auto pinTimeoutProgressBar = pinEntryTimeoutProgressBarOnPage();
-
-        pinTimeoutProgressBar->reset();
-        pinTimeoutProgressBar->setMaximum(PinInfo::PIN_PAD_PIN_ENTRY_TIMEOUT);
-        QTimeLine* previousPinTimeoutTimer = pinTimeoutProgressBar->findChild<QTimeLine*>();
+        ui->pinEntryTimeoutProgressBar->reset();
+        ui->pinEntryTimeoutProgressBar->setMaximum(PinInfo::PIN_PAD_PIN_ENTRY_TIMEOUT);
+        QTimeLine* previousPinTimeoutTimer =
+            ui->pinEntryTimeoutProgressBar->findChild<QTimeLine*>();
         if (previousPinTimeoutTimer) {
             previousPinTimeoutTimer->stop();
             previousPinTimeoutTimer->deleteLater();
         }
 
-        QTimeLine* pinTimeoutTimer =
-            new QTimeLine(pinTimeoutProgressBar->maximum() * 1000, pinTimeoutProgressBar);
+        QTimeLine* pinTimeoutTimer = new QTimeLine(ui->pinEntryTimeoutProgressBar->maximum() * 1000,
+                                                   ui->pinEntryTimeoutProgressBar);
         pinTimeoutTimer->setEasingCurve(QEasingCurve::Linear);
-        pinTimeoutTimer->setFrameRange(pinTimeoutProgressBar->minimum(),
-                                       pinTimeoutProgressBar->maximum());
-        connect(pinTimeoutTimer, &QTimeLine::frameChanged, pinTimeoutProgressBar,
+        pinTimeoutTimer->setFrameRange(ui->pinEntryTimeoutProgressBar->minimum(),
+                                       ui->pinEntryTimeoutProgressBar->maximum());
+        connect(pinTimeoutTimer, &QTimeLine::frameChanged, ui->pinEntryTimeoutProgressBar,
                 &QProgressBar::setValue);
         connect(pinTimeoutTimer, &QTimeLine::finished, pinTimeoutTimer, &QTimeLine::deleteLater);
 
@@ -428,8 +429,8 @@ void WebEidDialog::hidePinWidgets()
         return;
     }
 
-    pinTitleLabelOnPage()->hide();
-    pinInputOnPage()->hide();
+    ui->pinTitleLabel->hide();
+    ui->pinInput->hide();
 }
 
 void WebEidDialog::enableAndShowOK()
@@ -443,15 +444,14 @@ void WebEidDialog::disableOKUntilCertificateSelected(const CertificateListWidget
     okButton->setEnabled(false);
     certificateWidget->disconnect();
     connect(certificateWidget, &CertificateListWidget::certificateSelected, this,
-            [this]() { okButton->setEnabled(true); });
+            [this] { okButton->setEnabled(true); });
 }
 
-void WebEidDialog::displayPinRetriesRemaining(const PinInfo::PinRetriesCount& pinRetriesCount)
+void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount)
 {
     if (pinRetriesCount.first != pinRetriesCount.second) {
-        auto pinErrorLabel = pinErrorLabelOnPage();
-        pinErrorLabel->setText(tr("%n retries left", nullptr, int(pinRetriesCount.first)));
-        pinErrorLabel->show();
+        ui->pinErrorLabel->setText(tr("%n retries left", nullptr, int(pinRetriesCount.first)));
+        ui->pinErrorLabel->show();
     }
 }
 
@@ -459,9 +459,8 @@ void WebEidDialog::displayPinBlockedError()
 {
     okButton->hide();
     hidePinWidgets();
-    auto errorLabel = pinErrorLabelOnPage();
-    errorLabel->setText(tr("PIN is blocked, cannot proceed"));
-    errorLabel->show();
+    ui->pinErrorLabel->setText(tr("PIN is blocked, cannot proceed"));
+    ui->pinErrorLabel->show();
 }
 
 void WebEidDialog::resizeHeight()
@@ -470,71 +469,16 @@ void WebEidDialog::resizeHeight()
     adjustSize();
 }
 
-std::pair<QLabel*, CertificateListWidget*>
-WebEidDialog::originLabelAndCertificateListOnPage(const CommandType commandType)
+std::pair<QLabel*, CertificateListWidget*> WebEidDialog::originLabelAndCertificateListOnPage()
 {
-    switch (commandType) {
+    switch (currentCommand) {
     case CommandType::GET_CERTIFICATE:
         return {ui->selectCertificateOriginLabel, ui->selectCertificateInfo};
     case CommandType::AUTHENTICATE:
-        return {ui->authenticateOriginLabel, ui->authenticationCertificateInfo};
     case CommandType::SIGN:
-        return {ui->signOriginLabel, ui->signingCertificateInfo};
+        return {ui->pinInputOriginLabel, ui->pinInputCertificateInfo};
     default:
         THROW(ProgrammingError, "Only SELECT_CERTIFICATE, AUTHENTICATE or SIGN allowed");
-    }
-}
-
-std::pair<QLabel*, CertificateListWidget*> WebEidDialog::originLabelAndCertificateListOnPage()
-{
-    return originLabelAndCertificateListOnPage(currentCommand);
-}
-
-QLabel* WebEidDialog::pinErrorLabelOnPage()
-{
-    switch (currentCommand) {
-    case CommandType::AUTHENTICATE:
-        return ui->authenticationPinErrorLabel;
-    case CommandType::SIGN:
-        return ui->signingPinErrorLabel;
-    default:
-        THROW(ProgrammingError, "Only AUTHENTICATE or SIGN allowed");
-    }
-}
-
-QLabel* WebEidDialog::pinTitleLabelOnPage()
-{
-    switch (currentCommand) {
-    case CommandType::AUTHENTICATE:
-        return ui->authenticationPinTitleLabel;
-    case CommandType::SIGN:
-        return ui->signingPinTitleLabel;
-    default:
-        THROW(ProgrammingError, "Only AUTHENTICATE or SIGN allowed");
-    }
-}
-
-QLineEdit* WebEidDialog::pinInputOnPage()
-{
-    switch (currentCommand) {
-    case CommandType::AUTHENTICATE:
-        return ui->authenticationPinInput;
-    case CommandType::SIGN:
-        return ui->signingPinInput;
-    default:
-        THROW(ProgrammingError, "Only AUTHENTICATE or SIGN allowed");
-    }
-}
-
-QProgressBar* WebEidDialog::pinEntryTimeoutProgressBarOnPage()
-{
-    switch (currentCommand) {
-    case CommandType::AUTHENTICATE:
-        return ui->authenticatePinEntryTimeoutProgressBar;
-    case CommandType::SIGN:
-        return ui->signingPinEntryTimeoutProgressBar;
-    default:
-        THROW(ProgrammingError, "Only AUTHENTICATE or SIGN allowed");
     }
 }
 

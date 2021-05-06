@@ -32,7 +32,6 @@
 class CertificateListWidget;
 class QLabel;
 class QLineEdit;
-class QProgressBar;
 
 namespace Ui
 {
@@ -55,7 +54,7 @@ class WebEidDialog : public WebEidUI
     Q_OBJECT
 
 public:
-    enum class Page { WAITING, INSERT_CARD, SELECT_CERTIFICATE, AUTHENTICATE, SIGN };
+    enum class Page { WAITING, INSERT_CARD, SELECT_CERTIFICATE, PININPUT };
 
     explicit WebEidDialog(QWidget* parent = nullptr);
     ~WebEidDialog() override;
@@ -82,8 +81,7 @@ private:
 
     void makeOkButtonDefaultAndconnectSignals();
     void connectOkToEmitSelectedCertificate(CertificateListWidget* certificateWidget);
-    void connectOkToCachePinAndEmitSelectedCertificate(QLineEdit* pinInput,
-                                                       CertificateListWidget* certificateWidget);
+    void connectOkToCachePinAndEmitSelectedCertificate(CertificateListWidget* certificateWidget);
     void emitSelectedCertificate(CertificateListWidget* certificateWidget);
 
     void onRetryImpl(const QString& error);
@@ -95,18 +93,12 @@ private:
     void hidePinWidgets();
     void enableAndShowOK();
     void disableOKUntilCertificateSelected(const CertificateListWidget* certificateWidget);
-    void displayPinRetriesRemaining(const PinInfo::PinRetriesCount& pinRetriesCount);
+    void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);
     void displayPinBlockedError();
 
     void resizeHeight();
 
-    std::pair<QLabel*, CertificateListWidget*>
-    originLabelAndCertificateListOnPage(const CommandType commandType);
     std::pair<QLabel*, CertificateListWidget*> originLabelAndCertificateListOnPage();
-    QLabel* pinErrorLabelOnPage();
-    QLabel* pinTitleLabelOnPage();
-    QLineEdit* pinInputOnPage();
-    QProgressBar* pinEntryTimeoutProgressBarOnPage();
 
     std::tuple<QString, QString, QString>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
@@ -118,7 +110,6 @@ private:
     QPushButton* cancelButton;
 
     CommandType currentCommand = CommandType::NONE;
-    int lineHeight = -1;
     std::optional<bool> readerHasPinPad;
     QString pin;
 };
