@@ -270,6 +270,7 @@ void Controller::connectRetry(const ControllerChildThread* childThread)
     disconnect(window.get(), &WebEidUI::retry, nullptr, nullptr);
 
     connect(childThread, &ControllerChildThread::retry, window.get(), &WebEidUI::onRetry);
+    connect(childThread, &ControllerChildThread::cancel, this, &Controller::onDialogCancel);
     connect(window.get(), &WebEidUI::retry, this, &Controller::onRetry);
 }
 
@@ -279,6 +280,7 @@ void Controller::disconnectRetry()
         auto thread = childThread.second;
         if (thread) {
             disconnect(thread, &ControllerChildThread::retry, nullptr, nullptr);
+            disconnect(thread, &ControllerChildThread::cancel, nullptr, nullptr);
         }
     }
 }

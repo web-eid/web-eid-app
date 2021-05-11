@@ -53,6 +53,17 @@ public:
         }
         CATCH_PCSC_CPP_RETRIABLE_ERRORS(warnAndEmitRetry)
         CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(warnAndEmitRetry)
+        catch (const electronic_id::VerifyPinFailed& error)
+        {
+            if (error.status() == electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL) {
+                qInfo() << "Command" << commandType() << "canceled";
+                emit cancel();
+            } else {
+                qCritical() << "Command" << commandType() << "fatal error:" << error;
+                emit failure(error.what());
+            }
+        }
+
         catch (const std::exception& error)
         {
             qCritical() << "Command" << commandType() << "fatal error:" << error;
@@ -61,6 +72,7 @@ public:
     }
 
 signals:
+    void cancel();
     void retry(const RetriableError error);
     void failure(const QString& error);
 
