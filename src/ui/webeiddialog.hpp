@@ -77,10 +77,8 @@ public: // slots
 private:
     void showPage(const WebEidDialog::Page page);
 
-    void makeOkButtonDefaultAndconnectSignals();
     void connectOkToEmitSelectedCertificate(CertificateListWidget* certificateWidget);
-    void connectOkToCachePinAndEmitSelectedCertificate(CertificateListWidget* certificateWidget);
-    void emitSelectedCertificate(CertificateListWidget* certificateWidget);
+    void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
 
     void onRetryImpl(const QString& error);
 
@@ -88,7 +86,6 @@ private:
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinInfo);
 
     void startPinTimeoutProgressBar();
-    void hidePinWidgets();
     void enableAndShowOK();
     void disableOKUntilCertificateSelected(const CertificateListWidget* certificateWidget);
     void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);
@@ -101,11 +98,8 @@ private:
     std::tuple<QString, QString, QString>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
 
-    Ui::WebEidDialog* ui;
-
-    // Non-owning observer pointers.
-    QPushButton* okButton;
-    QPushButton* cancelButton;
+    class Private;
+    Private* ui;
 
     CommandType currentCommand = CommandType::NONE;
     std::optional<bool> readerHasPinPad;
