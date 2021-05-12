@@ -41,10 +41,10 @@ class WebEidDialog;
  * The WebEidDialog class contains all UI elements of the web-eid application.
  *
  * The dialog consists of OK/Cancel buttons and a QStackedWidget with the following pages:
- * - connect smart card,
+ * - waiting
+ * - message,
  * - select certificate,
- * - authenticate,
- * - sign.
+ * - pin input.
  */
 // clang-format on
 class WebEidDialog : public WebEidUI
@@ -52,7 +52,7 @@ class WebEidDialog : public WebEidUI
     Q_OBJECT
 
 public:
-    enum class Page { WAITING, INSERT_CARD, SELECT_CERTIFICATE, PININPUT };
+    enum class Page { WAITING, MESSAGE, SELECT_CERTIFICATE, PININPUT };
 
     explicit WebEidDialog(QWidget* parent = nullptr);
     ~WebEidDialog() override;

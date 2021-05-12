@@ -42,7 +42,7 @@ background-color: #EFEFEF;
 QPushButton::hover, QPushButton::focus {
 background-color: #DEDEDE;
 }
-#waitingPageTitleLabel, #selectCardPageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel {
+#waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel {
 color: #003168;
 font-size: 32px;
 font-weight: bold;
@@ -173,8 +173,8 @@ font-weight: bold;
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="selectCardPage">
-      <layout class="QVBoxLayout" name="selectCardPageLayout">
+     <widget class="QWidget" name="messagePage">
+      <layout class="QVBoxLayout" name="messagePageLayout">
        <property name="spacing">
         <number>20</number>
        </property>
@@ -191,7 +191,7 @@ font-weight: bold;
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="selectCardPageTitleLabel">
+        <widget class="QLabel" name="messagePageTitleLabel">
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -201,7 +201,7 @@ font-weight: bold;
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="selectCardInfoLayout" stretch="0,1">
+        <layout class="QHBoxLayout" name="messageInfoLayout" stretch="0,1">
          <property name="spacing">
           <number>20</number>
          </property>
@@ -240,7 +240,7 @@ font-weight: bold;
         </layout>
        </item>
        <item>
-        <spacer name="selectCardPageSpacer">
+        <spacer name="messagePageSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

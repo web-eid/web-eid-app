@@ -87,10 +87,6 @@ Valid: from %4 to %5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Retry?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PIN pad PIN entry timeout</source>
         <translation type="unfinished"></translation>
     </message>
@@ -100,10 +96,6 @@ Valid: from %4 to %5</source>
     </message>
     <message>
         <source>No electronic ID card is inserted that has the signing certificate provided as argument. Please insert the electronic ID card that belongs to %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error occurred: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -192,6 +184,18 @@ Valid: from %4 to %5</source>
     </message>
     <message>
         <source>Insert Smart Card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error occurred</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
