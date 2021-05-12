@@ -55,10 +55,18 @@ public:
         CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(warnAndEmitRetry)
         catch (const electronic_id::VerifyPinFailed& error)
         {
-            if (error.status() == electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL) {
+            switch (error.status()) {
+            case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL:
                 qInfo() << "Command" << commandType() << "canceled";
                 emit cancel();
-            } else {
+                break;
+            case electronic_id::VerifyPinFailed::Status::INVALID_PIN_LENGTH:
+                qInfo() << "Command" << commandType() << "invalid pin length";
+                break;
+            case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:
+                qInfo() << "Command" << commandType() << "timeout";
+                break;
+            default:
                 qCritical() << "Command" << commandType() << "fatal error:" << error;
                 emit failure(error.what());
             }

@@ -51,7 +51,7 @@ WebEidDialog::Page commandToPage(const CommandType command)
     using Page = WebEidDialog::Page;
     switch (command) {
     case CommandType::INSERT_CARD:
-        return Page::INSERT_CARD;
+        return Page::MESSAGE;
     case CommandType::GET_CERTIFICATE:
         return Page::SELECT_CERTIFICATE;
     case CommandType::AUTHENTICATE:
@@ -130,7 +130,7 @@ void WebEidDialog::showWaitingForCardPage(const CommandType commandType)
     ui->okButton->hide();
 
     const auto pageIndex =
-        commandType == CommandType::INSERT_CARD ? int(Page::INSERT_CARD) : int(Page::WAITING);
+        commandType == CommandType::INSERT_CARD ? int(Page::MESSAGE) : int(Page::WAITING);
     ui->pageStack->setCurrentIndex(pageIndex);
     switch (commandType) {
     case CommandType::AUTHENTICATE:
@@ -166,12 +166,12 @@ void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
     const auto [errorText, title, icon] = retriableErrorToTextTitleAndIcon(status);
 
     ui->connectCardLabel->setText(errorText);
-    ui->selectCardPageTitleLabel->setText(title);
+    ui->messagePageTitleLabel->setText(title);
     ui->cardChipIcon->setPixmap(icon);
 
     // In case the insert card page is not shown, switch back to it.
     ui->okButton->hide();
-    showPage(Page::INSERT_CARD);
+    showPage(Page::MESSAGE);
 }
 
 /** This slot is used by the get certificate and authenticate commands in case there are multiple
@@ -228,7 +228,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
 
     try {
         const auto page = commandToPage(currentCommand);
-        if (page == Page::INSERT_CARD) {
+        if (page == Page::MESSAGE) {
             THROW(ProgrammingError, "Insert card commmand not allowed here");
         }
         auto [originLabel, certificateWidget] = originLabelAndCertificateListOnPage();
@@ -356,12 +356,16 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
 
 void WebEidDialog::onRetryImpl(const QString& error)
 {
-    showPage(Page::WAITING);
-
-    const auto result =
-        QMessageBox::warning(this, tr("Retry?"), tr("Error occurred: ") + error,
-                             QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No));
-    emit result == QMessageBox::Yes ? retry() : reject();
+    ui->connectCardLabel->setText(error);
+    ui->messagePageTitleLabel->setText(tr("Error occurred"));
+    ui->cardChipIcon->setPixmap(QStringLiteral(":/images/id-card.svg"));
+    showPage(Page::MESSAGE);
+    ui->okButton->disconnect();
+    ui->okButton->show();
+    ui->okButton->setEnabled(true);
+    ui->okButton->setText(tr("Retry"));
+    ui->cancelButton->show();
+    connect(ui->okButton, &QPushButton::clicked, this, &WebEidDialog::retry);
 }
 
 void WebEidDialog::setupPinPadProgressBarAndEmitWait()
@@ -411,6 +415,7 @@ void WebEidDialog::enableAndShowOK()
 {
     ui->okButton->setEnabled(true);
     ui->okButton->show();
+    ui->okButton->setText(tr("OK"));
 }
 
 void WebEidDialog::disableOKUntilCertificateSelected(const CertificateListWidget* certificateWidget)
