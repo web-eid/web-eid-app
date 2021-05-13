@@ -255,7 +255,7 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
 void Controller::onRetry()
 {
     try {
-        disposeUI();
+        window.reset();
         startCommandExecution();
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
@@ -318,24 +318,11 @@ void Controller::onCriticalFailure(const QString& error)
                 << "fatal error:" << error;
     writeResponseToStdOut(isInStdinMode, makeErrorObject(RESP_TECH_ERROR, error), commandType());
 
-    disposeUI();
+    window.reset();
 
     WebEidUI::showFatalError();
 
     exit();
-}
-
-void Controller::disposeUI()
-{
-    if (window) {
-        window->disconnect();
-        window->close();
-        window->deleteLater();
-        // unique_ptr must release ownership of the window object without deleting to avoid double
-        // free, as deleteLater() has been already called.
-        window.release();
-        window = nullptr;
-    }
 }
 
 void Controller::exit()

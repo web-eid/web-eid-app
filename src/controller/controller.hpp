@@ -86,7 +86,6 @@ private:
     void connectRetry(const ControllerChildThread* childThread);
     void disconnectRetry();
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
-    void disposeUI();
     void exit();
     void waitForChildThreads();
     CommandType commandType();
