@@ -59,11 +59,16 @@ QByteArray createAuthenticationToken(const QSslCertificate& certificate,
         {"x5c", QJsonArray({QString(certificateDer.toBase64())})},
     });
 
+    const QString sub =
+        certificate.subjectInfo("SN").isEmpty() && certificate.subjectInfo("GN").isEmpty()
+        ? certificate.subjectInfo(QSslCertificate::CommonName).join(',')
+        : QStringLiteral("%1,%2").arg(certificate.subjectInfo("SN").join(','),
+                                      certificate.subjectInfo("GN").join(','));
     auto tokenPayload = QJsonObject {
         {"iat", QString::number(QDateTime::currentDateTimeUtc().toSecsSinceEpoch())},
         {"exp",
          QString::number(QDateTime::currentDateTimeUtc().addSecs(5 * 60).toSecsSinceEpoch())},
-        {"sub", certificate.subjectInfo(QSslCertificate::CommonName)[0]},
+        {"sub", sub},
         {"nonce", nonce},
         {"iss", QStringLiteral("web-eid app %1").arg(qApp->applicationVersion())},
     };
@@ -75,7 +80,7 @@ QByteArray createAuthenticationToken(const QSslCertificate& certificate,
         // urn:cert:sha-256 as per https://tools.ietf.org/id/draft-seantek-certspec-00.html
         aud.append("urn:cert:sha-256:" + originCertFingerprint);
     }
-    tokenPayload["aud"] = aud;
+    tokenPayload[QStringLiteral("aud")] = aud;
 
     return jsonDocToBase64(tokenHeader) + '.' + jsonDocToBase64(QJsonDocument(tokenPayload));
 }
