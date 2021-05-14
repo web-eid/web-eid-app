@@ -37,13 +37,6 @@ public:
     void run(const std::vector<electronic_id::CardInfo::ptr>& cards) override;
     void connectSignals(const WebEidUI* window) override;
 
-signals:
-    void
-    multipleCertificatesReady(const QUrl& origin,
-                              const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
-    void singleCertificateReady(const QUrl& origin,
-                                const CardCertificateAndPinInfo& cardCertAndPinInfo);
-
 protected:
     virtual void
     emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);

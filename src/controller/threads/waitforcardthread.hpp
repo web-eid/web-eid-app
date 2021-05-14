@@ -24,12 +24,12 @@
 
 #include "controllerchildthread.hpp"
 
-class ReaderMonitorThread : public ControllerChildThread
+class WaitForCardThread : public ControllerChildThread
 {
     Q_OBJECT
 
 public:
-    explicit ReaderMonitorThread(QObject* parent) : ControllerChildThread(parent) {}
+    explicit WaitForCardThread(QObject* parent) : ControllerChildThread(parent) {}
 
 signals:
     void cardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& cardInfo);
@@ -39,7 +39,7 @@ private:
     void doRun() override
     {
         while (!attemptCardSelection() && !isInterruptionRequested()) {
-            msleep(500); // sleep for half a second
+            waitForControllerNotify.wait(&controllerChildThreadMutex, ONE_SECOND);
         }
     }
 

@@ -32,6 +32,7 @@
 #include <cstdint>
 
 class ControllerChildThread;
+class CardEventMonitorThread;
 
 /** Controller coordinates the execution flow and interaction between all other components. */
 class Controller : public QObject
@@ -56,6 +57,9 @@ public: // slots
     // Called on reader and card events from monitor thread.
     void onReaderMonitorStatusUpdate(const RetriableError reason);
 
+    // Called when CommandHandlerRunThread finishes execution.
+    void onCertificatesLoaded();
+
     // Called either directly from onDialogOK() or from the dialog when waiting for PIN-pad.
     void onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCertAndPinInfo);
 
@@ -78,14 +82,14 @@ private:
     using observer_ptr = T*;
 
     void startCommandExecution();
-    void warnAndWaitUntilSupportedCardSelected(const RetriableError errorCode,
-                                               const std::exception& error);
+    void warnAndWaitUntilSupportedCardAvailable(const RetriableError errorCode,
+                                                const std::exception& error);
     void waitUntilSupportedCardAvailable();
     void runCommandHandler(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
     void connectOkCancelWaitingForPinPad();
     void connectRetry(const ControllerChildThread* childThread);
-    void disconnectRetry();
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
+    void stopCardEventMonitorThread();
     void exit();
     void waitForChildThreads();
     CommandType commandType();
@@ -93,6 +97,8 @@ private:
     CommandWithArgumentsPtr command;
     CommandHandler::ptr commandHandler = nullptr;
     std::unordered_map<uintptr_t, observer_ptr<ControllerChildThread>> childThreads;
+    // Key of card event monitor thread in childThreads map.
+    uintptr_t cardEventMonitorThreadKey = 0;
     WebEidUI::ptr window = nullptr;
     QVariantMap _result;
     bool isInStdinMode = true;

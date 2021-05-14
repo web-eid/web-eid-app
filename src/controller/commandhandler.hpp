@@ -42,6 +42,11 @@ public:
 
 signals:
     void retry(const RetriableError error);
+    void
+    multipleCertificatesReady(const QUrl& origin,
+                              const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
+    void singleCertificateReady(const QUrl& origin,
+                                const CardCertificateAndPinInfo& cardCertAndPinInfo);
 
 protected:
     CommandHandler(const CommandWithArguments& cmd) : command(cmd) {}
