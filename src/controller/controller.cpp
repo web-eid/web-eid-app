@@ -22,9 +22,10 @@
 
 #include "controller.hpp"
 
-#include "threads/readermonitorthread.hpp"
-#include "threads/commandhandlerrunthread.hpp"
+#include "threads/cardeventmonitorthread.hpp"
 #include "threads/commandhandlerconfirmthread.hpp"
+#include "threads/commandhandlerrunthread.hpp"
+#include "threads/waitforcardthread.hpp"
 
 #include "utils.hpp"
 #include "inputoutputmode.hpp"
@@ -55,6 +56,13 @@ QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessag
         {QStringLiteral("message"), errorMessage},
     };
     return {{QStringLiteral("error"), errorBody}};
+}
+
+void interruptThread(QThread* thread)
+{
+    qDebug() << "Interrupting thread" << uintptr_t(thread);
+    thread->requestInterruption();
+    ControllerChildThread::waitForControllerNotify.wakeAll();
 }
 
 } // namespace
@@ -109,12 +117,12 @@ void Controller::startCommandExecution()
                 << std::string(magic_enum::enum_name(failure.reason()));
         waitUntilSupportedCardAvailable();
     }
-    CATCH_PCSC_CPP_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardSelected)
-    CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardSelected)
+    CATCH_PCSC_CPP_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardAvailable)
+    CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardAvailable)
 }
 
-void Controller::warnAndWaitUntilSupportedCardSelected(const RetriableError errorCode,
-                                                       const std::exception& error)
+void Controller::warnAndWaitUntilSupportedCardAvailable(const RetriableError errorCode,
+                                                        const std::exception& error)
 {
     WARN_RETRIABLE_ERROR(std::string(commandType()), errorCode, error);
     waitUntilSupportedCardAvailable();
@@ -123,12 +131,12 @@ void Controller::warnAndWaitUntilSupportedCardSelected(const RetriableError erro
 void Controller::waitUntilSupportedCardAvailable()
 {
     // Reader monitor thread setup.
-    ReaderMonitorThread* readerMonitorThread = new ReaderMonitorThread(this);
-    connect(readerMonitorThread, &ReaderMonitorThread::statusUpdate, this,
+    WaitForCardThread* waitForCardThread = new WaitForCardThread(this);
+    connect(waitForCardThread, &WaitForCardThread::statusUpdate, this,
             &Controller::onReaderMonitorStatusUpdate);
-    connect(readerMonitorThread, &ReaderMonitorThread::cardsAvailable, this,
+    connect(waitForCardThread, &WaitForCardThread::cardsAvailable, this,
             &Controller::onCardsAvailable);
-    saveChildThreadPtrAndConnectFailureFinish(readerMonitorThread);
+    saveChildThreadPtrAndConnectFailureFinish(waitForCardThread);
 
     // UI setup.
     window = WebEidUI::createAndShowDialog(CommandType::INSERT_CARD);
@@ -136,7 +144,7 @@ void Controller::waitUntilSupportedCardAvailable()
     connectOkCancelWaitingForPinPad();
 
     // Finally, start the thread to wait for card insertion after everything is wired up.
-    readerMonitorThread->start();
+    waitForCardThread->start();
 }
 
 void Controller::saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread)
@@ -156,8 +164,9 @@ void Controller::saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread
 
         const auto threadPtrAddress = uintptr_t(childThread);
         if (childThreads.count(threadPtrAddress) && childThreads[threadPtrAddress]) {
-            childThread->wait();
             childThreads[threadPtrAddress] = nullptr;
+            childThread->wait();
+            qDebug() << "Thread" << threadPtrAddress << "finished";
         } else {
             qWarning() << "Controller child thread" << childThread
                        << "is missing or null in finish slot";
@@ -211,6 +220,13 @@ void Controller::runCommandHandler(const std::vector<electronic_id::CardInfo::pt
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerRunThread);
         connectRetry(commandHandlerRunThread);
 
+        // When the command handler run thread retrieves certificates successfully, call
+        // onCertificatesLoaded() that starts card event monitoring while user enters the PIN.
+        connect(commandHandler.get(), &CommandHandler::singleCertificateReady, this,
+                &Controller::onCertificatesLoaded);
+        connect(commandHandler.get(), &CommandHandler::multipleCertificatesReady, this,
+                &Controller::onCertificatesLoaded);
+
         commandHandlerRunThread->start();
 
     } catch (const std::exception& error) {
@@ -223,8 +239,37 @@ void Controller::onReaderMonitorStatusUpdate(const RetriableError reason)
     emit statusUpdate(reason);
 }
 
+void Controller::onCertificatesLoaded()
+{
+    CardEventMonitorThread* cardEventMonitorThread =
+        new CardEventMonitorThread(this, std::string(commandType()));
+    saveChildThreadPtrAndConnectFailureFinish(cardEventMonitorThread);
+    cardEventMonitorThreadKey = uintptr_t(cardEventMonitorThread);
+    connect(cardEventMonitorThread, &CardEventMonitorThread::cardEvent, this, &Controller::onRetry);
+    cardEventMonitorThread->start();
+}
+
+void Controller::stopCardEventMonitorThread()
+{
+    if (cardEventMonitorThreadKey) {
+        try {
+            auto cardEventMonitorThread = childThreads.at(cardEventMonitorThreadKey);
+            cardEventMonitorThreadKey = 0;
+            if (cardEventMonitorThread) {
+                interruptThread(cardEventMonitorThread);
+            }
+        } catch (const std::out_of_range&) {
+            qWarning() << "Card event monitor thread" << cardEventMonitorThreadKey
+                       << "is missing from childThreads map in stopCardEventMonitorThread()";
+            cardEventMonitorThreadKey = 0;
+        }
+    }
+}
+
 void Controller::onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCertAndPinInfo)
 {
+    stopCardEventMonitorThread();
+
     try {
         CommandHandlerConfirmThread* commandHandlerConfirmThread = new CommandHandlerConfirmThread(
             this, *commandHandler, window.get(), cardCertAndPinInfo);
@@ -255,8 +300,16 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
 void Controller::onRetry()
 {
     try {
+        // Dispose the UI, it will be re-created during next execution.
         window.reset();
+        // Command handler signals are still connected, disconnect them so that they can be
+        // reconnected during next execution.
+        commandHandler->disconnect();
+        // Before restarting, wait until child threads finish.
+        waitForChildThreads();
+
         startCommandExecution();
+
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
@@ -270,19 +323,9 @@ void Controller::connectRetry(const ControllerChildThread* childThread)
     disconnect(window.get(), &WebEidUI::retry, nullptr, nullptr);
 
     connect(childThread, &ControllerChildThread::retry, window.get(), &WebEidUI::onRetry);
+    // This connection handles cancel events from PIN pad.
     connect(childThread, &ControllerChildThread::cancel, this, &Controller::onDialogCancel);
     connect(window.get(), &WebEidUI::retry, this, &Controller::onRetry);
-}
-
-void Controller::disconnectRetry()
-{
-    for (const auto& childThread : childThreads) {
-        auto thread = childThread.second;
-        if (thread) {
-            disconnect(thread, &ControllerChildThread::retry, nullptr, nullptr);
-            disconnect(thread, &ControllerChildThread::cancel, nullptr, nullptr);
-        }
-    }
 }
 
 void Controller::onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo)
@@ -299,12 +342,8 @@ void Controller::onDialogCancel()
 {
     qDebug() << "User cancelled";
 
-    // Don't handle retry after user has cancelled.
-    disconnectRetry();
-    // Disconnect all signals from dialog to controller to avoid catching reject() twice.
-    window->disconnect(this);
-    // Close the dialog.
-    window->close();
+    // Dispose the UI.
+    window.reset();
 
     writeResponseToStdOut(isInStdinMode,
                           makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled")),
@@ -318,6 +357,7 @@ void Controller::onCriticalFailure(const QString& error)
                 << "fatal error:" << error;
     writeResponseToStdOut(isInStdinMode, makeErrorObject(RESP_TECH_ERROR, error), commandType());
 
+    // Dispose the UI.
     window.reset();
 
     WebEidUI::showFatalError();
@@ -333,12 +373,12 @@ void Controller::exit()
 
 void Controller::waitForChildThreads()
 {
-    // Waiting for child thread must not happen in destructor.
+    // Waiting for child threads must not happen in destructor.
     // See https://tombarta.wordpress.com/2008/07/10/gcc-pure-virtual-method-called/ for details.
     for (const auto& childThread : childThreads) {
         auto thread = childThread.second;
         if (thread) {
-            thread->requestInterruption();
+            interruptThread(thread);
             // Waiting for PIN input on PIN pad may take a long time, call processEvents() so that
             // the UI doesn't freeze.
             while (thread->isRunning()) {

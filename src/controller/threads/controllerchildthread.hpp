@@ -29,6 +29,7 @@
 
 #include <QThread>
 #include <QMutexLocker>
+#include <QWaitCondition>
 
 class ControllerChildThread : public QThread
 {
@@ -37,16 +38,14 @@ class ControllerChildThread : public QThread
 public:
     void run() override
     {
-        static QMutex mutex;
-        QMutexLocker lock {&mutex};
+        QMutexLocker lock {&controllerChildThreadMutex};
 
-        // Cannot use virtual calls in constructor, have to initialize the class name here.
-        className = metaObject()->className();
+        beforeRun();
 
         try {
-            qDebug() << "Starting" << className << "for command" << commandType();
             doRun();
-            qInfo() << className << "for command" << commandType() << "completed successfully";
+            qInfo() << className << uintptr_t(this) << "for command" << commandType()
+                    << "completed successfully";
 
         } catch (const CommandHandlerVerifyPinFailed& error) {
             qWarning() << "Command" << commandType() << "PIN verification failed:" << error;
@@ -71,13 +70,14 @@ public:
                 emit failure(error.what());
             }
         }
-
         catch (const std::exception& error)
         {
             qCritical() << "Command" << commandType() << "fatal error:" << error;
             emit failure(error.what());
         }
     }
+
+    static QWaitCondition waitForControllerNotify;
 
 signals:
     void cancel();
@@ -90,10 +90,22 @@ protected:
     {
         // Avoid throwing in destructor.
         try {
-            qDebug() << className << "destroyed";
+            qDebug() << className << uintptr_t(this) << "destroyed";
         } catch (...) {
         }
     }
+
+    void beforeRun()
+    {
+        // Cannot use virtual calls in constructor, have to initialize the class name here.
+        className = metaObject()->className();
+        qDebug() << "Starting" << className << uintptr_t(this) << "for command" << commandType();
+    }
+
+    static const unsigned long ONE_SECOND = 1000;
+
+    static QMutex controllerChildThreadMutex;
+    QString className;
 
 private:
     virtual void doRun() = 0;
@@ -104,6 +116,4 @@ private:
         WARN_RETRIABLE_ERROR(commandType(), errorCode, error);
         emit retry(errorCode);
     }
-
-    QString className;
 };

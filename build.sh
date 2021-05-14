@@ -16,5 +16,7 @@ cd "$PROJECT_ROOT/lib/libelectronic-id"
 mkdir -p "$PROJECT_ROOT/build"
 cd "$PROJECT_ROOT/build"
 
-cmake ..
-cmake --build . # -- VERBOSE=1
+BUILD_TYPE=RelWithDebInfo
+
+cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+cmake --build . --config $BUILD_TYPE # -- VERBOSE=1
