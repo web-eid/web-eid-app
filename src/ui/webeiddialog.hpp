@@ -77,7 +77,6 @@ public: // slots
 private:
     void showPage(const WebEidDialog::Page page);
 
-    void connectOkToEmitSelectedCertificate(CertificateListWidget* certificateWidget);
     void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
 
     void onRetryImpl(const QString& error);
@@ -85,9 +84,7 @@ private:
     void setupPinPadProgressBarAndEmitWait();
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinInfo);
 
-    void startPinTimeoutProgressBar();
-    void enableAndShowOK();
-    void disableOKUntilCertificateSelected(const CertificateListWidget* certificateWidget);
+    void setupOK(const std::function<void()>& func);
     void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);
     void displayPinBlockedError();
 

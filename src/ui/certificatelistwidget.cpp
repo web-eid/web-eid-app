@@ -2,11 +2,7 @@
 
 #include "certandpininfo.hpp"
 
-#include "electronic-id/electronic-id.hpp"
 #include "pcsc-cpp/pcsc-cpp-utils.hpp"
-
-#include <QLabel>
-#include <QListWidget>
 
 CertificateListWidget::CertificateListWidget(QWidget* parent) : QListWidget(parent)
 {
@@ -36,11 +32,6 @@ CardCertificateAndPinInfo CertificateListWidget::selectedCertificate() const
         THROW(electronic_id::ProgrammingError, "Unable to retrieve item certificate data");
     }
     return certData.value<CardCertificateAndPinInfo>();
-}
-
-void CertificateListWidget::selectFirstRow()
-{
-    setCurrentRow(0);
 }
 
 void CertificateListWidget::addCertificateListItem(const CardCertificateAndPinInfo& cardCertPinInfo)
