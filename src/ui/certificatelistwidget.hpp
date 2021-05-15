@@ -13,7 +13,6 @@ public:
 
     void setCertificateInfo(const std::vector<CardCertificateAndPinInfo>& certificateAndPinInfos);
     CardCertificateAndPinInfo selectedCertificate() const;
-    void selectFirstRow();
 
 signals:
     void certificateSelected();

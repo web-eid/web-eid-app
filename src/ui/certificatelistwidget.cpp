@@ -34,11 +34,6 @@ CardCertificateAndPinInfo CertificateListWidget::selectedCertificate() const
     return certData.value<CardCertificateAndPinInfo>();
 }
 
-void CertificateListWidget::selectFirstRow()
-{
-    setCurrentRow(0);
-}
-
 void CertificateListWidget::addCertificateListItem(const CardCertificateAndPinInfo& cardCertPinInfo)
 {
     const auto certInfo = cardCertPinInfo.certInfo;
