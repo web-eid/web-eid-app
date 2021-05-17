@@ -124,7 +124,7 @@ Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(
     const auto arguments = cmd.second;
 
     // nonce, origin, origin-cert
-    if (arguments.size() != 3) {
+    if (arguments.size() < 3 || arguments.size() > 4) {
         THROW(CommandHandlerInputDataError,
               "Argument must be '{"
               "\"nonce\": \"<challenge nonce>\", "

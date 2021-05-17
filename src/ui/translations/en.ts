@@ -7,7 +7,9 @@
         <source>%1
 Issuer: %2
 Valid: from %3 to %4</source>
-        <translation type="unfinished"></translation>
+        <translation>%1
+Issuer: %2
+Valid: from %3 to %4</translation>
     </message>
 </context>
 <context>
@@ -100,114 +102,114 @@ Valid: from %3 to %4</source>
     </message>
     <message>
         <source>Waiting for card</source>
-        <translation type="unfinished"></translation>
+        <translation>Waiting for card</translation>
     </message>
     <message>
         <source>No electronic ID card is inserted that has the signing certificate provided as argument. Please insert the electronic ID card that belongs to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No electronic ID card is inserted that has the signing certificate provided as argument. Please insert the electronic ID card that belongs to %1</translation>
     </message>
     <message>
         <source>Start smart card service</source>
-        <translation type="unfinished"></translation>
+        <translation>Start smart card service</translation>
     </message>
     <message>
         <source>Connect a smart card reader</source>
-        <translation type="unfinished"></translation>
+        <translation>Connect a smart card reader</translation>
     </message>
     <message>
         <source>Insert an ID card</source>
-        <translation type="unfinished"></translation>
+        <translation>Insert an ID card</translation>
     </message>
     <message>
         <source>The smart card was removed. Please insert an electronic ID card into the reader.</source>
-        <translation type="unfinished"></translation>
+        <translation>The smart card was removed. Please insert an electronic ID card into the reader.</translation>
     </message>
     <message>
         <source>The smart card transaction failed. Please make sure that the smart card and reader are properly connected.</source>
-        <translation type="unfinished"></translation>
+        <translation>The smart card transaction failed. Please make sure that the smart card and reader are properly connected.</translation>
     </message>
     <message>
         <source>Check the ID card connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Check the ID card connection</translation>
     </message>
     <message>
         <source>Failed to communicate with the smart card or reader. Please make sure that the smart card and reader are properly connected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to communicate with the smart card or reader. Please make sure that the smart card and reader are properly connected.</translation>
     </message>
     <message>
         <source>The smart card is malfunctioning, please change the smart card.</source>
-        <translation type="unfinished"></translation>
+        <translation>The smart card is malfunctioning, please change the smart card.</translation>
     </message>
     <message>
         <source>Change the ID card</source>
-        <translation type="unfinished"></translation>
+        <translation>Change the ID card</translation>
     </message>
     <message>
         <source>A smart card command failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>A smart card command failed.</translation>
     </message>
     <message>
         <source>ID card failure</source>
-        <translation type="unfinished"></translation>
+        <translation>ID card failure</translation>
     </message>
     <message>
         <source>Smart card middleware error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Smart card middleware error.</translation>
     </message>
     <message>
         <source>ID card middleware failure</source>
-        <translation type="unfinished"></translation>
+        <translation>ID card middleware failure</translation>
     </message>
     <message>
         <source>Internal smart card service error occurred. Please make sure that the smart card and reader are properly connected or try restarting the smart card service.</source>
-        <translation type="unfinished"></translation>
+        <translation>Internal smart card service error occurred. Please make sure that the smart card and reader are properly connected or try restarting the smart card service.</translation>
     </message>
     <message>
         <source>Unsupported smart card in reader. Please insert a supported electronic ID card into the reader.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unsupported smart card in reader. Please insert a supported electronic ID card into the reader.</translation>
     </message>
     <message>
         <source>No ID card with valid certificate available. Please insert an ID card that has a valid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>No ID card with valid certificate available. Please insert an ID card that has a valid certificate.</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>Unknown error</translation>
     </message>
     <message>
         <source>Please enter %1 using PIN pad</source>
-        <translation type="unfinished"></translation>
+        <translation>Please enter %1 using PIN pad</translation>
     </message>
     <message>
         <source>authentication PIN (PIN 1)</source>
-        <translation type="unfinished"></translation>
+        <translation>authentication PIN (PIN 1)</translation>
     </message>
     <message>
         <source>signing PIN (PIN 2)</source>
-        <translation type="unfinished"></translation>
+        <translation>signing PIN (PIN 2)</translation>
     </message>
     <message>
         <source>Error occurred</source>
-        <translation type="unfinished"></translation>
+        <translation>Error occurred</translation>
     </message>
     <message>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Retry</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
     <name>WebEidUI</name>
     <message>
         <source>Web eID: fatal error</source>
-        <translation type="unfinished"></translation>
+        <translation>Web eID: fatal error</translation>
     </message>
     <message>
         <source>A fatal error occurred, check the logs for more details</source>
-        <translation type="unfinished"></translation>
+        <translation>A fatal error occurred, check the logs for more details</translation>
     </message>
 </context>
 </TS>

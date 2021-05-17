@@ -24,7 +24,6 @@
 
 #include "commandhandler.hpp"
 
-#include <QSslCertificate>
 #include <QUrl>
 
 class CertificateReader : public CommandHandler

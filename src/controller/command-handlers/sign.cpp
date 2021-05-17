@@ -51,7 +51,7 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
     const auto arguments = cmd.second;
 
     // doc-hash, origin
-    if (arguments.size() != 4) {
+    if (arguments.size() < 4 || arguments.size() > 5) {
         THROW(CommandHandlerInputDataError,
               "Argument must be '{\"doc-hash\": \"<Base64-encoded document hash>\", "
               "\"hash-algo\": \"<the hash algorithm that was used for computing 'doc-hash', any of "
