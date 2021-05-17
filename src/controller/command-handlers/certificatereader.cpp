@@ -22,6 +22,7 @@
 
 #include "certificatereader.hpp"
 
+#include "application.hpp"
 #include "signauthutils.hpp"
 #include "utils.hpp"
 #include "magic_enum/magic_enum.hpp"
@@ -39,7 +40,7 @@ QString certificateStatusToString(const CertificateStatus status)
 }
 
 std::pair<CertificateStatus, CardCertificateAndPinInfo>
-getCertificateWithStatusAndInfo(CardInfo::ptr card, const CertificateType certificateType,
+getCertificateWithStatusAndInfo(const CardInfo::ptr& card, const CertificateType certificateType,
                                 const bool isAuthenticate)
 {
     const auto certificateBytes = card->eid().getCertificate(certificateType);
@@ -85,11 +86,14 @@ getCertificateWithStatusAndInfo(CardInfo::ptr card, const CertificateType certif
 CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandHandler(cmd)
 {
     validateAndStoreOrigin(cmd.second);
+    if (Application* app = qobject_cast<Application*>(qApp)) {
+        app->loadTranslations(cmd.second.value(QStringLiteral("lang")).toString());
+    }
 }
 
 void CertificateReader::run(const std::vector<CardInfo::ptr>& cards)
 {
-    REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(cards);
+    REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(cards)
 
     const bool isAuthenticate = command.first == CommandType::AUTHENTICATE
         || command.second[QStringLiteral("type")] == QStringLiteral("auth");

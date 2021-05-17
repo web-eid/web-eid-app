@@ -312,6 +312,18 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     }
 }
 
+bool WebEidDialog::event(QEvent* event)
+{
+    switch (event->type()) {
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        break;
+    default:
+        break;
+    }
+    return WebEidUI::event(event);
+}
+
 void WebEidDialog::showPage(const WebEidDialog::Page page)
 {
     if (ui->pageStack->currentIndex() != int(page)) {

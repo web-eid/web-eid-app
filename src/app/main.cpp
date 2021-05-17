@@ -23,7 +23,6 @@
 #include "application.hpp"
 #include "controller.hpp"
 #include "logging.hpp"
-#include "parseargs.hpp"
 
 #include <QTimer>
 
@@ -35,7 +34,7 @@ int main(int argc, char* argv[])
     Application app(argc, argv, QStringLiteral("web-eid"), QStringLiteral("Web eID"));
 
     try {
-        Controller controller(parseArgs(app));
+        Controller controller(app.parseArgs());
 
         QObject::connect(&controller, &Controller::quit, &app, &QApplication::quit);
         // Pass control to Controller::run() when the event loop starts.

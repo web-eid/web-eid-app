@@ -104,7 +104,7 @@ Valid: from %3 to %4</source>
     </message>
     <message>
         <source>Connect a smart card reader</source>
-        <translation type="unfinished"></translation>
+        <translation>Ühenda kaardilugeja</translation>
     </message>
     <message>
         <source>Insert an ID card</source>

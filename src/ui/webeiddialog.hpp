@@ -75,6 +75,7 @@ public: // slots
                            const quint8 retriesLeft) override;
 
 private:
+    bool event(QEvent* event) override;
     void showPage(const WebEidDialog::Page page);
 
     void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);

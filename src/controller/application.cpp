@@ -25,9 +25,23 @@
 #include "logging.hpp"
 #include "retriableerror.hpp"
 
+#include <QCommandLineParser>
 #include <QDir>
 #include <QFontDatabase>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QTranslator>
+
+inline CommandWithArguments::second_type parseArgumentJson(const QString& argumentStr)
+{
+    const auto argumentJson = QJsonDocument::fromJson(argumentStr.toUtf8());
+
+    if (!argumentJson.isObject()) {
+        throw ArgumentError("parseArgument: Invalid JSON, not an object");
+    }
+
+    return argumentJson.object().toVariantMap();
+}
 
 Application::Application(int& argc, char** argv, const QString& name, const QString& display) :
     QApplication(argc, argv)
@@ -38,9 +52,9 @@ Application::Application(int& argc, char** argv, const QString& name, const QStr
     setOrganizationDomain(QStringLiteral("web-eid.eu"));
     setOrganizationName(QStringLiteral("RIA"));
 
-    QTranslator* translator = new QTranslator(this);
-    translator->load(QLocale(), QStringLiteral(":/translations/"));
+    translator = new QTranslator(this);
     QApplication::installTranslator(translator);
+    loadTranslations();
 
     for (const QString& font : QDir(QStringLiteral(":/fonts")).entryList()) {
         QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/%1").arg(font));
@@ -48,6 +62,68 @@ Application::Application(int& argc, char** argv, const QString& name, const QStr
 
     registerMetatypes();
     setupLogging();
+}
+
+void Application::loadTranslations(const QString& lang)
+{
+    QLocale locale;
+    static const QStringList SUPPORTED_LANGS {"en", "et", "fi", "ru"};
+    if (SUPPORTED_LANGS.contains(lang)) {
+        locale = QLocale(lang);
+    }
+    translator->load(locale, QStringLiteral(":/translations/"));
+}
+
+CommandWithArgumentsPtr Application::parseArgs()
+{
+    QCommandLineOption parentWindow(QStringLiteral("parent-window"),
+                                    QStringLiteral("Parent window handle (unused)"),
+                                    QStringLiteral("parent-window"));
+    QCommandLineParser parser;
+    parser.setApplicationDescription(
+        "Application that communicates with the Web eID browser extension via standard input and "
+        "output, but also works standalone in command-line mode. Performs PKI cryptographic "
+        "operations with eID smart cards for signing and authentication purposes.");
+
+    parser.addHelpOption();
+    parser.addOptions({{{"c", "command-line-mode"},
+                        "Command-line mode, read commands from command line arguments instead of "
+                        "standard input."},
+                       parentWindow});
+
+    static const auto COMMANDS = "'" + CMDLINE_GET_CERTIFICATE + "', '" + CMDLINE_AUTHENTICATE
+        + "', '" + CMDLINE_SIGN + "'.";
+
+    parser.addPositionalArgument(
+        QStringLiteral("command"),
+        QStringLiteral("The command to execute in command-line mode, any of ") + COMMANDS);
+    parser.addPositionalArgument(
+        QStringLiteral("arguments"),
+        QStringLiteral("Arguments to the given command as a JSON-encoded string."));
+
+    parser.process(arguments());
+
+    if (parser.isSet(QStringLiteral("command-line-mode"))) {
+        const auto args = parser.positionalArguments();
+        if (args.size() != 2) {
+            throw ArgumentError("Provide two positional arguments in command-line mode.");
+        }
+        const auto& command = args.first();
+        const auto& arguments = args.at(1);
+        if (command == CMDLINE_GET_CERTIFICATE || command == CMDLINE_AUTHENTICATE
+            || command == CMDLINE_SIGN) {
+            // TODO: add command-specific argument validation
+            return std::make_unique<CommandWithArguments>(commandNameToCommandType(command),
+                                                          parseArgumentJson(arguments));
+        }
+        throw ArgumentError("The command has to be one of " + COMMANDS.toStdString());
+    }
+    if (parser.isSet(parentWindow)) {
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=354597#c2
+        qDebug() << "Parent window handle is unused" << parser.value(parentWindow);
+    }
+
+    return nullptr;
 }
 
 void Application::registerMetatypes()

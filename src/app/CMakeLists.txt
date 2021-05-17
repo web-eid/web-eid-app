@@ -1,7 +1,6 @@
 add_executable(web-eid WIN32 MACOSX_BUNDLE
     getcommandhandler.cpp
     main.cpp
-    parseargs.hpp
     web-eid.rc
 )
 set_property(SOURCE web-eid.rc APPEND PROPERTY COMPILE_DEFINITIONS

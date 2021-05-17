@@ -65,7 +65,7 @@ void Controller::run()
     const bool isInCommandLineMode = bool(command);
     isInStdinMode = !isInCommandLineMode;
 
-    qInfo() << "web-eid app" << qApp->applicationVersion() << "running in"
+    qInfo() << qApp->applicationName() << "app" << qApp->applicationVersion() << "running in"
             << (isInStdinMode ? "stdin/stdout" : "command-line") << "mode";
 
     try {
