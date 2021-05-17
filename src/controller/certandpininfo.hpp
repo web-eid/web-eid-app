@@ -24,13 +24,11 @@
 
 #include "qeid.hpp"
 
-#include <QString>
 #include <QSslCertificate>
 
 struct CertificateInfo
 {
     electronic_id::CertificateType type = electronic_id::CertificateType::NONE;
-    QString icon;
 
     QString subject;
     QString issuer;

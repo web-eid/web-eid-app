@@ -38,13 +38,6 @@ QString certificateStatusToString(const CertificateStatus status)
     return QString::fromStdString(std::string(magic_enum::enum_name(status)));
 }
 
-const QMap<ElectronicID::Type, QString> ICONS {
-    {ElectronicID::EstEID, QStringLiteral(":/images/esteid.png")},
-    {ElectronicID::FinEID, QStringLiteral(":/images/fineid.png")},
-    {ElectronicID::LatEID, QStringLiteral(":/images/lateid.png")},
-    {ElectronicID::LitEID, QStringLiteral(":/images/liteid.png")},
-};
-
 std::pair<CertificateStatus, CardCertificateAndPinInfo>
 getCertificateWithStatusAndInfo(CardInfo::ptr card, const CertificateType certificateType,
                                 const bool isAuthenticate)
@@ -72,7 +65,6 @@ getCertificateWithStatusAndInfo(CardInfo::ptr card, const CertificateType certif
     }
 
     auto certInfo = CertificateInfo {certificateType,
-                                     ICONS.value(card->eid().type()),
                                      certificate.subjectInfo(QSslCertificate::CommonName).join(' '),
                                      certificate.issuerInfo(QSslCertificate::CommonName).join(' '),
                                      certificate.effectiveDate().date().toString(Qt::ISODate),
