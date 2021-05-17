@@ -1,9 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/esteid.png</file>
-        <file>images/fineid.png</file>
-        <file>images/lateid.png</file>
-        <file>images/liteid.png</file>
         <file>images/cardreader.svg</file>
         <file>images/id-card.svg</file>
         <file>images/origin.svg</file>

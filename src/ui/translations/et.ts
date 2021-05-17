@@ -4,9 +4,9 @@
 <context>
     <name>CertificateListWidget</name>
     <message>
-        <source>%1: %2
-Issuer: %3
-Valid: from %4 to %5</source>
+        <source>%1
+Issuer: %2
+Valid: from %3 to %4</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

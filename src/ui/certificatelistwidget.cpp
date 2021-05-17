@@ -2,11 +2,7 @@
 
 #include "certandpininfo.hpp"
 
-#include "electronic-id/electronic-id.hpp"
 #include "pcsc-cpp/pcsc-cpp-utils.hpp"
-
-#include <QLabel>
-#include <QListWidget>
 
 CertificateListWidget::CertificateListWidget(QWidget* parent) : QListWidget(parent)
 {
@@ -46,13 +42,11 @@ void CertificateListWidget::selectFirstRow()
 void CertificateListWidget::addCertificateListItem(const CardCertificateAndPinInfo& cardCertPinInfo)
 {
     const auto certInfo = cardCertPinInfo.certInfo;
-    const auto certType = certInfo.type.isAuthentication() ? QStringLiteral("Authentication")
-                                                           : QStringLiteral("Signature");
-    auto item = new QListWidgetItem(QIcon(certInfo.icon),
-                                    tr("%1: %2\nIssuer: %3\nValid: from %4 to %5")
-                                        .arg(certType, certInfo.subject, certInfo.issuer,
-                                             certInfo.effectiveDate, certInfo.expiryDate),
-                                    this);
+    auto item = new QListWidgetItem(
+        QIcon(QStringLiteral(":/images/id-card.svg")),
+        tr("%1\nIssuer: %2\nValid: from %3 to %4")
+            .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate),
+        this);
     item->setData(Qt::UserRole, QVariant::fromValue(cardCertPinInfo));
 }
 

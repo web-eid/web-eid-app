@@ -1,10 +1,8 @@
 #pragma once
 
-#include "certandpininfo.hpp"
-
 #include <QListWidget>
 
-struct CertificateInfo;
+struct CardCertificateAndPinInfo;
 
 class CertificateListWidget : public QListWidget
 {
