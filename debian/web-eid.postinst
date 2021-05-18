@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+mkdir -p /etc/opt/chrome/native-messaging-hosts
+ln -sf /usr/share/chrome-token-signing/eu.webeid.json \
+	/etc/opt/chrome/native-messaging-hosts/eu.webeid.json
+
+#DEBHELPER#

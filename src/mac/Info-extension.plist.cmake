@@ -5,7 +5,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>ee.ria.web-eid-safari.${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
+	<string>eu.web-eid.web-eid-safari.${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

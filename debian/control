@@ -1,10 +1,9 @@
 Source: web-eid
 Section: web
-Priority: extra
+Priority: optional
 Maintainer: RIA <info@ria.ee>
 Build-Depends:
  cdbs,
- clang-10,
  debhelper (>= 10),
  libpcsclite-dev,
  qtbase5-dev
