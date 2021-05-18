@@ -80,7 +80,7 @@
 <?ifdef var.qt_path ?>
             <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll"/>
             <File Source="$(var.VCPATH)\vcruntime140$(var.qt_suffix).dll"/>
-<?if $(var.Platform) = x64 ?>
+<?if $(var.Platform) = x64 AND $(env.VisualStudioVersion) = "16.0" ?>
             <File Source="$(var.VCPATH)\vcruntime140_1$(var.qt_suffix).dll"/>
 <?endif?>
             <File Source="$(var.ssl_path)\libcrypto-1_1$(var.ssl_suffix).dll"/>

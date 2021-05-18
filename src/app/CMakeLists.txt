@@ -113,7 +113,7 @@ else()
         set(MOZILLA_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib/mozilla/native-messaging-hosts")
     endif()
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
-        DESTINATION "/etc/opt/chrome/native-messaging-hosts")
+        DESTINATION "/usr/share/chrome-token-signing")
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
         DESTINATION "${MOZILLA_INSTALL_DIR}" RENAME eu.webeid.json)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
