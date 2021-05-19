@@ -241,7 +241,6 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         auto [originLabel, certificateWidget] = originLabelAndCertificateListOnPage();
 
         fillOriginAndCertificateList(originLabel, certificateWidget, origin, {certAndPin});
-        certificateWidget->setCurrentRow(0);
 
         if (currentCommand == CommandType::GET_CERTIFICATE) {
             setupOK([this, certAndPin] { emit accepted(certAndPin); });
@@ -317,8 +316,8 @@ void WebEidDialog::showPage(const WebEidDialog::Page page)
 {
     if (ui->pageStack->currentIndex() != int(page)) {
         ui->pageStack->setCurrentIndex(int(page));
+        resizeHeight();
     }
-    resizeHeight();
 }
 
 void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
