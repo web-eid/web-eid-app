@@ -13,10 +13,15 @@ CertificateListWidget::CertificateListWidget(QWidget* parent) : QListWidget(pare
 void CertificateListWidget::setCertificateInfo(
     const std::vector<CardCertificateAndPinInfo>& certAndPinInfos)
 {
+    if (certAndPinInfos.empty()) {
+        // Should not happen as certAndPinInfos is pre-validated.
+        THROW(electronic_id::ProgrammingError, "certAndPinInfos is empty");
+    }
     clear();
     for (const auto& certAndPinInfo : certAndPinInfos) {
         addCertificateListItem(certAndPinInfo);
     }
+    setCurrentRow(0);
     resizeHeight();
 }
 
