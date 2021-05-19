@@ -2,11 +2,9 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fi">
 <context>
-    <name>CertificateListWidget</name>
+    <name>CertificateWidget</name>
     <message>
-        <source>%1
-Issuer: %2
-Valid: from %3 to %4</source>
+        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: from %3 to %4</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -195,7 +193,19 @@ Valid: from %3 to %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>OK</source>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proceed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>https://www.id.ee/en/</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

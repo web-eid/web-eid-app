@@ -84,8 +84,6 @@ private:
 
     void resizeHeight();
 
-    std::pair<QLabel*, CertificateListWidget*> originLabelAndCertificateListOnPage();
-
     std::tuple<QString, QString, QString>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
 
