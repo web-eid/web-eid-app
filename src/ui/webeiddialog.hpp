@@ -24,17 +24,8 @@
 
 #include "ui.hpp"
 
-#include <optional>
-#include <utility>
-
 class CertificateListWidget;
 class QLabel;
-class QLineEdit;
-
-namespace Ui
-{
-class WebEidDialog;
-}
 
 // clang-format off
 /**
@@ -76,16 +67,18 @@ public: // slots
 
 private:
     bool event(QEvent* event) override;
+    void reject() override;
     void showPage(const WebEidDialog::Page page);
 
     void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
 
     void onRetryImpl(const QString& error);
 
-    void setupPinPadProgressBarAndEmitWait();
+    void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinInfo);
 
-    void setupOK(const std::function<void()>& func);
+    void setupOK(const std::function<void()>& func, const QString& label = {},
+                 bool enabled = false);
     void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);
     void displayPinBlockedError();
 
@@ -100,6 +93,5 @@ private:
     Private* ui;
 
     CommandType currentCommand = CommandType::NONE;
-    std::optional<bool> readerHasPinPad;
     QString pin;
 };
