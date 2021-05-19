@@ -21,7 +21,6 @@ void CertificateListWidget::setCertificateInfo(
     for (const auto& certAndPinInfo : certAndPinInfos) {
         addCertificateListItem(certAndPinInfo);
     }
-    setCurrentRow(0);
     resizeHeight();
 }
 
@@ -56,5 +55,5 @@ void CertificateListWidget::resizeHeight()
     for (int i = 0; i < count(); ++i) {
         totalHeight += sizeHintForRow(0);
     }
-    setFixedHeight(totalHeight + 1);
+    setFixedHeight(totalHeight + 1 + count() * 6);
 }
