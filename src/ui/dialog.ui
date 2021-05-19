@@ -55,18 +55,17 @@ background-color: #004B2F;
 }
 QListWidget {
 border: 0;
-icon-size: 45px 29px;
 }
-QListWidget::item {
+QListWidget::item, #pinInputCertificateInfo {
 border: 1px solid rgba(0,49,104,0.1);
-color: black;
 border-radius: 35px;
 min-height: 70px;
-padding: 0px 15px 0px 15px;
 }
 QListWidget::item:selected {
 border: 2px solid #113F8E;
-padding: 0px 14px 0px 14px;
+}
+QListWidget::item QWidget, #pinInputCertificateInfo QWidget {
+background-color: transparent;
 }
 #selectCertificateInfo::item {
 background-color: #F5F5F5;
@@ -419,11 +418,7 @@ color: #003168;
         </layout>
        </item>
        <item>
-        <widget class="CertificateListWidget" name="pinInputCertificateInfo">
-         <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
-         </property>
-        </widget>
+        <widget class="CertificateWidget" name="pinInputCertificateInfo" native="true"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="pinLayout">
@@ -574,6 +569,12 @@ color: #003168;
    <class>CertificateListWidget</class>
    <extends>QListWidget</extends>
    <header>certificatelistwidget.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>CertificateWidget</class>
+   <extends>QWidget</extends>
+   <header>certificatelistwidget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

@@ -79,7 +79,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->pinLayout->setAlignment(ui->pinInput, Qt::AlignCenter);
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
 
-    connect(ui->selectCertificateInfo, &CertificateListWidget::certificateSelected, this,
+    connect(ui->selectCertificateInfo, &CertificateListWidget::currentItemChanged, this,
             [this] { ui->okButton->setEnabled(true); });
     connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::rejected);
     connect(ui->helpButton, &QPushButton::clicked, this,
@@ -222,10 +222,19 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         if (page == Page::MESSAGE) {
             THROW(ProgrammingError, "Insert card commmand not allowed here");
         }
-        auto [originLabel, certificateWidget] = originLabelAndCertificateListOnPage();
-
-        originLabel->setText(fromPunycode(origin));
-        certificateWidget->setCertificateInfo({certAndPin});
+        switch (currentCommand) {
+        case CommandType::GET_CERTIFICATE:
+            ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
+            ui->selectCertificateInfo->setCertificateInfo({certAndPin});
+            break;
+        case CommandType::AUTHENTICATE:
+        case CommandType::SIGN:
+            ui->pinInputOriginLabel->setText(fromPunycode(origin));
+            ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
+            break;
+        default:
+            THROW(ProgrammingError, "Only SELECT_CERTIFICATE, AUTHENTICATE or SIGN allowed");
+        }
 
         if (currentCommand == CommandType::GET_CERTIFICATE) {
             setupOK([this, certAndPin] { emit accepted(certAndPin); });
@@ -436,19 +445,6 @@ void WebEidDialog::resizeHeight()
 {
     ui->pageStack->setFixedHeight(ui->pageStack->currentWidget()->sizeHint().height());
     adjustSize();
-}
-
-std::pair<QLabel*, CertificateListWidget*> WebEidDialog::originLabelAndCertificateListOnPage()
-{
-    switch (currentCommand) {
-    case CommandType::GET_CERTIFICATE:
-        return {ui->selectCertificateOriginLabel, ui->selectCertificateInfo};
-    case CommandType::AUTHENTICATE:
-    case CommandType::SIGN:
-        return {ui->pinInputOriginLabel, ui->pinInputCertificateInfo};
-    default:
-        THROW(ProgrammingError, "Only SELECT_CERTIFICATE, AUTHENTICATE or SIGN allowed");
-    }
 }
 
 std::tuple<QString, QString, QString>

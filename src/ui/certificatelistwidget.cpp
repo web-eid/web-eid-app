@@ -4,10 +4,43 @@
 
 #include "pcsc-cpp/pcsc-cpp-utils.hpp"
 
-CertificateListWidget::CertificateListWidget(QWidget* parent) : QListWidget(parent)
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPainter>
+
+CertificateWidget::CertificateWidget(QWidget* parent) :
+    QWidget(parent), icon(new QLabel(this)), info(new QLabel(this))
 {
-    connect(this, &QListWidget::currentItemChanged, this,
-            &CertificateListWidget::certificateSelected);
+    QHBoxLayout* layout = new QHBoxLayout(this);
+    layout->addWidget(icon);
+    layout->addWidget(info, 1);
+    layout->setContentsMargins(20, 0, 20, 0);
+    layout->setSpacing(20);
+}
+
+CertificateWidget::CertificateWidget(const CardCertificateAndPinInfo& cardCertPinInfo,
+                                     QWidget* parent) :
+    CertificateWidget(parent)
+{
+    setCertificateInfo(cardCertPinInfo);
+}
+
+void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
+{
+    QStyleOption opt;
+    opt.init(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+}
+
+void CertificateWidget::setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo)
+{
+    const auto certInfo = cardCertPinInfo.certInfo;
+    icon->setPixmap(QStringLiteral(":/images/id-card.svg"));
+    info->setText(
+        tr("<b>%1</b><br />Issuer: %2<br />Valid: from %3 to %4")
+            .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate));
+    info->setFocusPolicy(Qt::TabFocus);
 }
 
 void CertificateListWidget::setCertificateInfo(
@@ -40,13 +73,9 @@ CardCertificateAndPinInfo CertificateListWidget::selectedCertificate() const
 
 void CertificateListWidget::addCertificateListItem(const CardCertificateAndPinInfo& cardCertPinInfo)
 {
-    const auto certInfo = cardCertPinInfo.certInfo;
-    auto item = new QListWidgetItem(
-        QIcon(QStringLiteral(":/images/id-card.svg")),
-        tr("%1\nIssuer: %2\nValid: from %3 to %4")
-            .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate),
-        this);
+    QListWidgetItem* item = new QListWidgetItem(this);
     item->setData(Qt::UserRole, QVariant::fromValue(cardCertPinInfo));
+    setItemWidget(item, new CertificateWidget(cardCertPinInfo, this));
 }
 
 void CertificateListWidget::resizeHeight()
