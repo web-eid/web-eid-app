@@ -314,12 +314,8 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
 
 bool WebEidDialog::event(QEvent* event)
 {
-    switch (event->type()) {
-    case QEvent::LanguageChange:
+    if (event->type() == QEvent::LanguageChange) {
         ui->retranslateUi(this);
-        break;
-    default:
-        break;
     }
     return WebEidUI::event(event);
 }

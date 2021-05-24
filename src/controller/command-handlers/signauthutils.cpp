@@ -28,6 +28,24 @@
 
 using namespace electronic_id;
 
+// Take argument names by copy/move as they will be modified.
+void requireArgumentsAndOptionalLang(QStringList argNames, const QVariantMap& args,
+                                     const std::string& argDescriptions)
+{
+    QVariantMap argCopy {args};
+    argCopy.remove(QStringLiteral("lang"));
+
+    // Sorts the list of arguments in ascending order.
+    argNames.sort();
+
+    // QMap::keys() also returns a list containing all the keys in the map in ascending order.
+    if (argCopy.keys() != argNames) {
+        THROW(CommandHandlerInputDataError,
+              "Argument must be '{" + argDescriptions
+                  + ", \"lang\": \"<OPTIONAL user interface language>\"}'");
+    }
+}
+
 template <typename T>
 T validateAndGetArgument(const QString& argName, const QVariantMap& args, bool allowNull)
 {
@@ -37,7 +55,7 @@ T validateAndGetArgument(const QString& argName, const QVariantMap& args, bool a
     if (allowNull && args[argName].isNull()) {
         return args[argName].value<T>();
     }
-    const auto argValue = args[argName].value<T>();
+    auto argValue = args[argName].value<T>();
     if (argValue.isEmpty()) {
         THROW(CommandHandlerInputDataError, "Argument '" + argName.toStdString() + "' is empty");
     }
@@ -83,7 +101,7 @@ pcsc_cpp::byte_vector getPin(const pcsc_cpp::SmartCard& card, WebEidUI* window)
         return {};
     }
 
-    REQUIRE_NON_NULL(window);
+    REQUIRE_NON_NULL(window)
 
     auto pin = window->getPin();
     if (pin.isEmpty()) {

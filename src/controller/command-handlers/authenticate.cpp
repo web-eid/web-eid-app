@@ -122,15 +122,10 @@ QByteArray signToken(const ElectronicID& eid, const QByteArray& token,
 Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(cmd)
 {
     const auto arguments = cmd.second;
-
-    // nonce, origin, origin-cert
-    if (arguments.size() < 3 || arguments.size() > 4) {
-        THROW(CommandHandlerInputDataError,
-              "Argument must be '{"
-              "\"nonce\": \"<challenge nonce>\", "
-              "\"origin\": \"<origin URL>\", "
-              "\"origin-cert\": \"<Base64-encoded origin certificate>\"}'");
-    }
+    requireArgumentsAndOptionalLang({"nonce", "origin", "origin-cert"}, arguments,
+                                    "\"nonce\": \"<challenge nonce>\", "
+                                    "\"origin\": \"<origin URL>\", "
+                                    "\"origin-cert\": \"<Base64-encoded origin certificate>\"");
 
     nonce = validateAndGetArgument<QString>(QStringLiteral("nonce"), arguments);
     // nonce must contain at least 256 bits of entropy and is usually Base64-encoded, so the

@@ -50,16 +50,14 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
 {
     const auto arguments = cmd.second;
 
-    // doc-hash, origin
-    if (arguments.size() < 4 || arguments.size() > 5) {
-        THROW(CommandHandlerInputDataError,
-              "Argument must be '{\"doc-hash\": \"<Base64-encoded document hash>\", "
-              "\"hash-algo\": \"<the hash algorithm that was used for computing 'doc-hash', any of "
-                  + HashAlgorithm::allSupportedAlgorithmNames()
-                  + ">\", \"user-eid-cert\": \"<Base64-encoded user eID certificate previously "
-                    "retrieved with get-cert>\", "
-                    "\"origin\": \"<origin URL>\"}'");
-    }
+    requireArgumentsAndOptionalLang(
+        {"doc-hash", "hash-algo", "user-eid-cert", "origin"}, arguments,
+        "\"doc-hash\": \"<Base64-encoded document hash>\", "
+        "\"hash-algo\": \"<the hash algorithm that was used for computing 'doc-hash', any of "
+            + HashAlgorithm::allSupportedAlgorithmNames()
+            + ">\", \"user-eid-cert\": \"<Base64-encoded user eID certificate previously "
+              "retrieved with get-cert>\", "
+              "\"origin\": \"<origin URL>\"");
 
     validateAndStoreDocHashAndHashAlgo(arguments);
 
