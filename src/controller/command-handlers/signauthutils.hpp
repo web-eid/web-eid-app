@@ -25,13 +25,13 @@
 #include "electronic-id/enums.hpp"
 #include "pcsc-cpp/pcsc-cpp-utils.hpp"
 
-#include <QSslCertificate>
 #include <QVariantMap>
-#include <QString>
-
-#include <string>
 
 class WebEidUI;
+class QSslCertificate;
+
+void requireArgumentsAndOptionalLang(QStringList argNames, const QVariantMap& args,
+                                     const std::string& argDescriptions);
 
 template <typename T>
 T validateAndGetArgument(const QString& argName, const QVariantMap& args, bool allowNull = false);

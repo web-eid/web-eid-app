@@ -98,6 +98,16 @@ output example:
 
     {"signature": "O0vhA3XSflWsE/v0xcdLGPG0mbWHySSPXWJkRni8vklWKhlzWvGuHD98rWZzf31VsuldBlhJo9eflZvmKK/tUuTjiwXw2BLq3E+qv6Vs6nLHJNJs/ki6Lm/s+bwffyrH"}
 
+## Changing the user interface language
+
+All commands support an optional `lang` parameter that, if provided, must
+contain a two-letter ISO 639-1 language code. If translations exist for the given
+language, then the user interface will be displayed in this language.
+
+The following example will display the user interface in Estonian:
+
+    web-eid -c get-certificate '{"lang": "et", "type": "auth", "origin": "https://ria.ee"}'
+
 ## Input-output mode
 
 Input-output mode is intended for communicating with the Web eID browser extension.

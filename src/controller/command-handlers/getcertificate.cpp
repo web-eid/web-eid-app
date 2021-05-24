@@ -71,10 +71,9 @@ QVariantList supportedSigningAlgos(const ElectronicID& eid)
 GetCertificate::GetCertificate(const CommandWithArguments& cmd) : CertificateReader(cmd)
 {
     const auto arguments = cmd.second;
-    if (arguments.size() < 2 || arguments.size() > 3) {
-        THROW(CommandHandlerInputDataError,
-              "Argument must be '{\"type\": [\"auth\"|\"sign\"], \"origin\": \"<origin URL>\"}'");
-    }
+    requireArgumentsAndOptionalLang({"type", "origin"}, arguments,
+                                    "\"type\": [\"auth\"|\"sign\"], \"origin\": \"<origin URL>\"");
+
     if (arguments[QStringLiteral("type")] != QStringLiteral("auth")
         && arguments[QStringLiteral("type")] != QStringLiteral("sign")) {
         THROW(CommandHandlerInputDataError, "Argument type must be either 'auth' or 'sign'");
