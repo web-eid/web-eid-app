@@ -20,7 +20,7 @@ CertificateWidget::CertificateWidget(QWidget* parent) :
 
 CertificateWidget::CertificateWidget(const CardCertificateAndPinInfo& cardCertPinInfo,
                                      QWidget* parent) :
-    QWidget(parent)
+    CertificateWidget(parent)
 {
     setCertificateInfo(cardCertPinInfo);
 }
