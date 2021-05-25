@@ -316,7 +316,8 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     resizeHeight();
 }
 
-void WebEidDialog::reject() {
+void WebEidDialog::reject()
+{
     if (!ui->pinEntryTimeoutProgressBar->isVisible()) {
         WebEidUI::reject();
     }
