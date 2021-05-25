@@ -10,6 +10,7 @@ class CertificateWidget final : public QWidget
     Q_OBJECT
 
 public:
+    explicit CertificateWidget(QWidget* parent);
     CertificateWidget(const CardCertificateAndPinInfo& cardCertPinInfo, QWidget* parent);
 
     void setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo);
