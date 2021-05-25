@@ -20,7 +20,7 @@ CertificateWidget::CertificateWidget(QWidget* parent) :
 
 CertificateWidget::CertificateWidget(const CardCertificateAndPinInfo& cardCertPinInfo,
                                      QWidget* parent) :
-    CertificateWidget(parent)
+    QWidget(parent)
 {
     setCertificateInfo(cardCertPinInfo);
 }
@@ -30,6 +30,7 @@ void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
     QStyleOption opt;
     opt.init(this);
     QPainter p(this);
+    // Applies style sheet styling to the custom widget.
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
 
