@@ -120,25 +120,6 @@ void WebEidDialog::showWaitingForCardPage(const CommandType commandType)
     const auto pageIndex =
         commandType == CommandType::INSERT_CARD ? int(Page::MESSAGE) : int(Page::WAITING);
     ui->pageStack->setCurrentIndex(pageIndex);
-    switch (commandType) {
-    case CommandType::AUTHENTICATE:
-        ui->pinInputPageTitleLabel->setText(tr("Authenticate"));
-        ui->pinInputDescriptionLabel->setText(
-            tr("By confirming authentication, I agree to submit my name and personal "
-               "identification number to the website"));
-        ui->pinTitleLabel->setText(tr("Please enter authentication PIN (PIN 1):"));
-        break;
-    case CommandType::SIGN:
-        ui->pinInputPageTitleLabel->setText(tr("Sign"));
-        ui->pinInputDescriptionLabel->setText(
-            tr("By confirming signing, I agree to submit my name and personal identification "
-               "number to the website"));
-        ui->pinTitleLabel->setText(tr("Please enter signing PIN (PIN 2):"));
-        break;
-    default:
-        break;
-    }
-
     resizeHeight();
 }
 
@@ -224,17 +205,28 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         }
         switch (currentCommand) {
         case CommandType::GET_CERTIFICATE:
-            ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
             ui->selectCertificateInfo->setCertificateInfo({certAndPin});
             break;
         case CommandType::AUTHENTICATE:
-        case CommandType::SIGN:
-            ui->pinInputOriginLabel->setText(fromPunycode(origin));
             ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
+            ui->pinInputPageTitleLabel->setText(tr("Authenticate"));
+            ui->pinInputDescriptionLabel->setText(
+                tr("By confirming authentication, I agree to submit my name and personal "
+                   "identification number to the website"));
+            ui->pinTitleLabel->setText(tr("Please enter authentication PIN (PIN 1):"));
+        case CommandType::SIGN:
+            ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
+            ui->pinInputPageTitleLabel->setText(tr("Sign"));
+            ui->pinInputDescriptionLabel->setText(
+                tr("By confirming signing, I agree to submit my name and personal identification "
+                   "number to the website"));
+            ui->pinTitleLabel->setText(tr("Please enter signing PIN (PIN 2):"));
             break;
         default:
             THROW(ProgrammingError, "Only SELECT_CERTIFICATE, AUTHENTICATE or SIGN allowed");
         }
+        ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
+        ui->pinInputOriginLabel->setText(ui->selectCertificateOriginLabel->text());
 
         if (currentCommand == CommandType::GET_CERTIFICATE) {
             setupOK([this, certAndPin] { emit accepted(certAndPin); });
