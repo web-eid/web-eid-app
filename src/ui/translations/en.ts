@@ -93,10 +93,6 @@
         <translation>PIN pad PIN entry cancelled</translation>
     </message>
     <message>
-        <source>Insert Smart Card</source>
-        <translation>Insert Smart Card</translation>
-    </message>
-    <message>
         <source>Waiting for card</source>
         <translation>Waiting for card</translation>
     </message>

@@ -12,8 +12,6 @@ add_library(ui STATIC
     certificatelistwidget.hpp
     punycode.hpp
     ui.cpp
-    waitingspinner/waitingspinnerwidget.cpp
-    waitingspinner/waitingspinnerwidget.hpp
     webeiddialog.cpp
     webeiddialog.hpp
     web-eid-resources.qrc

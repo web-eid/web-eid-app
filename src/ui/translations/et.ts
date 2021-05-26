@@ -181,10 +181,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Insert Smart Card</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error occurred</source>
         <translation type="unfinished"></translation>
     </message>
