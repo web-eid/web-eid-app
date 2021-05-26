@@ -31,10 +31,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PIN blocked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Wrong PIN length</source>
         <translation type="unfinished"></translation>
     </message>

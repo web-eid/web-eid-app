@@ -31,10 +31,6 @@
         <translation>No readers attached. Please connect a smart card reader.</translation>
     </message>
     <message>
-        <source>PIN blocked</source>
-        <translation>PIN blocked</translation>
-    </message>
-    <message>
         <source>Wrong PIN length</source>
         <translation>Wrong PIN length</translation>
     </message>

@@ -81,6 +81,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->waitingSpinner->load(QStringLiteral(":/images/wait.svg"));
     ui->waitingPageLayout->setAlignment(ui->waitingSpinner, Qt::AlignCenter);
 
+    connect(ui->pageStack, &QStackedWidget::currentChanged, this, &WebEidDialog::resizeHeight);
     connect(ui->selectCertificateInfo, &CertificateListWidget::currentItemChanged, this,
             [this] { ui->okButton->setEnabled(true); });
     connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::rejected);
@@ -119,10 +120,8 @@ void WebEidDialog::showWaitingForCardPage(const CommandType commandType)
     // Don't show OK button while waiting for card operation or connect card.
     ui->okButton->hide();
 
-    const auto pageIndex =
-        commandType == CommandType::INSERT_CARD ? int(Page::MESSAGE) : int(Page::WAITING);
-    ui->pageStack->setCurrentIndex(pageIndex);
-    resizeHeight();
+    ui->pageStack->setCurrentIndex(
+        int(commandType == CommandType::INSERT_CARD ? Page::MESSAGE : Page::WAITING));
 }
 
 QString WebEidDialog::getPin()
@@ -144,7 +143,7 @@ void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
     ui->helpButton->show();
     ui->cancelButton->show();
     ui->okButton->hide();
-    showPage(Page::MESSAGE);
+    ui->pageStack->setCurrentIndex(int(Page::MESSAGE));
 }
 
 /** This slot is used by the get certificate and authenticate commands in case there are multiple
@@ -184,7 +183,7 @@ void WebEidDialog::onMultipleCertificatesReady(
             THROW(ProgrammingError, "Command " + std::string(currentCommand) + " not allowed here");
         }
 
-        showPage(Page::SELECT_CERTIFICATE);
+        ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
     }
     CATCH_AND_EMIT_FAILURE_AND_RETURN()
 }
@@ -246,7 +245,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             displayPinRetriesRemaining(certAndPin.pinInfo.pinRetriesCount);
         }
 
-        showPage(page);
+        ui->pageStack->setCurrentIndex(int(page));
     }
     CATCH_AND_EMIT_FAILURE_AND_RETURN()
 }
@@ -270,7 +269,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
 
     QString message;
 
-    // FIXME: don't allow retry in case of PIN_BLOCKED, UNKNOWN_ERROR
+    // FIXME: don't allow retry in case of UNKNOWN_ERROR
     switch (status) {
     case Status::RETRY_ALLOWED:
         message = tr("Incorrect PIN, %n retries left", nullptr, retriesLeft);
@@ -279,8 +278,9 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
         style()->polish(ui->pinInput);
         break;
     case Status::PIN_BLOCKED:
-        message = tr("PIN blocked");
-        break;
+        displayPinBlockedError();
+        resizeHeight();
+        return;
     case Status::INVALID_PIN_LENGTH:
         message = tr("Wrong PIN length");
         break;
@@ -303,11 +303,10 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     } else {
         ui->pinInput->show();
         ui->pinTitleLabel->show();
-        ui->okButton->setEnabled(true);
+        ui->okButton->setDisabled(true);
         ui->cancelButton->setEnabled(true);
+        resizeHeight();
     }
-
-    resizeHeight();
 }
 
 void WebEidDialog::reject()
@@ -323,14 +322,6 @@ bool WebEidDialog::event(QEvent* event)
         ui->retranslateUi(this);
     }
     return WebEidUI::event(event);
-}
-
-void WebEidDialog::showPage(const WebEidDialog::Page page)
-{
-    if (ui->pageStack->currentIndex() != int(page)) {
-        ui->pageStack->setCurrentIndex(int(page));
-        resizeHeight();
-    }
 }
 
 void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
@@ -363,8 +354,8 @@ void WebEidDialog::onRetryImpl(const QString& error)
     ui->connectCardLabel->setText(error);
     ui->messagePageTitleLabel->setText(tr("Error occurred"));
     ui->cardChipIcon->setPixmap(QStringLiteral(":/images/id-card.svg"));
-    showPage(Page::MESSAGE);
     setupOK([this] { emit retry(); }, tr("Retry"), true);
+    ui->pageStack->setCurrentIndex(int(Page::MESSAGE));
 }
 
 void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin)
@@ -401,7 +392,6 @@ void WebEidDialog::setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMin
     ui->pinInput->setMaxLength(int(pinMinMaxLength.second));
     ui->pinInput->show();
     ui->pinInput->setFocus();
-    resizeHeight();
 }
 
 void WebEidDialog::setupOK(const std::function<void()>& func, const QString& label, bool enabled)
