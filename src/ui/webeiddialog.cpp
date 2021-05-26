@@ -78,6 +78,8 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->messageInfoLayout->setAlignment(ui->cardChipIcon, Qt::AlignTop);
     ui->pinLayout->setAlignment(ui->pinInput, Qt::AlignCenter);
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
+    ui->waitingSpinner->load(QStringLiteral(":/images/wait.svg"));
+    ui->waitingPageLayout->setAlignment(ui->waitingSpinner, Qt::AlignCenter);
 
     connect(ui->selectCertificateInfo, &CertificateListWidget::currentItemChanged, this,
             [this] { ui->okButton->setEnabled(true); });

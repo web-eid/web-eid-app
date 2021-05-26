@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>465</height>
+    <height>475</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -162,30 +162,49 @@ color: #003168;
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="waitingPageHorizontalLayout" stretch="0,1">
-         <property name="spacing">
-          <number>20</number>
+        <widget class="QLabel" name="waitingPageLabel">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
          </property>
-         <item>
-          <widget class="WaitingSpinnerWidget" name="waitingPageSpinner" native="true"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="waitingPageLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string notr="true">Please wait until the card operation completes</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+         <property name="text">
+          <string notr="true">Please wait until the card operation completes</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
-        <spacer name="waitingPageVerticalSpacer">
+        <spacer name="waitingSpacerTop">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QSvgWidget" name="waitingSpinner" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>80</width>
+           <height>80</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>80</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="waitingSpacerBottom">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -222,7 +241,7 @@ color: #003168;
           <enum>Qt::TabFocus</enum>
          </property>
          <property name="text">
-          <string>Insert Smart Card</string>
+          <string>Insert an ID card</string>
          </property>
         </widget>
        </item>
@@ -560,12 +579,6 @@ color: #003168;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>WaitingSpinnerWidget</class>
-   <extends>QWidget</extends>
-   <header>waitingspinner/waitingspinnerwidget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>CertificateListWidget</class>
    <extends>QListWidget</extends>
    <header>certificatelistwidget.hpp</header>
@@ -574,6 +587,12 @@ color: #003168;
    <class>CertificateWidget</class>
    <extends>QWidget</extends>
    <header>certificatelistwidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QSvgWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">QSvgWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

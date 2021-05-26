@@ -95,10 +95,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Insert Smart Card</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Waiting for card</source>
         <translation type="unfinished"></translation>
     </message>

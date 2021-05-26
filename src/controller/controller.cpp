@@ -99,37 +99,6 @@ void Controller::run()
 
 void Controller::startCommandExecution()
 {
-    try {
-        const auto availableCards = availableSupportedCards();
-
-        if (availableCards.empty()) {
-            waitUntilSupportedCardAvailable();
-        } else {
-            for (const auto& card : availableCards) {
-                qInfo() << "Reader" << card->reader().name << "has supported card"
-                        << card->eid().name();
-            }
-            onCardsAvailable(availableCards);
-        }
-
-    } catch (const AutoSelectFailed& failure) {
-        qInfo() << "Card autoselect failed:"
-                << std::string(magic_enum::enum_name(failure.reason()));
-        waitUntilSupportedCardAvailable();
-    }
-    CATCH_PCSC_CPP_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardAvailable)
-    CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(warnAndWaitUntilSupportedCardAvailable)
-}
-
-void Controller::warnAndWaitUntilSupportedCardAvailable(const RetriableError errorCode,
-                                                        const std::exception& error)
-{
-    WARN_RETRIABLE_ERROR(std::string(commandType()), errorCode, error);
-    waitUntilSupportedCardAvailable();
-}
-
-void Controller::waitUntilSupportedCardAvailable()
-{
     // Reader monitor thread setup.
     WaitForCardThread* waitForCardThread = new WaitForCardThread(this);
     connect(waitForCardThread, &WaitForCardThread::statusUpdate, this,

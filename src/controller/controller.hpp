@@ -82,9 +82,6 @@ private:
     using observer_ptr = T*;
 
     void startCommandExecution();
-    void warnAndWaitUntilSupportedCardAvailable(const RetriableError errorCode,
-                                                const std::exception& error);
-    void waitUntilSupportedCardAvailable();
     void runCommandHandler(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
     void connectOkCancelWaitingForPinPad();
     void connectRetry(const ControllerChildThread* childThread);
