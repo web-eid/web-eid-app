@@ -68,7 +68,6 @@ public: // slots
 private:
     bool event(QEvent* event) override;
     void reject() override;
-    void showPage(const WebEidDialog::Page page);
 
     void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
 
