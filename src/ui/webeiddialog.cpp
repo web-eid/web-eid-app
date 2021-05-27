@@ -215,6 +215,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
                 tr("By confirming authentication, I agree to submit my name and personal "
                    "identification number to the website"));
             ui->pinTitleLabel->setText(tr("Please enter authentication PIN (PIN 1):"));
+            break;
         case CommandType::SIGN:
             ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
             ui->pinInputPageTitleLabel->setText(tr("Sign"));
@@ -302,6 +303,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
         onRetryImpl(message);
     } else {
         ui->pinInput->show();
+        ui->pinInput->setFocus();
         ui->pinTitleLabel->show();
         ui->okButton->setDisabled(true);
         ui->cancelButton->setEnabled(true);
@@ -414,6 +416,9 @@ void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetrie
     if (pinRetriesCount.first != pinRetriesCount.second) {
         ui->pinErrorLabel->setText(tr("%n retries left", nullptr, int(pinRetriesCount.first)));
         ui->pinErrorLabel->show();
+    }
+    if (!ui->pinEntryTimeoutProgressBar->isVisible()) {
+        ui->pinInput->setFocus();
     }
 }
 
