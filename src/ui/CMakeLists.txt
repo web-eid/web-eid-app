@@ -8,8 +8,8 @@ qt5_add_translation(SOURCES
 add_library(ui STATIC
     ${SOURCES}
     ${CMAKE_CURRENT_BINARY_DIR}/translations.qrc
-    certificatelistwidget.cpp
-    certificatelistwidget.hpp
+    certificatewidget.cpp
+    certificatewidget.hpp
     punycode.hpp
     ui.cpp
     webeiddialog.cpp
@@ -22,4 +22,5 @@ set_target_properties(ui PROPERTIES
     AUTOUIC ON
 )
 target_include_directories(ui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_definitions(ui PRIVATE QT_NO_DEPRECATED_WARNINGS)
 target_link_libraries(ui controller Qt5::Svg)

@@ -25,10 +25,12 @@
 
 #include "ui_dialog.h"
 
+#include <QButtonGroup>
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QMutexLocker>
 #include <QRegularExpressionValidator>
+#include <QStyle>
 #include <QTimeLine>
 #include <QUrl>
 
@@ -68,6 +70,7 @@ public:
     // Non-owning observer pointers.
     QRegularExpressionValidator* pinInputValidator;
     QTimeLine* pinTimeoutTimer;
+    QButtonGroup* selectionGroup;
 };
 
 WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
@@ -75,14 +78,12 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->setupUi(this);
     setWindowFlag(Qt::CustomizeWindowHint);
     setWindowFlag(Qt::WindowTitleHint);
-    ui->messageInfoLayout->setAlignment(ui->cardChipIcon, Qt::AlignTop);
-    ui->pinLayout->setAlignment(ui->pinInput, Qt::AlignCenter);
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
     ui->waitingSpinner->load(QStringLiteral(":/images/wait.svg"));
-    ui->waitingPageLayout->setAlignment(ui->waitingSpinner, Qt::AlignCenter);
+    ui->selectionGroup = new QButtonGroup(this);
 
     connect(ui->pageStack, &QStackedWidget::currentChanged, this, &WebEidDialog::resizeHeight);
-    connect(ui->selectCertificateInfo, &CertificateListWidget::currentItemChanged, this,
+    connect(ui->selectionGroup, qOverload<int>(&QButtonGroup::buttonClicked), this,
             [this] { ui->okButton->setEnabled(true); });
     connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::rejected);
     connect(ui->helpButton, &QPushButton::clicked, this,
@@ -158,13 +159,18 @@ void WebEidDialog::onMultipleCertificatesReady(
 {
     try {
         ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
-        ui->selectCertificateInfo->setCertificateInfo(certificateAndPinInfos);
+        setupCertificateAndPinInfo(certificateAndPinInfos);
 
         switch (currentCommand) {
         case CommandType::GET_CERTIFICATE:
             setupOK([this] {
                 try {
-                    emit accepted(ui->selectCertificateInfo->selectedCertificate());
+                    if (CertificateButton* button =
+                            qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
+                        emit accepted(button->certificateInfo());
+                    } else {
+                        THROW(ProgrammingError, "CertificateButton not found");
+                    }
                 }
                 CATCH_AND_EMIT_FAILURE_AND_RETURN()
             });
@@ -174,8 +180,12 @@ void WebEidDialog::onMultipleCertificatesReady(
             // Authenticate continues with the selected certificate to onSingleCertificateReady().
             setupOK([this, origin] {
                 try {
-                    onSingleCertificateReady(origin,
-                                             ui->selectCertificateInfo->selectedCertificate());
+                    if (CertificateButton* button =
+                            qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
+                        onSingleCertificateReady(origin, button->certificateInfo());
+                    } else {
+                        THROW(ProgrammingError, "CertificateButton not found");
+                    }
                 }
                 CATCH_AND_EMIT_FAILURE_AND_RETURN()
             });
@@ -207,7 +217,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         }
         switch (currentCommand) {
         case CommandType::GET_CERTIFICATE:
-            ui->selectCertificateInfo->setCertificateInfo({certAndPin});
+            setupCertificateAndPinInfo({certAndPin});
             break;
         case CommandType::AUTHENTICATE:
             ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
@@ -359,6 +369,20 @@ void WebEidDialog::onRetryImpl(const QString& error)
     ui->cardChipIcon->setPixmap(QStringLiteral(":/images/id-card.svg"));
     setupOK([this] { emit retry(); }, tr("Retry"), true);
     ui->pageStack->setCurrentIndex(int(Page::ALERT));
+}
+
+void WebEidDialog::setupCertificateAndPinInfo(
+    const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos)
+{
+    for (CertificateButton* widget :
+         ui->selectCertificatePage->findChildren<CertificateButton*>()) {
+        widget->deleteLater();
+    }
+    for (const CardCertificateAndPinInfo& certAndPin : cardCertAndPinInfos) {
+        CertificateButton* button = new CertificateButton(certAndPin, ui->selectCertificatePage);
+        ui->selectCertificateInfo->addWidget(button);
+        ui->selectionGroup->addButton(button);
+    }
 }
 
 void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin)
