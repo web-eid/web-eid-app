@@ -49,12 +49,12 @@ WebEidDialog::Page commandToPage(const CommandType command)
     using Page = WebEidDialog::Page;
     switch (command) {
     case CommandType::INSERT_CARD:
-        return Page::MESSAGE;
+        return Page::ALERT;
     case CommandType::GET_CERTIFICATE:
         return Page::SELECT_CERTIFICATE;
     case CommandType::AUTHENTICATE:
     case CommandType::SIGN:
-        return Page::PININPUT;
+        return Page::PIN_INPUT;
     default:
         THROW(ProgrammingError, "No page exists for command " + std::string(command));
     }
@@ -120,8 +120,7 @@ void WebEidDialog::showWaitingForCardPage(const CommandType commandType)
     // Don't show OK button while waiting for card operation or connect card.
     ui->okButton->hide();
 
-    ui->pageStack->setCurrentIndex(
-        int(commandType == CommandType::INSERT_CARD ? Page::MESSAGE : Page::WAITING));
+    ui->pageStack->setCurrentIndex(int(Page::WAITING));
 }
 
 QString WebEidDialog::getPin()
@@ -133,6 +132,8 @@ QString WebEidDialog::getPin()
 
 void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
 {
+    currentCommand = CommandType::INSERT_CARD;
+
     const auto [errorText, title, icon] = retriableErrorToTextTitleAndIcon(status);
 
     ui->connectCardLabel->setText(errorText);
@@ -143,7 +144,7 @@ void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
     ui->helpButton->show();
     ui->cancelButton->show();
     ui->okButton->hide();
-    ui->pageStack->setCurrentIndex(int(Page::MESSAGE));
+    ui->pageStack->setCurrentIndex(int(Page::ALERT));
 }
 
 /** This slot is used by the get certificate and authenticate commands in case there are multiple
@@ -201,7 +202,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
 {
     try {
         const auto page = commandToPage(currentCommand);
-        if (page == Page::MESSAGE) {
+        if (page == Page::ALERT) {
             THROW(ProgrammingError, "Insert card commmand not allowed here");
         }
         switch (currentCommand) {
@@ -258,8 +259,8 @@ void WebEidDialog::onRetry(const RetriableError error)
 
 void WebEidDialog::onCertificateNotFound(const QString& certificateSubject)
 {
-    onRetryImpl(tr("No electronic ID card is inserted that has the signing certificate provided as "
-                   "argument. Please insert the electronic ID card that belongs to %1")
+    onRetryImpl(tr("None of the inserted electronic ID cards has the requested signing "
+                   "certificate. Please insert the electronic ID card that belongs to %1.")
                     .arg(certificateSubject));
 }
 
@@ -357,7 +358,7 @@ void WebEidDialog::onRetryImpl(const QString& error)
     ui->messagePageTitleLabel->setText(tr("Error occurred"));
     ui->cardChipIcon->setPixmap(QStringLiteral(":/images/id-card.svg"));
     setupOK([this] { emit retry(); }, tr("Retry"), true);
-    ui->pageStack->setCurrentIndex(int(Page::MESSAGE));
+    ui->pageStack->setCurrentIndex(int(Page::ALERT));
 }
 
 void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin)

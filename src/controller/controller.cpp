@@ -99,6 +99,8 @@ void Controller::run()
 
 void Controller::startCommandExecution()
 {
+    REQUIRE_NON_NULL(commandHandler)
+
     // Reader monitor thread setup.
     WaitForCardThread* waitForCardThread = new WaitForCardThread(this);
     connect(waitForCardThread, &WaitForCardThread::statusUpdate, this,
@@ -108,7 +110,7 @@ void Controller::startCommandExecution()
     saveChildThreadPtrAndConnectFailureFinish(waitForCardThread);
 
     // UI setup.
-    window = WebEidUI::createAndShowDialog(CommandType::INSERT_CARD);
+    window = WebEidUI::createAndShowDialog(commandHandler->commandType());
     connect(this, &Controller::statusUpdate, window.get(), &WebEidUI::onSmartCardStatusUpdate);
     connectOkCancelWaitingForPinPad();
 
@@ -157,6 +159,7 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
 {
     try {
         REQUIRE_NON_NULL(commandHandler)
+        REQUIRE_NON_NULL(window)
         REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableCards)
 
         for (const auto& card : availableCards) {
@@ -165,12 +168,7 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
             qInfo() << "Using smart card protocol" << protocol << "for card" << card->eid().name();
         }
 
-        if (!window) {
-            window = WebEidUI::createAndShowDialog(commandHandler->commandType());
-            connectOkCancelWaitingForPinPad();
-        } else {
-            window->showWaitingForCardPage(commandHandler->commandType());
-        }
+        window->showWaitingForCardPage(commandHandler->commandType());
 
         commandHandler->connectSignals(window.get());
 
