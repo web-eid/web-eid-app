@@ -46,6 +46,7 @@ public:
     static void showFatalError();
 
     virtual void showWaitingForCardPage(const CommandType commandType) = 0;
+
     // getPin() is called from background threads and must be thread-safe.
     virtual QString getPin() = 0;
 

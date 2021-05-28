@@ -43,7 +43,7 @@ class WebEidDialog : public WebEidUI
     Q_OBJECT
 
 public:
-    enum class Page { WAITING, MESSAGE, SELECT_CERTIFICATE, PININPUT };
+    enum class Page { WAITING, ALERT, SELECT_CERTIFICATE, PIN_INPUT };
 
     explicit WebEidDialog(QWidget* parent = nullptr);
     ~WebEidDialog() override;
