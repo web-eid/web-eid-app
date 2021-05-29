@@ -116,14 +116,18 @@
     if([@"status" isEqualToString:req[@"command"]]) {
         resp = [NSApplication toNSDictionary:{{QStringLiteral("version"), qApp->applicationVersion()}}];
     } else {
-        const auto argumentJson = QJsonDocument::fromJson(QByteArray::fromNSData(req[@"arguments"]));
-        Controller controller(std::make_unique<CommandWithArguments>(commandNameToCommandType(QString::fromNSString(req[@"command"])),
-                                                                    argumentJson.object().toVariantMap()));
-        controller.run();
-        QEventLoop e;
-        QObject::connect(&controller, &Controller::quit, &e, &QEventLoop::quit);
-        e.exec();
-        resp = [NSApplication toNSDictionary:controller.result()];
+        try {
+            const auto argumentJson = QJsonDocument::fromJson(QByteArray::fromNSData(req[@"arguments"]));
+            Controller controller(std::make_unique<CommandWithArguments>(commandNameToCommandType(QString::fromNSString(req[@"command"])),
+                                                                        argumentJson.object().toVariantMap()));
+            controller.run();
+            QEventLoop e;
+            QObject::connect(&controller, &Controller::quit, &e, &QEventLoop::quit);
+            e.exec();
+            resp = [NSApplication toNSDictionary:controller.result()];
+        } catch (const std::exception& error) {
+            qCritical() << error;
+        }
     }
 
     NSLog(@"web-eid-safari: msg to extension nonce (%@) request: %@", nonce, resp);
