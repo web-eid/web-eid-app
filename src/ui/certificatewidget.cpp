@@ -22,6 +22,8 @@
 
 #include "certificatewidget.hpp"
 
+#include "application.hpp"
+
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -47,6 +49,10 @@ CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
 {
     icon->setPixmap(QStringLiteral(":/images/id-card.svg"));
     warnIcon->setPixmap(QStringLiteral(":/images/fatal.svg"));
+    if (qApp->isDarkTheme()) {
+        icon->setPixmap(QStringLiteral(":/images/id-card_dark.svg"));
+        warnIcon->setPixmap(QStringLiteral(":/images/fatal_dark.svg"));
+    }
     warnIcon->hide();
     warnIcon->installEventFilter(self);
     warn->setObjectName(QStringLiteral("warn"));

@@ -85,7 +85,8 @@ private:
     void showPinInputWarning(bool show);
     void resizeHeight();
 
-    std::tuple<QString, QString, QString>
+    QPixmap pixmap(const QString& name) const;
+    std::tuple<QString, QString, QPixmap>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
 
     class Private;

@@ -1,0 +1,87 @@
+QWidget {
+background-color: #232325;
+color: white;
+}
+QPushButton {
+border-color: #4E4E53;
+background-color: #4E4E53;
+}
+QPushButton::disabled {
+border-color: #27272A;
+background-color: #27272A;
+}
+QPushButton::hover {
+background-color: #76767B;
+border-color: #76767B;
+}
+QPushButton::focus {
+background-color: #76767B;
+border-color: #DEDEDE;
+}
+QPushButton:default {
+background-color: #113F8E;
+border-color: #113F8E;
+}
+QPushButton:default::disabled {
+background-color: #15213E;
+border-color: #15213E;
+}
+QPushButton:default::hover {
+background-color: #008EEA;
+border-color: #008EEA;
+}
+QPushButton:default::focus {
+background-color: #008EEA;
+border-color: #DEDEDE;
+}
+CertificateButton, CertificateWidget {
+border-color: #4E4E53;
+}
+CertificateButton {
+background-color: rgba(255,255,255,0.1);
+border-color: black;
+}
+CertificateButton:checked {
+border-color: #008EEA;
+}
+/* CertificateButton QWidget:disabled, CertificateWidget QWidget:disabled */
+CertificateButton #warn,  CertificateWidget #warn {
+color: #F54A67;
+}
+QLineEdit {
+background-color: rgba(255,255,255,0.1);
+border-color: #008EEA;
+}
+QLineEdit[warning="true"] {
+border-color: #F54A67;
+color: #F54A67;
+}
+QProgressBar {
+background-color: rgba(255,255,255,0.1);
+border-color: #4E4E53;
+}
+QProgressBar::chunk {
+background-color: #008EEA;
+border-color: #003168;
+}
+#waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel, #aboutPageLabel  {
+color: #FFFFFF;
+}
+#selectCertificateOriginLabel, #pinInputOriginLabel {
+color: white;
+}
+#pinErrorLabel {
+color: #F54A67;
+}
+#aboutContent {
+border-color: #4E4E53;
+}
+#fatalErrorLabel, #aboutAlert {
+color: white;
+}
+#helpButton {
+color: white;
+}
+#aboutVersion {
+color: white;
+}
