@@ -1,6 +1,7 @@
 add_library(controller STATIC
     application.cpp
     application.hpp
+    $<${APPLE}:application.mm>
     certandpininfo.hpp
     command-handlers/authenticate.cpp
     command-handlers/authenticate.hpp
@@ -38,7 +39,7 @@ add_library(controller STATIC
 
 set_property(SOURCE application.cpp APPEND PROPERTY COMPILE_DEFINITIONS PROJECT_VERSION="${SEMVER_VERSION_STRING}")
 target_include_directories(controller PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(controller electronic-id Qt5::Network Qt5::Widgets)
+target_link_libraries(controller electronic-id Qt5::Network Qt5::Widgets $<${APPLE}:-framework\ AppKit>)
 
 # %{function}:%{file}:%{line} works in Qt log message pattern only if code
 # is compiled in debug mode or if QT_MESSAGELOGCONTEXT is set in compiler flags.

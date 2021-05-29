@@ -21,12 +21,14 @@
  */
 
 #include "webeiddialog.hpp"
+#include "application.hpp"
 #include "punycode.hpp"
 
 #include "ui_dialog.h"
 
 #include <QButtonGroup>
 #include <QDesktopServices>
+#include <QFile>
 #include <QMessageBox>
 #include <QMutexLocker>
 #include <QRegularExpressionValidator>
@@ -76,6 +78,14 @@ public:
 WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 {
     ui->setupUi(this);
+    if (Application* app = qobject_cast<Application*>(qApp)) {
+        if (app->isDarkTheme()) {
+            QFile f(":dark.qss");
+            if (f.open(QFile::ReadOnly | QFile::Text)) {
+                setStyleSheet(QTextStream(&f).readAll());
+            }
+        }
+    }
     setWindowFlag(Qt::CustomizeWindowHint);
     setWindowFlag(Qt::WindowTitleHint);
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);

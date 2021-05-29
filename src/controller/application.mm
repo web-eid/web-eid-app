@@ -20,29 +20,17 @@
  * SOFTWARE.
  */
 
-#pragma once
+#include "application.hpp"
 
-#include <QApplication>
+#import <AppKit/AppKit.h>
 
-#include "commands.hpp"
-
-class ArgumentError : public std::runtime_error
+bool Application::isDarkTheme() const
 {
-public:
-    using std::runtime_error::runtime_error;
-};
-
-class Application final : public QApplication
-{
-    Q_OBJECT
-public:
-    Application(int& argc, char** argv, const QString& name, const QString& display);
-
-    bool isDarkTheme() const;
-    void loadTranslations(const QString& lang = {});
-    CommandWithArgumentsPtr parseArgs();
-    static void registerMetatypes();
-
-private:
-    QTranslator* translator;
-};
+    if (__builtin_available(macOS 10.14, *))
+    {
+        auto appearance = [NSApp.effectiveAppearance bestMatchFromAppearancesWithNames:
+            @[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+        return [appearance isEqualToString:NSAppearanceNameDarkAqua];
+    }
+    return false;
+}
