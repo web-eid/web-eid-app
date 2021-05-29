@@ -43,8 +43,7 @@ public:
     // Factory function that creates and shows the dialog that implements this interface.
     static ptr createAndShowDialog(const CommandType command);
 
-    static void showFatalError();
-
+    virtual void showFatalError() {}
     virtual void showWaitingForCardPage(const CommandType commandType) = 0;
 
     // getPin() is called from background threads and must be thread-safe.

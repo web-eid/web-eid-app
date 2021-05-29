@@ -20,10 +20,7 @@
  * SOFTWARE.
  */
 
-#include "ui.hpp"
 #include "webeiddialog.hpp"
-
-#include <QMessageBox>
 
 WebEidUI::ptr WebEidUI::createAndShowDialog(const CommandType command)
 {
@@ -34,10 +31,4 @@ WebEidUI::ptr WebEidUI::createAndShowDialog(const CommandType command)
     dialog->raise();
 
     return dialog;
-}
-
-void WebEidUI::showFatalError()
-{
-    QMessageBox::critical(nullptr, tr("Web eID: fatal error"),
-                          tr("A fatal error occurred, check the logs for more details"));
 }

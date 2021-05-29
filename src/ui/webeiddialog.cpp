@@ -81,11 +81,12 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
     ui->waitingSpinner->load(QStringLiteral(":/images/wait.svg"));
     ui->selectionGroup = new QButtonGroup(this);
+    ui->smartCardError->hide();
 
     connect(ui->pageStack, &QStackedWidget::currentChanged, this, &WebEidDialog::resizeHeight);
     connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
             [this] { ui->okButton->setEnabled(true); });
-    connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::rejected);
+    connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::reject);
     connect(ui->helpButton, &QPushButton::clicked, this,
             [] { QDesktopServices::openUrl(tr("https://www.id.ee/en/")); });
 
@@ -112,6 +113,19 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 WebEidDialog::~WebEidDialog()
 {
     delete ui;
+}
+
+void WebEidDialog::showFatalError()
+{
+    ui->messagePageTitleLabel->setText(tr("Fatal error"));
+    ui->smartCardError->show();
+    ui->connectCardLabel->hide();
+    ui->cardChipIcon->hide();
+    ui->helpButton->show();
+    ui->cancelButton->show();
+    ui->okButton->hide();
+    ui->pageStack->setCurrentIndex(int(Page::ALERT));
+    exec();
 }
 
 void WebEidDialog::showWaitingForCardPage(const CommandType commandType)
@@ -441,9 +455,6 @@ void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetrie
     if (pinRetriesCount.first != pinRetriesCount.second) {
         ui->pinErrorLabel->setText(tr("%n retries left", nullptr, int(pinRetriesCount.first)));
         ui->pinErrorLabel->show();
-    }
-    if (!ui->pinEntryTimeoutProgressBar->isVisible()) {
-        ui->pinInput->setFocus();
     }
 }
 
