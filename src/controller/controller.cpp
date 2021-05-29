@@ -324,10 +324,7 @@ void Controller::onCriticalFailure(const QString& error)
                 << "fatal error:" << error;
     writeResponseToStdOut(isInStdinMode, makeErrorObject(RESP_TECH_ERROR, error), commandType());
 
-    // Dispose the UI.
-    window.reset();
-
-    WebEidUI::showFatalError();
+    WebEidUI::createAndShowDialog(CommandType(CommandType::INSERT_CARD))->showFatalError();
 
     exit();
 }

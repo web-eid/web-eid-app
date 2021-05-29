@@ -100,11 +100,11 @@ max-height: 20px;
 #pinErrorLabel {
 color: #F04E23;
 }
-#smartCardErrorLabel {
+#smartCardError {
 border: 1px solid rgba(240,78,35,0.1);
 border-radius: 3px;
-padding: 10px;
 color: #F04E23;
+min-height: 56px;
 }
 #helpButton {
 color: #003168;
@@ -238,7 +238,7 @@ color: #003168;
           <enum>Qt::TabFocus</enum>
          </property>
          <property name="text">
-          <string>Insert an ID card</string>
+          <string notr="true">Insert an ID card</string>
          </property>
         </widget>
        </item>
@@ -280,6 +280,41 @@ color: #003168;
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QWidget" name="smartCardError" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+          <property name="spacing">
+           <number>8</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="smartCardErrorIcon">
+            <property name="pixmap">
+             <pixmap resource="web-eid-resources.qrc">:/images/fatal.svg</pixmap>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="smartCardErrorLabel">
+            <property name="text">
+             <string>A fatal error occurred, check the logs for more details</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <spacer name="messagePageSpacer">

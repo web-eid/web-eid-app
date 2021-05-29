@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>images/arrow.svg</file>
         <file>images/cardreader.svg</file>
+        <file>images/fatal.svg</file>
         <file>images/help.svg</file>
         <file>images/id-card.svg</file>
         <file>images/origin.svg</file>
