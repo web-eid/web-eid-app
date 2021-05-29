@@ -30,6 +30,9 @@
 #include <QFontDatabase>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QPalette>
+#include <QProcess>
+#include <QSettings>
 #include <QTranslator>
 
 inline CommandWithArguments::second_type parseArgumentJson(const QString& argumentStr)
@@ -63,6 +66,32 @@ Application::Application(int& argc, char** argv, const QString& name) : QApplica
     registerMetatypes();
     setupLogging();
 }
+
+#ifndef Q_OS_MAC
+bool Application::isDarkTheme() const
+{
+#ifdef Q_OS_WIN
+    QSettings settings(
+        "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        QSettings::NativeFormat);
+    return settings.value("AppsUseLightTheme", 1).toInt() == 0;
+#elif 0 // Disabled as there is currently no straightforward way to detect dark mode in Linux.
+    static const bool isDarkTheme = [] {
+        QProcess p;
+        p.start(QStringLiteral("gsettings"), {"get", "org.gnome.desktop.interface", "gtk-theme"});
+        if (p.waitForFinished()) {
+            return p.readAllStandardOutput().contains("dark");
+        }
+        int text_hsv_value = palette().color(QPalette::WindowText).value();
+        int bg_hsv_value = palette().color(QPalette::Window).value();
+        return text_hsv_value > bg_hsv_value;
+    }();
+    return isDarkTheme;
+#else
+    return false;
+#endif
+}
+#endif
 
 void Application::loadTranslations(const QString& lang)
 {

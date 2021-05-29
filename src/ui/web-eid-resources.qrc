@@ -1,11 +1,19 @@
 <RCC>
     <qresource prefix="/">
+        <file>dark.qss</file>
         <file>images/arrow.svg</file>
         <file>images/cardreader.svg</file>
+        <file>images/cardreader_dark.svg</file>
         <file>images/fatal.svg</file>
+        <file>images/fatal_dark.svg</file>
         <file>images/help.svg</file>
+        <file>images/help_dark.svg</file>
         <file>images/id-card.svg</file>
+        <file>images/id-card_dark.svg</file>
+        <file>images/no-id-card.svg</file>
+        <file>images/no-id-card_dark.svg</file>
         <file>images/origin.svg</file>
+        <file>images/origin_dark.svg</file>
         <file>images/wait.svg</file>
         <file>fonts/Roboto-Black.ttf</file>
         <file>fonts/Roboto-BlackItalic.ttf</file>
@@ -19,7 +27,6 @@
         <file>fonts/Roboto-Regular.ttf</file>
         <file>fonts/Roboto-Thin.ttf</file>
         <file>fonts/Roboto-ThinItalic.ttf</file>
-        <file>images/no-id-card.svg</file>
         <file>../../install/appicon_128.png</file>
     </qresource>
 </RCC>

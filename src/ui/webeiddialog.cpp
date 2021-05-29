@@ -21,12 +21,14 @@
  */
 
 #include "webeiddialog.hpp"
+#include "application.hpp"
 #include "punycode.hpp"
 
 #include "ui_dialog.h"
 
 #include <QButtonGroup>
 #include <QDesktopServices>
+#include <QFile>
 #include <QMessageBox>
 #include <QMutexLocker>
 #include <QRegularExpressionValidator>
@@ -49,6 +51,18 @@ public:
 WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 {
     ui->setupUi(this);
+    if (qApp->isDarkTheme()) {
+        QFile f(QStringLiteral(":dark.qss"));
+        if (f.open(QFile::ReadOnly | QFile::Text)) {
+            setStyleSheet(styleSheet() + QTextStream(&f).readAll());
+            ui->selectCertificateOriginLabelIcon->setPixmap(pixmap(QStringLiteral("origin")));
+            ui->pinInputOriginLabelIcon->setPixmap(pixmap(QStringLiteral("origin")));
+            ui->cardChipIcon->setPixmap(pixmap(QStringLiteral("no-id-card")));
+            ui->fatalErrorIcon->setPixmap(pixmap(QStringLiteral("fatal")));
+            ui->aboutIcon->setPixmap(pixmap(QStringLiteral("fatal")));
+            ui->helpButton->setIcon(QIcon(QStringLiteral(":/images/help_dark.svg")));
+        }
+    }
     setWindowFlag(Qt::CustomizeWindowHint);
     setWindowFlag(Qt::WindowTitleHint);
     setWindowTitle(qApp->applicationDisplayName());
@@ -399,7 +413,7 @@ void WebEidDialog::onRetryImpl(const QString& error)
 {
     ui->connectCardLabel->setText(error);
     ui->messagePageTitleLabel->setText(tr("Operation failed"));
-    ui->cardChipIcon->setPixmap(QStringLiteral(":/images/no-id-card.svg"));
+    ui->cardChipIcon->setPixmap(pixmap(QStringLiteral("no-id-card")));
     setupOK([this] { emit retry(); }, tr("Try again"), true);
     ui->pageStack->setCurrentIndex(int(Page::ALERT));
 }
@@ -511,68 +525,74 @@ void WebEidDialog::resizeHeight()
     adjustSize();
 }
 
-std::tuple<QString, QString, QString>
+QPixmap WebEidDialog::pixmap(const QString& name) const
+{
+    return QPixmap(QStringLiteral(":/images/%1%2.svg")
+                       .arg(name, qApp->isDarkTheme() ? QStringLiteral("_dark") : QString()));
+}
+
+std::tuple<QString, QString, QPixmap>
 WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
 {
     switch (error) {
     case RetriableError::SMART_CARD_SERVICE_IS_NOT_RUNNING:
         return {tr("The smart card service required to use the ID-card is not running. Please "
                    "start the smart card service and try again."),
-                tr("Launch the Smart Card service"), QStringLiteral(":/images/cardreader.svg")};
+                tr("Launch the Smart Card service"), pixmap(QStringLiteral("cardreader"))};
     case RetriableError::NO_SMART_CARD_READERS_FOUND:
         return {
             tr("<b>Card reader not connected.</b> Please connect the card reader to the computer."),
-            tr("Connect the card reader"), QStringLiteral(":/images/cardreader.svg")};
+            tr("Connect the card reader"), pixmap(QStringLiteral("cardreader"))};
 
     case RetriableError::NO_SMART_CARDS_FOUND:
     case RetriableError::PKCS11_TOKEN_NOT_PRESENT:
         return {tr("<b>ID-card not found.</b> Please insert the ID-card into the reader."),
-                tr("Insert the ID-card"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Insert the ID-card"), pixmap(QStringLiteral("no-id-card"))};
     case RetriableError::SMART_CARD_WAS_REMOVED:
     case RetriableError::PKCS11_TOKEN_REMOVED:
         return {tr("The ID-card was removed from the reader. Please insert the ID-card into the "
                    "reader."),
-                tr("Insert the ID-card"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Insert the ID-card"), pixmap(QStringLiteral("no-id-card"))};
 
     case RetriableError::SMART_CARD_TRANSACTION_FAILED:
         return {tr("Operation failed. Make sure that the ID-card and the card reader are connected "
                    "correctly."),
                 tr("Check the ID-card and the reader connection"),
-                QStringLiteral(":/images/no-id-card.svg")};
+                pixmap(QStringLiteral("no-id-card"))};
     case RetriableError::FAILED_TO_COMMUNICATE_WITH_CARD_OR_READER:
         return {tr("Connection to the ID-card or reader failed. Make sure that the ID-card and the "
                    "card reader are connected correctly."),
                 tr("Check the ID-card and the reader connection"),
-                QStringLiteral(":/images/no-id-card.svg")};
+                pixmap(QStringLiteral("no-id-card"))};
 
     case RetriableError::SMART_CARD_CHANGE_REQUIRED:
         return {tr("The desired operation cannot be performed with the inserted ID-card. Make sure "
                    "that the ID-card is supported by the Web eID application."),
-                tr("Operation not supported"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported"), pixmap(QStringLiteral("no-id-card"))};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
         return {tr("Error communicating with the card."), tr("Operation failed"),
-                QStringLiteral(":/images/no-id-card.svg")};
+                pixmap(QStringLiteral("no-id-card"))};
         // TODO: what action should the user take? Should this be fatal?
     case RetriableError::PKCS11_ERROR:
         return {tr("Card driver error. Please try again."), tr("Card driver error"),
-                QStringLiteral(":/images/no-id-card.svg")};
+                pixmap(QStringLiteral("no-id-card"))};
         // TODO: what action should the user take? Should this be fatal?
     case RetriableError::SCARD_ERROR:
         return {tr("An error occurred in the Smart Card service required to use the ID-card. Make "
                    "sure that the ID-card and the card reader are connected correctly or relaunch "
                    "the Smart Card service."),
-                tr("Operation failed"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation failed"), pixmap(QStringLiteral("no-id-card"))};
 
     case RetriableError::UNSUPPORTED_CARD:
         return {tr("The card in the reader is not supported. Make sure that the entered ID-card is "
                    "supported by the Web eID application."),
-                tr("Operation not supported"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported"), pixmap(QStringLiteral("no-id-card"))};
 
     case RetriableError::NO_VALID_CERTIFICATE_AVAILABLE:
         return {tr("The certificates of the ID-card have expired. Valid certificates are required "
                    "for the electronic use of the ID-card."),
-                tr("Operation not supported"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported"), pixmap(QStringLiteral("no-id-card"))};
 
     case RetriableError::PIN_VERIFY_DISABLED:
         return {
@@ -582,8 +602,7 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
             tr("Card driver error"), QStringLiteral(":/images/cardreader.svg")};
 
     case RetriableError::UNKNOWN_ERROR:
-        return {tr("Unknown error"), tr("Unknown error"),
-                QStringLiteral(":/images/no-id-card.svg")};
+        return {tr("Unknown error"), tr("Unknown error"), pixmap(QStringLiteral("no-id-card"))};
     }
-    return {tr("Unknown error"), tr("Unknown error"), QStringLiteral(":/images/no-id-card.svg")};
+    return {tr("Unknown error"), tr("Unknown error"), pixmap(QStringLiteral("no-id-card"))};
 }

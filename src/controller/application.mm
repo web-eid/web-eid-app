@@ -20,45 +20,17 @@
  * SOFTWARE.
  */
 
-#pragma once
+#include "application.hpp"
 
-#include <QApplication>
+#import <AppKit/AppKit.h>
 
-#include "commands.hpp"
-
-#include <stdexcept>
-
-class ArgumentError : public std::runtime_error
+bool Application::isDarkTheme() const
 {
-public:
-    using std::runtime_error::runtime_error;
-};
-
-class Application : public QApplication
-{
-    Q_OBJECT
-public:
-    Application(int& argc, char** argv, const QString& name);
-
-    bool isDarkTheme() const;
-    void loadTranslations(const QString& lang = {});
-    CommandWithArgumentsPtr parseArgs();
-    static void registerMetatypes();
-
-    // Methods specific to Safari web extension's containing app,
-    // see class SafariApplication in src/mac/main.mm and WebEidDialog::showAboutPage().
-    virtual bool isSafariExtensionContainingApp() { return false; }
-    virtual void requestSafariExtensionState() {}
-    virtual void showSafariSettings() {}
-
-signals:
-    void safariExtensionEnabled(bool value);
-
-private:
-    QTranslator* translator;
-};
-
-#if defined(qApp)
-#undef qApp
-#endif
-#define qApp (static_cast<Application*>(QCoreApplication::instance()))
+    if (__builtin_available(macOS 10.14, *))
+    {
+        auto appearance = [NSApp.effectiveAppearance bestMatchFromAppearancesWithNames:
+            @[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+        return [appearance isEqualToString:NSAppearanceNameDarkAqua];
+    }
+    return false;
+}
