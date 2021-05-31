@@ -53,21 +53,18 @@ QPushButton:default::hover, QPushButton:default::focus {
 color: white;
 background-color: #004B2F;
 }
-QListWidget {
-border: 0;
-}
-QListWidget::item, #pinInputCertificateInfo {
+CertificateButton, CertificateWidget {
 border: 1px solid rgba(0,49,104,0.1);
 border-radius: 35px;
 min-height: 70px;
 }
-QListWidget::item:selected {
+CertificateButton:checked {
 border: 2px solid #113F8E;
 }
-QListWidget::item QWidget, #pinInputCertificateInfo QWidget {
+CertificateButton QWidget, CertificateWidget QWidget {
 background-color: transparent;
 }
-#selectCertificateInfo::item {
+CertificateButton {
 background-color: #F5F5F5;
 }
 QLineEdit {
@@ -187,7 +184,7 @@ color: #003168;
          </property>
         </spacer>
        </item>
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QSvgWidget" name="waitingSpinner" native="true">
          <property name="minimumSize">
           <size>
@@ -250,7 +247,7 @@ color: #003168;
          <property name="spacing">
           <number>20</number>
          </property>
-         <item>
+         <item alignment="Qt::AlignTop">
           <widget class="QLabel" name="cardChipIcon">
            <property name="minimumSize">
             <size>
@@ -364,11 +361,11 @@ color: #003168;
         </layout>
        </item>
        <item>
-        <widget class="CertificateListWidget" name="selectCertificateInfo">
+        <layout class="QVBoxLayout" name="selectCertificateInfo">
          <property name="spacing">
-          <number>3</number>
+          <number>6</number>
          </property>
-        </widget>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -472,7 +469,7 @@ color: #003168;
            </property>
           </widget>
          </item>
-         <item>
+         <item alignment="Qt::AlignHCenter">
           <widget class="QLineEdit" name="pinInput">
            <property name="maxLength">
             <number>12</number>
@@ -579,14 +576,9 @@ color: #003168;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CertificateListWidget</class>
-   <extends>QListWidget</extends>
-   <header>certificatelistwidget.hpp</header>
-  </customwidget>
-  <customwidget>
    <class>CertificateWidget</class>
    <extends>QWidget</extends>
-   <header>certificatelistwidget.hpp</header>
+   <header>certificatewidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

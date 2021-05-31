@@ -1,0 +1,91 @@
+QWidget {
+background-color: #2E2E30;
+font-size: 14px;
+font-family: "Roboto";
+color: white;
+}
+QDialogButtonBox {
+dialogbuttonbox-buttons-have-icons: 0;
+}
+QPushButton {
+font-size: 17px;
+border: 1px solid rgba(245,245,245,0.1);
+border-radius: 3px;
+height: 45px;
+padding-left: 19px;
+padding-right: 19px;
+min-width: 30px;
+background-color: rgba(245,245,245,0.1);
+}
+QPushButton::hover, QPushButton::focus {
+background-color: #DEDEDE;
+}
+QPushButton:default {
+color: white;
+background-color: #007147;
+border: 1px solid #00915B;
+}
+QPushButton:default::disabled {
+background-color: rgba(0,89,56,0.5);
+}
+QPushButton:default::hover, QPushButton:default::focus {
+color: white;
+background-color: #004B2F;
+}
+CertificateButton, CertificateWidget {
+border: 1px solid rgba(245,245,245,0.6);
+border-radius: 35px;
+min-height: 70px;
+}
+CertificateButton:checked {
+border: 2px solid #5ECAE7;
+}
+CertificateButton QWidget, CertificateWidget QWidget {
+background-color: transparent;
+}
+CertificateButton {
+background-color: rgba(245,245,245,0.1);
+}
+QLineEdit {
+background-color: rgba(245,245,245,0.7);
+border: 2px solid #B5E0F5;
+border-radius: 3px;
+min-width: 161px;
+min-height: 41px;
+max-width: 161px;
+max-height: 41px;
+font-size: 20px;
+font-weight: bold;
+}
+QLineEdit[warning="true"] {
+border: 2px solid #F04E23;
+}
+#waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel {
+color: #FFFFFF;
+font-size: 32px;
+font-weight: bold;
+max-height: 40px;
+}
+#selectCertificateDescriptionLabel, #pinInputDescriptionLabel {
+max-height: 40px;
+}
+#selectCertificateOriginLabel, #pinInputOriginLabel {
+color: white;
+font-weight: bold;
+max-height: 20px;
+}
+#pinTitleLabel, #pinErrorLabel {
+max-height: 20px;
+}
+#pinErrorLabel {
+color: #F04E23;
+}
+#smartCardErrorLabel {
+border: 1px solid rgba(240,78,35,0.1);
+border-radius: 3px;
+padding: 10px;
+color: #F04E23;
+}
+#helpButton {
+color: white;
+}

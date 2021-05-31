@@ -2,6 +2,13 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fi">
 <context>
+    <name>CertificateButton</name>
+    <message>
+        <source>%1 Issuer: %2 Valid: from %3 to %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CertificateWidget</name>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: from %3 to %4</source>

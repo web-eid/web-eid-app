@@ -30,6 +30,7 @@
 #include <QFontDatabase>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QSettings>
 #include <QTranslator>
 
 inline CommandWithArguments::second_type parseArgumentJson(const QString& argumentStr)
@@ -63,6 +64,20 @@ Application::Application(int& argc, char** argv, const QString& name, const QStr
     registerMetatypes();
     setupLogging();
 }
+
+#ifndef Q_OS_MAC
+bool Application::isDarkTheme() const
+{
+#ifdef Q_OS_WIN
+    QSettings settings(
+        "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        QSettings::NativeFormat);
+    return settings.value("AppsUseLightTheme", 1).toInt() == 0;
+#else
+    return false;
+#endif
+}
+#endif
 
 void Application::loadTranslations(const QString& lang)
 {

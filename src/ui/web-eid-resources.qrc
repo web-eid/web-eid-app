@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>dark.qss</file>
         <file>images/arrow.svg</file>
         <file>images/cardreader.svg</file>
         <file>images/help.svg</file>

@@ -22,27 +22,48 @@
 
 #pragma once
 
-#include <QApplication>
+#include <QAbstractButton>
 
-#include "commands.hpp"
+#include "certandpininfo.hpp"
 
-class ArgumentError : public std::runtime_error
+class QLabel;
+
+class CertificateWidgetInfo
 {
 public:
-    using std::runtime_error::runtime_error;
+    CardCertificateAndPinInfo certificateInfo() const;
+    virtual void setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo);
+
+protected:
+    CertificateWidgetInfo(QWidget* self);
+
+    QLabel* icon;
+    QLabel* info;
+    CardCertificateAndPinInfo certAndPinInfo;
 };
 
-class Application final : public QApplication
+class CertificateWidget final : public QWidget, public CertificateWidgetInfo
 {
     Q_OBJECT
-public:
-    Application(int& argc, char** argv, const QString& name, const QString& display);
 
-    bool isDarkTheme() const;
-    void loadTranslations(const QString& lang = {});
-    CommandWithArgumentsPtr parseArgs();
-    static void registerMetatypes();
+public:
+    explicit CertificateWidget(QWidget* parent);
+    CertificateWidget(const CardCertificateAndPinInfo& cardCertPinInfo, QWidget* parent);
 
 private:
-    QTranslator* translator;
+    void paintEvent(QPaintEvent* event) final;
+};
+
+class CertificateButton final : public QAbstractButton, public CertificateWidgetInfo
+{
+    Q_OBJECT
+
+public:
+    explicit CertificateButton(QWidget* parent);
+    CertificateButton(const CardCertificateAndPinInfo& cardCertPinInfo, QWidget* parent);
+
+    void setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo) final;
+
+private:
+    void paintEvent(QPaintEvent* event) final;
 };

@@ -73,6 +73,8 @@ private:
 
     void onRetryImpl(const QString& error);
 
+    void
+    setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinInfo);
 
