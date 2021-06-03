@@ -145,13 +145,28 @@ how to use input-output mode, it can be run with:
 
     python tests/input-output-mode/test.py
 
-## Logging
+## Debugging and logs
 
-The application writes logs to
+- To enable logging in the extension companion native app,
 
-- `~/.local/share/RIA/web-eid/web-eid.log` in Linux
-- `~/Library/Application Support/RIA/web-eid/web-eid.log` in macOS
-- `C:/Users/<USER>/AppData/Local/RIA/web-eid/web-eid.log` in Windows.
+  - in **Linux**, run the following command in the console:
+  ```
+  echo 'logging=true' > ~/.config/RIA/web-eid.conf
+  ```
+  - in **macOS**, run the following command in the console:
+  ```
+  defaults write eu.web-eid.web-eid logging true
+  defaults write eu.web-eid.web-eid-safari logging true
+  ```
+  - in **Windows**, add the following registry key:
+  ```
+  [HKEY_CURRENT_USER\SOFTWARE\RIA\web-eid]
+  "logging"="true"
+- The native app logs are stored:
+   - ```~/.local/share/RIA/web-eid/web-eid.log``` in **Linux**
+   - ```~/Library/Application Support/RIA/web-eid/web-eid.log``` in **macOS**
+   - ```C:/Users/<USER>/AppData/Local/RIA/web-eid/web-eid.log``` in **Windows**
+   
 
 ## Build environment setup
 
