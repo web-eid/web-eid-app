@@ -30,7 +30,7 @@
 class CommandType
 {
 public:
-    enum CommandTypeEnum { INSERT_CARD, GET_CERTIFICATE, AUTHENTICATE, SIGN, NONE = -1 };
+    enum CommandTypeEnum { INSERT_CARD, GET_CERTIFICATE, AUTHENTICATE, SIGN, QUIT, NONE = -1 };
 
     CommandType() = default;
     constexpr CommandType(const CommandTypeEnum _value) : value(_value) {}

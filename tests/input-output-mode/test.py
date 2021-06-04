@@ -26,6 +26,14 @@ class Test(unittest.TestCase):
         self.process.stdout.close()
         del self.process
 
+    def test_0_quit(self):
+        message = {
+            'command': 'quit',
+            'arguments': {}
+        }
+        response = self.exchange_message_with_app(message)
+        self.assertFalse(response)
+
     def test_1_get_certificate(self):
         message = {
             'command': 'get-certificate',

@@ -30,6 +30,8 @@
 const QString CMDLINE_GET_CERTIFICATE = QStringLiteral("get-certificate");
 const QString CMDLINE_AUTHENTICATE = QStringLiteral("authenticate");
 const QString CMDLINE_SIGN = QStringLiteral("sign");
+// A special command for stdin mode for quitting the application after sending the version.
+const QString STDINMODE_QUIT = QStringLiteral("quit");
 
 CommandType commandNameToCommandType(const QString& cmdName)
 {
@@ -37,6 +39,7 @@ CommandType commandNameToCommandType(const QString& cmdName)
         {CMDLINE_GET_CERTIFICATE, CommandType::GET_CERTIFICATE},
         {CMDLINE_AUTHENTICATE, CommandType::AUTHENTICATE},
         {CMDLINE_SIGN, CommandType::SIGN},
+        {STDINMODE_QUIT, CommandType::QUIT},
     };
 
     try {
