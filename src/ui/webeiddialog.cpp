@@ -83,7 +83,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->selectionGroup = new QButtonGroup(this);
 
     connect(ui->pageStack, &QStackedWidget::currentChanged, this, &WebEidDialog::resizeHeight);
-    connect(ui->selectionGroup, qOverload<int>(&QButtonGroup::buttonClicked), this,
+    connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
             [this] { ui->okButton->setEnabled(true); });
     connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::rejected);
     connect(ui->helpButton, &QPushButton::clicked, this,
