@@ -10,6 +10,8 @@ mode.
 
 More information about the Web eID project is available on the project [website](https://web-eid.eu/).
 
+Overview of the Web eID system architecture is available in the [system architecture document](https://github.com/web-eid/web-eid-system-architecture-doc).
+
 ## Command-line mode
 
 Command-line mode is useful both for testing and for using the application
