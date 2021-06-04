@@ -72,6 +72,8 @@ private slots:
 
     void fromPunycode_decodesEeDomain();
 
+    void quit_exits();
+
 private:
     void runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy);
     void initGetCert();
@@ -196,6 +198,23 @@ void WebEidTests::fromPunycode_decodesEeDomain()
 {
     QCOMPARE(fromPunycode(QUrl("https://xn--igusnunik-p7af.ee")),
              QStringLiteral("https://\u00F5igusn\u00F5unik.ee"));
+}
+
+void WebEidTests::quit_exits()
+{
+    try {
+        auto quitCmd = std::make_unique<CommandWithArguments>(CommandType::QUIT, QVariantMap {});
+        controller = std::make_unique<Controller>(std::move(quitCmd));
+
+        QSignalSpy quitSpy(controller.get(), &Controller::quit);
+        QTimer::singleShot(0, controller.get(), &Controller::run);
+        QVERIFY(quitSpy.wait());
+
+    } catch (const std::exception& e) {
+        QFAIL(QStringLiteral("WebEidTests::quit_exits() failed with exception: %s")
+                  .arg(e.what())
+                  .toUtf8());
+    }
 }
 
 void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy)

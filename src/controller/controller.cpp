@@ -88,6 +88,14 @@ void Controller::run()
         }
 
         REQUIRE_NON_NULL(command)
+        // If quit is requested, respond with empty JSON object and quit immediately.
+        if (command->first == CommandType::QUIT) {
+            qInfo() << "Quit requested, exiting";
+            writeResponseToStdOut(true, {}, "quit");
+            emit quit();
+            return;
+        }
+
         commandHandler = getCommandHandler(*command);
 
         startCommandExecution();
