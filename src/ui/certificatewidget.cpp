@@ -27,7 +27,8 @@
 #include <QPainter>
 #include <QStyleOption>
 
-// for accessibility and screen readers we use separate widgets
+// We use two separate widgets, CertificateWidget and CertificateButton, for accessibility, to
+// support screen readers.
 
 CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
     icon(new QLabel(self)), info(new QLabel(self))

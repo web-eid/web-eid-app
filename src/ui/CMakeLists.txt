@@ -22,5 +22,4 @@ set_target_properties(ui PROPERTIES
     AUTOUIC ON
 )
 target_include_directories(ui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_definitions(ui PRIVATE QT_NO_DEPRECATED_WARNINGS)
 target_link_libraries(ui controller Qt5::Svg)
