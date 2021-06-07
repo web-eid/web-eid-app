@@ -75,7 +75,7 @@ elseif(APPLE)
     )
     if(SIGNCERT)
         add_custom_command(TARGET macdeployqt POST_BUILD
-            COMMAND codesign -f -s "Developer ID Application: ${SIGNCERT}"
+            COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
                 $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/Frameworks/*.*
                 $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/PlugIns/*/*
                 $<TARGET_BUNDLE_DIR:web-eid>
