@@ -35,8 +35,6 @@ RetriableError toRetriableError(const electronic_id::AutoSelectFailed::Reason re
     using Reason = electronic_id::AutoSelectFailed::Reason;
 
     switch (reason) {
-    case Reason::SCARD_ERROR:
-        return RetriableError::SCARD_ERROR;
     case Reason::SERVICE_NOT_RUNNING:
         return RetriableError::SMART_CARD_SERVICE_IS_NOT_RUNNING;
     case Reason::NO_READERS:
