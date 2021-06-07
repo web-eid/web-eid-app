@@ -6,7 +6,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>ee.ria.web-eid-safari.shared</string>
+		<string>eu.web-eid.web-eid-safari.shared</string>
 	</array>
 </dict>
 </plist>

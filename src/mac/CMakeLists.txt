@@ -49,10 +49,10 @@ add_custom_target(macdeployqt-safari DEPENDS web-eid-safari
 )
 if(SIGNCERT)
     add_custom_command(TARGET macdeployqt-safari POST_BUILD
-        COMMAND codesign -f -s "Developer ID Application: ${SIGNCERT}"
+        COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
             --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-extension.entitlements
             $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns/*.appex
-        COMMAND codesign -f -s "Developer ID Application: ${SIGNCERT}"
+        COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
             --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements
             $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/Frameworks/*.*
             $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns/*/*.dylib
