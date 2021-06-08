@@ -38,7 +38,6 @@ class Test(unittest.TestCase):
         message = {
             'command': 'get-certificate',
             'arguments': {
-                'type': 'sign',
                 'origin': 'https://ria.ee',
             }
         }

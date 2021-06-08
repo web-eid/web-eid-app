@@ -40,8 +40,7 @@ QString certificateStatusToString(const CertificateStatus status)
 }
 
 std::pair<CertificateStatus, CardCertificateAndPinInfo>
-getCertificateWithStatusAndInfo(const CardInfo::ptr& card, const CertificateType certificateType,
-                                const bool isAuthenticate)
+getCertificateWithStatusAndInfo(const CardInfo::ptr& card, const CertificateType certificateType)
 {
     const auto certificateBytes = card->eid().getCertificate(certificateType);
 
@@ -70,10 +69,12 @@ getCertificateWithStatusAndInfo(const CardInfo::ptr& card, const CertificateType
                                      certificate.issuerInfo(QSslCertificate::CommonName).join(' '),
                                      certificate.effectiveDate().date().toString(Qt::ISODate),
                                      certificate.expiryDate().date().toString(Qt::ISODate)};
-    auto pinInfo = PinInfo {
-        isAuthenticate ? card->eid().authPinMinMaxLength() : card->eid().signingPinMinMaxLength(),
-        isAuthenticate ? card->eid().authPinRetriesLeft() : card->eid().signingPinRetriesLeft(),
-        card->eid().smartcard().readerHasPinPad()};
+    auto pinInfo =
+        PinInfo {certificateType.isAuthentication() ? card->eid().authPinMinMaxLength()
+                                                    : card->eid().signingPinMinMaxLength(),
+                 certificateType.isAuthentication() ? card->eid().authPinRetriesLeft()
+                                                    : card->eid().signingPinRetriesLeft(),
+                 card->eid().smartcard().readerHasPinPad()};
     if (pinInfo.pinRetriesCount.first == 0) {
         pinInfo.pinIsBlocked = true;
     }
@@ -95,18 +96,16 @@ void CertificateReader::run(const std::vector<CardInfo::ptr>& cards)
 {
     REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(cards)
 
-    const bool isAuthenticate = command.first == CommandType::AUTHENTICATE
-        || command.second[QStringLiteral("type")] == QStringLiteral("auth");
-    certificateType = isAuthenticate ? CertificateType::AUTHENTICATION : CertificateType::SIGNING;
+    certificateType = command.first == CommandType::AUTHENTICATE ? CertificateType::AUTHENTICATION
+                                                                 : CertificateType::SIGNING;
 
     std::vector<CardCertificateAndPinInfo> certInfos;
 
     for (const auto& card : cards) {
-        auto certStatusAndInfo =
-            getCertificateWithStatusAndInfo(card, certificateType, isAuthenticate);
+        auto certStatusAndInfo = getCertificateWithStatusAndInfo(card, certificateType);
         // Omit invalid certificates.
         if (certStatusAndInfo.first != CertificateStatus::VALID) {
-            qWarning() << "The" << (isAuthenticate ? "authentication" : "signing")
+            qWarning() << "The" << QString::fromStdString(certificateType)
                        << "certificate status is not valid:"
                        << certificateStatusToString(certStatusAndInfo.first);
             continue;
