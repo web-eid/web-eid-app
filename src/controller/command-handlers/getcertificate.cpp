@@ -29,34 +29,6 @@ using namespace electronic_id;
 namespace
 {
 
-QVariantList supportedAuthAlgo(const ElectronicID& eid)
-{
-    switch (eid.authSignatureAlgorithm()) {
-    case JsonWebSignatureAlgorithm::ES256:
-        return {signatureAlgoToVariantMap(SignatureAlgorithm::ES256)};
-    case JsonWebSignatureAlgorithm::ES384:
-        return {signatureAlgoToVariantMap(SignatureAlgorithm::ES384)};
-    case JsonWebSignatureAlgorithm::ES512:
-        return {signatureAlgoToVariantMap(SignatureAlgorithm::ES512)};
-    case JsonWebSignatureAlgorithm::PS256:
-        return {signatureAlgoToVariantMap(SignatureAlgorithm::PS256)};
-    case JsonWebSignatureAlgorithm::PS384:
-        return {signatureAlgoToVariantMap(SignatureAlgorithm::PS384)};
-    case JsonWebSignatureAlgorithm::PS512:
-        return {signatureAlgoToVariantMap(SignatureAlgorithm::PS512)};
-    case JsonWebSignatureAlgorithm::RS256:
-        return {signatureAlgoToVariantMap(SignatureAlgorithm::RS256)};
-    case JsonWebSignatureAlgorithm::RS384:
-        return {signatureAlgoToVariantMap(SignatureAlgorithm::RS384)};
-    case JsonWebSignatureAlgorithm::RS512:
-        return {signatureAlgoToVariantMap(SignatureAlgorithm::RS512)};
-    default:
-        THROW(ProgrammingError,
-              "Unknown authentication signature algorithm "
-                  + std::string(eid.authSignatureAlgorithm()));
-    }
-}
-
 QVariantList supportedSigningAlgos(const ElectronicID& eid)
 {
     QVariantList algos;
@@ -71,13 +43,7 @@ QVariantList supportedSigningAlgos(const ElectronicID& eid)
 GetCertificate::GetCertificate(const CommandWithArguments& cmd) : CertificateReader(cmd)
 {
     const auto arguments = cmd.second;
-    requireArgumentsAndOptionalLang({"type", "origin"}, arguments,
-                                    "\"type\": [\"auth\"|\"sign\"], \"origin\": \"<origin URL>\"");
-
-    if (arguments[QStringLiteral("type")] != QStringLiteral("auth")
-        && arguments[QStringLiteral("type")] != QStringLiteral("sign")) {
-        THROW(CommandHandlerInputDataError, "Argument type must be either 'auth' or 'sign'");
-    }
+    requireArgumentsAndOptionalLang({"origin"}, arguments, "\"origin\": \"<origin URL>\"");
 }
 
 QVariantMap GetCertificate::onConfirm(WebEidUI* /* window */,
@@ -87,10 +53,6 @@ QVariantMap GetCertificate::onConfirm(WebEidUI* /* window */,
     // Each string in the array is a Base64-encoded (Section 4 of [RFC4648] -- not
     // Base64url-encoded) DER [ITU.X690.2008] PKIX certificate value.
     auto certPem = cardCertAndPin.certificateBytesInDer.toBase64();
-
-    auto algos = certificateType.isAuthentication()
-        ? supportedAuthAlgo(cardCertAndPin.cardInfo->eid())
-        : supportedSigningAlgos(cardCertAndPin.cardInfo->eid());
-
+    auto algos = supportedSigningAlgos(cardCertAndPin.cardInfo->eid());
     return {{"certificate", QString(certPem)}, {"supported-signature-algos", algos}};
 }

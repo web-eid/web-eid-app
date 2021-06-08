@@ -42,14 +42,10 @@ Arguments:
 
 ### Get certificate
 
-Pass the certificate type (either `auth` or `sign`) and origin URL as
-JSON-encoded command-line arguments to the `get-certificate`
+Pass the origin URL as JSON-encoded command-line arguments to the `get-certificate`
 command to retrieve the certificate:
 
-    web-eid -c get-certificate '{"type": "auth", "origin": "https://ria.ee"}'
-
-Passing `"type": "auth"` will retrieve the authentication certificate and
-`"type": "sign"` the signing certificate.
+    web-eid -c get-certificate '{"origin": "https://ria.ee"}'
 
 The result will be written to standard output as a JSON-encoded message that
 either contains the requested Base64-encoded certificate and supported
@@ -114,10 +110,9 @@ the hash algorithm output length and the hash algorithm has to be supported by
 the electronic ID signing implementation.
 
 The user signing certificate for the `user-eid-cert` field can be retrieved
-with the `get-certificate` command as described above, by passing `sign` in the
-`type` field:
+with the `get-certificate` command as described above:
 
-    web-eid -c get-certificate '{"type": "sign", ...other arguments as above...}'
+    web-eid -c get-certificate '{...other arguments as above...}'
 
 The result will be written to standard output as a JSON-encoded message that
 either contains the Base64-encoded signature and the signature algorithm used
@@ -134,7 +129,7 @@ language, then the user interface will be displayed in this language.
 
 The following example will display the user interface in Estonian:
 
-    web-eid -c get-certificate '{"lang": "et", "type": "auth", "origin": "https://ria.ee"}'
+    web-eid -c get-certificate '{"lang": "et", "origin": "https://ria.ee"}'
 
 ## Input-output mode
 
@@ -247,7 +242,7 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
     cd web-eid-app
     ./build.sh
     ./test.sh
-    ./build/src/app/web-eid -c get-certificate '{"type":"auth", "origin":"https://ria.ee"}'
+    ./build/src/app/web-eid -c get-certificate '{"origin":"https://ria.ee"}'
 
 ### Building and testing in Windows
 

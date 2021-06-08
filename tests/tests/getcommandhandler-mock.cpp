@@ -47,8 +47,7 @@ const QVariantMap AUTHENTICATE_COMMAND_ARGUMENT = {
      "/jYGfoB1Qgp0McItzDpecJ7yxpkc"},
 };
 
-const QVariantMap GET_CERTIFICATE_COMMAND_ARGUMENT = {{"type", "auth"},
-                                                      {"origin", "https://dummy-origin"}};
+const QVariantMap GET_CERTIFICATE_COMMAND_ARGUMENT = {{"origin", "https://dummy-origin"}};
 
 std::unique_ptr<GetCertificate> g_cached_GetCertificate = std::make_unique<GetCertificate>(
     std::pair {CommandType::GET_CERTIFICATE, GET_CERTIFICATE_COMMAND_ARGUMENT});
