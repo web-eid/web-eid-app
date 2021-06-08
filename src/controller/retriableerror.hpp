@@ -36,6 +36,7 @@ enum class RetriableError {
     FAILED_TO_COMMUNICATE_WITH_CARD_OR_READER,
     SMART_CARD_WAS_REMOVED,
     SMART_CARD_TRANSACTION_FAILED,
+    SCARD_ERROR,
     // libelectronic-id
     SMART_CARD_CHANGE_REQUIRED,
     SMART_CARD_COMMAND_ERROR,
@@ -43,7 +44,6 @@ enum class RetriableError {
     PKCS11_TOKEN_REMOVED,
     PKCS11_ERROR,
     // AutoSelectFailed::Reason
-    SCARD_ERROR,
     UNSUPPORTED_CARD,
     // CertificateReader::run
     NO_VALID_CERTIFICATE_AVAILABLE,
@@ -83,7 +83,8 @@ RetriableError toRetriableError(const electronic_id::AutoSelectFailed::Reason re
     catch (const pcsc_cpp::ScardTransactionFailedError& error)                                     \
     {                                                                                              \
         ERROR_HANDLER(RetriableError::SMART_CARD_TRANSACTION_FAILED, error);                       \
-    }
+    }                                                                                              \
+    catch (const pcsc_cpp::ScardError& error) { ERROR_HANDLER(RetriableError::SCARD_ERROR, error); }
 
 #define CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(ERROR_HANDLER)                                     \
     catch (const electronic_id::SmartCardChangeRequiredError& error)                               \

@@ -173,7 +173,8 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
         for (const auto& card : availableCards) {
             const auto protocol =
                 card->eid().smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
-            qInfo() << "Using smart card protocol" << protocol << "for card" << card->eid().name();
+            qInfo() << "Card" << card->eid().name() << "in reader" << card->reader().name
+                    << "using protocol" << protocol;
         }
 
         window->showWaitingForCardPage(commandHandler->commandType());
