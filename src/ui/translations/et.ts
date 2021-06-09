@@ -96,10 +96,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No electronic ID card is inserted that has the signing certificate provided as argument. Please insert the electronic ID card that belongs to %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Start smart card service</source>
         <translation type="unfinished"></translation>
     </message>
@@ -205,6 +201,10 @@
     </message>
     <message>
         <source>https://www.id.ee/en/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None of the inserted electronic ID cards has the requested signing certificate. Please insert the electronic ID card that belongs to %1.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
