@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--
+https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/DistributionDefinitionRef/
+https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/InstallerJavaScriptRef/
+-->
+<installer-gui-script minSpecVersion="2">
+    <title>SU_TITLE</title>
+    <allowed-os-versions>
+        <os-version min="10.10"/>
+    </allowed-os-versions>
+    <options customize="allow" require-scripts="false" rootVolumeOnly="true" hostArchitectures="x86_64"/>
+    <!--domains enable_anywhere="false" enable_currentUserHome="false" enable_localSystem="true"/-->
+    <background file="background.png" alignment="center" mime-type="image/png" scaling="tofit" />
+    <welcome language="en" mime-type="text/html"><![CDATA[<html><body><br />
+<p style="margin: 0px; font: 13px 'Lucida Grande'">You will be guided through the steps necessary to install this software.</p></body></html>]]></welcome>
+    <welcome language="et" mime-type="text/html"><![CDATA[<html><body><br />
+<p style="margin: 0px; font: 13px 'Lucida Grande'">Järgnevad juhised tarkvara installeerimiseks.</p></body></html>]]></welcome>
+    <welcome language="ru" mime-type="text/html"><![CDATA[<html><body><br />
+<p style="margin: 0px; font: 13px 'Lucida Grande'">Вам будут предложены шаги по установке данного ПО.</p></body></html>]]></welcome>
+    <conclusion language="en" mime-type="text/html"><![CDATA[<html><body><br />
+<p style="margin: 0px; font: 14px 'Lucida Grande'">Changelog: <a href="https://www.id.ee/en/article/id-tarkvara-versioonide-info-release-notes/">https://www.id.ee/en/article/id-tarkvara-versioonide-info-release-notes/</a></p><br /><br />
+</body></html>]]></conclusion>
+    <conclusion language="et" mime-type="text/html"><![CDATA[<html><body><br />
+<p style="margin: 0px; font: 14px 'Lucida Grande'">Muudatuste loetelu: <a href="https://www.id.ee/artikkel/id-tarkvara-versioonide-info-release-notes/">https://www.id.ee/artikkel/id-tarkvara-versioonide-info-release-notes/</a></p><br /><br />
+</body></html>]]></conclusion>
+    <conclusion language="ru" mime-type="text/html"><![CDATA[<html><body><br />
+<p style="margin: 0px; font: 14px 'Lucida Grande'">Журнал изменений: <a href="https://www.id.ee/ru/artikkel/informacziya-o-versiyah-programmnogo-obespecheniya-id-karty-release-notes-2/">https://www.id.ee/ru/artikkel/informacziya-o-versiyah-programmnogo-obespecheniya-id-karty-release-notes-2/</a></p><br /><br />
+</body></html>]]></conclusion>
+    <localization>
+        <strings language="en">
+<![CDATA[
+"SU_TITLE" = "Web eID Software";
+"SU_ERROR" = "Error";
+"SU_1013" = "macOS must be 10.13 or newer.";
+"SU_BASE" = "Base components";
+"SU_SAFARI" = "Safari authentication and signing support";
+"SU_FIREFOX" = "Firefox authentication and signing support";
+"SU_CHROME" = "Chrome authentication and signing support";
+]]>
+        </strings>
+        <strings language="et">
+<![CDATA[
+"SU_TITLE" = "Web eID tarkvara";
+"SU_ERROR" = "Viga";
+"SU_1013" = "macOS peab olema 10.13 või uuem.";
+"SU_BASE" = "Baas komponendid";
+"SU_SAFARI" = "Safari autentimise ja allkirjastamise tugi";
+"SU_FIREFOX" = "Firefoxi autentimise ja allkirjastamise tugi";
+"SU_CHROME" = "Chrome'i autentimise ja allkirjastamise tugi";
+]]>
+        </strings>
+        <strings language="ru">
+<![CDATA[
+"SU_TITLE" = "Web eID Software";
+"SU_ERROR" = "Error";
+"SU_1013" = "macOS must be 10.13 or newer.";
+"SU_BASE" = "Base components";
+"SU_SAFARI" = "Поддержка аутентиф. и подпис. в Safari";
+"SU_FIREFOX" = "Поддержка аутентиф. и подпис. в Firefox";
+"SU_CHROME" = "Поддержка аутентиф. и подпис. в Chrome";
+]]>
+        </strings>
+    </localization>
+    <installation-check script="pm_install_check();"/>
+    <script>
+<![CDATA[
+function pm_install_check() {
+  if(system.compareVersions(system.version.ProductVersion, '10.13.0') < 0) {
+    my.result.title = system.localizedString('SU_ERROR');
+    my.result.message = system.localizedString('SU_1013');
+    my.result.type = 'Fatal';
+    return false;
+  }
+  return true;
+}
+
+function pm_safari_selected() {
+  return my.target.receiptForIdentifier("eu.web-eid.web-eid") == null ||
+     my.target.receiptForIdentifier("eu.web-eid.web-eid-safari") != null;
+}
+
+function pm_firefox_selected() {
+  return my.target.receiptForIdentifier("eu.web-eid.web-eid") == null ||
+     my.target.receiptForIdentifier("eu.web-eid.web-eid-firefox") != null;
+}
+
+function pm_chrome_selected() {
+  return my.target.receiptForIdentifier("eu.web-eid.web-eid") == null ||
+     my.target.receiptForIdentifier("eu.web-eid.web-eid-chrome") != null;
+}
+]]>
+    </script>
+    <choices-outline>
+        <line choice="default"/>
+        <line choice="safari"/>
+        <line choice="firefox"/>
+        <line choice="chrome"/>
+    </choices-outline>
+    <choice id="default" title="SU_BASE" start_enabled="false" visible="false">
+        <pkg-ref id="eu.web-eid.web-eid">web-eid-base.pkg</pkg-ref>
+    </choice>
+    <choice id="safari" title="SU_SAFARI" description="SU_SAFARI" start_selected="pm_safari_selected()">
+        <pkg-ref id="eu.web-eid.web-eid-safari">web-eid-safari.pkg</pkg-ref>
+    </choice>
+    <choice id="firefox" title="SU_FIREFOX" description="SU_FIREFOX" start_selected="pm_firefox_selected()">
+        <pkg-ref id="eu.web-eid.web-eid-firefox">web-eid-firefox.pkg</pkg-ref>
+    </choice>
+    <choice id="chrome" title="SU_CHROME" description="SU_CHROME" start_selected="pm_chrome_selected()">
+        <pkg-ref id="eu.web-eid.web-eid-chrome">web-eid-chrome.pkg</pkg-ref>
+    </choice>
+</installer-gui-script>
