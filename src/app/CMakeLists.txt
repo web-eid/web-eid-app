@@ -78,6 +78,8 @@ elseif(APPLE)
             COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
                 $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/Frameworks/*.*
                 $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/PlugIns/*/*
+            COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
+                --entitlements ${CMAKE_CURRENT_LIST_DIR}/../mac/web-eid-safari.entitlements
                 $<TARGET_BUNDLE_DIR:web-eid>
         )
     endif()
@@ -99,7 +101,6 @@ elseif(APPLE)
             --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-chrome_${PROJECT_VERSION}.pkg
         COMMAND_EXPAND_LISTS
     )
-    add_custom_target(installer DEPENDS installer-firefox installer-chrome)
 else()
     include(GNUInstallDirs)
     set(WEBEID_PATH ${CMAKE_INSTALL_FULL_BINDIR}/web-eid)
