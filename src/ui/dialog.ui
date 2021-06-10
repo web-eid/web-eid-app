@@ -244,7 +244,7 @@ color: #003168;
           <enum>Qt::TabFocus</enum>
          </property>
          <property name="text">
-          <string notr="true">Insert an ID card</string>
+          <string notr="true">Insert the ID-card</string>
          </property>
         </widget>
        </item>
@@ -363,7 +363,7 @@ color: #003168;
           <enum>Qt::TabFocus</enum>
          </property>
          <property name="text">
-          <string>Select Certificate</string>
+          <string>Select a certificate</string>
          </property>
         </widget>
        </item>
@@ -381,7 +381,7 @@ color: #003168;
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
-            <string>By choosing the certificate, I agree to submit my name and personal identification number to the website</string>
+            <string>By choosing the certificate, I agree to the transfer of my name and personal identification code to the service provider.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -454,7 +454,7 @@ color: #003168;
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
-            <string>By confirming authentication, I agree to submit my name and personal identification number to the website</string>
+            <string>By authenticating, I agree to the transfer of my name and personal identification code to the service provider.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -496,7 +496,7 @@ color: #003168;
             </font>
            </property>
            <property name="text">
-            <string>Please enter authentication PIN (PIN 1):</string>
+            <string>Enter PIN1 for authentication</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -597,7 +597,7 @@ color: #003168;
      <item>
       <widget class="QPushButton" name="okButton">
        <property name="text">
-        <string>Proceed</string>
+        <string>Confirm</string>
        </property>
        <property name="icon">
         <iconset resource="web-eid-resources.qrc">

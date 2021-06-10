@@ -247,7 +247,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             ui->pinInputDescriptionLabel->setText(
                 tr("By confirming authentication, I agree to submit my name and personal "
                    "identification number to the website"));
-            ui->pinTitleLabel->setText(tr("Please enter authentication PIN (PIN 1):"));
+            ui->pinTitleLabel->setText(tr("Enter PIN1 for authentication"));
             break;
         case CommandType::SIGN:
             ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
@@ -255,7 +255,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             ui->pinInputDescriptionLabel->setText(
                 tr("By confirming signing, I agree to submit my name and personal identification "
                    "number to the website"));
-            ui->pinTitleLabel->setText(tr("Please enter signing PIN (PIN 2):"));
+            ui->pinTitleLabel->setText(tr("Enter PIN2 for signing"));
             break;
         default:
             THROW(ProgrammingError, "Only SELECT_CERTIFICATE, AUTHENTICATE or SIGN allowed");
@@ -306,7 +306,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     // FIXME: don't allow retry in case of UNKNOWN_ERROR
     switch (status) {
     case Status::RETRY_ALLOWED:
-        message = tr("Incorrect PIN, %n retries left", nullptr, retriesLeft);
+        message = tr("Incorrect PIN, %n attempts left.", nullptr, retriesLeft);
         style()->unpolish(ui->pinInput);
         ui->pinInput->setProperty("warning", true);
         style()->polish(ui->pinInput);
@@ -316,13 +316,13 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
         resizeHeight();
         return;
     case Status::INVALID_PIN_LENGTH:
-        message = tr("Wrong PIN length");
+        message = tr("Invalid PIN length");
         break;
     case Status::PIN_ENTRY_TIMEOUT:
-        message = tr("PIN pad PIN entry timeout");
+        message = tr("PinPad reader session timed out.");
         break;
     case Status::PIN_ENTRY_CANCEL:
-        message = tr("PIN pad PIN entry cancelled");
+        message = tr("PIN entry cancelled.");
         break;
     case Status::UNKNOWN_ERROR:
         message = tr("Technical error");
@@ -387,7 +387,7 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
 void WebEidDialog::onRetryImpl(const QString& error)
 {
     ui->connectCardLabel->setText(error);
-    ui->messagePageTitleLabel->setText(tr("Error occurred"));
+    ui->messagePageTitleLabel->setText(tr("Operation failed"));
     ui->cardChipIcon->setPixmap(QStringLiteral(":/images/no-id-card.svg"));
     setupOK([this] { emit retry(); }, tr("Retry"), true);
     ui->pageStack->setCurrentIndex(int(Page::ALERT));
@@ -422,10 +422,10 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPin
     ui->cancelButton->hide();
     ui->helpButton->hide();
     ui->pinEntryTimeoutProgressBar->show();
-    ui->pinTitleLabel->setText(tr("Please enter %1 using PIN pad")
+    ui->pinTitleLabel->setText(tr("Please enter %1 in PinPad reader")
                                    .arg(currentCommand == CommandType::AUTHENTICATE
-                                            ? tr("authentication PIN (PIN 1)")
-                                            : tr("signing PIN (PIN 2)")));
+                                            ? tr("PIN1 for authentication")
+                                            : tr("PIN2 for signing")));
 
     ui->pinEntryTimeoutProgressBar->reset();
     // To be strictly correct, the timeout timer should be started after the handler thread
@@ -454,7 +454,7 @@ void WebEidDialog::setupOK(const std::function<void()>& func, const QString& lab
     connect(ui->okButton, &QPushButton::clicked, this, func);
     ui->okButton->show();
     ui->okButton->setEnabled(enabled);
-    ui->okButton->setText(label.isEmpty() ? tr("Proceed") : label);
+    ui->okButton->setText(label.isEmpty() ? tr("Confirm") : label);
     ui->cancelButton->show();
     ui->cancelButton->setEnabled(true);
     ui->helpButton->hide();
@@ -466,7 +466,7 @@ void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetrie
     ui->pinInput->setProperty("warning", QVariant(pinRetriesCount.first != pinRetriesCount.second));
     style()->polish(ui->pinInput);
     if (pinRetriesCount.first != pinRetriesCount.second) {
-        ui->pinErrorLabel->setText(tr("%n retries left", nullptr, int(pinRetriesCount.first)));
+        ui->pinErrorLabel->setText(tr("%n attempts left", nullptr, int(pinRetriesCount.first)));
         ui->pinErrorLabel->show();
     }
 }
@@ -475,7 +475,7 @@ void WebEidDialog::displayPinBlockedError()
 {
     ui->pinTitleLabel->hide();
     ui->pinInput->hide();
-    ui->pinErrorLabel->setText(tr("PIN is blocked, cannot proceed"));
+    ui->pinErrorLabel->setText(tr("PIN is locked. Unblock and try again."));
     ui->pinErrorLabel->show();
     ui->okButton->hide();
     ui->cancelButton->setEnabled(true);
@@ -493,59 +493,59 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
 {
     switch (error) {
     case RetriableError::SMART_CARD_SERVICE_IS_NOT_RUNNING:
-        return {tr("Smart card service is not running. Please start it."),
-                tr("Start smart card service"), QStringLiteral(":/images/cardreader.svg")};
+        return {tr("The Smart Card service required to use the ID-card does not work. Please run it."),
+                tr("Launch the Smart Card service"), QStringLiteral(":/images/cardreader.svg")};
     case RetriableError::NO_SMART_CARD_READERS_FOUND:
-        return {tr("No readers attached. Please connect a smart card reader."),
-                tr("Connect a smart card reader"), QStringLiteral(":/images/cardreader.svg")};
+        return {tr("Card reader not connected. Please connect the card reader to the computer."),
+                tr("Connect the card reader"), QStringLiteral(":/images/cardreader.svg")};
 
     case RetriableError::NO_SMART_CARDS_FOUND:
     case RetriableError::PKCS11_TOKEN_NOT_PRESENT:
         return {tr("No smart card in reader. "
                    "Please insert an electronic ID card into the reader."),
-                tr("Insert an ID card"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Insert the ID-card"), QStringLiteral(":/images/no-id-card.svg")};
     case RetriableError::SMART_CARD_WAS_REMOVED:
     case RetriableError::PKCS11_TOKEN_REMOVED:
         return {tr("The smart card was removed. "
                    "Please insert an electronic ID card into the reader."),
-                tr("Insert an ID card"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Insert the ID-card"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_TRANSACTION_FAILED:
         return {tr("The smart card transaction failed. "
                    "Please make sure that the smart card and reader are properly connected."),
-                tr("Check the ID card connection"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Check the ID-card and the reader connection"), QStringLiteral(":/images/no-id-card.svg")};
     case RetriableError::FAILED_TO_COMMUNICATE_WITH_CARD_OR_READER:
         return {tr("Failed to communicate with the smart card or reader. "
                    "Please make sure that the smart card and reader are properly connected."),
-                tr("Check the ID card connection"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Check the ID-card and the reader connection"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_CHANGE_REQUIRED:
-        return {tr("The smart card is malfunctioning, please change the smart card."),
-                tr("Change the ID card"), QStringLiteral(":/images/no-id-card.svg")};
+        return {tr("The desired operation cannot be performed with the inserted ID-card. Make sure that the ID-card is supported by the Web eID application."),
+                tr("ID-card is not supported"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
-        return {tr("A smart card command failed."), tr("ID card failure"),
+        return {tr("Error communicating with card."), tr("Operation failed"),
                 QStringLiteral(":/images/no-id-card.svg")};
         // TODO: what action should the user take? Should this be fatal?
     case RetriableError::PKCS11_ERROR:
-        return {tr("Smart card middleware error."), tr("ID card middleware failure"),
+        return {tr("Card driver error. Please try again."), tr("Card driver error"),
                 QStringLiteral(":/images/no-id-card.svg")};
         // TODO: what action should the user take? Should this be fatal?
     case RetriableError::SCARD_ERROR:
         return {tr("Internal smart card service error occurred. "
                    "Please make sure that the smart card and reader are properly connected "
                    "or try restarting the smart card service."),
-                tr("ID card failure"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation failed"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::UNSUPPORTED_CARD:
         return {tr("Unsupported smart card in reader. "
                    "Please insert a supported electronic ID card into the reader."),
-                tr("Change the ID card"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("ID-card is not supported"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::NO_VALID_CERTIFICATE_AVAILABLE:
         return {tr("No ID card with valid certificate available. Please insert "
                    "an ID card that has a valid certificate."),
-                tr("Change the ID card"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("ID-card is not supported"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::UNKNOWN_ERROR:
         return {tr("Unknown error"), tr("Unknown error"),
