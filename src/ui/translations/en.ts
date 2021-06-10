@@ -5,41 +5,41 @@
     <name>CertificateButton</name>
     <message>
         <source>%1 Issuer: %2 Valid: from %3 to %4</source>
-        <translation>%1 Issuer: %2 Valid: from %3 to %4</translation>
+        <translation>%1 Issuer: %2 Valid: %3 to %4</translation>
     </message>
 </context>
 <context>
     <name>CertificateWidget</name>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: from %3 to %4</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: from %3 to %4</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4</translation>
     </message>
 </context>
 <context>
     <name>WebEidDialog</name>
     <message>
         <source>By choosing the certificate, I agree to submit my name and personal identification number to the website</source>
-        <translation>By choosing the certificate, I agree to submit my name and personal identification number to the website</translation>
+        <translation>By choosing the certificate, I agree to the transfer of my name and personal identification code to the service provider.</translation>
     </message>
     <message>
         <source>By confirming authentication, I agree to submit my name and personal identification number to the website</source>
-        <translation>By confirming authentication, I agree to submit my name and personal identification number to the website</translation>
+        <translation>By authenticating, I agree to the transfer of my name and personal identification code to the service provider.</translation>
     </message>
     <message>
         <source>By confirming signing, I agree to submit my name and personal identification number to the website</source>
-        <translation>By confirming signing, I agree to submit my name and personal identification number to the website</translation>
+        <translation>By signing, I agree to the transfer of my name and personal identification code to the service provider.</translation>
     </message>
     <message>
         <source>Smart card service is not running. Please start it.</source>
-        <translation>Smart card service is not running. Please start it.</translation>
+        <translation>The Smart Card service required to use the ID-card does not work. Please run it.</translation>
     </message>
     <message>
         <source>No readers attached. Please connect a smart card reader.</source>
-        <translation>No readers attached. Please connect a smart card reader.</translation>
+        <translation>Card reader not connected. Please connect the card reader to the computer.</translation>
     </message>
     <message>
         <source>Wrong PIN length</source>
-        <translation>Wrong PIN length</translation>
+        <translation>Invalid PIN length</translation>
     </message>
     <message>
         <source>Technical error</source>
@@ -47,53 +47,53 @@
     </message>
     <message>
         <source>Please enter authentication PIN (PIN 1):</source>
-        <translation>Please enter authentication PIN (PIN 1):</translation>
+        <translation>Enter PIN1 for authentication</translation>
     </message>
     <message>
         <source>Authenticate</source>
-        <translation>Authenticate</translation>
+        <translation>Authentication</translation>
     </message>
     <message>
         <source>Sign</source>
-        <translation>Sign</translation>
+        <translation>Signing</translation>
     </message>
     <message>
         <source>Please enter signing PIN (PIN 2):</source>
-        <translation>Please enter signing PIN (PIN 2):</translation>
+        <translation>Enter PIN2 for signing</translation>
     </message>
     <message>
         <source>Select Certificate</source>
-        <translation>Select Certificate</translation>
+        <translation>Select a certificate</translation>
     </message>
     <message>
         <source>PIN is blocked, cannot proceed</source>
-        <translation>PIN is blocked, cannot proceed</translation>
+        <translation>PIN is locked. Unblock and try again.</translation>
     </message>
     <message numerus="yes">
         <source>%n retries left</source>
         <translation>
-            <numerusform>%n retry left</numerusform>
-            <numerusform>%n retries left</numerusform>
+            <numerusform>The PIN has been entered incorrectly at least once. %n attempt left.</numerusform>
+            <numerusform>The PIN has been entered incorrectly at least once. %n attempts left.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Incorrect PIN, %n retries left</source>
         <translation>
-            <numerusform>Incorrect PIN, %n retry left</numerusform>
-            <numerusform>Incorrect PIN, %n retries left</numerusform>
+            <numerusform>Incorrect PIN, %n attempt left.</numerusform>
+            <numerusform>Incorrect PIN, %n attempts left.</numerusform>
         </translation>
     </message>
     <message>
         <source>No smart card in reader. Please insert an electronic ID card into the reader.</source>
-        <translation>No smart card in reader. Please insert an electronic ID card into the reader.</translation>
+        <translation>ID-card not found. Please insert the ID-card into the reader.</translation>
     </message>
     <message>
         <source>PIN pad PIN entry timeout</source>
-        <translation>PIN pad PIN entry timeout</translation>
+        <translation>PinPad reader session timed out.</translation>
     </message>
     <message>
         <source>PIN pad PIN entry cancelled</source>
-        <translation>PIN pad PIN entry cancelled</translation>
+        <translation>PIN entry cancelled.</translation>
     </message>
     <message>
         <source>Waiting for card</source>
@@ -101,71 +101,71 @@
     </message>
     <message>
         <source>No electronic ID card is inserted that has the signing certificate provided as argument. Please insert the electronic ID card that belongs to %1</source>
-        <translation>No electronic ID card is inserted that has the signing certificate provided as argument. Please insert the electronic ID card that belongs to %1</translation>
+        <translation>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</translation>
     </message>
     <message>
         <source>Start smart card service</source>
-        <translation>Start smart card service</translation>
+        <translation>Launch the Smart Card service</translation>
     </message>
     <message>
         <source>Connect a smart card reader</source>
-        <translation>Connect a smart card reader</translation>
+        <translation>Connect the card reader</translation>
     </message>
     <message>
         <source>Insert an ID card</source>
-        <translation>Insert an ID card</translation>
+        <translation>Insert the ID-card</translation>
     </message>
     <message>
         <source>The smart card was removed. Please insert an electronic ID card into the reader.</source>
-        <translation>The smart card was removed. Please insert an electronic ID card into the reader.</translation>
+        <translation>The ID-card was removed from the reader. Please insert the ID-card into the reader.</translation>
     </message>
     <message>
         <source>The smart card transaction failed. Please make sure that the smart card and reader are properly connected.</source>
-        <translation>The smart card transaction failed. Please make sure that the smart card and reader are properly connected.</translation>
+        <translation>Operation failed. Make sure that the ID-card and the card reader are connected correctly.</translation>
     </message>
     <message>
         <source>Check the ID card connection</source>
-        <translation>Check the ID card connection</translation>
+        <translation>Check the ID-card and the reader connection</translation>
     </message>
     <message>
         <source>Failed to communicate with the smart card or reader. Please make sure that the smart card and reader are properly connected.</source>
-        <translation>Failed to communicate with the smart card or reader. Please make sure that the smart card and reader are properly connected.</translation>
+        <translation>Connection to the ID-card or reader failed. Make sure that the ID-card and the card reader are connected correctly.</translation>
     </message>
     <message>
         <source>The smart card is malfunctioning, please change the smart card.</source>
-        <translation>The smart card is malfunctioning, please change the smart card.</translation>
+        <translation>The desired operation cannot be performed with the inserted ID-card. Make sure that the ID-card is supported by the Web eID application.</translation>
     </message>
     <message>
         <source>Change the ID card</source>
-        <translation>Change the ID card</translation>
+        <translation>ID-card is not supported</translation>
     </message>
     <message>
         <source>A smart card command failed.</source>
-        <translation>A smart card command failed.</translation>
+        <translation>Error communicating with card.</translation>
     </message>
     <message>
         <source>ID card failure</source>
-        <translation>ID card failure</translation>
+        <translation>Operation failed</translation>
     </message>
     <message>
         <source>Smart card middleware error.</source>
-        <translation>Smart card middleware error.</translation>
+        <translation>Card driver error. Please try again.</translation>
     </message>
     <message>
         <source>ID card middleware failure</source>
-        <translation>ID card middleware failure</translation>
+        <translation>Card driver error</translation>
     </message>
     <message>
         <source>Internal smart card service error occurred. Please make sure that the smart card and reader are properly connected or try restarting the smart card service.</source>
-        <translation>Internal smart card service error occurred. Please make sure that the smart card and reader are properly connected or try restarting the smart card service.</translation>
+        <translation>An error occurred in the Smart Card service required to use the ID-card. Make sure that the ID-card and the card reader are connected correctly or relaunch the Smart Card service.</translation>
     </message>
     <message>
         <source>Unsupported smart card in reader. Please insert a supported electronic ID card into the reader.</source>
-        <translation>Unsupported smart card in reader. Please insert a supported electronic ID card into the reader.</translation>
+        <translation>The card in the reader is not supported. Make sure that the entered ID-card is supported by the Web eID application.</translation>
     </message>
     <message>
         <source>No ID card with valid certificate available. Please insert an ID card that has a valid certificate.</source>
-        <translation>No ID card with valid certificate available. Please insert an ID card that has a valid certificate.</translation>
+        <translation>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</translation>
     </message>
     <message>
         <source>Unknown error</source>
@@ -173,23 +173,23 @@
     </message>
     <message>
         <source>Please enter %1 using PIN pad</source>
-        <translation>Please enter %1 using PIN pad</translation>
+        <translation>Please enter %1 in PinPad reader</translation>
     </message>
     <message>
         <source>authentication PIN (PIN 1)</source>
-        <translation>authentication PIN (PIN 1)</translation>
+        <translation>PIN1 for authentication</translation>
     </message>
     <message>
         <source>signing PIN (PIN 2)</source>
-        <translation>signing PIN (PIN 2)</translation>
+        <translation>PIN2 for signing</translation>
     </message>
     <message>
         <source>Error occurred</source>
-        <translation>Error occurred</translation>
+        <translation>Operation failed</translation>
     </message>
     <message>
         <source>Retry</source>
-        <translation>Retry</translation>
+        <translation>Try again</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -197,7 +197,7 @@
     </message>
     <message>
         <source>Proceed</source>
-        <translation>Proceed</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <source>Help</source>
@@ -205,18 +205,18 @@
     </message>
     <message>
         <source>https://www.id.ee/en/</source>
-        <translation>https://www.id.ee/en/</translation>
+        <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
     </message>
 </context>
 <context>
     <name>WebEidUI</name>
     <message>
         <source>Web eID: fatal error</source>
-        <translation>Web eID: fatal error</translation>
+        <translation>Operation failed</translation>
     </message>
     <message>
         <source>A fatal error occurred, check the logs for more details</source>
-        <translation>A fatal error occurred, check the logs for more details</translation>
+        <translation>Error communicating with card. More detailed information can be found in the log files.</translation>
     </message>
 </context>
 </TS>

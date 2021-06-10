@@ -5,41 +5,41 @@
     <name>CertificateButton</name>
     <message>
         <source>%1 Issuer: %2 Valid: from %3 to %4</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Väljaandja: %2 Kehtib: %3 kuni %4</translation>
     </message>
 </context>
 <context>
     <name>CertificateWidget</name>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: from %3 to %4</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Väljaandja: %2&lt;br /&gt;Kehtib: %3 kuni %4</translation>
     </message>
 </context>
 <context>
     <name>WebEidDialog</name>
     <message>
         <source>By choosing the certificate, I agree to submit my name and personal identification number to the website</source>
-        <translation>Sertifikaadi valikuga nõustun oma nime ja isikukoodi edastamisega teenusepakkujale</translation>
+        <translation>Sertifikaadi valikuga nõustun oma nime ja isikukoodi edastamisega teenusepakkujale.</translation>
     </message>
     <message>
         <source>By confirming authentication, I agree to submit my name and personal identification number to the website</source>
-        <translation type="unfinished"></translation>
+        <translation>Autentimisel nõustun oma nime ja isikukoodi edastamisega teenusepakkujale.</translation>
     </message>
     <message>
         <source>By confirming signing, I agree to submit my name and personal identification number to the website</source>
-        <translation type="unfinished"></translation>
+        <translation>Allkirjastamisel nõustun oma nime ja isikukoodi edastamisega teenusepakkujale.</translation>
     </message>
     <message>
         <source>Smart card service is not running. Please start it.</source>
-        <translation type="unfinished"></translation>
+        <translation>ID-kaardi kasutamiseks vajalik Kiipkaardi teenus ei tööta. Palun käivita see.</translation>
     </message>
     <message>
         <source>No readers attached. Please connect a smart card reader.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaardilugeja ei ole ühendatud. Palun ühenda kaardilugeja arvutiga.</translation>
     </message>
     <message>
         <source>Wrong PIN length</source>
-        <translation>Valie PIN koodi pikkus</translation>
+        <translation>Vale PIN-koodi pikkus</translation>
     </message>
     <message>
         <source>Technical error</source>
@@ -47,7 +47,7 @@
     </message>
     <message>
         <source>Please enter authentication PIN (PIN 1):</source>
-        <translation>Sisestage autentimise PIN (PIN 1):</translation>
+        <translation>Sisesta autentimiseks PIN1-kood</translation>
     </message>
     <message>
         <source>Authenticate</source>
@@ -55,11 +55,11 @@
     </message>
     <message>
         <source>Sign</source>
-        <translation>Allkirjasta</translation>
+        <translation>Allkirjastamine</translation>
     </message>
     <message>
         <source>Please enter signing PIN (PIN 2):</source>
-        <translation>Sisestage allirjastamise PIN (PIN 2):</translation>
+        <translation>Sisesta allkirjastamiseks PIN2-kood</translation>
     </message>
     <message>
         <source>Select Certificate</source>
@@ -67,41 +67,41 @@
     </message>
     <message>
         <source>PIN is blocked, cannot proceed</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN-kood on lukus. Tühista blokeering ja proovi uuesti.</translation>
     </message>
     <message numerus="yes">
         <source>%n retries left</source>
         <translation>
-            <numerusform>%n katse veel</numerusform>
-            <numerusform>%n katset veel</numerusform>
+            <numerusform>PIN-koodi on vähemalt ühe korra valesti sisestatud. %n katse jäänud.</numerusform>
+            <numerusform>PIN-koodi on vähemalt ühe korra valesti sisestatud. %n katset jäänud.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Incorrect PIN, %n retries left</source>
         <translation>
-            <numerusform>Vale PIN, %n katse veel</numerusform>
-            <numerusform>Vale PIN, %n katset veel</numerusform>
+            <numerusform>Vale PIN-kood, %n katse jäänud.</numerusform>
+            <numerusform>Vale PIN-kood, %n katset jäänud.</numerusform>
         </translation>
     </message>
     <message>
         <source>No smart card in reader. Please insert an electronic ID card into the reader.</source>
-        <translation type="unfinished"></translation>
+        <translation>ID-kaarti ei leitud. Palun sisesta ID-kaart lugejasse.</translation>
     </message>
     <message>
         <source>PIN pad PIN entry timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>PinPad lugeja sessioon aegus.</translation>
     </message>
     <message>
         <source>PIN pad PIN entry cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN-koodi sisestamine katkestati.</translation>
     </message>
     <message>
         <source>No electronic ID card is inserted that has the signing certificate provided as argument. Please insert the electronic ID card that belongs to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Lugejas oleva ID-kaardi sertifikaat ei ühti esitatud sertifikaadiga. Palun sisesta ID-kaart, mis kuulub  %1.</translation>
     </message>
     <message>
         <source>Start smart card service</source>
-        <translation type="unfinished"></translation>
+        <translation>Käivita Kiipkaardi teenus</translation>
     </message>
     <message>
         <source>Connect a smart card reader</source>
@@ -109,75 +109,75 @@
     </message>
     <message>
         <source>Insert an ID card</source>
-        <translation type="unfinished"></translation>
+        <translation>Sisesta ID-kaart</translation>
     </message>
     <message>
         <source>The smart card was removed. Please insert an electronic ID card into the reader.</source>
-        <translation type="unfinished"></translation>
+        <translation>ID-kaart eemaldati lugejast. Palun sisesta ID-kaart lugejasse.</translation>
     </message>
     <message>
         <source>The smart card transaction failed. Please make sure that the smart card and reader are properly connected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Toiming ebaõnnestus. Palun veendu, et ID-kaart ja kaardilugeja on korrektselt ühendatud.</translation>
     </message>
     <message>
         <source>Check the ID card connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrolli ID-kaardi ja lugeja ühendust</translation>
     </message>
     <message>
         <source>Failed to communicate with the smart card or reader. Please make sure that the smart card and reader are properly connected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ühendus ID-kaardi või lugejaga ebaõnnestus. Palun veendu, et ID-kaart ja kaardilugeja on korrektselt ühendatud.</translation>
     </message>
     <message>
         <source>The smart card is malfunctioning, please change the smart card.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sisestatud ID-kaardiga ei saa soovitud toimingut teostada. Palun veendu, et ID-kaart on Web eID rakenduse poolt toetatud.</translation>
     </message>
     <message>
         <source>Change the ID card</source>
-        <translation type="unfinished"></translation>
+        <translation>ID-kaart ei ole toetatud</translation>
     </message>
     <message>
         <source>A smart card command failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Viga kaardiga suhtlemisel.</translation>
     </message>
     <message>
         <source>ID card failure</source>
-        <translation type="unfinished"></translation>
+        <translation>Toiming ebaõnnestus</translation>
     </message>
     <message>
         <source>Smart card middleware error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaardi draiveri viga. Palun proovi uuesti.</translation>
     </message>
     <message>
         <source>ID card middleware failure</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaardi draiveri viga</translation>
     </message>
     <message>
         <source>Internal smart card service error occurred. Please make sure that the smart card and reader are properly connected or try restarting the smart card service.</source>
-        <translation type="unfinished"></translation>
+        <translation>ID-kaardi kasutamiseks vajalikus Kiipkaardi teenuses tekkis viga. Palun veendu, et ID-kaart ja kaardilugeja on korrektselt ühendatud või taaskäivita Kiipkaardi teenus.</translation>
     </message>
     <message>
         <source>Unsupported smart card in reader. Please insert a supported electronic ID card into the reader.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lugejas on mittetoetatud kaart. Palun veendu, et sisestatud ID-kaart on Web eID rakenduses toetatud.</translation>
     </message>
     <message>
         <source>No ID card with valid certificate available. Please insert an ID card that has a valid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>ID-kaardi sertifikaadid on aegunud. ID-kaardi elektrooniliseks kasutamiseks on vaja kehtivaid sertifikaate.</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>Tundmatu viga</translation>
     </message>
     <message>
         <source>Please enter %1 using PIN pad</source>
-        <translation type="unfinished"></translation>
+        <translation>Palun sisesta PinPad lugejas %1</translation>
     </message>
     <message>
         <source>authentication PIN (PIN 1)</source>
-        <translation type="unfinished"></translation>
+        <translation>autentimiseks PIN1-kood</translation>
     </message>
     <message>
         <source>signing PIN (PIN 2)</source>
-        <translation type="unfinished"></translation>
+        <translation>allkirjastamiseks PIN2-kood</translation>
     </message>
     <message>
         <source>Waiting for card</source>
@@ -185,38 +185,38 @@
     </message>
     <message>
         <source>Error occurred</source>
-        <translation type="unfinished"></translation>
+        <translation>Toiming ebaõnnestus</translation>
     </message>
     <message>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Proovi uuesti</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Katkesta</translation>
     </message>
     <message>
         <source>Proceed</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinnita</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Abi</translation>
     </message>
     <message>
         <source>https://www.id.ee/en/</source>
-        <translation type="unfinished"></translation>
+        <translation>https://www.id.ee/artikkel/kuidas-kontrollida-id-kaardi-ja-lugeja-tookorras-olekut/</translation>
     </message>
 </context>
 <context>
     <name>WebEidUI</name>
     <message>
         <source>Web eID: fatal error</source>
-        <translation type="unfinished"></translation>
+        <translation>Toiming ebaõnnestus</translation>
     </message>
     <message>
         <source>A fatal error occurred, check the logs for more details</source>
-        <translation type="unfinished"></translation>
+        <translation>Viga kaardiga suhtlemisel. Täpsem informatsioon on leitav logifailidest.</translation>
     </message>
 </context>
 </TS>
