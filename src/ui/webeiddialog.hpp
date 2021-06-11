@@ -51,7 +51,7 @@ public:
     void showWaitingForCardPage(const CommandType commandType) override;
     QString getPin() override;
 
-    void showFatalErrorPage();
+    void showFatalErrorPage(const FatalErrorType errorType);
 
 public: // slots
     void onSmartCardStatusUpdate(const RetriableError status) override;

@@ -26,12 +26,6 @@
 
 #include "commands.hpp"
 
-class ArgumentError : public std::runtime_error
-{
-public:
-    using std::runtime_error::runtime_error;
-};
-
 class Application final : public QApplication
 {
     Q_OBJECT

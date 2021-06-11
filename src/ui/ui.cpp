@@ -33,8 +33,8 @@ WebEidUI::ptr WebEidUI::createAndShowDialog(const CommandType command)
     return dialog;
 }
 
-void WebEidUI::showFatalError()
+void WebEidUI::showFatalError(const FatalErrorType errorType)
 {
     auto dialog = WebEidDialog {};
-    dialog.showFatalErrorPage();
+    dialog.showFatalErrorPage(errorType);
 }

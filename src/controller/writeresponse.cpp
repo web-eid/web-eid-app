@@ -24,6 +24,8 @@
 #include "inputoutputmode.hpp"
 #include "logging.hpp"
 
+#include "electronic-id/electronic-id.hpp"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -34,8 +36,8 @@ QByteArray resultToJson(const QVariantMap& result, const std::string& commandTyp
 {
     const auto json = QJsonDocument::fromVariant(result);
     if (!json.isObject()) {
-        throw std::logic_error("Controller::resultToJson: command " + commandType
-                               + " did not return a JSON object");
+        throw electronic_id::ProgrammingError("Controller::resultToJson: command " + commandType
+                                              + " did not return a JSON object");
     }
 
     return json.toJson(QJsonDocument::Compact);

@@ -60,3 +60,9 @@ CommandType commandNameToCommandType(const QString& cmdName);
 
 using CommandWithArguments = std::pair<CommandType, QVariantMap>;
 using CommandWithArgumentsPtr = std::unique_ptr<CommandWithArguments>;
+
+class ArgumentError : public std::runtime_error
+{
+public:
+    using std::runtime_error::runtime_error;
+};

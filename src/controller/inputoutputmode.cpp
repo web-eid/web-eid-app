@@ -22,6 +22,9 @@
 
 #include "inputoutputmode.hpp"
 
+#include "pcsc-cpp/pcsc-cpp.hpp"
+#include "electronic-id/electronic-id.hpp"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -48,6 +51,7 @@ void setIoStreamsToBinaryMode()
 #endif
 
 using namespace pcsc_cpp;
+using namespace electronic_id;
 
 uint32_t readMessageLength(std::istream& input)
 {
@@ -71,15 +75,13 @@ CommandWithArgumentsPtr readCommandFromStdin()
     const auto messageLength = readMessageLength(std::cin);
 
     if (messageLength < 5) {
-        // FIXME: Pass errors back up to caller in stdin mode.
-        throw std::invalid_argument("readCommandFromStdin: Message length is "
-                                    + std::to_string(messageLength) + ", at least 5 required");
+        throw ArgumentError("readCommandFromStdin: Message length is "
+                            + std::to_string(messageLength) + ", at least 5 required");
     }
 
     if (messageLength > 8192) {
-        throw std::invalid_argument("readCommandFromStdin: Message length "
-                                    + std::to_string(messageLength)
-                                    + " exceeds maximum allowed length 8192");
+        throw ArgumentError("readCommandFromStdin: Message length " + std::to_string(messageLength)
+                            + " exceeds maximum allowed length 8192");
     }
 
     auto message = QByteArray(int(messageLength), '\0');
@@ -88,8 +90,7 @@ CommandWithArgumentsPtr readCommandFromStdin()
     const auto json = QJsonDocument::fromJson(message);
 
     if (!json.isObject()) {
-        // FIXME: Pass errors back up to caller in stdin mode.
-        throw std::invalid_argument("readCommandFromStdin: Invalid JSON, not an object");
+        throw ArgumentError("readCommandFromStdin: Invalid JSON, not an object");
     }
 
     const auto jsonObject = json.object();
@@ -97,9 +98,8 @@ CommandWithArgumentsPtr readCommandFromStdin()
     const auto arguments = jsonObject["arguments"];
 
     if (!command.isString() || !arguments.isObject()) {
-        // FIXME: Pass errors back up to caller in stdin mode.
-        throw std::invalid_argument("readCommandFromStdin: Invalid JSON, the main object does not "
-                                    "contain a 'command' string and 'arguments' object");
+        throw ArgumentError("readCommandFromStdin: Invalid JSON, the main object does not "
+                            "contain a 'command' string and 'arguments' object");
     }
 
     return std::make_unique<CommandWithArguments>(commandNameToCommandType(command.toString()),

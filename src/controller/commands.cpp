@@ -45,7 +45,7 @@ CommandType commandNameToCommandType(const QString& cmdName)
     try {
         return SUPPORTED_COMMANDS.at(cmdName);
     } catch (const std::out_of_range&) {
-        throw std::invalid_argument("Command '" + cmdName.toStdString() + "' is not supported");
+        throw ArgumentError("Command '" + cmdName.toStdString() + "' is not supported");
     }
 }
 
