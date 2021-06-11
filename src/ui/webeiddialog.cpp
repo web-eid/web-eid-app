@@ -465,11 +465,13 @@ void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetrie
 
 void WebEidDialog::displayPinBlockedError()
 {
-    ui->okButton->hide();
     ui->pinTitleLabel->hide();
     ui->pinInput->hide();
     ui->pinErrorLabel->setText(tr("PIN is blocked, cannot proceed"));
     ui->pinErrorLabel->show();
+    ui->okButton->hide();
+    ui->cancelButton->setEnabled(true);
+    ui->helpButton->show();
 }
 
 void WebEidDialog::resizeHeight()
