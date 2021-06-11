@@ -100,7 +100,7 @@ max-height: 20px;
 #pinErrorLabel {
 color: #F04E23;
 }
-#smartCardError {
+#fatalError {
 border: 1px solid rgba(240,78,35,0.1);
 border-radius: 3px;
 color: #F04E23;
@@ -282,7 +282,7 @@ color: #003168;
         </layout>
        </item>
        <item>
-        <widget class="QWidget" name="smartCardError" native="true">
+        <widget class="QWidget" name="fatalError" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
           <property name="spacing">
            <number>8</number>
@@ -300,14 +300,14 @@ color: #003168;
            <number>10</number>
           </property>
           <item>
-           <widget class="QLabel" name="smartCardErrorIcon">
+           <widget class="QLabel" name="fatalErrorIcon">
             <property name="pixmap">
              <pixmap resource="web-eid-resources.qrc">:/images/fatal.svg</pixmap>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="smartCardErrorLabel">
+           <widget class="QLabel" name="fatalErrorLabel">
             <property name="text">
              <string>A fatal error occurred, check the logs for more details</string>
             </property>
