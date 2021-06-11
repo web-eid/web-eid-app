@@ -35,17 +35,17 @@ Arguments:
 
 ```
   command                  The command to execute in command-line mode, any of
-                           'get-certificate', 'authenticate', 'sign'.
+                           'get-signing-certificate', 'authenticate', 'sign'.
   arguments                Arguments to the given command as a JSON-encoded
                            string.
 ```
 
-### Get certificate
+### Get signing certificate
 
-Pass the origin URL as JSON-encoded command-line arguments to the `get-certificate`
-command to retrieve the certificate:
+Pass the origin URL as JSON-encoded command-line argument to the `get-signing-certificate`
+command to retrieve the digital signing certificate:
 
-    web-eid -c get-certificate '{"origin": "https://ria.ee"}'
+    web-eid -c get-signing-certificate '{"origin": "https://ria.ee"}'
 
 The result will be written to standard output as a JSON-encoded message that
 either contains the requested Base64-encoded certificate and supported
@@ -73,6 +73,9 @@ members:
 
 ### Authenticate
 
+Authentication command creates the OpenID X509 ID Token and signs it with the
+authentication key.
+
 Authentication command requires the nonce, origin URL and Base64-encoded origin
 certificate as JSON-encoded command-line arguments:
 
@@ -96,6 +99,8 @@ origin certificate SHA-256 fingerprint as second element.
 
 ### Sign
 
+Signing command signs the provided document hash with the signing key.
+
 Signing command requires the Base64-encoded document hash, hash algorithm,
 origin URL and previously retrieved Base64-encoded user signing certificate as
 JSON-encoded command-line arguments:
@@ -105,14 +110,14 @@ JSON-encoded command-line arguments:
 Allowed hash algorithm values are SHA-224, SHA-256, SHA-384, SHA-512, SHA3-224,
 SHA3-256, SHA3-384, SHA3-512, and the hash algorithm has to be supported by the
 card (see the `hash-algo` member of `supported-signature-algos` array elements
-in the `get-certificate` command output). The document hash length has to match
+in the `get-signing-certificate` command output). The document hash length has to match
 the hash algorithm output length and the hash algorithm has to be supported by
 the electronic ID signing implementation.
 
 The user signing certificate for the `user-eid-cert` field can be retrieved
-with the `get-certificate` command as described above:
+with the `get-signing-certificate` command as described above:
 
-    web-eid -c get-certificate '{...other arguments as above...}'
+    web-eid -c get-signing-certificate '{...other arguments as above...}'
 
 The result will be written to standard output as a JSON-encoded message that
 either contains the Base64-encoded signature and the signature algorithm used
@@ -129,7 +134,7 @@ language, then the user interface will be displayed in this language.
 
 The following example will display the user interface in Estonian:
 
-    web-eid -c get-certificate '{"lang": "et", "origin": "https://ria.ee"}'
+    web-eid -c get-signing-certificate '{"lang": "et", "origin": "https://ria.ee"}'
 
 ## Input-output mode
 
@@ -242,7 +247,7 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
     cd web-eid-app
     ./build.sh
     ./test.sh
-    ./build/src/app/web-eid -c get-certificate '{"origin":"https://ria.ee"}'
+    ./build/src/app/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
 
 ### Building and testing in Windows
 

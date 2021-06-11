@@ -50,14 +50,14 @@ const QVariantMap AUTHENTICATE_COMMAND_ARGUMENT = {
 const QVariantMap GET_CERTIFICATE_COMMAND_ARGUMENT = {{"origin", "https://dummy-origin"}};
 
 std::unique_ptr<GetCertificate> g_cached_GetCertificate = std::make_unique<GetCertificate>(
-    std::pair {CommandType::GET_CERTIFICATE, GET_CERTIFICATE_COMMAND_ARGUMENT});
+    std::pair {CommandType::GET_SIGNING_CERTIFICATE, GET_CERTIFICATE_COMMAND_ARGUMENT});
 std::unique_ptr<Authenticate> g_cached_Authenticate = std::make_unique<Authenticate>(
     std::pair {CommandType::AUTHENTICATE, AUTHENTICATE_COMMAND_ARGUMENT});
 
 CommandHandler::ptr getCommandHandler(const CommandWithArguments& cmd)
 {
     // The cached global unique_ptr will be nullptr after return.
-    if (cmd.first == CommandType::GET_CERTIFICATE) {
+    if (cmd.first == CommandType::GET_SIGNING_CERTIFICATE) {
         return std::move(g_cached_GetCertificate);
     } else if (cmd.first == CommandType::AUTHENTICATE) {
         return std::move(g_cached_Authenticate);

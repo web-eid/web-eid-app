@@ -91,8 +91,8 @@ CommandWithArgumentsPtr Application::parseArgs()
                         "standard input."},
                        parentWindow});
 
-    static const auto COMMANDS = "'" + CMDLINE_GET_CERTIFICATE + "', '" + CMDLINE_AUTHENTICATE
-        + "', '" + CMDLINE_SIGN + "'.";
+    static const auto COMMANDS = "'" + CMDLINE_GET_SIGNING_CERTIFICATE + "', '"
+        + CMDLINE_AUTHENTICATE + "', '" + CMDLINE_SIGN + "'.";
 
     parser.addPositionalArgument(
         QStringLiteral("command"),
@@ -110,7 +110,7 @@ CommandWithArgumentsPtr Application::parseArgs()
         }
         const auto& command = args.first();
         const auto& arguments = args.at(1);
-        if (command == CMDLINE_GET_CERTIFICATE || command == CMDLINE_AUTHENTICATE
+        if (command == CMDLINE_GET_SIGNING_CERTIFICATE || command == CMDLINE_AUTHENTICATE
             || command == CMDLINE_SIGN) {
             // TODO: add command-specific argument validation
             return std::make_unique<CommandWithArguments>(commandNameToCommandType(command),

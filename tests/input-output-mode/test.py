@@ -36,7 +36,7 @@ class Test(unittest.TestCase):
 
     def test_1_get_certificate(self):
         message = {
-            'command': 'get-certificate',
+            'command': 'get-signing-certificate',
             'arguments': {
                 'origin': 'https://ria.ee',
             }

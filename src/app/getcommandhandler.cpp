@@ -35,7 +35,7 @@ CommandHandler::ptr getCommandHandler(const CommandWithArguments& cmd)
     auto cmdCopy = CommandWithArguments {cmdType, cmd.second};
 
     switch (cmdType) {
-    case CommandType::GET_CERTIFICATE:
+    case CommandType::GET_SIGNING_CERTIFICATE:
         return std::make_unique<GetCertificate>(cmdCopy);
     case CommandType::AUTHENTICATE:
         return std::make_unique<Authenticate>(cmdCopy);
