@@ -81,7 +81,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
     ui->waitingSpinner->load(QStringLiteral(":/images/wait.svg"));
     ui->selectionGroup = new QButtonGroup(this);
-    ui->smartCardError->hide();
+    ui->fatalError->hide();
 
     connect(ui->pageStack, &QStackedWidget::currentChanged, this, &WebEidDialog::resizeHeight);
     connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
@@ -115,10 +115,10 @@ WebEidDialog::~WebEidDialog()
     delete ui;
 }
 
-void WebEidDialog::showFatalError()
+void WebEidDialog::showFatalErrorPage()
 {
     ui->messagePageTitleLabel->setText(tr("Fatal error"));
-    ui->smartCardError->show();
+    ui->fatalError->show();
     ui->connectCardLabel->hide();
     ui->cardChipIcon->hide();
     ui->helpButton->show();

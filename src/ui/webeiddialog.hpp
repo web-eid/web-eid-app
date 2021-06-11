@@ -48,9 +48,10 @@ public:
     explicit WebEidDialog(QWidget* parent = nullptr);
     ~WebEidDialog() override;
 
-    void showFatalError() override;
     void showWaitingForCardPage(const CommandType commandType) override;
     QString getPin() override;
+
+    void showFatalErrorPage();
 
 public: // slots
     void onSmartCardStatusUpdate(const RetriableError status) override;
