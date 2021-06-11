@@ -60,10 +60,13 @@ public:
                 emit cancel();
                 break;
             case electronic_id::VerifyPinFailed::Status::INVALID_PIN_LENGTH:
-                qInfo() << "Command" << commandType() << "invalid pin length";
+                qInfo() << "Command" << commandType() << "invalid PIN length";
                 break;
             case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:
-                qInfo() << "Command" << commandType() << "timeout";
+                qInfo() << "Command" << commandType() << "PIN entry timeout";
+                break;
+            case electronic_id::VerifyPinFailed::Status::PIN_BLOCKED:
+                qInfo() << "Command" << commandType() << "PIN blocked";
                 break;
             default:
                 qCritical() << "Command" << commandType() << "fatal error:" << error;
