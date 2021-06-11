@@ -78,7 +78,7 @@ private:
     void runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy);
     void initGetCert();
     void initAuthenticate();
-    void initCard();
+    void initCard(bool withSigningScript = true);
 
     std::unique_ptr<Controller> controller;
 };
@@ -137,7 +137,7 @@ void WebEidTests::getCertificate_expiredCertificateHasExpiredStatus()
     // arrange
     PcscMock::setAtr(ESTEID_GEMALTO_V3_5_8_COLD_ATR);
     PcscMock::setApduScript(
-        replaceCertValidUntilTo2010(ESTEID_GEMALTO_V3_5_8_GET_AUTH_CERTIFICATE_AND_AUTHENTICATE));
+        replaceCertValidUntilTo2010(ESTEID_GEMALTO_V3_5_8_GET_SIGN_CERTIFICATE_AND_SIGNING));
 
     initGetCert();
 
@@ -159,20 +159,20 @@ void WebEidTests::getCertificate_outputsSupportedAlgos()
 
     QSignalSpy certificateReadySpy(g_cached_GetCertificate.get(),
                                    &GetCertificate::singleCertificateReady);
-    QVariantMap ES384_ALGO {
-        {"crypto-algo", "ECC"}, {"hash-algo", "SHA-384"}, {"padding-algo", "NONE"}};
+    QVariantMap ES224_ALGO {
+        {"crypto-algo", "ECC"}, {"hash-algo", "SHA-224"}, {"padding-algo", "NONE"}};
 
     // act
     runEventLoopVerifySignalsEmitted(certificateReadySpy);
 
     // assert
-    QCOMPARE(controller->result()["supported-signature-algos"].toList()[0].toMap(), ES384_ALGO);
+    QCOMPARE(controller->result()["supported-signature-algos"].toList()[0].toMap(), ES224_ALGO);
 }
 
 void WebEidTests::authenticate_validArgumentsResultInValidJwt()
 {
     // arrange
-    initCard();
+    initCard(false);
     initAuthenticate();
 
     QSignalSpy authenticateSpy(g_cached_Authenticate.get(),
@@ -235,8 +235,8 @@ void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy)
 void WebEidTests::initGetCert()
 {
     try {
-        auto getCertCmd = std::make_unique<CommandWithArguments>(CommandType::GET_CERTIFICATE,
-                                                                 GET_CERTIFICATE_COMMAND_ARGUMENT);
+        auto getCertCmd = std::make_unique<CommandWithArguments>(
+            CommandType::GET_SIGNING_CERTIFICATE, GET_CERTIFICATE_COMMAND_ARGUMENT);
         // GetCertificate will make an internal copy of getCertCmd.
         g_cached_GetCertificate = std::make_unique<GetCertificate>(*getCertCmd);
         // Controller will take ownership of getCertCmd, it will be null after this line.
@@ -265,12 +265,13 @@ void WebEidTests::initAuthenticate()
     }
 }
 
-void WebEidTests::initCard()
+void WebEidTests::initCard(bool withSigningScript)
 {
     try {
         PcscMock::setAtr(ESTEID_GEMALTO_V3_5_8_COLD_ATR);
         const auto notExpiredCertScript = replaceCertValidUntilToNextYear(
-            ESTEID_GEMALTO_V3_5_8_GET_AUTH_CERTIFICATE_AND_AUTHENTICATE);
+            withSigningScript ? ESTEID_GEMALTO_V3_5_8_GET_SIGN_CERTIFICATE_AND_SIGNING
+                              : ESTEID_GEMALTO_V3_5_8_GET_AUTH_CERTIFICATE_AND_AUTHENTICATE);
         PcscMock::setApduScript(notExpiredCertScript);
 
     } catch (const std::exception& e) {

@@ -52,7 +52,7 @@ WebEidDialog::Page commandToPage(const CommandType command)
     switch (command) {
     case CommandType::INSERT_CARD:
         return Page::ALERT;
-    case CommandType::GET_CERTIFICATE:
+    case CommandType::GET_SIGNING_CERTIFICATE:
         return Page::SELECT_CERTIFICATE;
     case CommandType::AUTHENTICATE:
     case CommandType::SIGN:
@@ -162,7 +162,7 @@ void WebEidDialog::onMultipleCertificatesReady(
         setupCertificateAndPinInfo(certificateAndPinInfos);
 
         switch (currentCommand) {
-        case CommandType::GET_CERTIFICATE:
+        case CommandType::GET_SIGNING_CERTIFICATE:
             setupOK([this] {
                 try {
                     if (CertificateButton* button =
@@ -216,7 +216,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             THROW(ProgrammingError, "Insert card commmand not allowed here");
         }
         switch (currentCommand) {
-        case CommandType::GET_CERTIFICATE:
+        case CommandType::GET_SIGNING_CERTIFICATE:
             setupCertificateAndPinInfo({certAndPin});
             break;
         case CommandType::AUTHENTICATE:
@@ -241,7 +241,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
         ui->pinInputOriginLabel->setText(ui->selectCertificateOriginLabel->text());
 
-        if (currentCommand == CommandType::GET_CERTIFICATE) {
+        if (currentCommand == CommandType::GET_SIGNING_CERTIFICATE) {
             setupOK([this, certAndPin] { emit accepted(certAndPin); });
 
         } else if (certAndPin.pinInfo.pinIsBlocked) {
