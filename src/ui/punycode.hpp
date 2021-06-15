@@ -33,7 +33,7 @@ inline QString fromPunycode(const QUrl& punycodeUrl)
     // .ee, .lv, .lt etc.
     url.setHost(url.host() + QStringLiteral(".com"), QUrl::TolerantMode);
     const auto host = url.host(QUrl::PrettyDecoded);
-    return QStringLiteral("%1://%2%3")
-        .arg(url.scheme(), host.mid(0, host.size() - 4),
-             url.port() == -1 ? QString() : QStringLiteral(":%1").arg(url.port()));
+    return QStringLiteral("%2%3").arg(host.mid(0, host.size() - 4),
+                                      url.port() == -1 ? QString()
+                                                       : QStringLiteral(":%1").arg(url.port()));
 }
