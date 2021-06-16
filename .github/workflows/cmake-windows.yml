@@ -34,7 +34,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: "5.12.10"
+          version: "5.12.11"
           arch: ${{ matrix.qt }}
 
       - name: Setup MS Visual C++ dev env
@@ -70,5 +70,60 @@ jobs:
           name: web-eid-app-windows-build-${{github.run_number}}
           path: |
             build/src/app/*.msi
-            build/src/**/*.pdb
-            build/lib/**/*.pdb
+            build/**/*.pdb
+
+  bundle:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Prepare vcpkg and libraries
+        uses: lukka/run-vcpkg@v7
+        with:
+          vcpkgArguments: gtest openssl
+          vcpkgTriplet: x64-windows
+          vcpkgGitCommitId: 18376a2f2ce989e022db5c1199b468e43f7c1a79
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: "5.12.11"
+          arch: win64_msvc2017_64
+
+      - name: Setup MS Visual C++ dev env
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+          toolset: 14.16 # Latest MS VC 2017
+
+      - name: Create build directory
+        run: mkdir build
+
+      - name: Configure CMake
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake "-GNinja" `
+            "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
+            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" ..
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: web-eid-app-windows-build-${{github.run_number}}
+          path: build
+
+      - name: Build
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake --build . --config ${env:BUILD_TYPE} --target bundle
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: web-eid-app-windows-build-${{github.run_number}}
+          path: |
+            build/src/app/*.exe
