@@ -73,16 +73,6 @@ elseif(APPLE)
     add_custom_target(macdeployqt DEPENDS web-eid
         COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
     )
-    if(SIGNCERT)
-        add_custom_command(TARGET macdeployqt POST_BUILD
-            COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
-                $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/Frameworks/*.*
-                $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/PlugIns/*/*
-            COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
-                --entitlements ${CMAKE_CURRENT_LIST_DIR}/../mac/web-eid-safari.entitlements
-                $<TARGET_BUNDLE_DIR:web-eid>
-        )
-    endif()
     add_custom_target(installer-firefox DEPENDS macdeployqt
         COMMAND rm -rf root_firefox
         COMMAND DESTDIR=root_firefox ${CMAKE_COMMAND} --install . --component main
@@ -101,6 +91,38 @@ elseif(APPLE)
             --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-chrome_${PROJECT_VERSION}.pkg
         COMMAND_EXPAND_LISTS
     )
+    add_custom_target(installer DEPENDS installer-chrome installer-firefox
+        COMMAND mkdir -p root_bundle packages
+        COMMAND cp web-eid-chrome_*.pkg packages/web-eid-chrome.pkg
+        COMMAND cp web-eid-firefox_*.pkg packages/web-eid-firefox.pkg
+        COMMAND pkgbuild --root root_bundle --identifier "eu.web-eid.web-eid"
+            "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
+            --version "${PROJECT_VERSION}" packages/web-eid-base.pkg
+        COMMAND productbuild --distribution ${CMAKE_SOURCE_DIR}/install/distribution.xml
+            "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>" --resources ${CMAKE_SOURCE_DIR}/install/
+            --version "${PROJECT_VERSION}" --package-path packages/ web-eid_${PROJECT_VERSION}.pkg
+        COMMAND mkdir -p tmp
+        COMMAND cp ${CMAKE_SOURCE_DIR}/install/DS_Store tmp/.DS_Store
+        COMMAND cp web-eid_${PROJECT_VERSION}.pkg tmp/web-eid.pkg
+        COMMAND cp ${CMAKE_SOURCE_DIR}/install/background.png ${CMAKE_SOURCE_DIR}/install/uninstall.sh tmp
+        COMMAND setfile -a E tmp/web-eid.pkg
+        COMMAND setfile -a V tmp/background.png
+        COMMAND hdiutil create web-eid_${PROJECT_VERSION}.dmg -ov -volname web-eid -srcfolder tmp
+        COMMAND_EXPAND_LISTS
+    )
+    if(SIGNCERT)
+        add_custom_command(TARGET macdeployqt POST_BUILD
+            COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
+                $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/Frameworks/*.*
+                $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/PlugIns/*/*
+            COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
+                --entitlements ${CMAKE_CURRENT_LIST_DIR}/../mac/web-eid-safari.entitlements
+                $<TARGET_BUNDLE_DIR:web-eid>
+        )
+        add_custom_command(TARGET installer POST_BUILD
+            COMMAND codesign -f --timestamp -s "Developer ID Application: ${SIGNCERT}" web-eid_${PROJECT_VERSION}.dmg
+        )
+    endif()
 else()
     include(GNUInstallDirs)
     set(WEBEID_PATH ${CMAKE_INSTALL_FULL_BINDIR}/web-eid)

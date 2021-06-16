@@ -33,7 +33,6 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
 "SU_ERROR" = "Error";
 "SU_1013" = "macOS must be 10.13 or newer.";
 "SU_BASE" = "Base components";
-"SU_SAFARI" = "Safari authentication and signing support";
 "SU_FIREFOX" = "Firefox authentication and signing support";
 "SU_CHROME" = "Chrome authentication and signing support";
 ]]>
@@ -44,7 +43,6 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
 "SU_ERROR" = "Viga";
 "SU_1013" = "macOS peab olema 10.13 või uuem.";
 "SU_BASE" = "Baas komponendid";
-"SU_SAFARI" = "Safari autentimise ja allkirjastamise tugi";
 "SU_FIREFOX" = "Firefoxi autentimise ja allkirjastamise tugi";
 "SU_CHROME" = "Chrome'i autentimise ja allkirjastamise tugi";
 ]]>
@@ -55,7 +53,6 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
 "SU_ERROR" = "Error";
 "SU_1013" = "macOS must be 10.13 or newer.";
 "SU_BASE" = "Base components";
-"SU_SAFARI" = "Поддержка аутентиф. и подпис. в Safari";
 "SU_FIREFOX" = "Поддержка аутентиф. и подпис. в Firefox";
 "SU_CHROME" = "Поддержка аутентиф. и подпис. в Chrome";
 ]]>
@@ -74,11 +71,6 @@ function pm_install_check() {
   return true;
 }
 
-function pm_safari_selected() {
-  return my.target.receiptForIdentifier("eu.web-eid.web-eid") == null ||
-     my.target.receiptForIdentifier("eu.web-eid.web-eid-safari") != null;
-}
-
 function pm_firefox_selected() {
   return my.target.receiptForIdentifier("eu.web-eid.web-eid") == null ||
      my.target.receiptForIdentifier("eu.web-eid.web-eid-firefox") != null;
@@ -92,15 +84,11 @@ function pm_chrome_selected() {
     </script>
     <choices-outline>
         <line choice="default"/>
-        <line choice="safari"/>
         <line choice="firefox"/>
         <line choice="chrome"/>
     </choices-outline>
     <choice id="default" title="SU_BASE" start_enabled="false" visible="false">
         <pkg-ref id="eu.web-eid.web-eid">web-eid-base.pkg</pkg-ref>
-    </choice>
-    <choice id="safari" title="SU_SAFARI" description="SU_SAFARI" start_selected="pm_safari_selected()">
-        <pkg-ref id="eu.web-eid.web-eid-safari">web-eid-safari.pkg</pkg-ref>
     </choice>
     <choice id="firefox" title="SU_FIREFOX" description="SU_FIREFOX" start_selected="pm_firefox_selected()">
         <pkg-ref id="eu.web-eid.web-eid-firefox">web-eid-firefox.pkg</pkg-ref>
