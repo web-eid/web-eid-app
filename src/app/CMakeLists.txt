@@ -21,7 +21,8 @@ if(WIN32)
     get_filename_component(SSL_PATH "${OPENSSL_CRYPTO_LIBRARY}" DIRECTORY)
     get_filename_component(SSL_PATH "${SSL_PATH}/../bin" ABSOLUTE)
     set(WEBEID_PATH web-eid.exe)
-    set(MSI_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.${PLATFORM})
+    set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION})
+    set(MSI_FILE ${BASE_FILE}.${PLATFORM})
     list(APPEND CANDLE_CMD "$ENV{WIX}bin\\candle.exe" -nologo -arch ${PLATFORM}
         -dMSI_VERSION=${PROJECT_VERSION}
         -dPlatform=${PLATFORM}
@@ -38,6 +39,7 @@ if(WIN32)
     )
     list(APPEND LIGHT_CMD "$ENV{WIX}bin\\light.exe" -nologo -ext WixUIExtension
         web-eid.wixobj WelcomeDlg2.wixobj WixUI_Minimal2.wixobj
+        -dWixUIDialogBmp=${CMAKE_SOURCE_DIR}/install/dlgbmp.bmp
     )
     add_custom_target(installer DEPENDS web-eid
         COMMAND ${CANDLE_CMD}
@@ -45,6 +47,12 @@ if(WIN32)
         #Build MSI with QT
         COMMAND ${CANDLE_CMD} -dqt_path=${_qt5Core_install_prefix}
         COMMAND ${LIGHT_CMD} -o "${MSI_FILE}.qt.msi"
+        WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
+    )
+    add_custom_target(bundle
+        COMMAND "$ENV{WIX}bin\\candle.exe" -nologo -ext WixBalExtension -ext WixUtilExtension -dwebeid="${BASE_FILE}"
+            -dMSI_VERSION=${PROJECT_VERSION} -dpath="${CMAKE_SOURCE_DIR}/install" "${CMAKE_SOURCE_DIR}/install/plugins.wxs"
+        COMMAND "$ENV{WIX}bin\\light.exe" "plugins.wixobj" -nologo -ext WixBalExtension -out "${BASE_FILE}.exe"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
     if(SIGNCERT)
@@ -56,6 +64,14 @@ if(WIN32)
         )
         add_custom_command(TARGET installer POST_BUILD
             COMMAND ${SIGNCMD} "${MSI_FILE}.msi" "${MSI_FILE}.qt.msi"
+            WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
+        )
+        add_custom_command(TARGET bundle POST_BUILD
+            COMMAND "$ENV{WIX}bin\\insignia.exe" -nologo -ib "${BASE_FILE}.exe" -o "${BASE_FILE}.engine.exe"
+            COMMAND ${SIGNCMD} "${BASE_FILE}.engine.exe"
+            COMMAND "$ENV{WIX}bin\\insignia.exe" -nologo -ab "${BASE_FILE}.engine.exe" "${BASE_FILE}.exe" -o "${BASE_FILE}.exe"
+            COMMAND ${SIGNCMD} "${BASE_FILE}.exe"
+            COMMAND del "${BASE_FILE}.engine.exe"
             WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
         )
     endif()

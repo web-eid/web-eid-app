@@ -31,7 +31,7 @@
 <?endif ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Name="Web eID" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
+  <Product Name="Web eID software" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
       Id="*" Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="RIA">
     <Package Platform="$(var.Platform)" Keywords="Installer" InstallerVersion="405" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated"/>
     <MediaTemplate EmbedCab="yes" CompressionLevel="high"/>

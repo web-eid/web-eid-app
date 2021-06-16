@@ -1,0 +1,29 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+    xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+    xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Bundle Name="Web eID software" Version="$(var.MSI_VERSION)" Manufacturer="RIA"
+      UpgradeCode="a9bdddb0-cdb3-11eb-b8bc-0242ac130003"
+      Copyright="RIA" AboutUrl="http://www.id.ee"
+      Condition="(VersionNT >= v6.1)">
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkSidebarLicense">
+      <bal:WixStandardBootstrapperApplication
+          LicenseUrl=""
+          SuppressOptionsUI="yes"
+          LogoFile="$(var.path)\banner.bmp"
+          LogoSideFile="$(var.path)\dlgbmp.bmp"
+          ThemeFile="$(var.path)\HyperlinkSidebarTheme.xml"/>
+        <Payload Name="1033\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.en.wxl"/>
+        <Payload Name="1061\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.et.wxl"/>
+    </BootstrapperApplicationRef>
+    <Chain>
+      <MsiPackage Id="WebEID.X86" InstallCondition="NOT VersionNT64" ForcePerMachine="yes"
+          SourceFile="$(var.webeid).x86.qt.msi" Compressed="yes">
+        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFilesFolder]Web eID"/>
+      </MsiPackage>
+      <MsiPackage Id="WebEID.X64" InstallCondition="VersionNT64" ForcePerMachine="yes"
+          SourceFile="$(var.webeid).x64.qt.msi" Compressed="yes">
+        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFilesFolder]Web eID"/>
+      </MsiPackage>
+    </Chain>
+  </Bundle>
+</Wix>
