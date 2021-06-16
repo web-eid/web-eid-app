@@ -34,6 +34,7 @@ jobs:
         run: |
           cmake --build . --config ${BUILD_TYPE}
           cmake --build . --config ${BUILD_TYPE} --target installer
+          cmake --build . --config ${BUILD_TYPE} --target installer-safari
 
       - name: Test
         working-directory: ${{github.workspace}}/build
