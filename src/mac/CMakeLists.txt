@@ -41,7 +41,6 @@ set_target_properties(web-eid-safari PROPERTIES
     XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "ee.ria.web-eid-safari"
 )
-set_property(SOURCE main.mm APPEND PROPERTY COMPILE_DEFINITIONS PROJECT_VERSION="${SEMVER_VERSION_STRING}")
 target_link_libraries(web-eid-safari SafariServices controller ui pcsc "-framework Cocoa")
 add_custom_command(TARGET web-eid-safari POST_BUILD
     COMMAND mkdir -p $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns
@@ -51,23 +50,6 @@ install(TARGETS web-eid-safari DESTINATION /Applications/Utilities)
 add_custom_target(macdeployqt-safari DEPENDS web-eid-safari
     COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid-safari>
 )
-
-# Sign
-if(SIGNCERT)
-    add_custom_command(TARGET web-eid-safari-extension POST_BUILD
-        COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
-            --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-extension.entitlements
-            $<TARGET_BUNDLE_DIR:web-eid-safari-extension>
-    )
-    add_custom_command(TARGET macdeployqt-safari POST_BUILD
-        COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
-            $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/Frameworks/*.*
-            $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns/*/*.dylib
-        COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
-            --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements
-            $<TARGET_BUNDLE_DIR:web-eid-safari>
-    )
-endif()
 
 # Installer
 add_custom_target(installer-safari DEPENDS macdeployqt-safari
@@ -88,5 +70,32 @@ add_custom_target(installer DEPENDS installer-chrome installer-firefox installer
     COMMAND productbuild --distribution ${CMAKE_SOURCE_DIR}/install/distribution.xml
         "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>" --resources ${CMAKE_SOURCE_DIR}/install/
         --version "${PROJECT_VERSION}" --package-path packages/ web-eid_${PROJECT_VERSION}.pkg
+    COMMAND mkdir -p tmp
+    COMMAND cp ${CMAKE_SOURCE_DIR}/install/DS_Store tmp/.DS_Store
+    COMMAND cp web-eid_${PROJECT_VERSION}.pkg tmp/web-eid.pkg
+    COMMAND cp ${CMAKE_SOURCE_DIR}/install/background.png ${CMAKE_SOURCE_DIR}/install/uninstall.sh tmp
+    COMMAND setfile -a E tmp/web-eid.pkg
+    COMMAND setfile -a V tmp/background.png
+    COMMAND hdiutil create web-eid_${PROJECT_VERSION}.dmg -ov -volname web-eid -srcfolder tmp
     COMMAND_EXPAND_LISTS
 )
+
+# Sign
+if(SIGNCERT)
+    add_custom_command(TARGET web-eid-safari-extension POST_BUILD
+        COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
+            --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-extension.entitlements
+            $<TARGET_BUNDLE_DIR:web-eid-safari-extension>
+    )
+    add_custom_command(TARGET macdeployqt-safari POST_BUILD
+        COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
+            $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/Frameworks/*.*
+            $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns/*/*.dylib
+        COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
+            --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements
+            $<TARGET_BUNDLE_DIR:web-eid-safari>
+    )
+    add_custom_command(TARGET installer POST_BUILD
+        COMMAND codesign -f --timestamp -s "Developer ID Application: ${SIGNCERT}" web-eid_${PROJECT_VERSION}.dmg
+    )
+endif()

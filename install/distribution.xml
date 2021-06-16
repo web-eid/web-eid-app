@@ -18,13 +18,13 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
     <welcome language="ru" mime-type="text/html"><![CDATA[<html><body><br />
 <p style="margin: 0px; font: 13px 'Lucida Grande'">Вам будут предложены шаги по установке данного ПО.</p></body></html>]]></welcome>
     <conclusion language="en" mime-type="text/html"><![CDATA[<html><body><br />
-<p style="margin: 0px; font: 14px 'Lucida Grande'">Changelog: <a href="https://www.id.ee/en/article/id-tarkvara-versioonide-info-release-notes/">https://www.id.ee/en/article/id-tarkvara-versioonide-info-release-notes/</a></p><br /><br />
+<p style="margin: 0px; font: 14px 'Lucida Grande'">Installation completed successfully!</p><br /><br />
 </body></html>]]></conclusion>
     <conclusion language="et" mime-type="text/html"><![CDATA[<html><body><br />
-<p style="margin: 0px; font: 14px 'Lucida Grande'">Muudatuste loetelu: <a href="https://www.id.ee/artikkel/id-tarkvara-versioonide-info-release-notes/">https://www.id.ee/artikkel/id-tarkvara-versioonide-info-release-notes/</a></p><br /><br />
+<p style="margin: 0px; font: 14px 'Lucida Grande'">Tarkvara paigaldus õnnestus!</p><br /><br />
 </body></html>]]></conclusion>
     <conclusion language="ru" mime-type="text/html"><![CDATA[<html><body><br />
-<p style="margin: 0px; font: 14px 'Lucida Grande'">Журнал изменений: <a href="https://www.id.ee/ru/artikkel/informacziya-o-versiyah-programmnogo-obespecheniya-id-karty-release-notes-2/">https://www.id.ee/ru/artikkel/informacziya-o-versiyah-programmnogo-obespecheniya-id-karty-release-notes-2/</a></p><br /><br />
+<p style="margin: 0px; font: 14px 'Lucida Grande'">Installation completed successfully!</p><br /><br />
 </body></html>]]></conclusion>
     <localization>
         <strings language="en">
