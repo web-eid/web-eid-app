@@ -396,6 +396,11 @@ void WebEidDialog::setupCertificateAndPinInfo(
         CertificateButton* button = new CertificateButton(certAndPin, ui->selectCertificatePage);
         ui->selectCertificateInfo->addWidget(button);
         ui->selectionGroup->addButton(button);
+        QWidget* previous = ui->selectCertificateOriginLabel;
+        if (!ui->selectionGroup->buttons().isEmpty()) {
+            previous = ui->selectionGroup->buttons().last();
+        }
+        setTabOrder(previous, button);
     }
 }
 

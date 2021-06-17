@@ -308,6 +308,9 @@ color: #003168;
           </item>
           <item>
            <widget class="QLabel" name="fatalErrorLabel">
+            <property name="focusPolicy">
+             <enum>Qt::TabFocus</enum>
+            </property>
             <property name="text">
              <string>A fatal error occurred, check the logs for more details</string>
             </property>
