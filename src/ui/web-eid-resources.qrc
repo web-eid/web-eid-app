@@ -19,5 +19,6 @@
         <file>fonts/Roboto-Regular.ttf</file>
         <file>fonts/Roboto-Thin.ttf</file>
         <file>fonts/Roboto-ThinItalic.ttf</file>
+        <file>images/no-id-card.svg</file>
     </qresource>
 </RCC>
