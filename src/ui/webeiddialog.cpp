@@ -79,6 +79,9 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     setWindowFlag(Qt::CustomizeWindowHint);
     setWindowFlag(Qt::WindowTitleHint);
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
+    auto pinInputFont = ui->pinInput->font();
+    pinInputFont.setLetterSpacing(QFont::AbsoluteSpacing, 2);
+    ui->pinInput->setFont(pinInputFont);
     ui->waitingSpinner->load(QStringLiteral(":/images/wait.svg"));
     ui->selectionGroup = new QButtonGroup(this);
     ui->fatalError->hide();

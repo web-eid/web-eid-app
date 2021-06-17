@@ -68,13 +68,19 @@ background-color: #F5F5F5;
 }
 QLineEdit {
 border: 2px solid #113F8E;
+color: #113F8E;
 border-radius: 3px;
-min-width: 161px;
-min-height: 41px;
-max-width: 161px;
-max-height: 41px;
-font-size: 20px;
+min-width: 200px;
+min-height: 45px;
+max-width: 200px;
+max-height: 45px;
+font-size: 27px;
 font-weight: bold;
+padding-right: 14px;
+padding-left: 14px;
+padding-top: 0px;
+padding-bottom: 0px;
+lineedit-password-character: 42;
 }
 QLineEdit[warning=&quot;true&quot;] {
 border: 2px solid #F04E23;
