@@ -393,13 +393,13 @@ void WebEidDialog::setupCertificateAndPinInfo(
         widget->deleteLater();
     }
     for (const CardCertificateAndPinInfo& certAndPin : cardCertAndPinInfos) {
-        CertificateButton* button = new CertificateButton(certAndPin, ui->selectCertificatePage);
-        ui->selectCertificateInfo->addWidget(button);
-        ui->selectionGroup->addButton(button);
         QWidget* previous = ui->selectCertificateOriginLabel;
         if (!ui->selectionGroup->buttons().isEmpty()) {
             previous = ui->selectionGroup->buttons().last();
         }
+        CertificateButton* button = new CertificateButton(certAndPin, ui->selectCertificatePage);
+        ui->selectCertificateInfo->addWidget(button);
+        ui->selectionGroup->addButton(button);
         setTabOrder(previous, button);
     }
 }
