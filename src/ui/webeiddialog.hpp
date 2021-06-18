@@ -43,7 +43,7 @@ class WebEidDialog : public WebEidUI
     Q_OBJECT
 
 public:
-    enum class Page { WAITING, ALERT, SELECT_CERTIFICATE, PIN_INPUT };
+    enum class Page { WAITING, ALERT, SELECT_CERTIFICATE, PIN_INPUT, ABOUT };
 
     explicit WebEidDialog(QWidget* parent = nullptr);
     ~WebEidDialog() override;
@@ -51,6 +51,7 @@ public:
     void showWaitingForCardPage(const CommandType commandType) override;
     QString getPin() override;
 
+    static void showAboutPage();
     void showFatalErrorPage();
 
 public: // slots

@@ -207,5 +207,17 @@
         <source>Error communicating with the card. More detailed information can be found in the log files.</source>
         <translation>Error communicating with the card. More detailed information can be found in the log files.</translation>
     </message>
+    <message>
+        <source>This application provides eID Safari extension.</source>
+        <translation>This application provides eID Safari extension.</translation>
+    </message>
+    <message>
+        <source>To uninstall this extension, remove this application</source>
+        <translation>To uninstall this extension, remove this application</translation>
+    </message>
+    <message>
+        <source>Version: %1</source>
+        <translation>Version: %1</translation>
+    </message>
 </context>
 </TS>

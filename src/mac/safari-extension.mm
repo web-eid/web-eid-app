@@ -48,14 +48,11 @@
 - (void)notificationEvent:(NSNotification *)notification {
     // Received notification from App
     NSString *nonce = notification.object;
-    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:WebEidShared];
-    NSDictionary *resp = [defaults dictionaryForKey:nonce];
+    NSDictionary *resp = takeValue(nonce);
     NSLog(@"web-eid-safari-extension: from app nonce (%@) request: %@", nonce, resp);
     if (resp == nil) {
         return;
     }
-    [defaults removeObjectForKey:nonce];
-    [defaults synchronize];
 
     // Forward to background script
     NSExtensionContext *context = contexts[nonce];
@@ -65,25 +62,46 @@
     [context completeRequestReturningItems:@[ response ] completionHandler:nil];
 }
 
+- (BOOL)execNativeApp {
+    if ([NSRunningApplication runningApplicationsWithBundleIdentifier:WebEidApp].count > 0) {
+        NSLog(@"web-eid-safari-extension: web-eid-safari is running");
+        return YES;
+    }
+    NSURL *appURL = [NSWorkspace.sharedWorkspace URLForApplicationWithBundleIdentifier:WebEidApp];
+    if (appURL == nil) {
+        NSLog(@"web-eid-safari-extension: failed to get app url");
+        return NO;
+    }
+    setValue(WebEidStarting, @(true));
+    if (![NSWorkspace.sharedWorkspace launchApplication:appURL.path]) {
+        NSLog(@"web-eid-safari-extension: failed to start app");
+        return NO;
+    }
+    NSLog(@"web-eid-safari-extension: started app");
+    for (int i = 0; i < 10 && [getUserDefaults() boolForKey:WebEidStarting]; ++i) {
+        [NSThread sleepForTimeInterval:1.0];
+        NSLog(@"web-eid-safari-extension: waiting to be running %@", [getUserDefaults() objectForKey:WebEidStarting]);
+    }
+    if ([getUserDefaults() boolForKey:WebEidStarting]) {
+        NSLog(@"web-eid-safari-extension: timeout to start app");
+        return NO;
+    }
+    NSLog(@"web-eid-safari-extension: app executed");
+    return YES;
+}
+
 - (void)beginRequestWithExtensionContext:(NSExtensionContext *)context
 {
-    BOOL isRunning = [NSRunningApplication runningApplicationsWithBundleIdentifier:WebEidApp].count > 0;
-    NSLog(@"web-eid-safari-extension: web-eid-safari isRunning: %d", isRunning);
-    if (!isRunning) {
-        if (NSURL *appURL = [NSWorkspace.sharedWorkspace URLForApplicationWithBundleIdentifier:WebEidApp]) {
-            if ([NSWorkspace.sharedWorkspace launchApplication:appURL.path]) {
-                NSLog(@"web-eid-safari-extension: started app");
-            } else {
-                NSLog(@"web-eid-safari-extension: failed to start app");
-            }
-        }
-        else {
-            NSLog(@"web-eid-safari-extension: failed to get app url");
-        }
-    }
-
     id message = [context.inputItems.firstObject userInfo][SFExtensionMessageKey];
     NSLog(@"web-eid-safari-extension: msg from background.js %@", message);
+
+    if (![self execNativeApp]) {
+        NSDictionary *resp = @{@"code": @"ERR_WEBEID_NATIVE_FATAL", @"message": @"Failed to start app"};
+        NSExtensionItem *response = [[NSExtensionItem alloc] init];
+        response.userInfo = @{ SFExtensionMessageKey: resp };
+        [context completeRequestReturningItems:@[ response ] completionHandler:nil];
+        return;
+    }
 
     // Save context
     NSString *nonce = [[[NSUUID alloc] init] UUIDString];
@@ -96,9 +114,7 @@
         NSError *error;
         msg[@"arguments"] = [NSJSONSerialization dataWithJSONObject:message[@"arguments"] options:0 error:&error];
     }
-    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:WebEidShared];
-    [defaults setObject:msg forKey:nonce];
-    [defaults synchronize];
+    setValue(nonce, msg);
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:WebEidApp object:nonce userInfo:nil deliverImmediately:YES];
 }
 

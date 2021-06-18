@@ -24,7 +24,7 @@ set_target_properties(web-eid-safari-extension PROPERTIES
     BUNDLE_EXTENSION appex
     XCODE_PRODUCT_TYPE "com.apple.product-type.app-extension"
     XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-extension.entitlements"
-    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "ee.ria.web-eid-safari.web-eid-safari-extension"
+    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "eu.web-eid.web-eid-safari.web-eid-safari-extension"
 )
 target_link_libraries(web-eid-safari-extension SafariServices "-framework AppKit")
 target_link_options(web-eid-safari-extension PRIVATE -e _NSExtensionMain -fapplication-extension)
@@ -45,7 +45,7 @@ set_target_properties(web-eid-safari PROPERTIES
     AUTOMOC OFF
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info-app.plist.cmake
     XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements"
-    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "ee.ria.web-eid-safari"
+    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "eu.web-eid.web-eid-safari"
 )
 target_link_libraries(web-eid-safari SafariServices controller ui pcsc "-framework Cocoa")
 add_custom_command(TARGET web-eid-safari POST_BUILD

@@ -3,6 +3,7 @@ add_executable(web-eid WIN32 MACOSX_BUNDLE
     getcommandhandler.cpp
     main.cpp
     web-eid.rc
+    web-eid.entitlements
 )
 set_property(SOURCE web-eid.rc APPEND PROPERTY COMPILE_DEFINITIONS
     PROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
@@ -134,7 +135,7 @@ elseif(APPLE)
                 $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/Frameworks/*.*
                 $<TARGET_BUNDLE_CONTENT_DIR:web-eid>/PlugIns/*/*
             COMMAND codesign -f -o runtime --timestamp -s "Developer ID Application: ${SIGNCERT}"
-                --entitlements ${CMAKE_CURRENT_LIST_DIR}/../mac/web-eid-safari.entitlements
+                --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid.entitlements
                 $<TARGET_BUNDLE_DIR:web-eid>
         )
         add_custom_command(TARGET installer POST_BUILD

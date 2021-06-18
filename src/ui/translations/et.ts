@@ -207,5 +207,17 @@
         <source>Error communicating with the card. More detailed information can be found in the log files.</source>
         <translation>Viga kaardiga suhtlemisel. Täpsem informatsioon on leitav logifailidest.</translation>
     </message>
+    <message>
+        <source>This application provides eID Safari extension.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To uninstall this extension, remove this application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

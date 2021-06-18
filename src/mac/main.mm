@@ -23,6 +23,7 @@
 #include "application.hpp"
 #include "controller.hpp"
 #include "logging.hpp"
+#include "webeiddialog.hpp"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -103,14 +104,11 @@
 
 - (void)notificationEvent:(NSNotification *)notification {
     NSString *nonce = notification.object;
-    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:WebEidShared];
-    NSDictionary *req = [defaults dictionaryForKey:nonce];
+    NSDictionary *req = takeValue(nonce);
     NSLog(@"web-eid-safari: msg from extension nonce (%@) request: %@", nonce, req);
     if (req == nil) {
         return;
     }
-    [defaults removeObjectForKey:nonce];
-    [defaults synchronize];
 
     NSDictionary *resp;
     if([@"status" isEqualToString:req[@"command"]]) {
@@ -132,54 +130,12 @@
     }
 
     NSLog(@"web-eid-safari: msg to extension nonce (%@) request: %@", nonce, resp);
-    [defaults setObject:resp forKey:nonce];
-    [defaults synchronize];
+    setValue(nonce, resp);
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:WebEidExtension object:nonce userInfo:nil deliverImmediately:YES];
+    qApp->quit();
 }
 
 @end
-
-
-static void checkAppAutostart()
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    LSSharedFileListRef list = LSSharedFileListCreate(kCFAllocatorDefault, kLSSharedFileListSessionLoginItems, nil);
-    if (list) {
-        bool found = false;
-        NSURL *url = NSBundle.mainBundle.bundleURL;
-        UInt32 seedValue = 0;
-        NSArray *loginItemsArray = CFBridgingRelease(LSSharedFileListCopySnapshot(list, &seedValue));
-        for (id item in loginItemsArray) {
-            if (NSURL *tmp = CFBridgingRelease(LSSharedFileListItemCopyResolvedURL((__bridge LSSharedFileListItemRef)item, 0, nil))) {
-                if ([tmp isEqual:url])
-                    found = true;
-            }
-        }
-
-        if (!found) {
-            NSDictionary *props = @{(__bridge id)kLSSharedFileListLoginItemHidden: @(YES)};
-            LSSharedFileListItemRef item = LSSharedFileListInsertItemURL(
-                list, kLSSharedFileListItemLast, nil, nil, (__bridge CFURLRef)url, (__bridge CFDictionaryRef)props, nil);
-            if (item) {
-                CFRelease(item);
-            }
-        }
-        CFRelease(list);
-    }
-#pragma clang diagnostic pop
-}
-
-static void checkExtensionState()
-{
-    [SFSafariExtensionManager getStateOfSafariExtensionWithIdentifier:WebEidExtension completionHandler:^(SFSafariExtensionState *state, NSError *error) {
-        NSLog(@"Extension state %@, error %@", @(state ? state.enabled : 0), error);
-        if (!state.enabled) {
-            [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension completionHandler:nil];
-        }
-    }];
-}
-
 
 int main(int argc, char* argv[])
 {
@@ -207,8 +163,17 @@ int main(int argc, char* argv[])
     }
 
     [NSDistributedNotificationCenter.defaultCenter addObserver:NSApp selector:@selector(notificationEvent:) name:WebEidApp object:nil];
-    checkAppAutostart();
-    checkExtensionState();
+    [SFSafariExtensionManager getStateOfSafariExtensionWithIdentifier:WebEidExtension completionHandler:^(SFSafariExtensionState *state, NSError *error) {
+        NSLog(@"Extension state %@, error %@", @(state ? state.enabled : 0), error);
+        if (!state.enabled) {
+            [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension completionHandler:nil];
+        }
+    }];
 
+    id starting = takeValue(WebEidStarting);
+    NSLog(@"web-eid-safari: is starting %@", starting);
+    if (![(NSNumber*)starting boolValue]) {
+        WebEidDialog::showAboutPage();
+    }
     return QApplication::exec();
 }

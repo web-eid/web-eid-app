@@ -57,6 +57,8 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->setupUi(this);
     setWindowFlag(Qt::CustomizeWindowHint);
     setWindowFlag(Qt::WindowTitleHint);
+    ui->aboutPageLabel->setText(qApp->applicationDisplayName());
+    ui->versionLabel->setText(tr("Version: %1").arg(qApp->applicationVersion()));
 
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
     auto pinInputFont = ui->pinInput->font();
@@ -100,6 +102,16 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 WebEidDialog::~WebEidDialog()
 {
     delete ui;
+}
+
+void WebEidDialog::showAboutPage()
+{
+    WebEidDialog* d = new WebEidDialog();
+    d->setAttribute(Qt::WA_DeleteOnClose);
+    d->ui->okButton->hide();
+    d->ui->pageStack->setCurrentIndex(int(Page::ABOUT));
+    d->adjustSize();
+    d->open();
 }
 
 void WebEidDialog::showFatalErrorPage()
@@ -328,6 +340,7 @@ bool WebEidDialog::event(QEvent* event)
 {
     if (event->type() == QEvent::LanguageChange) {
         ui->retranslateUi(this);
+        ui->versionLabel->setText(tr("Version: %1").arg(qApp->applicationVersion()));
     }
     return WebEidUI::event(event);
 }
