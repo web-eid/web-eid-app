@@ -430,7 +430,7 @@ color: #003168;
           <enum>Qt::TabFocus</enum>
          </property>
          <property name="text">
-          <string>Authenticate</string>
+          <string notr="true">Authenticate</string>
          </property>
         </widget>
        </item>
@@ -448,7 +448,7 @@ color: #003168;
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
-            <string>By confirming authentication, I agree to submit my name and personal identification number to the website</string>
+            <string notr="true">By confirming authentication, I agree to submit my name and personal identification number to the website</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -490,7 +490,7 @@ color: #003168;
             </font>
            </property>
            <property name="text">
-            <string>Please enter authentication PIN (PIN 1):</string>
+            <string notr="true">Please enter authentication PIN (PIN 1):</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -591,7 +591,7 @@ color: #003168;
      <item>
       <widget class="QPushButton" name="okButton">
        <property name="text">
-        <string>Proceed</string>
+        <string notr="true">Proceed</string>
        </property>
        <property name="icon">
         <iconset resource="web-eid-resources.qrc">

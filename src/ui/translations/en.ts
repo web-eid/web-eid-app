@@ -100,10 +100,6 @@
         <translation>Waiting for card</translation>
     </message>
     <message>
-        <source>No electronic ID card is inserted that has the signing certificate provided as argument. Please insert the electronic ID card that belongs to %1</source>
-        <translation>No electronic ID card is inserted that has the signing certificate provided as argument. Please insert the electronic ID card that belongs to %1</translation>
-    </message>
-    <message>
         <source>Start smart card service</source>
         <translation>Start smart card service</translation>
     </message>
@@ -206,6 +202,10 @@
     <message>
         <source>https://www.id.ee/en/</source>
         <translation>https://www.id.ee/en/</translation>
+    </message>
+    <message>
+        <source>None of the inserted electronic ID cards has the requested signing certificate. Please insert the electronic ID card that belongs to %1.</source>
+        <translation>None of the inserted electronic ID cards has the requested signing certificate. Please insert the electronic ID card that belongs to %1.</translation>
     </message>
 </context>
 <context>
