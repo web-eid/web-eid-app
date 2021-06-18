@@ -37,8 +37,8 @@
   <String Id="ModifyCloseButton">&amp;Close</String>
   <String Id="SuccessRepairHeader">Repair completed successfully.</String>
   <String Id="SuccessUninstallHeader">Uninstall completed</String>
-  <String Id="SuccessInstallHeader">Installation completed successfully.</String>
-  <String Id="SuccessInstallMessage">Installation completed successfully!</String>
+  <String Id="SuccessInstallHeader">Installation completed successfully!</String>
+  <String Id="SuccessInstallMessage"></String>
   <String Id="SuccessHeader">Setup successful</String>
   <String Id="SuccessLaunchButton">&amp;Launch ID-card utility</String>
   <String Id="SuccessRestartText">You must restart your computer before you can use the software.</String>
@@ -59,7 +59,6 @@
   <String Id="FilesInUseDontCloseRadioButton">&amp;Do not close the applications. A reboot will be required.</String>
   <String Id="FilesInUseOkButton">&amp;OK</String>
   <String Id="FilesInUseCancelButton">&amp;Cancel</String>
-  <String Id="ChangeLogLink">&lt;a href="https://www.id.ee/en/article/id-software-versions-info-release-notes/"&gt;Changelog&lt;/a&gt;</String>
   <String Id="OptionsCustomizeInstall">Customize install</String>
   <String Id="chromeplugin">Chrome signing support</String>
   <String Id="chromepluginpolicy">Chrome signing plug-in will be activated automatically</String>
