@@ -12,7 +12,11 @@
     <name>CertificateWidget</name>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4</translation>
+        <translation type="vanished">&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: from %3 to %4</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -27,7 +31,7 @@
     </message>
     <message>
         <source>By signing, I agree to the transfer of my name and personal identification code to the service provider.</source>
-        <translation>By signing, I agree to the transfer of my name and personal identification code to the service provider.</translation>
+        <translation type="vanished">By signing, I agree to the transfer of my name and personal identification code to the service provider.</translation>
     </message>
     <message>
         <source>The Smart Card service required to use the ID-card does not work. Please run it.</source>
@@ -85,7 +89,7 @@
     </message>
     <message>
         <source>ID-card not found. Please insert the ID-card into the reader.</source>
-        <translation>ID-card not found. Please insert the ID-card into the reader.</translation>
+        <translation type="vanished">ID-card not found. Please insert the ID-card into the reader.</translation>
     </message>
     <message>
         <source>PinPad reader session timed out.</source>
@@ -101,7 +105,7 @@
     </message>
     <message>
         <source>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</source>
-        <translation>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</translation>
+        <translation type="vanished">The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</translation>
     </message>
     <message>
         <source>Launch the Smart Card service</source>
@@ -117,11 +121,11 @@
     </message>
     <message>
         <source>The ID-card was removed from the reader. Please insert the ID-card into the reader.</source>
-        <translation>The ID-card was removed from the reader. Please insert the ID-card into the reader.</translation>
+        <translation type="vanished">The ID-card was removed from the reader. Please insert the ID-card into the reader.</translation>
     </message>
     <message>
         <source>Operation failed. Make sure that the ID-card and the card reader are connected correctly.</source>
-        <translation>Operation failed. Make sure that the ID-card and the card reader are connected correctly.</translation>
+        <translation type="vanished">Operation failed. Make sure that the ID-card and the card reader are connected correctly.</translation>
     </message>
     <message>
         <source>Check the ID-card and the reader connection</source>
@@ -129,7 +133,7 @@
     </message>
     <message>
         <source>Connection to the ID-card or reader failed. Make sure that the ID-card and the card reader are connected correctly.</source>
-        <translation>Connection to the ID-card or reader failed. Make sure that the ID-card and the card reader are connected correctly.</translation>
+        <translation type="vanished">Connection to the ID-card or reader failed. Make sure that the ID-card and the card reader are connected correctly.</translation>
     </message>
     <message>
         <source>The desired operation cannot be performed with the inserted ID-card. Make sure that the ID-card is supported by the Web eID application.</source>
@@ -157,15 +161,15 @@
     </message>
     <message>
         <source>An error occurred in the Smart Card service required to use the ID-card. Make sure that the ID-card and the card reader are connected correctly or relaunch the Smart Card service.</source>
-        <translation>An error occurred in the Smart Card service required to use the ID-card. Make sure that the ID-card and the card reader are connected correctly or relaunch the Smart Card service.</translation>
+        <translation type="vanished">An error occurred in the Smart Card service required to use the ID-card. Make sure that the ID-card and the card reader are connected correctly or relaunch the Smart Card service.</translation>
     </message>
     <message>
         <source>The card in the reader is not supported. Make sure that the entered ID-card is supported by the Web eID application.</source>
-        <translation>The card in the reader is not supported. Make sure that the entered ID-card is supported by the Web eID application.</translation>
+        <translation type="vanished">The card in the reader is not supported. Make sure that the entered ID-card is supported by the Web eID application.</translation>
     </message>
     <message>
         <source>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</source>
-        <translation>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</translation>
+        <translation type="vanished">The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</translation>
     </message>
     <message>
         <source>Unknown error</source>
@@ -182,10 +186,6 @@
     <message>
         <source>PIN2 for signing</source>
         <translation>PIN2 for signing</translation>
-    </message>
-    <message>
-        <source>Operation failed</source>
-        <translation>Operation failed</translation>
     </message>
     <message>
         <source>Retry</source>
@@ -207,16 +207,64 @@
         <source>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</source>
         <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/article/how-to-check-that-your-id-card-reader-is-working/</translation>
     </message>
+    <message>
+        <source>A fatal error occurred, check the logs for more details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fatal error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By confirming authentication, I agree to submit my name and personal identification number to the website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By confirming signing, I agree to submit my name and personal identification number to the website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None of the inserted electronic ID cards has the requested signing certificate. Please insert the electronic ID card that belongs to %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No smart card in reader. Please insert an electronic ID card into the reader.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The smart card was removed. Please insert an electronic ID card into the reader.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The smart card transaction failed. Please make sure that the smart card and reader are properly connected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to communicate with the smart card or reader. Please make sure that the smart card and reader are properly connected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Internal smart card service error occurred. Please make sure that the smart card and reader are properly connected or try restarting the smart card service.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsupported smart card in reader. Please insert a supported electronic ID card into the reader.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No ID card with valid certificate available. Please insert an ID card that has a valid certificate.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WebEidUI</name>
     <message>
         <source>Operation failed</source>
-        <translation>Operation failed</translation>
+        <translation type="vanished">Operation failed</translation>
     </message>
     <message>
         <source>Error communicating with card. More detailed information can be found in the log files.</source>
-        <translation>Error communicating with card. More detailed information can be found in the log files.</translation>
+        <translation type="vanished">Error communicating with card. More detailed information can be found in the log files.</translation>
     </message>
 </context>
 </TS>
