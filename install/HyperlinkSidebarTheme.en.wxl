@@ -59,6 +59,7 @@
   <String Id="FilesInUseDontCloseRadioButton">&amp;Do not close the applications. A reboot will be required.</String>
   <String Id="FilesInUseOkButton">&amp;OK</String>
   <String Id="FilesInUseCancelButton">&amp;Cancel</String>
+  <String Id="ChangeLogLink"></String>
   <String Id="OptionsCustomizeInstall">Customize install</String>
   <String Id="chromeplugin">Chrome signing support</String>
   <String Id="chromepluginpolicy">Chrome signing plug-in will be activated automatically</String>

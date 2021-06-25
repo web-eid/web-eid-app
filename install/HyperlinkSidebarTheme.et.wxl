@@ -59,6 +59,7 @@
   <String Id="FilesInUseDontCloseRadioButton">&amp;Ära sulge rakendusi. Arvuti tuleb taaskäivitada.</String>
   <String Id="FilesInUseOkButton">&amp;OK</String>
   <String Id="FilesInUseCancelButton">&amp;Katkesta</String>
+  <String Id="ChangeLogLink"></String>
   <String Id="OptionsCustomizeInstall">Kohanda paigaldust</String>
   <String Id="chromeplugin">Chrome allkirjastamise tugi</String>
   <String Id="chromepluginpolicy">Chrome allkirjastamise tugi aktiveeritakse automaatselt</String>
