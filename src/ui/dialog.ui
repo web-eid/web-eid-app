@@ -318,7 +318,7 @@ color: #003168;
              <enum>Qt::TabFocus</enum>
             </property>
             <property name="text">
-             <string>A fatal error occurred, check the logs for more details</string>
+             <string>Error communicating with card. More detailed information can be found in the log files.</string>
             </property>
            </widget>
           </item>

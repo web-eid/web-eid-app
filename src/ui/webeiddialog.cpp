@@ -125,7 +125,7 @@ WebEidDialog::~WebEidDialog()
 
 void WebEidDialog::showFatalErrorPage()
 {
-    ui->messagePageTitleLabel->setText(tr("Fatal error"));
+    ui->messagePageTitleLabel->setText(tr("Operation failed"));
     ui->fatalError->show();
     ui->connectCardLabel->hide();
     ui->cardChipIcon->hide();
@@ -245,16 +245,16 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
             ui->pinInputPageTitleLabel->setText(tr("Authenticate"));
             ui->pinInputDescriptionLabel->setText(
-                tr("By confirming authentication, I agree to submit my name and personal "
-                   "identification number to the website"));
+                tr("By authenticating, I agree to the transfer of my name and personal "
+                   "identification code to the service provider."));
             ui->pinTitleLabel->setText(tr("Enter PIN1 for authentication"));
             break;
         case CommandType::SIGN:
             ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
             ui->pinInputPageTitleLabel->setText(tr("Sign"));
             ui->pinInputDescriptionLabel->setText(
-                tr("By confirming signing, I agree to submit my name and personal identification "
-                   "number to the website"));
+                tr("By signing, I agree to the transfer of my name and personal identification "
+                   "code to the service provider."));
             ui->pinTitleLabel->setText(tr("Enter PIN2 for signing"));
             break;
         default:
@@ -291,8 +291,8 @@ void WebEidDialog::onRetry(const RetriableError error)
 
 void WebEidDialog::onCertificateNotFound(const QString& certificateSubject)
 {
-    onRetryImpl(tr("None of the inserted electronic ID cards has the requested signing "
-                   "certificate. Please insert the electronic ID card that belongs to %1.")
+    onRetryImpl(tr("The certificate of the ID-card in the reader does not match the submitted "
+                   "certificate. Please insert the ID-card belonging to %1.")
                     .arg(certificateSubject));
 }
 
@@ -493,34 +493,37 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
 {
     switch (error) {
     case RetriableError::SMART_CARD_SERVICE_IS_NOT_RUNNING:
-        return {tr("The Smart Card service required to use the ID-card does not work. Please run it."),
-                tr("Launch the Smart Card service"), QStringLiteral(":/images/cardreader.svg")};
+        return {
+            tr("The Smart Card service required to use the ID-card does not work. Please run it."),
+            tr("Launch the Smart Card service"), QStringLiteral(":/images/cardreader.svg")};
     case RetriableError::NO_SMART_CARD_READERS_FOUND:
         return {tr("Card reader not connected. Please connect the card reader to the computer."),
                 tr("Connect the card reader"), QStringLiteral(":/images/cardreader.svg")};
 
     case RetriableError::NO_SMART_CARDS_FOUND:
     case RetriableError::PKCS11_TOKEN_NOT_PRESENT:
-        return {tr("No smart card in reader. "
-                   "Please insert an electronic ID card into the reader."),
+        return {tr("ID-card not found. Please insert the ID-card into the reader."),
                 tr("Insert the ID-card"), QStringLiteral(":/images/no-id-card.svg")};
     case RetriableError::SMART_CARD_WAS_REMOVED:
     case RetriableError::PKCS11_TOKEN_REMOVED:
-        return {tr("The smart card was removed. "
-                   "Please insert an electronic ID card into the reader."),
+        return {tr("The ID-card was removed from the reader. Please insert the ID-card into the "
+                   "reader."),
                 tr("Insert the ID-card"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_TRANSACTION_FAILED:
-        return {tr("The smart card transaction failed. "
-                   "Please make sure that the smart card and reader are properly connected."),
-                tr("Check the ID-card and the reader connection"), QStringLiteral(":/images/no-id-card.svg")};
+        return {tr("Operation failed. Make sure that the ID-card and the card reader are connected "
+                   "correctly."),
+                tr("Check the ID-card and the reader connection"),
+                QStringLiteral(":/images/no-id-card.svg")};
     case RetriableError::FAILED_TO_COMMUNICATE_WITH_CARD_OR_READER:
-        return {tr("Failed to communicate with the smart card or reader. "
-                   "Please make sure that the smart card and reader are properly connected."),
-                tr("Check the ID-card and the reader connection"), QStringLiteral(":/images/no-id-card.svg")};
+        return {tr("Connection to the ID-card or reader failed. Make sure that the ID-card and the "
+                   "card reader are connected correctly."),
+                tr("Check the ID-card and the reader connection"),
+                QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_CHANGE_REQUIRED:
-        return {tr("The desired operation cannot be performed with the inserted ID-card. Make sure that the ID-card is supported by the Web eID application."),
+        return {tr("The desired operation cannot be performed with the inserted ID-card. Make sure "
+                   "that the ID-card is supported by the Web eID application."),
                 tr("ID-card is not supported"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
@@ -532,19 +535,19 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
                 QStringLiteral(":/images/no-id-card.svg")};
         // TODO: what action should the user take? Should this be fatal?
     case RetriableError::SCARD_ERROR:
-        return {tr("Internal smart card service error occurred. "
-                   "Please make sure that the smart card and reader are properly connected "
-                   "or try restarting the smart card service."),
+        return {tr("An error occurred in the Smart Card service required to use the ID-card. Make "
+                   "sure that the ID-card and the card reader are connected correctly or relaunch "
+                   "the Smart Card service."),
                 tr("Operation failed"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::UNSUPPORTED_CARD:
-        return {tr("Unsupported smart card in reader. "
-                   "Please insert a supported electronic ID card into the reader."),
+        return {tr("The card in the reader is not supported. Make sure that the entered ID-card is "
+                   "supported by the Web eID application."),
                 tr("ID-card is not supported"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::NO_VALID_CERTIFICATE_AVAILABLE:
-        return {tr("No ID card with valid certificate available. Please insert "
-                   "an ID card that has a valid certificate."),
+        return {tr("The certificates of the ID-card have expired. Valid certificates are required "
+                   "for the electronic use of the ID-card."),
                 tr("ID-card is not supported"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::UNKNOWN_ERROR:
