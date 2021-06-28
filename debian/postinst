@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+# Chrome extension
+
+mkdir -p /etc/opt/chrome/native-messaging-hosts
+ln -sf /usr/share/chrome-token-signing/eu.webeid.json \
+	/etc/opt/chrome/native-messaging-hosts/eu.webeid.json
+
+# Firefox extension
+
 POLICIES=/usr/lib/firefox/distribution
 mkdir -p ${POLICIES}
 if [ ! -f ${POLICIES}/policies.json ]; then
@@ -10,3 +18,5 @@ else
 fi
 jq '.policies.ExtensionSettings["{e68418bc-f2b0-4459-a9ea-3e72b6751b07}"] = {"installation_mode": "normal_installed", "install_url": "https://addons.mozilla.org/firefox/downloads/latest/web-eid-webextension/latest.xpi"}' ${JQARGS} > ${POLICIES}/policies.tmp
 mv ${POLICIES}/policies.tmp ${POLICIES}/policies.json
+
+#DEBHELPER#

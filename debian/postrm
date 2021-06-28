@@ -1,5 +1,16 @@
 #!/bin/bash
+
 set -e
+
+# Chrome extension
+
+# Workaround postrm when folder is missing
+mkdir -p /etc/opt/chrome/native-messaging-hosts
+
+rm -f /etc/opt/chrome/native-messaging-hosts/eu.webeid.json
+rmdir -p --ignore-fail-on-non-empty /etc/opt/chrome/native-messaging-hosts
+
+# Firefox extension
 
 POLICIES=/usr/lib/firefox/distribution
 mkdir -p ${POLICIES}
@@ -10,3 +21,5 @@ else
 fi
 jq '.policies.ExtensionSettings["{e68418bc-f2b0-4459-a9ea-3e72b6751b07}"] = {"installation_mode": "blocked"}' ${JQARGS} > ${POLICIES}/policies.tmp
 mv ${POLICIES}/policies.tmp ${POLICIES}/policies.json
+
+#DEBHELPER#
