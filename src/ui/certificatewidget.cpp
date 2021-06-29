@@ -51,7 +51,7 @@ void CertificateWidgetInfo::setCertificateInfo(const CardCertificateAndPinInfo& 
     certAndPinInfo = cardCertPinInfo;
     const auto certInfo = cardCertPinInfo.certInfo;
     info->setText(
-        CertificateWidget::tr("<b>%1</b><br />Issuer: %2<br />Valid: from %3 to %4")
+        CertificateWidget::tr("<b>%1</b><br />Issuer: %2<br />Valid: %3 to %4")
             .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate));
 }
 
@@ -81,7 +81,7 @@ CertificateButton::CertificateButton(const CardCertificateAndPinInfo& cardCertPi
     setCertificateInfo(cardCertPinInfo);
     const auto certInfo = cardCertPinInfo.certInfo;
     setText(
-        tr("%1 Issuer: %2 Valid: from %3 to %4")
+        tr("%1 Issuer: %2 Valid: %3 to %4")
             .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate));
 }
 
