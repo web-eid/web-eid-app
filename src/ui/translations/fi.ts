@@ -26,7 +26,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The Smart Card service required to use the ID-card does not work. Please run it.</source>
+        <source>The smart card service required to use the ID-card is not running. Please start the smart card service and try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -80,7 +80,7 @@
         </translation>
     </message>
     <message>
-        <source>PinPad reader session timed out.</source>
+        <source>PinPad timed out waiting for customer interaction.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -112,11 +112,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ID-card is not supported</source>
+        <source>Operation not supported by ID-card</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error communicating with card.</source>
+        <source>Error communicating with the card.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -204,7 +204,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error communicating with card. More detailed information can be found in the log files.</source>
+        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

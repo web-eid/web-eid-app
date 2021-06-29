@@ -30,8 +30,8 @@
         <translation>By signing, I agree to the transfer of my name and personal identification code to the service provider.</translation>
     </message>
     <message>
-        <source>The Smart Card service required to use the ID-card does not work. Please run it.</source>
-        <translation>The Smart Card service required to use the ID-card does not work. Please run it.</translation>
+        <source>The smart card service required to use the ID-card is not running. Please start the smart card service and try again.</source>
+        <translation>The smart card service required to use the ID-card is not running. Please start the smart card service and try again.</translation>
     </message>
     <message>
         <source>Card reader not connected. Please connect the card reader to the computer.</source>
@@ -88,8 +88,8 @@
         <translation>ID-card not found. Please insert the ID-card into the reader.</translation>
     </message>
     <message>
-        <source>PinPad reader session timed out.</source>
-        <translation>PinPad reader session timed out.</translation>
+        <source>PinPad timed out waiting for customer interaction.</source>
+        <translation>PinPad timed out waiting for customer interaction.</translation>
     </message>
     <message>
         <source>PIN entry cancelled.</source>
@@ -136,12 +136,12 @@
         <translation>The desired operation cannot be performed with the inserted ID-card. Make sure that the ID-card is supported by the Web eID application.</translation>
     </message>
     <message>
-        <source>ID-card is not supported</source>
-        <translation>ID-card is not supported</translation>
+        <source>Operation not supported by ID-card</source>
+        <translation>Operation not supported by ID-card</translation>
     </message>
     <message>
-        <source>Error communicating with card.</source>
-        <translation>Error communicating with card.</translation>
+        <source>Error communicating with the card.</source>
+        <translation>Error communicating with the card.</translation>
     </message>
     <message>
         <source>Operation failed</source>
@@ -204,8 +204,8 @@
         <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/article/how-to-check-that-your-id-card-reader-is-working/</translation>
     </message>
     <message>
-        <source>Error communicating with card. More detailed information can be found in the log files.</source>
-        <translation>Error communicating with card. More detailed information can be found in the log files.</translation>
+        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
+        <translation>Error communicating with the card. More detailed information can be found in the log files.</translation>
     </message>
 </context>
 </TS>

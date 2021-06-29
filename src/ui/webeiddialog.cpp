@@ -319,7 +319,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
         message = tr("Invalid PIN length");
         break;
     case Status::PIN_ENTRY_TIMEOUT:
-        message = tr("PinPad reader session timed out.");
+        message = tr("PinPad timed out waiting for customer interaction.");
         break;
     case Status::PIN_ENTRY_CANCEL:
         message = tr("PIN entry cancelled.");
@@ -494,7 +494,7 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     switch (error) {
     case RetriableError::SMART_CARD_SERVICE_IS_NOT_RUNNING:
         return {
-            tr("The Smart Card service required to use the ID-card does not work. Please run it."),
+            tr("The smart card service required to use the ID-card is not running. Please start the smart card service and try again."),
             tr("Launch the Smart Card service"), QStringLiteral(":/images/cardreader.svg")};
     case RetriableError::NO_SMART_CARD_READERS_FOUND:
         return {tr("Card reader not connected. Please connect the card reader to the computer."),
@@ -524,10 +524,10 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     case RetriableError::SMART_CARD_CHANGE_REQUIRED:
         return {tr("The desired operation cannot be performed with the inserted ID-card. Make sure "
                    "that the ID-card is supported by the Web eID application."),
-                tr("ID-card is not supported"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported by ID-card"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
-        return {tr("Error communicating with card."), tr("Operation failed"),
+        return {tr("Error communicating with the card."), tr("Operation failed"),
                 QStringLiteral(":/images/no-id-card.svg")};
         // TODO: what action should the user take? Should this be fatal?
     case RetriableError::PKCS11_ERROR:
@@ -543,12 +543,12 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     case RetriableError::UNSUPPORTED_CARD:
         return {tr("The card in the reader is not supported. Make sure that the entered ID-card is "
                    "supported by the Web eID application."),
-                tr("ID-card is not supported"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported by ID-card"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::NO_VALID_CERTIFICATE_AVAILABLE:
         return {tr("The certificates of the ID-card have expired. Valid certificates are required "
                    "for the electronic use of the ID-card."),
-                tr("ID-card is not supported"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported by ID-card"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::UNKNOWN_ERROR:
         return {tr("Unknown error"), tr("Unknown error"),

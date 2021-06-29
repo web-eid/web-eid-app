@@ -318,7 +318,7 @@ color: #003168;
              <enum>Qt::TabFocus</enum>
             </property>
             <property name="text">
-             <string>Error communicating with card. More detailed information can be found in the log files.</string>
+             <string>Error communicating with the card. More detailed information can be found in the log files.</string>
             </property>
            </widget>
           </item>

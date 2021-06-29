@@ -30,7 +30,7 @@
         <translation>Подписываясь, я соглашаюсь на передачу своего имени и личного кода поставщику услуг.</translation>
     </message>
     <message>
-        <source>The Smart Card service required to use the ID-card does not work. Please run it.</source>
+        <source>The smart card service required to use the ID-card is not running. Please start the smart card service and try again.</source>
         <translation>Необходимая для использования ID-карты услуга считывания смарт-карты не работает. Пожалуйста, запустите ее.</translation>
     </message>
     <message>
@@ -90,7 +90,7 @@
         <translation>ID-карта не найдена. Пожалуйста, вставьте ID-карту в считыватель.</translation>
     </message>
     <message>
-        <source>PinPad reader session timed out.</source>
+        <source>PinPad timed out waiting for customer interaction.</source>
         <translation>Время сеанса считывателя PinPad истекло.</translation>
     </message>
     <message>
@@ -99,7 +99,7 @@
     </message>
     <message>
         <source>Waiting for card</source>
-        <translation type="unfinished"></translation>
+        <translation>Считываю данные с карты</translation>
     </message>
     <message>
         <source>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</source>
@@ -138,11 +138,11 @@
         <translation>Со вставленной ID-картой невозможно выполнить данную операцию. Пожалуйста, убедитесь, что ID-карта поддерживается приложением Web eID.</translation>
     </message>
     <message>
-        <source>ID-card is not supported</source>
-        <translation>ID-карта не поддерживается</translation>
+        <source>Operation not supported by ID-card</source>
+        <translation>Операция не поддерживается</translation>
     </message>
     <message>
-        <source>Error communicating with card.</source>
+        <source>Error communicating with the card.</source>
         <translation>Ошибка связи с картой.</translation>
     </message>
     <message>
@@ -206,7 +206,7 @@
         <translation>https://www.id.ee/ru/artikkel/kak-proverit-rabochee-sostoyanie-id-karty-i-schityvatelya/</translation>
     </message>
     <message>
-        <source>Error communicating with card. More detailed information can be found in the log files.</source>
+        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
         <translation>Ошибка связи с картой. Более подробную информацию можно найти в файлах регистрации.</translation>
     </message>
 </context>

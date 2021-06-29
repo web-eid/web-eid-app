@@ -30,8 +30,8 @@
         <translation>Allkirjastamisel nõustun oma nime ja isikukoodi edastamisega teenusepakkujale.</translation>
     </message>
     <message>
-        <source>The Smart Card service required to use the ID-card does not work. Please run it.</source>
-        <translation>ID-kaardi kasutamiseks vajalik Kiipkaardi teenus ei tööta. Palun käivita see.</translation>
+        <source>The smart card service required to use the ID-card is not running. Please start the smart card service and try again.</source>
+        <translation>ID-kaardi kasutamiseks vajalik Kiipkaardi teenus ei tööta. Palun käivita käivita Kiipkaardi teenus ja proovi uuesti.</translation>
     </message>
     <message>
         <source>Card reader not connected. Please connect the card reader to the computer.</source>
@@ -88,8 +88,8 @@
         <translation>ID-kaarti ei leitud. Palun sisesta ID-kaart lugejasse.</translation>
     </message>
     <message>
-        <source>PinPad reader session timed out.</source>
-        <translation>PinPad lugeja sessioon aegus.</translation>
+        <source>PinPad timed out waiting for customer interaction.</source>
+        <translation>PinPad lugeja toiming aegus.</translation>
     </message>
     <message>
         <source>PIN entry cancelled.</source>
@@ -132,11 +132,11 @@
         <translation>Sisestatud ID-kaardiga ei saa soovitud toimingut teostada. Palun veendu, et ID-kaart on Web eID rakenduse poolt toetatud.</translation>
     </message>
     <message>
-        <source>ID-card is not supported</source>
-        <translation>ID-kaart ei ole toetatud</translation>
+        <source>Operation not supported by ID-card</source>
+        <translation>Toiming ei ole toetatud</translation>
     </message>
     <message>
-        <source>Error communicating with card.</source>
+        <source>Error communicating with the card.</source>
         <translation>Viga kaardiga suhtlemisel.</translation>
     </message>
     <message>
@@ -181,7 +181,7 @@
     </message>
     <message>
         <source>Waiting for card</source>
-        <translation type="unfinished"></translation>
+        <translation>Loen kaardilt andmeid</translation>
     </message>
     <message>
         <source>Retry</source>
@@ -204,7 +204,7 @@
         <translation>https://www.id.ee/artikkel/kuidas-kontrollida-id-kaardi-ja-lugeja-tookorras-olekut/</translation>
     </message>
     <message>
-        <source>Error communicating with card. More detailed information can be found in the log files.</source>
+        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
         <translation>Viga kaardiga suhtlemisel. Täpsem informatsioon on leitav logifailidest.</translation>
     </message>
 </context>
