@@ -201,7 +201,7 @@
     </message>
     <message>
         <source>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</source>
-        <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/article/how-to-check-that-your-id-card-reader-is-working/</translation>
+        <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
     </message>
     <message>
         <source>Error communicating with the card. More detailed information can be found in the log files.</source>
