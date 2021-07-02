@@ -89,11 +89,17 @@ void Controller::run()
 
         REQUIRE_NON_NULL(command)
         // If quit is requested, respond with empty JSON object and quit immediately.
-        if (command->first == CommandType::QUIT) {
+        switch (command->first) {
+        case CommandType::ABOUT:
+            WebEidUI::showAboutPage();
+            return;
+        case CommandType::QUIT:
             qInfo() << "Quit requested, exiting";
             writeResponseToStdOut(true, {}, "quit");
             emit quit();
             return;
+        default:
+            break;
         }
 
         commandHandler = getCommandHandler(*command);
@@ -111,8 +117,7 @@ void Controller::startCommandExecution()
 
     // Reader monitor thread setup.
     WaitForCardThread* waitForCardThread = new WaitForCardThread(this);
-    connect(waitForCardThread, &WaitForCardThread::statusUpdate, this,
-            &Controller::onReaderMonitorStatusUpdate);
+    connect(waitForCardThread, &WaitForCardThread::statusUpdate, this, &Controller::statusUpdate);
     connect(waitForCardThread, &WaitForCardThread::cardsAvailable, this,
             &Controller::onCardsAvailable);
     saveChildThreadPtrAndConnectFailureFinish(waitForCardThread);
@@ -208,11 +213,6 @@ void Controller::runCommandHandler(const std::vector<electronic_id::CardInfo::pt
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
-}
-
-void Controller::onReaderMonitorStatusUpdate(const RetriableError reason)
-{
-    emit statusUpdate(reason);
 }
 
 void Controller::onCertificatesLoaded()
