@@ -36,6 +36,7 @@ public:
         AUTHENTICATE,
         SIGN,
         QUIT,
+        ABOUT,
         NONE = -1
     };
 

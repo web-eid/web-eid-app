@@ -122,7 +122,9 @@ CommandWithArgumentsPtr Application::parseArgs()
         // https://bugs.chromium.org/p/chromium/issues/detail?id=354597#c2
         qDebug() << "Parent window handle is unused" << parser.value(parentWindow);
     }
-
+    if (arguments().size() == 1) {
+        return std::make_unique<CommandWithArguments>(CommandType::ABOUT, QVariantMap());
+    }
     return nullptr;
 }
 
