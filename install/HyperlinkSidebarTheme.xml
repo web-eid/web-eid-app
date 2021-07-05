@@ -35,6 +35,9 @@
     <!--Text X="11" Y="121" Width="-11" Height="17" FontId="3">#(loc.OptionsLocationLabel)</Text-->
     <!--Editbox Name="FolderEditbox" X="11" Y="143" Width="-91" Height="21" TabStop="yes" FontId="3" FileSystemAutoComplete="yes" /-->
     <!--Button Name="BrowseButton" X="-11" Y="142" Width="75" Height="23" TabStop="yes" FontId="3">#(loc.OptionsBrowseButton)</Button-->
+    <Checkbox Name="ChromeSupport" X="30" Y="102" Width="-11" Height="17" TabStop="yes" FontId="3">#(loc.chromeplugin)</Checkbox>
+    <Checkbox Name="EdgeSupport" X="30" Y="124" Width="-11" Height="17" TabStop="yes" FontId="3">#(loc.edgeplugin)</Checkbox>
+    <Checkbox Name="FirefoxSupport" X="30" Y="146" Width="-11" Height="17" TabStop="yes" FontId="3">#(loc.firefoxplugin)</Checkbox>
     <Button Name="OptionsOkButton" X="-91" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0">#(loc.OptionsOkButton)</Button>
     <Button Name="OptionsCancelButton" X="-11" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0">#(loc.OptionsCancelButton)</Button>
   </Page>
