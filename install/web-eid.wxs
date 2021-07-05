@@ -61,11 +61,14 @@
 
     <CustomAction Id="SetExtensionSettingsForInstall" Property="ExtensionSettingsInstall"
       Value="EXTENSIONSETTINGS_UUID=$(var.FIREFOX_UUID);EXTENSIONSETTINGS_URL=$(var.FIREFOX_URL)"/>
+    <CustomAction Id="SetExtensionSettingsForNoInstall" Property="ExtensionSettingsNoInstall"
+      Value="EXTENSIONSETTINGS_UUID=$(var.FIREFOX_UUID);EXTENSIONSETTINGS_URL=$(var.FIREFOX_URL)"/>
     <CustomAction Id="SetExtensionSettingsForRemove" Property="ExtensionSettingsRemove"
       Value="EXTENSIONSETTINGS_UUID=$(var.FIREFOX_UUID);EXTENSIONSETTINGS_URL=$(var.FIREFOX_URL)"/>
 
     <InstallExecuteSequence>
       <Custom Action="SetExtensionSettingsForInstall" Before="InstallInitialize" />
+      <Custom Action="SetExtensionSettingsForNoInstall" Before="InstallInitialize" />
       <Custom Action="SetExtensionSettingsForRemove" Before="InstallInitialize" />
       <Custom Action="ExtensionSettingsInstall" Before="InstallFinalize">FIREFOXINSTALL=1 AND NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
       <Custom Action="ExtensionSettingsNoInstall" Before="InstallFinalize">NOT (FIREFOXINSTALL=1) AND NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
