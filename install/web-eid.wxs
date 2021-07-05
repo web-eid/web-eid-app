@@ -130,13 +130,13 @@
 <?endif?>
         </Directory>
       </Directory>
-      <Component Id="Chrome" Win64="no">
+      <Component Id="Chrome" Win64="no" Transitive="yes" >
         <Condition><![CDATA[(CHROMEINSTALL = 1)]]></Condition>
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic"
           Value="https://clients2.google.com/service/update2/crx"/>
       </Component>
-      <Component Id="Edge" Win64="no">
+      <Component Id="Edge" Win64="no" Transitive="yes" >
         <Condition><![CDATA[(EDGEINSTALL = 1)]]></Condition>
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido"

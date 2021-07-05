@@ -69,6 +69,11 @@
     <Text X="185" Y="50" Width="-11" Height="30" FontId="2" DisablePrefix="yes">#(loc.ModifyHeader)</Text-->
     <Image X="0" Y="0" Width="493" Height="58" ImageFile="logo.png"/>
     <Text X="11" Y="11" Width="-11" Height="32" FontId="1" DisablePrefix="yes">#(loc.Title)</Text>
+    <Text X="11" Y="66" Width="-11" Height="30" TabStop="yes" FontId="2" DisablePrefix="yes">#(loc.OptionsHeader)</Text>
+    <Checkbox Name="ChromeSupport" X="30" Y="102" Width="-11" Height="17" TabStop="yes" FontId="3">#(loc.chromeplugin)</Checkbox>
+    <Checkbox Name="EdgeSupport" X="30" Y="124" Width="-11" Height="17" TabStop="yes" FontId="3">#(loc.edgeplugin)</Checkbox>
+    <Checkbox Name="FirefoxSupport" X="30" Y="146" Width="-11" Height="17" TabStop="yes" FontId="3">#(loc.firefoxplugin)</Checkbox>
+    <Button Name="RepairButton" X="-171" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0" HideWhenDisabled="yes">#(loc.ModifyRepairButton)</Button>
     <Button Name="UninstallButton" X="-91" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0">#(loc.ModifyUninstallButton)</Button>
     <Button Name="ModifyCancelButton" X="-11" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0">#(loc.ModifyCloseButton)</Button>
   </Page>
