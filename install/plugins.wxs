@@ -22,7 +22,7 @@
       </MsiPackage>
       <MsiPackage Id="WebEID.X64" InstallCondition="VersionNT64" ForcePerMachine="yes"
           SourceFile="$(var.webeid).x64.qt.msi" Compressed="yes">
-        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFilesFolder]Web eID"/>
+        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFiles64Folder]Web eID"/>
       </MsiPackage>
     </Chain>
   </Bundle>
