@@ -3,7 +3,7 @@
     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Bundle Name="Web eID software" Version="$(var.MSI_VERSION)" Manufacturer="RIA"
       UpgradeCode="a9bdddb0-cdb3-11eb-b8bc-0242ac130003"
-      Copyright="RIA" AboutUrl="http://www.id.ee"
+      Copyright="RIA" IconSourceFile="$(var.path)\appicon.ico" AboutUrl="http://www.id.ee"
       Condition="(VersionNT >= v6.1)">
     <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkSidebarLicense">
       <bal:WixStandardBootstrapperApplication
