@@ -6,6 +6,8 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFile</key>
+	<string>appicon.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>eu.web-eid.${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
 	<key>CFBundleInfoDictionaryVersion</key>

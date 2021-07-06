@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+
+Exec=web-eid %F
+Icon=web-eid
+
+Name=Web eID
+
+Categories=Qt;Office;

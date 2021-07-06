@@ -1,4 +1,5 @@
 add_executable(web-eid WIN32 MACOSX_BUNDLE
+    ${CMAKE_SOURCE_DIR}/install/appicon.icns
     getcommandhandler.cpp
     main.cpp
     web-eid.rc
@@ -77,6 +78,7 @@ if(WIN32)
     endif()
 elseif(APPLE)
     set(WEBEID_PATH /Applications/Utilities/web-eid.app/Contents/MacOS/web-eid)
+    set_source_files_properties(${CMAKE_SOURCE_DIR}/install/appicon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     set_target_properties(web-eid PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in)
     configure_file(${CMAKE_SOURCE_DIR}/install/macos-postinstall.in scripts/postinstall @ONLY)
     install(TARGETS web-eid DESTINATION /Applications/Utilities COMPONENT main)
@@ -156,6 +158,15 @@ else()
         DESTINATION "${MOZILLA_INSTALL_DIR}" RENAME eu.webeid.json)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
         DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/google-chrome/extensions")
+    install(FILES ${CMAKE_SOURCE_DIR}/install/web-eid.desktop
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+    foreach(RES 16 32 128 256 512)
+        install(
+            FILES ${CMAKE_SOURCE_DIR}/install/appicon_${RES}.png
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/${RES}x${RES}/apps/
+            RENAME web-eid.png
+        )
+    endforeach()
     add_custom_target(installer
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         COMMAND dch --distribution unstable -v ${PROJECT_VERSION} "Release: ${PROJECT_VERSION}."
