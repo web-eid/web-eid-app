@@ -43,27 +43,6 @@
 
 using namespace electronic_id;
 
-namespace
-{
-
-WebEidDialog::Page commandToPage(const CommandType command)
-{
-    using Page = WebEidDialog::Page;
-    switch (command) {
-    case CommandType::INSERT_CARD:
-        return Page::ALERT;
-    case CommandType::GET_SIGNING_CERTIFICATE:
-        return Page::SELECT_CERTIFICATE;
-    case CommandType::AUTHENTICATE:
-    case CommandType::SIGN:
-        return Page::PIN_INPUT;
-    default:
-        THROW(ProgrammingError, "No page exists for command " + std::string(command));
-    }
-}
-
-} // namespace
-
 class WebEidDialog::Private : public Ui::WebEidDialog
 {
 public:
@@ -233,14 +212,16 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
                                             const CardCertificateAndPinInfo& certAndPin)
 {
     try {
-        const auto page = commandToPage(currentCommand);
-        if (page == Page::ALERT) {
-            THROW(ProgrammingError, "Insert card commmand not allowed here");
-        }
+        ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
+        ui->pinInputOriginLabel->setText(ui->selectCertificateOriginLabel->text());
+
         switch (currentCommand) {
         case CommandType::GET_SIGNING_CERTIFICATE:
             setupCertificateAndPinInfo({certAndPin});
-            break;
+            setupOK([this, certAndPin] { emit accepted(certAndPin); });
+            ui->selectionGroup->buttons().at(0)->click();
+            ui->pageStack->setCurrentIndex(int(WebEidDialog::Page::SELECT_CERTIFICATE));
+            return;
         case CommandType::AUTHENTICATE:
             ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
             ui->pinInputPageTitleLabel->setText(tr("Authenticate"));
@@ -260,13 +241,8 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         default:
             THROW(ProgrammingError, "Only SELECT_CERTIFICATE, AUTHENTICATE or SIGN allowed");
         }
-        ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
-        ui->pinInputOriginLabel->setText(ui->selectCertificateOriginLabel->text());
 
-        if (currentCommand == CommandType::GET_SIGNING_CERTIFICATE) {
-            setupOK([this, certAndPin] { emit accepted(certAndPin); });
-
-        } else if (certAndPin.pinInfo.pinIsBlocked) {
+        if (certAndPin.pinInfo.pinIsBlocked) {
             displayPinBlockedError();
 
         } else if (certAndPin.pinInfo.readerHasPinPad) {
@@ -279,7 +255,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             displayPinRetriesRemaining(certAndPin.pinInfo.pinRetriesCount);
         }
 
-        ui->pageStack->setCurrentIndex(int(page));
+        ui->pageStack->setCurrentIndex(int(WebEidDialog::Page::PIN_INPUT));
     }
     CATCH_AND_EMIT_FAILURE_AND_RETURN()
 }
@@ -306,10 +282,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     // FIXME: don't allow retry in case of UNKNOWN_ERROR
     switch (status) {
     case Status::RETRY_ALLOWED:
-        message = tr("Incorrect PIN, %n attempts left.", nullptr, retriesLeft);
-        style()->unpolish(ui->pinInput);
-        ui->pinInput->setProperty("warning", true);
-        style()->polish(ui->pinInput);
+        displayPinRetriesRemaining({retriesLeft, retriesLeft + 1});
         break;
     case Status::PIN_BLOCKED:
         displayPinBlockedError();
@@ -493,9 +466,9 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
 {
     switch (error) {
     case RetriableError::SMART_CARD_SERVICE_IS_NOT_RUNNING:
-        return {
-            tr("The smart card service required to use the ID-card is not running. Please start the smart card service and try again."),
-            tr("Launch the Smart Card service"), QStringLiteral(":/images/cardreader.svg")};
+        return {tr("The smart card service required to use the ID-card is not running. Please "
+                   "start the smart card service and try again."),
+                tr("Launch the Smart Card service"), QStringLiteral(":/images/cardreader.svg")};
     case RetriableError::NO_SMART_CARD_READERS_FOUND:
         return {tr("Card reader not connected. Please connect the card reader to the computer."),
                 tr("Connect the card reader"), QStringLiteral(":/images/cardreader.svg")};
@@ -524,7 +497,8 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     case RetriableError::SMART_CARD_CHANGE_REQUIRED:
         return {tr("The desired operation cannot be performed with the inserted ID-card. Make sure "
                    "that the ID-card is supported by the Web eID application."),
-                tr("Operation not supported by ID-card"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported by ID-card"),
+                QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
         return {tr("Error communicating with the card."), tr("Operation failed"),
@@ -543,12 +517,14 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     case RetriableError::UNSUPPORTED_CARD:
         return {tr("The card in the reader is not supported. Make sure that the entered ID-card is "
                    "supported by the Web eID application."),
-                tr("Operation not supported by ID-card"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported by ID-card"),
+                QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::NO_VALID_CERTIFICATE_AVAILABLE:
         return {tr("The certificates of the ID-card have expired. Valid certificates are required "
                    "for the electronic use of the ID-card."),
-                tr("Operation not supported by ID-card"), QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported by ID-card"),
+                QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::UNKNOWN_ERROR:
         return {tr("Unknown error"), tr("Unknown error"),
