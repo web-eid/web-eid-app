@@ -592,6 +592,9 @@ color: #003168;
          <height>26</height>
         </size>
        </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item>
