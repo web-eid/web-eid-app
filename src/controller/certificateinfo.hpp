@@ -26,10 +26,6 @@
 
 #include <QString>
 
-enum class CertificateStatus { VALID, INVALID, NOT_YET_ACTIVE, EXPIRED };
-
-Q_DECLARE_METATYPE(CertificateStatus)
-
 struct CertificateInfo
 {
     using PinMinMaxLength = std::pair<size_t, size_t>;

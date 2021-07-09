@@ -71,6 +71,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 
     ui->selectionGroup = new QButtonGroup(this);
     ui->fatalError->hide();
+    ui->fatalHelp->hide();
 
     connect(ui->pageStack, &QStackedWidget::currentChanged, this, &WebEidDialog::resizeHeight);
     connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
@@ -85,6 +86,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->pinErrorLabel->hide();
     ui->pinInput->hide();
     ui->pinEntryTimeoutProgressBar->hide();
+    ui->pinTimeRemaining->hide();
 
     ui->pinInputValidator = new QRegularExpressionValidator(ui->pinInput);
     ui->pinInput->setValidator(ui->pinInputValidator);
@@ -99,6 +101,10 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
                                        ui->pinEntryTimeoutProgressBar->maximum());
     connect(ui->pinTimeoutTimer, &QTimeLine::frameChanged, ui->pinEntryTimeoutProgressBar,
             &QProgressBar::setValue);
+    connect(ui->pinTimeoutTimer, &QTimeLine::frameChanged, ui->pinTimeRemaining, [this](int value) {
+        ui->pinTimeRemaining->setText(
+            tr("Time remaining: <b>%1</b>").arg(ui->pinEntryTimeoutProgressBar->maximum() - value));
+    });
 }
 
 WebEidDialog::~WebEidDialog()
@@ -128,6 +134,7 @@ void WebEidDialog::showFatalErrorPage()
 {
     ui->messagePageTitleLabel->setText(tr("Operation failed"));
     ui->fatalError->show();
+    ui->fatalHelp->show();
     ui->connectCardLabel->hide();
     ui->cardChipIcon->hide();
     ui->helpButton->show();
@@ -271,6 +278,8 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             setupPinPadProgressBarAndEmitWait(certAndPin);
             displayPinRetriesRemaining(certAndPin.pinInfo.pinRetriesCount);
 
+        } else if (certAndPin.certInfo.isExpired || certAndPin.certInfo.notEffective) {
+            ui->pinTitleLabel->hide();
         } else {
             connectOkToCachePinAndEmitSelectedCertificate(certAndPin);
             setupPinInputValidator(certAndPin.pinInfo.pinMinMaxLength);
@@ -420,6 +429,9 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPin
     ui->okButton->hide();
     ui->cancelButton->hide();
     ui->helpButton->hide();
+    ui->pinTimeRemaining->show();
+    ui->pinTimeRemaining->setText(
+        tr("Time remaining: <b>%1</b>").arg(ui->pinEntryTimeoutProgressBar->maximum()));
     ui->pinEntryTimeoutProgressBar->show();
     ui->pinTitleLabel->setText(tr("Please enter %1 in PinPad reader")
                                    .arg(currentCommand == CommandType::AUTHENTICATE
@@ -498,12 +510,13 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
                    "start the smart card service and try again."),
                 tr("Launch the Smart Card service"), QStringLiteral(":/images/cardreader.svg")};
     case RetriableError::NO_SMART_CARD_READERS_FOUND:
-        return {tr("Card reader not connected. Please connect the card reader to the computer."),
-                tr("Connect the card reader"), QStringLiteral(":/images/cardreader.svg")};
+        return {
+            tr("<b>Card reader not connected.</b> Please connect the card reader to the computer."),
+            tr("Connect the card reader"), QStringLiteral(":/images/cardreader.svg")};
 
     case RetriableError::NO_SMART_CARDS_FOUND:
     case RetriableError::PKCS11_TOKEN_NOT_PRESENT:
-        return {tr("ID-card not found. Please insert the ID-card into the reader."),
+        return {tr("<b>ID-card not found.</b> Please insert the ID-card into the reader."),
                 tr("Insert the ID-card"), QStringLiteral(":/images/no-id-card.svg")};
     case RetriableError::SMART_CARD_WAS_REMOVED:
     case RetriableError::PKCS11_TOKEN_REMOVED:

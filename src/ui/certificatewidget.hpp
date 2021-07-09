@@ -38,8 +38,12 @@ protected:
     CertificateWidgetInfo(QWidget* self);
     Q_DISABLE_COPY(CertificateWidgetInfo)
 
+    void drawWarnIcon();
+
     QLabel* icon;
     QLabel* info;
+    QLabel* warnIcon;
+    QLabel* warn;
     CardCertificateAndPinInfo certAndPinInfo;
 };
 
@@ -51,6 +55,7 @@ public:
     explicit CertificateWidget(QWidget* parent);
 
 private:
+    bool eventFilter(QObject* object, QEvent* event) final;
     void paintEvent(QPaintEvent* event) final;
 };
 
@@ -62,5 +67,6 @@ public:
     CertificateButton(const CardCertificateAndPinInfo& cardCertPinInfo, QWidget* parent);
 
 private:
+    bool eventFilter(QObject* object, QEvent* event) final;
     void paintEvent(QPaintEvent* event) final;
 };

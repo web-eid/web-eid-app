@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>475</height>
+    <height>464</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -28,29 +28,42 @@ color: black;
 }
 QPushButton {
 font-size: 17px;
-border: 0px;
+border: 3px solid #EFEFEF;
 border-radius: 3px;
-height: 45px;
+height: 39px;
 padding-left: 19px;
 padding-right: 19px;
 min-width: 30px;
 background-color: #EFEFEF;
 }
-QPushButton::hover, QPushButton::focus {
-background-color: #DEDEDE;
-}
 QPushButton::disabled {
 background-color: #FAFAFA;
+border-color: #FAFAFA;
+}
+QPushButton::hover {
+background-color: #DEDEDE;
+border-color: #DEDEDE;
+}
+QPushButton::focus {
+background-color: #DEDEDE;
+border-color: #76767B;
 }
 QPushButton:default {
 color: white;
 background-color: #113F8E;
+border-color: #113F8E;
 }
 QPushButton:default::disabled {
 background-color: #B7C5DD;
+border-color: #B7C5DD;
 }
-QPushButton:default::hover, QPushButton:default::focus {
+QPushButton:default::hover {
 background-color: #003168;
+border-color: #003168
+}
+QPushButton:default::focus {
+background-color: #003168;
+border-color: #008EEA;
 }
 CertificateButton, CertificateWidget {
 border: 1px solid rgba(0,49,104,0.1);
@@ -62,6 +75,12 @@ border: 2px solid #113F8E;
 }
 CertificateButton QWidget, CertificateWidget QWidget {
 background-color: transparent;
+}
+CertificateButton QWidget:disabled, CertificateWidget QWidget:disabled {
+color: #76767B;
+}
+CertificateButton #warn,  CertificateWidget #warn {
+color: #CD2541;
 }
 CertificateButton {
 background-color: #F5F5F5;
@@ -86,11 +105,22 @@ QLineEdit[warning=&quot;true&quot;] {
 border: 2px solid #CD2541;
 color: #CD2541;
 }
+QProgressBar {
+height: 30px;
+background-color: #EFEFEF;
+border: 1px solid #DEDEDE;
+border-radius: 4px;
+padding: 2px;
+}
+QProgressBar::chunk {
+background-color: #113F8E;
+border: 1px solid #003168;
+border-radius: 2px;
+}
 #waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel, #aboutPageLabel {
 color: #003168;
 font-size: 32px;
 font-weight: bold;
-max-height: 40px;
 }
 #selectCertificateDescriptionLabel, #pinInputDescriptionLabel {
 max-height: 40px;
@@ -113,6 +143,7 @@ min-height: 56px;
 }
 #aboutContent {
 border: 1px solid rgba(17, 63, 142, 0.1);
+border-radius: 3px;
 }
 #fatalErrorLabel, #aboutAlert {
 color: #CD2541;
@@ -173,19 +204,6 @@ color: #76767B;
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="waitingPageLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string notr="true">Please wait until the card operation completes</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
         <spacer name="waitingSpacerTop">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -193,7 +211,7 @@ color: #76767B;
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -222,7 +240,7 @@ color: #76767B;
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -253,6 +271,9 @@ color: #76767B;
          </property>
          <property name="text">
           <string notr="true">Insert the ID-card</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -328,9 +349,22 @@ color: #76767B;
             <property name="text">
              <string>Operation failed. More detailed information can be found in the log files.</string>
             </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="fatalHelp">
+         <property name="text">
+          <string>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</string>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -341,7 +375,7 @@ color: #76767B;
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -514,13 +548,6 @@ color: #76767B;
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QProgressBar" name="pinEntryTimeoutProgressBar">
-           <property name="textVisible">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
          <item alignment="Qt::AlignHCenter">
           <widget class="QLineEdit" name="pinInput">
            <property name="maxLength">
@@ -536,8 +563,28 @@ color: #76767B;
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
+           <property name="text">
+            <string notr="true">2 tries left</string>
+           </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QProgressBar" name="pinEntryTimeoutProgressBar">
+           <property name="value">
+            <number>50</number>
+           </property>
+           <property name="textVisible">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="pinTimeRemaining">
+           <property name="text">
+            <string notr="true">Time remaining:</string>
            </property>
           </widget>
          </item>
@@ -641,6 +688,9 @@ color: #76767B;
             <property name="text">
              <string>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</string>
             </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="1">
@@ -679,6 +729,16 @@ color: #76767B;
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="aboutHelp">
+         <property name="text">
+          <string>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</string>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="aboutSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -699,6 +759,9 @@ color: #76767B;
     <layout class="QHBoxLayout" name="buttonLayout">
      <item>
       <widget class="QPushButton" name="cancelButton">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -722,6 +785,9 @@ color: #76767B;
      </item>
      <item>
       <widget class="QPushButton" name="helpButton">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string>Help</string>
        </property>
@@ -731,14 +797,20 @@ color: #76767B;
        </property>
        <property name="iconSize">
         <size>
-         <width>28</width>
+         <width>30</width>
          <height>26</height>
         </size>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="okButton">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string>Confirm</string>
        </property>
@@ -748,7 +820,7 @@ color: #76767B;
        </property>
        <property name="iconSize">
         <size>
-         <width>18</width>
+         <width>20</width>
          <height>16</height>
         </size>
        </property>

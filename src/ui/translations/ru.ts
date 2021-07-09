@@ -11,8 +11,20 @@
 <context>
     <name>CertificateWidget</name>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Выдавший: %2&lt;br /&gt;Действительно: с %3 до %4</translation>
+        <source> (Not effective)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (Expired)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
+        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Выдавший: %2&lt;br /&gt;Действительно: с %3 до %4%5</translation>
+    </message>
+    <message>
+        <source>Pin locked</source>
+        <translation>PIN-код заблокирован</translation>
     </message>
 </context>
 <context>
@@ -34,8 +46,8 @@
         <translation>При использовании ID-карты нужная услуга Чипкарта не работает. Пожалуйста запустите услугу Чипкарты и попробуйте заново.</translation>
     </message>
     <message>
-        <source>Card reader not connected. Please connect the card reader to the computer.</source>
-        <translation>Считыватель карты не подключен. Пожалуйста, подключите считыватель карты к компьютеру.</translation>
+        <source>&lt;b&gt;Card reader not connected.&lt;/b&gt; Please connect the card reader to the computer.</source>
+        <translation>&lt;b&gt;Считыватель карты не подключен.&lt;/b&gt; Пожалуйста, подключите считыватель карты к компьютеру.</translation>
     </message>
     <message>
         <source>Invalid PIN length</source>
@@ -86,8 +98,8 @@
         </translation>
     </message>
     <message>
-        <source>ID-card not found. Please insert the ID-card into the reader.</source>
-        <translation>ID-карта не найдена. Пожалуйста, вставьте ID-карту в считыватель.</translation>
+        <source>&lt;b&gt;ID-card not found.&lt;/b&gt; Please insert the ID-card into the reader.</source>
+        <translation>&lt;b&gt;ID-карта не найдена.&lt;/b&gt; Пожалуйста, вставьте ID-карту в считыватель.</translation>
     </message>
     <message>
         <source>PinPad timed out waiting for customer interaction.</source>
@@ -228,6 +240,14 @@
     <message>
         <source>About Web eID</source>
         <translation>О Web eID</translation>
+    </message>
+    <message>
+        <source>Time remaining: &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

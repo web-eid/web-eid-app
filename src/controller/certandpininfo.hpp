@@ -30,6 +30,8 @@ struct CertificateInfo
 {
     electronic_id::CertificateType type = electronic_id::CertificateType::NONE;
 
+    bool isExpired;
+    bool notEffective;
     QString subject;
     QString issuer;
     QString effectiveDate;

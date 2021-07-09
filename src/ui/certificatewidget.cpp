@@ -22,6 +22,7 @@
 
 #include "certificatewidget.hpp"
 
+#include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPainter>
@@ -31,14 +32,26 @@
 // support screen readers.
 
 CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
-    icon(new QLabel(self)), info(new QLabel(self))
+    icon(new QLabel(self)), info(new QLabel(self)), warnIcon(new QLabel(self)),
+    warn(new QLabel(CertificateWidget::tr("Pin locked"), self))
 {
     icon->setPixmap(QStringLiteral(":/images/id-card.svg"));
+    warnIcon->setPixmap(QStringLiteral(":/images/fatal.svg"));
+    warnIcon->hide();
+    warnIcon->installEventFilter(self);
+    warn->setObjectName(QStringLiteral("warn"));
+    warn->hide();
     QHBoxLayout* layout = new QHBoxLayout(self);
-    layout->addWidget(icon);
-    layout->addWidget(info, 1);
     layout->setContentsMargins(20, 0, 20, 0);
     layout->setSpacing(20);
+    layout->addWidget(icon);
+    layout->addWidget(info, 1);
+    layout->addWidget(warnIcon);
+    QHBoxLayout* warnLayout = new QHBoxLayout;
+    warnLayout->setSpacing(6);
+    warnLayout->addWidget(warnIcon);
+    warnLayout->addWidget(warn);
+    layout->addItem(warnLayout);
 }
 
 CardCertificateAndPinInfo CertificateWidgetInfo::certificateInfo() const
@@ -46,18 +59,56 @@ CardCertificateAndPinInfo CertificateWidgetInfo::certificateInfo() const
     return certAndPinInfo;
 }
 
+void CertificateWidgetInfo::drawWarnIcon()
+{
+    QPainter p(warnIcon);
+    QRect cr = warnIcon->contentsRect();
+    cr.adjust(warnIcon->margin(), warnIcon->margin(), -warnIcon->margin(), -warnIcon->margin());
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    warnIcon->style()->drawItemPixmap(&p, cr, Qt::AlignCenter, *warnIcon->pixmap());
+#else
+    warnIcon->style()->drawItemPixmap(&p, cr, Qt::AlignCenter, warnIcon->pixmap(Qt::ReturnByValue));
+#endif
+}
+
 void CertificateWidgetInfo::setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo)
 {
     certAndPinInfo = cardCertPinInfo;
     const auto certInfo = cardCertPinInfo.certInfo;
-    info->setText(
-        CertificateWidget::tr("<b>%1</b><br />Issuer: %2<br />Valid: %3 to %4")
-            .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate));
+    QString warning;
+    auto showRed = [](const QString& text, bool show) {
+        return show ? QStringLiteral("<span style=\"color: #CD2541\">%1</span>").arg(text) : text;
+    };
+    if (certInfo.notEffective) {
+        warning = showRed(CertificateWidget::tr(" (Not effective)"), true);
+    }
+    if (certInfo.isExpired) {
+        warning = showRed(CertificateWidget::tr(" (Expired)"), true);
+    }
+    info->setText(CertificateWidget::tr("<b>%1</b><br />Issuer: %2<br />Valid: %3 to %4%5")
+                      .arg(certInfo.subject, certInfo.issuer,
+                           showRed(certInfo.effectiveDate, certInfo.notEffective),
+                           showRed(certInfo.expiryDate, certInfo.isExpired), warning));
+    info->parentWidget()->setDisabled(certInfo.notEffective || certInfo.isExpired
+                                      || cardCertPinInfo.pinInfo.pinIsBlocked);
+    if (warning.isEmpty() && cardCertPinInfo.pinInfo.pinIsBlocked) {
+        warnIcon->show();
+        warn->show();
+    }
 }
 
 CertificateWidget::CertificateWidget(QWidget* parent) : QWidget(parent), CertificateWidgetInfo(this)
 {
     info->setFocusPolicy(Qt::TabFocus);
+}
+
+bool CertificateWidget::eventFilter(QObject* object, QEvent* event)
+{
+    if (qobject_cast<QLabel*>(object) && event->type() == QEvent::Paint) {
+        drawWarnIcon();
+        return true;
+    }
+    return QWidget::eventFilter(object, event);
 }
 
 void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
@@ -83,6 +134,15 @@ CertificateButton::CertificateButton(const CardCertificateAndPinInfo& cardCertPi
     setText(
         tr("%1 Issuer: %2 Valid: %3 to %4")
             .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate));
+}
+
+bool CertificateButton::eventFilter(QObject* object, QEvent* event)
+{
+    if (qobject_cast<QLabel*>(object) && event->type() == QEvent::Paint) {
+        drawWarnIcon();
+        return true;
+    }
+    return QAbstractButton::eventFilter(object, event);
 }
 
 void CertificateButton::paintEvent(QPaintEvent* /*event*/)

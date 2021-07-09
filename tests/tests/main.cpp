@@ -65,7 +65,7 @@ private slots:
     void statusUpdate_withUnsupportedCard_hasExpectedStatus();
 
     void getCertificate_validCertificateHasExpectedCertificateSubject();
-    void getCertificate_expiredCertificateHasExpiredStatus();
+    void getCertificate_expiredCertificateHasExpectedCertificateSubject();
     void getCertificate_outputsSupportedAlgos();
 
     void authenticate_validArgumentsResultInValidJwt();
@@ -132,7 +132,7 @@ void WebEidTests::getCertificate_validCertificateHasExpectedCertificateSubject()
              QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
 }
 
-void WebEidTests::getCertificate_expiredCertificateHasExpiredStatus()
+void WebEidTests::getCertificate_expiredCertificateHasExpectedCertificateSubject()
 {
     // arrange
     PcscMock::setAtr(ESTEID_GEMALTO_V3_5_8_COLD_ATR);
@@ -141,14 +141,22 @@ void WebEidTests::getCertificate_expiredCertificateHasExpiredStatus()
 
     initGetCert();
 
-    QSignalSpy certificateFailureSpy(g_cached_GetCertificate.get(), &GetCertificate::retry);
+    QSignalSpy certificateReadySpy(g_cached_GetCertificate.get(),
+                                   &GetCertificate::singleCertificateReady);
 
     // act
-    runEventLoopVerifySignalsEmitted(certificateFailureSpy);
+    runEventLoopVerifySignalsEmitted(certificateReadySpy);
 
     // assert
-    const auto failure = qvariant_cast<RetriableError>(certificateFailureSpy.first().at(0));
-    QCOMPARE(failure, RetriableError::NO_VALID_CERTIFICATE_AVAILABLE);
+    const auto certInfo = getCertAndPinInfoFromSignalSpy(certificateReadySpy);
+    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
+
+    const auto certBytes =
+        QByteArray::fromBase64(controller->result()["certificate"].toString().toUtf8());
+    const auto cert = QSslCertificate(certBytes, QSsl::EncodingFormat::Der);
+    QVERIFY(!cert.isNull());
+    QCOMPARE(cert.subjectInfo(QSslCertificate::CommonName)[0],
+             QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
 }
 
 void WebEidTests::getCertificate_outputsSupportedAlgos()
