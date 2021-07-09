@@ -336,7 +336,6 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
         onRetryImpl(message);
     } else {
         ui->pinInput->show();
-        ui->pinInput->setFocus();
         ui->pinTitleLabel->show();
         ui->okButton->setDisabled(true);
         ui->cancelButton->setEnabled(true);
@@ -445,7 +444,6 @@ void WebEidDialog::setupPinInputValidator(const PinInfo::PinMinMaxLength& pinMin
     ui->pinInputValidator->setRegularExpression(numericMinMaxRegexp);
     ui->pinInput->setMaxLength(int(pinMinMaxLength.second));
     ui->pinInput->show();
-    ui->pinInput->setFocus();
 }
 
 void WebEidDialog::setupOK(const std::function<void()>& func, const QString& label, bool enabled)
