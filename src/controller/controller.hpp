@@ -87,6 +87,8 @@ private:
     void connectRetry(const ControllerChildThread* childThread);
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
     void stopCardEventMonitorThread();
+    void onCriticalFailureImpl(const QString& error,
+                               const FatalErrorType errorType = FatalErrorType::OTHER_ERROR);
     void exit();
     void waitForChildThreads();
     CommandType commandType();

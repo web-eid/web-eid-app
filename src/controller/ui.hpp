@@ -43,7 +43,7 @@ public:
     // Factory function that creates and shows the dialog that implements this interface.
     static ptr createAndShowDialog(const CommandType command);
 
-    static void showFatalError();
+    static void showFatalError(const FatalErrorType errorType);
 
     virtual void showWaitingForCardPage(const CommandType commandType) = 0;
 

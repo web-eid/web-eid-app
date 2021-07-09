@@ -42,7 +42,7 @@ CommandHandler::ptr getCommandHandler(const CommandWithArguments& cmd)
     case CommandType::SIGN:
         return std::make_unique<Sign>(cmdCopy);
     default:
-        throw std::invalid_argument("Unknown command '" + std::string(cmdType)
-                                    + "' in getCommandHandler()");
+        throw ArgumentError("Unknown command '" + std::string(cmdType)
+                            + "' in getCommandHandler()");
     }
 }

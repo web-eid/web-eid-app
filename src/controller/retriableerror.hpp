@@ -28,6 +28,9 @@
 #include <QMetaType>
 #include <QDebug>
 
+// TODO: rename this file and .cpp to errors.{c,h}pp
+enum class FatalErrorType { PROGRAMMING_ERROR, ARGUMENT_ERROR, IO_ERROR, OTHER_ERROR };
+
 enum class RetriableError {
     // libpcsc-cpp
     SMART_CARD_SERVICE_IS_NOT_RUNNING,

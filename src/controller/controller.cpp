@@ -44,8 +44,7 @@ using namespace electronic_id;
 namespace
 {
 
-// TODO: Should we use more detailed error codes? E.g. report input data error back to the website
-// etc.
+const QString RESP_INVALID_ARGUMENT = QStringLiteral("ERR_WEBEID_NATIVE_INVALID_ARGUMENT");
 const QString RESP_TECH_ERROR = QStringLiteral("ERR_WEBEID_NATIVE_FATAL");
 const QString RESP_USER_CANCEL = QStringLiteral("ERR_WEBEID_USER_CANCELLED");
 
@@ -99,7 +98,8 @@ void Controller::run()
         commandHandler = getCommandHandler(*command);
 
         startCommandExecution();
-
+    } catch (const ArgumentError& error) {
+        onCriticalFailureImpl(error.what(), FatalErrorType::ARGUMENT_ERROR);
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
@@ -329,14 +329,21 @@ void Controller::onDialogCancel()
 
 void Controller::onCriticalFailure(const QString& error)
 {
+    onCriticalFailureImpl(error, FatalErrorType::OTHER_ERROR);
+}
+
+void Controller::onCriticalFailureImpl(const QString& error, const FatalErrorType errorType)
+{
     qCritical() << "Exiting due to command" << std::string(commandType())
                 << "fatal error:" << error;
-    writeResponseToStdOut(isInStdinMode, makeErrorObject(RESP_TECH_ERROR, error), commandType());
+    auto errorCode =
+        errorType == FatalErrorType::ARGUMENT_ERROR ? RESP_INVALID_ARGUMENT : RESP_TECH_ERROR;
+    writeResponseToStdOut(isInStdinMode, makeErrorObject(errorCode, error), commandType());
 
     // Dispose the UI.
     window.reset();
 
-    WebEidUI::showFatalError();
+    WebEidUI::showFatalError(errorType);
 
     exit();
 }

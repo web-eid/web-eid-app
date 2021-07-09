@@ -123,10 +123,14 @@ WebEidDialog::~WebEidDialog()
     delete ui;
 }
 
-void WebEidDialog::showFatalErrorPage()
+void WebEidDialog::showFatalErrorPage(const FatalErrorType errorType)
 {
     ui->messagePageTitleLabel->setText(tr("Operation failed"));
     ui->fatalError->show();
+    // TODO: use switch/case to cover other cases.
+    if (errorType == FatalErrorType::ARGUMENT_ERROR) {
+        ui->fatalErrorLabel->setText(tr("Invalid argument was passed to the application"));
+    }
     ui->connectCardLabel->hide();
     ui->cardChipIcon->hide();
     ui->helpButton->show();
@@ -303,7 +307,6 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
 
     QString message;
 
-    // FIXME: don't allow retry in case of UNKNOWN_ERROR
     switch (status) {
     case Status::RETRY_ALLOWED:
         message = tr("Incorrect PIN, %n attempts left.", nullptr, retriesLeft);
@@ -323,9 +326,6 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
         break;
     case Status::PIN_ENTRY_CANCEL:
         message = tr("PIN entry cancelled.");
-        break;
-    case Status::UNKNOWN_ERROR:
-        message = tr("Technical error");
         break;
     }
 
@@ -376,7 +376,9 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
 
         // TODO: We need to erase the PIN in the widget buffer, this needs further work.
         // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
-        // custom Qt widget.
+        // custom Qt widget. It may seem scary to not keep the PIN in secure memory,
+        // but unfortunately it is easy to trace it in plain text in the PC/SC layer,
+        // so it is less critical than it seems.
         // Clear the PIN input.
         ui->pinInput->setText({});
 
