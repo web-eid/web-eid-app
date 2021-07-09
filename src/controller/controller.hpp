@@ -54,9 +54,6 @@ public: // slots
     // Called either directly from run() or from the monitor thread when cards are available.
     void onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
 
-    // Called on reader and card events from monitor thread.
-    void onReaderMonitorStatusUpdate(const RetriableError reason);
-
     // Called when CommandHandlerRunThread finishes execution.
     void onCertificatesLoaded();
 

@@ -111,8 +111,7 @@ void Controller::startCommandExecution()
 
     // Reader monitor thread setup.
     WaitForCardThread* waitForCardThread = new WaitForCardThread(this);
-    connect(waitForCardThread, &WaitForCardThread::statusUpdate, this,
-            &Controller::onReaderMonitorStatusUpdate);
+    connect(waitForCardThread, &WaitForCardThread::statusUpdate, this, &Controller::statusUpdate);
     connect(waitForCardThread, &WaitForCardThread::cardsAvailable, this,
             &Controller::onCardsAvailable);
     saveChildThreadPtrAndConnectFailureFinish(waitForCardThread);
@@ -208,11 +207,6 @@ void Controller::runCommandHandler(const std::vector<electronic_id::CardInfo::pt
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
-}
-
-void Controller::onReaderMonitorStatusUpdate(const RetriableError reason)
-{
-    emit statusUpdate(reason);
 }
 
 void Controller::onCertificatesLoaded()
@@ -318,8 +312,7 @@ void Controller::onDialogCancel()
 {
     qDebug() << "User cancelled";
 
-    // Dispose the UI.
-    window.reset();
+    window->close();
 
     writeResponseToStdOut(isInStdinMode,
                           makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled")),
