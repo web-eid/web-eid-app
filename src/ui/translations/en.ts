@@ -207,5 +207,9 @@
         <source>Error communicating with the card. More detailed information can be found in the log files.</source>
         <translation>Error communicating with the card. More detailed information can be found in the log files.</translation>
     </message>
+    <message>
+        <source>Time remaining: &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

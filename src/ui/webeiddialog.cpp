@@ -81,6 +81,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->pinErrorLabel->hide();
     ui->pinInput->hide();
     ui->pinEntryTimeoutProgressBar->hide();
+    ui->pinTimeRemaining->hide();
 
     ui->pinInputValidator = new QRegularExpressionValidator(ui->pinInput);
     ui->pinInput->setValidator(ui->pinInputValidator);
@@ -95,6 +96,10 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
                                        ui->pinEntryTimeoutProgressBar->maximum());
     connect(ui->pinTimeoutTimer, &QTimeLine::frameChanged, ui->pinEntryTimeoutProgressBar,
             &QProgressBar::setValue);
+    connect(ui->pinTimeoutTimer, &QTimeLine::frameChanged, ui->pinTimeRemaining, [this](int value) {
+        ui->pinTimeRemaining->setText(
+            tr("Time remaining: <b>%1</b>").arg(ui->pinEntryTimeoutProgressBar->maximum() - value));
+    });
 }
 
 WebEidDialog::~WebEidDialog()
@@ -394,6 +399,9 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPin
     ui->okButton->hide();
     ui->cancelButton->hide();
     ui->helpButton->hide();
+    ui->pinTimeRemaining->show();
+    ui->pinTimeRemaining->setText(
+        tr("Time remaining: <b>%1</b>").arg(ui->pinEntryTimeoutProgressBar->maximum()));
     ui->pinEntryTimeoutProgressBar->show();
     ui->pinTitleLabel->setText(tr("Please enter %1 in PinPad reader")
                                    .arg(currentCommand == CommandType::AUTHENTICATE

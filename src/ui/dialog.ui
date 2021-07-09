@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>475</height>
+    <height>437</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -86,6 +86,18 @@ QLineEdit[warning=&quot;true&quot;] {
 border: 2px solid #CD2541;
 color: #CD2541;
 }
+QProgressBar {
+height: 30px;
+background-color: #EFEFEF;
+border: 1px solid #DEDEDE;
+border-radius: 4px;
+padding: 2px;
+}
+QProgressBar::chunk {
+background-color: #113F8E;
+border: 1px solid #003168;
+border-radius: 2px;
+}
 #waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel {
 color: #003168;
 font-size: 32px;
@@ -109,8 +121,10 @@ color: #CD2541;
 #fatalError {
 border: 1px solid rgba(240,78,35,0.1);
 border-radius: 3px;
-color: #CD2541;
 min-height: 56px;
+}
+#fatalErrorLabel {
+color: #CD2541;
 }
 #helpButton {
 color: #003168;
@@ -161,19 +175,6 @@ color: #003168;
          </property>
          <property name="text">
           <string>Waiting for card</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="waitingPageLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string notr="true">Please wait until the card operation completes</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -319,6 +320,9 @@ color: #003168;
             </property>
             <property name="text">
              <string>Error communicating with the card. More detailed information can be found in the log files.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -508,6 +512,9 @@ color: #003168;
          </item>
          <item>
           <widget class="QProgressBar" name="pinEntryTimeoutProgressBar">
+           <property name="value">
+            <number>50</number>
+           </property>
            <property name="textVisible">
             <bool>false</bool>
            </property>
@@ -524,9 +531,19 @@ color: #003168;
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="pinTimeRemaining">
+           <property name="text">
+            <string notr="true">Time remaining:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLabel" name="pinErrorLabel">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="text">
+            <string notr="true">2 tries left</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -556,6 +573,9 @@ color: #003168;
     <layout class="QHBoxLayout" name="buttonLayout">
      <item>
       <widget class="QPushButton" name="cancelButton">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -579,6 +599,9 @@ color: #003168;
      </item>
      <item>
       <widget class="QPushButton" name="helpButton">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string>Help</string>
        </property>
@@ -592,10 +615,16 @@ color: #003168;
          <height>26</height>
         </size>
        </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="okButton">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string>Confirm</string>
        </property>
