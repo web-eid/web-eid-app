@@ -318,8 +318,7 @@ void Controller::onDialogCancel()
 {
     qDebug() << "User cancelled";
 
-    // Dispose the UI.
-    window.reset();
+    window->close();
 
     writeResponseToStdOut(isInStdinMode,
                           makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled")),
