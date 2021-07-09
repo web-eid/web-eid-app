@@ -11,8 +11,20 @@
 <context>
     <name>CertificateWidget</name>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4</translation>
+        <source> (Not effective)</source>
+        <translation> (Not effective)</translation>
+    </message>
+    <message>
+        <source> (Expired)</source>
+        <translation> (Expired)</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
+        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</translation>
+    </message>
+    <message>
+        <source>Pin locked</source>
+        <translation>Pin locked</translation>
     </message>
 </context>
 <context>
@@ -34,8 +46,8 @@
         <translation>The smart card service required to use the ID-card is not running. Please start the smart card service and try again.</translation>
     </message>
     <message>
-        <source>Card reader not connected. Please connect the card reader to the computer.</source>
-        <translation>Card reader not connected. Please connect the card reader to the computer.</translation>
+        <source>&lt;b&gt;Card reader not connected.&lt;/b&gt; Please connect the card reader to the computer.</source>
+        <translation>&lt;b&gt;Card reader not connected.&lt;/b&gt; Please connect the card reader to the computer.</translation>
     </message>
     <message>
         <source>Invalid PIN length</source>
@@ -84,8 +96,8 @@
         </translation>
     </message>
     <message>
-        <source>ID-card not found. Please insert the ID-card into the reader.</source>
-        <translation>ID-card not found. Please insert the ID-card into the reader.</translation>
+        <source>&lt;b&gt;ID-card not found.&lt;/b&gt; Please insert the ID-card into the reader.</source>
+        <translation>&lt;b&gt;ID-card not found.&lt;/b&gt; Please insert the ID-card into the reader.</translation>
     </message>
     <message>
         <source>PinPad timed out waiting for customer interaction.</source>
@@ -226,6 +238,14 @@
     <message>
         <source>About Web eID</source>
         <translation>About Web eID</translation>
+    </message>
+    <message>
+        <source>Time remaining: &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation>Time remaining: &lt;b&gt;%1&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
+        <translation>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
     </message>
 </context>
 </TS>

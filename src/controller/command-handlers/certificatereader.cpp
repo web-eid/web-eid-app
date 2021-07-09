@@ -32,15 +32,8 @@ using namespace electronic_id;
 namespace
 {
 
-enum class CertificateStatus { VALID, INVALID, NOT_YET_ACTIVE, EXPIRED };
-
-QString certificateStatusToString(const CertificateStatus status)
-{
-    return QString::fromStdString(std::string(magic_enum::enum_name(status)));
-}
-
-std::pair<CertificateStatus, CardCertificateAndPinInfo>
-getCertificateWithStatusAndInfo(const CardInfo::ptr& card, const CertificateType certificateType)
+CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& card,
+                                                          const CertificateType certificateType)
 {
     const auto certificateBytes = card->eid().getCertificate(certificateType);
 
@@ -52,19 +45,9 @@ getCertificateWithStatusAndInfo(const CardInfo::ptr& card, const CertificateType
               "Invalid certificate returned by electronic ID " + card->eid().name());
     }
 
-    auto certificateStatus = CertificateStatus::VALID;
-
-    if (certificate.isNull()) {
-        certificateStatus = CertificateStatus::INVALID;
-    }
-    if (certificate.effectiveDate() > QDateTime::currentDateTimeUtc()) {
-        certificateStatus = CertificateStatus::NOT_YET_ACTIVE;
-    }
-    if (certificate.expiryDate() < QDateTime::currentDateTimeUtc()) {
-        certificateStatus = CertificateStatus::EXPIRED;
-    }
-
     auto certInfo = CertificateInfo {certificateType,
+                                     certificate.expiryDate() < QDateTime::currentDateTimeUtc(),
+                                     certificate.effectiveDate() > QDateTime::currentDateTimeUtc(),
                                      certificate.subjectInfo(QSslCertificate::CommonName).join(' '),
                                      certificate.issuerInfo(QSslCertificate::CommonName).join(' '),
                                      certificate.effectiveDate().date().toString(Qt::ISODate),
@@ -79,7 +62,7 @@ getCertificateWithStatusAndInfo(const CardInfo::ptr& card, const CertificateType
         pinInfo.pinIsBlocked = true;
     }
 
-    return {certificateStatus, {card, certificateDer, certificate, certInfo, pinInfo}};
+    return {card, certificateDer, certificate, certInfo, pinInfo};
 }
 
 } // namespace
@@ -100,17 +83,9 @@ void CertificateReader::run(const std::vector<CardInfo::ptr>& cards)
                                                                  : CertificateType::SIGNING;
 
     std::vector<CardCertificateAndPinInfo> certInfos;
-
+    certInfos.reserve(cards.size());
     for (const auto& card : cards) {
-        auto certStatusAndInfo = getCertificateWithStatusAndInfo(card, certificateType);
-        // Omit invalid certificates.
-        if (certStatusAndInfo.first != CertificateStatus::VALID) {
-            qWarning() << "The" << QString::fromStdString(certificateType)
-                       << "certificate status is not valid:"
-                       << certificateStatusToString(certStatusAndInfo.first);
-            continue;
-        }
-        certInfos.emplace_back(certStatusAndInfo.second);
+        certInfos.emplace_back(getCertificateWithStatusAndInfo(card, certificateType));
     }
 
     if (certInfos.empty()) {

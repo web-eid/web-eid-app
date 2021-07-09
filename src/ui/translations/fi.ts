@@ -11,7 +11,19 @@
 <context>
     <name>CertificateWidget</name>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4</source>
+        <source> (Not effective)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (Expired)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pin locked</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -30,7 +42,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Card reader not connected. Please connect the card reader to the computer.</source>
+        <source>&lt;b&gt;Card reader not connected.&lt;/b&gt; Please connect the card reader to the computer.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -200,7 +212,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ID-card not found. Please insert the ID-card into the reader.</source>
+        <source>&lt;b&gt;ID-card not found.&lt;/b&gt; Please insert the ID-card into the reader.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -225,6 +237,14 @@
     </message>
     <message>
         <source>About Web eID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time remaining: &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
