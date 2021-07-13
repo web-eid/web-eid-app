@@ -82,7 +82,7 @@
         [NSThread sleepForTimeInterval:1.0];
         NSLog(@"web-eid-safari-extension: waiting to be running %@", [getUserDefaults() objectForKey:WebEidStarting]);
     }
-    if ([getUserDefaults() boolForKey:WebEidStarting]) {
+    if ([(NSNumber*)takeValue(WebEidStarting) boolValue]) {
         NSLog(@"web-eid-safari-extension: timeout to start app");
         return NO;
     }
