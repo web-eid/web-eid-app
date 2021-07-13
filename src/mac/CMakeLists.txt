@@ -36,11 +36,13 @@ add_custom_command(TARGET web-eid-safari-extension POST_BUILD
 # Application
 add_executable(web-eid-safari MACOSX_BUNDLE
     ${CMAKE_SOURCE_DIR}/install/appicon.icns
+    InfoPlist.strings
     main.mm
     ../app/getCommandHandler.cpp
     web-eid-safari.entitlements
 )
 set_source_files_properties(${CMAKE_SOURCE_DIR}/install/appicon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+set_source_files_properties(InfoPlist.strings PROPERTIES MACOSX_PACKAGE_LOCATION Resources/en.lproj)
 set_target_properties(web-eid-safari PROPERTIES
     AUTOMOC OFF
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info-app.plist.cmake

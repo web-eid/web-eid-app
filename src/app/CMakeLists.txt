@@ -1,6 +1,7 @@
 add_executable(web-eid WIN32 MACOSX_BUNDLE
     ${CMAKE_SOURCE_DIR}/install/appicon.icns
     getcommandhandler.cpp
+    InfoPlist.strings
     main.cpp
     web-eid.rc
     web-eid.entitlements
@@ -80,6 +81,7 @@ if(WIN32)
 elseif(APPLE)
     set(WEBEID_PATH /Applications/Utilities/web-eid.app/Contents/MacOS/web-eid)
     set_source_files_properties(${CMAKE_SOURCE_DIR}/install/appicon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    set_source_files_properties(InfoPlist.strings PROPERTIES MACOSX_PACKAGE_LOCATION Resources/en.lproj)
     set_target_properties(web-eid PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in)
     configure_file(${CMAKE_SOURCE_DIR}/install/macos-postinstall.in scripts/postinstall @ONLY)
     install(TARGETS web-eid DESTINATION /Applications/Utilities COMPONENT main)

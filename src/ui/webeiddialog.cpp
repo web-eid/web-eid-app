@@ -57,6 +57,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->setupUi(this);
     setWindowFlag(Qt::CustomizeWindowHint);
     setWindowFlag(Qt::WindowTitleHint);
+    setWindowTitle(qApp->applicationDisplayName());
     ui->aboutPageLabel->setText(qApp->applicationDisplayName());
     ui->versionLabel->setText(tr("Version: %1").arg(qApp->applicationVersion()));
 
