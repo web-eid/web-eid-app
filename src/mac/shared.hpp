@@ -24,7 +24,7 @@
 
 static NSString* WebEidApp = @"eu.web-eid.web-eid-safari";
 static NSString* WebEidExtension = @"eu.web-eid.web-eid-safari.web-eid-safari-extension";
-static NSString* WebEidShared = @"eu.web-eid.web-eid-safari.shared";
+static NSString* WebEidShared = @"ET847QJV9F.eu.web-eid.web-eid-safari.shared";
 static NSString* WebEidStarting = @"eu.web-eid.web-eid-safari.starting";
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000

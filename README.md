@@ -233,7 +233,7 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 
 - Install _CMake_, _Google Test_, _OpenSSL_ and _Qt_ with _Homebrew_:
 
-      brew install cmake web-eid/gtest/gtest openssl qt@5
+      brew install cmake web-eid/gtest/gtest openssl qt@5 node
 
 - Create symlink to _OpenSSL_ location and setup environment variables required
   by _CMake_:
