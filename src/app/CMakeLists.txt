@@ -124,9 +124,9 @@ elseif(APPLE)
             --version "${PROJECT_VERSION}" --package-path packages/ web-eid_${PROJECT_VERSION}.pkg
         COMMAND mkdir -p tmp
         COMMAND cp ${CMAKE_SOURCE_DIR}/install/DS_Store tmp/.DS_Store
-        COMMAND cp web-eid_${PROJECT_VERSION}.pkg tmp/web-eid.pkg
+        COMMAND cp web-eid_${PROJECT_VERSION}.pkg tmp/Web-eID.pkg
         COMMAND cp ${CMAKE_SOURCE_DIR}/install/background.png ${CMAKE_SOURCE_DIR}/install/uninstall.sh tmp
-        COMMAND setfile -a E tmp/web-eid.pkg
+        COMMAND setfile -a E tmp/Web-eID.pkg
         COMMAND setfile -a V tmp/background.png
         COMMAND hdiutil create web-eid_${PROJECT_VERSION}.dmg -ov -volname web-eid -srcfolder tmp
         COMMAND_EXPAND_LISTS
