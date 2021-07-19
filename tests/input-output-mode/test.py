@@ -17,8 +17,9 @@ WEBEID_APP = os.path.join(BASE_DIR, 'build', 'src', 'app', 'web-eid')
 class Test(unittest.TestCase):
 
     def setUp(self):
-        self.process = subprocess.Popen(WEBEID_APP, stdin=subprocess.PIPE,
-                                        stdout=subprocess.PIPE, close_fds=True)
+        self.process = subprocess.Popen([WEBEID_APP, 'unused-argument'],
+                                        stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                        close_fds=True)
 
     def tearDown(self):
         self.process.wait()
