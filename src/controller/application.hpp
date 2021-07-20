@@ -36,7 +36,7 @@ class Application final : public QApplication
 {
     Q_OBJECT
 public:
-    Application(int& argc, char** argv, const QString& name, const QString& display);
+    Application(int& argc, char** argv, const QString& name);
 
     void loadTranslations(const QString& lang = {});
     CommandWithArgumentsPtr parseArgs();
