@@ -9,9 +9,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Web eID Safari Extension</string>
+	<string>Web eID Extension</string>
 	<key>CFBundleDisplayName</key>
-	<string>Web eID Safari Extension</string>
+	<string>Web eID Extension</string>
 	<key>CFBundlePackageType</key>
 	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
