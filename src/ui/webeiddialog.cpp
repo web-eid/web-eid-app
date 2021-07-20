@@ -59,7 +59,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     setWindowFlag(Qt::WindowTitleHint);
     setWindowTitle(qApp->applicationDisplayName());
     ui->aboutPageLabel->setText(qApp->applicationDisplayName());
-    ui->versionLabel->setText(tr("Version: %1").arg(qApp->applicationVersion()));
+    ui->aboutVersion->setText(tr("Version: %1").arg(qApp->applicationVersion()));
 
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
     auto pinInputFont = ui->pinInput->font();
@@ -109,7 +109,17 @@ void WebEidDialog::showAboutPage()
 {
     WebEidDialog* d = new WebEidDialog();
     d->setAttribute(Qt::WA_DeleteOnClose);
-    d->ui->okButton->hide();
+    d->ui->helpButton->hide();
+    d->ui->aboutAlert->hide();
+    if (qApp->applicationName() == QStringLiteral("web-eid-safari")) {
+        d->setupOK([] {
+            QApplication::postEvent(qApp, new QEvent(QEvent::User));
+        },
+                   tr("Show Safari settings..."), true);
+        d->ui->aboutAlert->setVisible(!qApp->property("extensionStatus").toBool());
+    } else {
+        d->ui->okButton->hide();
+    }
     d->ui->pageStack->setCurrentIndex(int(Page::ABOUT));
     d->adjustSize();
     d->open();
@@ -344,7 +354,7 @@ bool WebEidDialog::event(QEvent* event)
 {
     if (event->type() == QEvent::LanguageChange) {
         ui->retranslateUi(this);
-        ui->versionLabel->setText(tr("Version: %1").arg(qApp->applicationVersion()));
+        ui->aboutVersion->setText(tr("Version: %1").arg(qApp->applicationVersion()));
     }
     return WebEidUI::event(event);
 }

@@ -137,12 +137,31 @@
 
 @end
 
+class SafariApplication final : public Application
+{
+public:
+    using Application::Application;
+
+    bool event(QEvent *e) final {
+        if (e->type() == QEvent::User) {
+            [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension completionHandler:nil];
+        }
+        return Application::event(e);
+    }
+};
+
 int main(int argc, char* argv[])
 {
     Q_INIT_RESOURCE(web_eid_resources);
     Q_INIT_RESOURCE(translations);
 
-    Application app(argc, argv, QStringLiteral("web-eid-safari"));
+    SafariApplication app(argc, argv, QStringLiteral("web-eid-safari"));
+
+    [NSDistributedNotificationCenter.defaultCenter addObserver:NSApp selector:@selector(notificationEvent:) name:WebEidApp object:nil];
+    [SFSafariExtensionManager getStateOfSafariExtensionWithIdentifier:WebEidExtension completionHandler:^(SFSafariExtensionState *state, NSError *error) {
+        NSLog(@"Extension state %@, error %@", @(state ? state.enabled : 0), error);
+        qApp->setProperty("extensionStatus", bool(state.enabled));
+    }];
 
     try {
         if (auto args = app.parseArgs()) {
@@ -161,14 +180,6 @@ int main(int argc, char* argv[])
     } catch (const std::exception& error) {
         qCritical() << error;
     }
-
-    [NSDistributedNotificationCenter.defaultCenter addObserver:NSApp selector:@selector(notificationEvent:) name:WebEidApp object:nil];
-    [SFSafariExtensionManager getStateOfSafariExtensionWithIdentifier:WebEidExtension completionHandler:^(SFSafariExtensionState *state, NSError *error) {
-        NSLog(@"Extension state %@, error %@", @(state ? state.enabled : 0), error);
-        if (!state.enabled) {
-            [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension completionHandler:nil];
-        }
-    }];
 
     id starting = takeValue(WebEidStarting);
     NSLog(@"web-eid-safari: is starting %@", starting);

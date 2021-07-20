@@ -32,7 +32,7 @@ public:
     using std::runtime_error::runtime_error;
 };
 
-class Application final : public QApplication
+class Application : public QApplication
 {
     Q_OBJECT
 public:

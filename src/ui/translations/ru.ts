@@ -210,15 +210,19 @@
         <translation>Ошибка связи с картой. Более подробную информацию можно найти в файлах регистрации.</translation>
     </message>
     <message>
-        <source>This application provides eID Safari extension.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To uninstall this extension, remove this application</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The extension is currently disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;This application provides an eID browser extension&lt;/b&gt; and cannot be used independantly. To uninstall the extension, remove this application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Safari settings...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

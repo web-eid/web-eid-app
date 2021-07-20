@@ -208,16 +208,20 @@
         <translation>Error communicating with the card. More detailed information can be found in the log files.</translation>
     </message>
     <message>
-        <source>This application provides eID Safari extension.</source>
-        <translation>This application provides eID Safari extension.</translation>
-    </message>
-    <message>
-        <source>To uninstall this extension, remove this application</source>
-        <translation>To uninstall this extension, remove this application</translation>
-    </message>
-    <message>
         <source>Version: %1</source>
         <translation>Version: %1</translation>
+    </message>
+    <message>
+        <source>The extension is currently disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;This application provides an eID browser extension&lt;/b&gt; and cannot be used independantly. To uninstall the extension, remove this application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Safari settings...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
