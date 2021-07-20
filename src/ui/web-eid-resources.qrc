@@ -20,5 +20,6 @@
         <file>fonts/Roboto-Thin.ttf</file>
         <file>fonts/Roboto-ThinItalic.ttf</file>
         <file>images/no-id-card.svg</file>
+        <file>../../install/appicon_128.png</file>
     </qresource>
 </RCC>

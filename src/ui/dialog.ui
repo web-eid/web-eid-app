@@ -109,11 +109,19 @@ color: #CD2541;
 #fatalError {
 border: 1px solid rgba(240,78,35,0.1);
 border-radius: 3px;
-color: #CD2541;
 min-height: 56px;
 }
+#aboutContent {
+border: 1px solid rgba(17, 63, 142, 0.1);
+}
+#fatalErrorLabel, #aboutAlert {
+color: #CD2541;
+} 
 #helpButton {
 color: #003168;
+}
+#aboutVersion {
+color: #76767B;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="WebEidDialogLayout">
@@ -568,56 +576,110 @@ color: #003168;
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="aboutPageLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
+        <layout class="QGridLayout" name="aboutTitleLayout">
+         <property name="horizontalSpacing">
+          <number>20</number>
          </property>
-         <property name="text">
-          <string notr="true">Web eID</string>
+         <property name="verticalSpacing">
+          <number>2</number>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
+         <item row="0" column="0" rowspan="2">
+          <widget class="QLabel" name="aboutLogo">
+           <property name="minimumSize">
+            <size>
+             <width>60</width>
+             <height>60</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>60</height>
+            </size>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="web-eid-resources.qrc">:/install/appicon_128.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="aboutPageLabel">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="text">
+            <string notr="true">Web eID</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="aboutVersion">
+           <property name="text">
+            <string notr="true">Version: 1.0.0</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QWidget" name="aboutContent" native="true">
+         <layout class="QGridLayout" name="aboutContentLayout">
+          <property name="horizontalSpacing">
+           <number>10</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>20</number>
+          </property>
+          <item row="1" column="1">
+           <widget class="QLabel" name="aboutAlert">
+            <property name="focusPolicy">
+             <enum>Qt::TabFocus</enum>
+            </property>
+            <property name="text">
+             <string>The extension is currently disabled</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="aboutText">
+            <property name="focusPolicy">
+             <enum>Qt::TabFocus</enum>
+            </property>
+            <property name="text">
+             <string>&lt;b&gt;This application provides an eID browser extension&lt;/b&gt; and cannot be used independantly. To uninstall the extension, remove this application.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" rowspan="2">
+           <widget class="QLabel" name="aboutIcon">
+            <property name="minimumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="web-eid-resources.qrc">:/images/fatal.svg</pixmap>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="versionLabel">
-         <property name="text">
-          <string notr="true">Version: 1.0.0</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="info1Label">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string>This application provides eID Safari extension.</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="info2Label">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string>To uninstall this extension, remove this application</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
+        <spacer name="aboutSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
