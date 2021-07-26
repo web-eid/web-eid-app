@@ -295,7 +295,10 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     // FIXME: don't allow retry in case of UNKNOWN_ERROR
     switch (status) {
     case Status::RETRY_ALLOWED:
-        displayPinRetriesRemaining({retriesLeft, retriesLeft + 1});
+        message = tr("Incorrect PIN, %n attempts left.", nullptr, retriesLeft);
+        style()->unpolish(ui->pinInput);
+        ui->pinInput->setProperty("warning", true);
+        style()->polish(ui->pinInput);
         break;
     case Status::PIN_BLOCKED:
         displayPinBlockedError();
