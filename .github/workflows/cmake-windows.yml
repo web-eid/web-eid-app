@@ -29,7 +29,7 @@ jobs:
         with:
           vcpkgArguments: gtest openssl
           vcpkgTriplet: ${{ matrix.arch }}-windows
-          vcpkgGitCommitId: 18376a2f2ce989e022db5c1199b468e43f7c1a79
+          vcpkgGitCommitId: 8dddc6c899ce6fdbeab38b525a31e7f23cb2d5bb # Pull in CMake 3.21.0 fix
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
@@ -86,7 +86,7 @@ jobs:
         with:
           vcpkgArguments: gtest openssl
           vcpkgTriplet: x64-windows
-          vcpkgGitCommitId: 18376a2f2ce989e022db5c1199b468e43f7c1a79
+          vcpkgGitCommitId: 8dddc6c899ce6fdbeab38b525a31e7f23cb2d5bb # Pull in CMake 3.21.0 fix
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
