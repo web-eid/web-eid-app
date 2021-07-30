@@ -142,12 +142,17 @@ class SafariApplication final : public Application
 public:
     using Application::Application;
 
-    bool event(QEvent *e) final {
-        if (e->type() == QEvent::User) {
-            [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension completionHandler:nil];
-        }
-        return Application::event(e);
+    bool isSafariExtensionContainingApp() override { return true; }
+    bool isSafariExtensionEnabled() override { return safariExtensionEnabled; }
+    void showSafariSettings() override {
+        [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension completionHandler:nil];
     }
+    void setSafariExtensionEnabled(bool value) {
+        safariExtensionEnabled = value;
+    }
+
+private:
+    bool safariExtensionEnabled = false;
 };
 
 int main(int argc, char* argv[])
@@ -156,11 +161,12 @@ int main(int argc, char* argv[])
     Q_INIT_RESOURCE(translations);
 
     SafariApplication app(argc, argv, QStringLiteral("web-eid-safari"));
+    auto appPtr = &app;
 
     [NSDistributedNotificationCenter.defaultCenter addObserver:NSApp selector:@selector(notificationEvent:) name:WebEidApp object:nil];
     [SFSafariExtensionManager getStateOfSafariExtensionWithIdentifier:WebEidExtension completionHandler:^(SFSafariExtensionState *state, NSError *error) {
         NSLog(@"Extension state %@, error %@", @(state ? state.enabled : 0), error);
-        qApp->setProperty("extensionStatus", bool(state.enabled));
+        appPtr->setSafariExtensionEnabled(bool(state.enabled));
     }];
 
     try {

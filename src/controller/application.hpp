@@ -42,6 +42,12 @@ public:
     CommandWithArgumentsPtr parseArgs();
     static void registerMetatypes();
 
+    // Methods specific to Safari web extension's containing app,
+    // see class SafariApplication in src/mac/main.mm and WebEidDialog::showAboutPage().
+    virtual bool isSafariExtensionContainingApp() { return false; }
+    virtual bool isSafariExtensionEnabled() { return false; }
+    virtual void showSafariSettings() {}
+
 private:
     QTranslator* translator;
 };
