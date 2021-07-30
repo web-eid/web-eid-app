@@ -216,11 +216,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;This application provides an eID browser extension&lt;/b&gt; and cannot be used independantly. To uninstall the extension, remove this application.</source>
+        <source>Show Safari settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show Safari settings...</source>
+        <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

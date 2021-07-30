@@ -33,6 +33,7 @@
 #include <QStyle>
 #include <QTimeLine>
 #include <QUrl>
+#include <application.hpp>
 
 #define CATCH_AND_EMIT_FAILURE_AND_RETURN()                                                        \
     catch (std::exception & e)                                                                     \
@@ -111,12 +112,11 @@ void WebEidDialog::showAboutPage()
     d->setAttribute(Qt::WA_DeleteOnClose);
     d->ui->helpButton->hide();
     d->ui->aboutAlert->hide();
-    if (qApp->applicationName() == QStringLiteral("web-eid-safari")) {
-        d->setupOK([] {
-            QApplication::postEvent(qApp, new QEvent(QEvent::User));
-        },
+    auto app = static_cast<Application *>(QCoreApplication::instance());
+    if (app->isSafariExtensionContainingApp()) {
+        d->setupOK([app] { app->showSafariSettings(); },
                    tr("Show Safari settings..."), true);
-        d->ui->aboutAlert->setVisible(!qApp->property("extensionStatus").toBool());
+        d->ui->aboutAlert->setVisible(app->isSafariExtensionEnabled());
     } else {
         d->ui->okButton->hide();
     }

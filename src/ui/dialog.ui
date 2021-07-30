@@ -649,7 +649,7 @@ color: #76767B;
              <enum>Qt::TabFocus</enum>
             </property>
             <property name="text">
-             <string>&lt;b&gt;This application provides an eID browser extension&lt;/b&gt; and cannot be used independantly. To uninstall the extension, remove this application.</string>
+             <string>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
