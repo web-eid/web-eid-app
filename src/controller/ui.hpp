@@ -26,6 +26,8 @@
 #include "certandpininfo.hpp"
 #include "retriableerror.hpp"
 
+#include "observer_ptr.hpp"
+
 #include <QDialog>
 
 /**
@@ -36,12 +38,10 @@ class WebEidUI : public QDialog
     Q_OBJECT
 
 public:
-    using ptr = std::unique_ptr<WebEidUI>;
-
     explicit WebEidUI(QWidget* parent = nullptr) : QDialog(parent) {}
 
     // Factory function that creates and shows the dialog that implements this interface.
-    static ptr createAndShowDialog(const CommandType command);
+    static observer_ptr<WebEidUI> createAndShowDialog(const CommandType command);
 
     static void showAboutPage();
     static void showFatalError();

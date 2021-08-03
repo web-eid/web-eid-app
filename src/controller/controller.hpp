@@ -28,6 +28,8 @@
 
 #include "pcsc-cpp/pcsc-cpp.hpp"
 
+#include "observer_ptr.hpp"
+
 #include <unordered_map>
 #include <cstdint>
 
@@ -74,16 +76,13 @@ public: // slots
     void onCriticalFailure(const QString& error);
 
 private:
-    // Non-owning observing pointer.
-    template <typename T>
-    using observer_ptr = T*;
-
     void startCommandExecution();
     void runCommandHandler(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
     void connectOkCancelWaitingForPinPad();
     void connectRetry(const ControllerChildThread* childThread);
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
     void stopCardEventMonitorThread();
+    void disposeUI();
     void exit();
     void waitForChildThreads();
     CommandType commandType();
@@ -93,7 +92,8 @@ private:
     std::unordered_map<uintptr_t, observer_ptr<ControllerChildThread>> childThreads;
     // Key of card event monitor thread in childThreads map.
     uintptr_t cardEventMonitorThreadKey = 0;
-    WebEidUI::ptr window = nullptr;
+    // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
+    observer_ptr<WebEidUI> window = nullptr;
     QVariantMap _result;
     bool isInStdinMode = true;
 };

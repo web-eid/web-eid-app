@@ -22,9 +22,12 @@
 
 #include "webeiddialog.hpp"
 
-WebEidUI::ptr WebEidUI::createAndShowDialog(const CommandType command)
+WebEidUI* WebEidUI::createAndShowDialog(const CommandType command)
 {
-    auto dialog = std::make_unique<WebEidDialog>();
+    auto dialog = new WebEidDialog {};
+    // close() deletes the dialog automatically if the Qt::WA_DeleteOnClose flag is set.
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+
     dialog->showWaitingForCardPage(command);
     dialog->activateWindow();
     dialog->show();
