@@ -124,7 +124,7 @@ void Controller::startCommandExecution()
 
     // UI setup.
     window = WebEidUI::createAndShowDialog(commandHandler->commandType());
-    connect(this, &Controller::statusUpdate, window.get(), &WebEidUI::onSmartCardStatusUpdate);
+    connect(this, &Controller::statusUpdate, window, &WebEidUI::onSmartCardStatusUpdate);
     connectOkCancelWaitingForPinPad();
 
     // Finally, start the thread to wait for card insertion after everything is wired up.
@@ -162,10 +162,10 @@ void Controller::connectOkCancelWaitingForPinPad()
 {
     REQUIRE_NON_NULL(window)
 
-    connect(window.get(), &WebEidUI::accepted, this, &Controller::onDialogOK);
-    connect(window.get(), &WebEidUI::rejected, this, &Controller::onDialogCancel);
-    connect(window.get(), &WebEidUI::failure, this, &Controller::onCriticalFailure);
-    connect(window.get(), &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
+    connect(window, &WebEidUI::accepted, this, &Controller::onDialogOK);
+    connect(window, &WebEidUI::rejected, this, &Controller::onDialogCancel);
+    connect(window, &WebEidUI::failure, this, &Controller::onCriticalFailure);
+    connect(window, &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
 }
 
 void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& availableCards)
@@ -184,7 +184,7 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
 
         window->showWaitingForCardPage(commandHandler->commandType());
 
-        commandHandler->connectSignals(window.get());
+        commandHandler->connectSignals(window);
 
         runCommandHandler(availableCards);
 
@@ -242,13 +242,23 @@ void Controller::stopCardEventMonitorThread()
     }
 }
 
+void Controller::disposeUI()
+{
+    if (window) {
+        window->disconnect();
+        // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
+        window->close();
+        window = nullptr;
+    }
+}
+
 void Controller::onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCertAndPinInfo)
 {
     stopCardEventMonitorThread();
 
     try {
-        CommandHandlerConfirmThread* commandHandlerConfirmThread = new CommandHandlerConfirmThread(
-            this, *commandHandler, window.get(), cardCertAndPinInfo);
+        CommandHandlerConfirmThread* commandHandlerConfirmThread =
+            new CommandHandlerConfirmThread(this, *commandHandler, window, cardCertAndPinInfo);
         connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
                 &Controller::onCommandHandlerConfirmCompleted);
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerConfirmThread);
@@ -277,7 +287,7 @@ void Controller::onRetry()
 {
     try {
         // Dispose the UI, it will be re-created during next execution.
-        window.reset();
+        disposeUI();
         // Command handler signals are still connected, disconnect them so that they can be
         // reconnected during next execution.
         commandHandler->disconnect();
@@ -296,12 +306,12 @@ void Controller::connectRetry(const ControllerChildThread* childThread)
     REQUIRE_NON_NULL(childThread)
     REQUIRE_NON_NULL(window)
 
-    disconnect(window.get(), &WebEidUI::retry, nullptr, nullptr);
+    disconnect(window, &WebEidUI::retry, nullptr, nullptr);
 
-    connect(childThread, &ControllerChildThread::retry, window.get(), &WebEidUI::onRetry);
+    connect(childThread, &ControllerChildThread::retry, window, &WebEidUI::onRetry);
     // This connection handles cancel events from PIN pad.
     connect(childThread, &ControllerChildThread::cancel, this, &Controller::onDialogCancel);
-    connect(window.get(), &WebEidUI::retry, this, &Controller::onRetry);
+    connect(window, &WebEidUI::retry, this, &Controller::onRetry);
 }
 
 void Controller::onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo)
@@ -318,7 +328,7 @@ void Controller::onDialogCancel()
 {
     qDebug() << "User cancelled";
 
-    window->close();
+    disposeUI();
 
     writeResponseToStdOut(isInStdinMode,
                           makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled")),
@@ -332,8 +342,7 @@ void Controller::onCriticalFailure(const QString& error)
                 << "fatal error:" << error;
     writeResponseToStdOut(isInStdinMode, makeErrorObject(RESP_TECH_ERROR, error), commandType());
 
-    // Dispose the UI.
-    window.reset();
+    disposeUI();
 
     WebEidUI::showFatalError();
 

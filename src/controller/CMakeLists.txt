@@ -21,6 +21,7 @@ add_library(controller STATIC
     inputoutputmode.hpp
     logging.hpp
     logging.cpp
+    observer_ptr.hpp
     qeid.hpp
     retriableerror.cpp
     retriableerror.hpp

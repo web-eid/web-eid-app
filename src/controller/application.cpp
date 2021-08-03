@@ -43,8 +43,7 @@ inline CommandWithArguments::second_type parseArgumentJson(const QString& argume
     return argumentJson.object().toVariantMap();
 }
 
-Application::Application(int& argc, char** argv, const QString& name) :
-    QApplication(argc, argv)
+Application::Application(int& argc, char** argv, const QString& name) : QApplication(argc, argv)
 {
     setApplicationName(name);
     setApplicationDisplayName(QStringLiteral("Web eID"));

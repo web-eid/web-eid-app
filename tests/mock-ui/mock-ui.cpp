@@ -23,9 +23,10 @@
 #include "ui.hpp"
 #include "mock-ui.hpp"
 
-WebEidUI::ptr WebEidUI::createAndShowDialog(const CommandType)
+WebEidUI* WebEidUI::createAndShowDialog(const CommandType)
 {
-    return std::make_unique<MockUI>();
+    static MockUI instance;
+    return &instance;
 }
 
 void WebEidUI::showAboutPage() {}
