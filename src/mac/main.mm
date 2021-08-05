@@ -157,6 +157,9 @@ private:
 
 int main(int argc, char* argv[])
 {
+    id starting = takeValue(WebEidStarting);
+    NSLog(@"web-eid-safari: is starting %@", starting);
+
     Q_INIT_RESOURCE(web_eid_resources);
     Q_INIT_RESOURCE(translations);
 
@@ -171,6 +174,8 @@ int main(int argc, char* argv[])
 
     try {
         if (auto args = app.parseArgs()) {
+            NSLog(@"web-eid-safari: running with arguments");
+
             Controller controller(std::move(args));
 
             QObject::connect(&controller, &Controller::quit, &app, &QApplication::quit);
@@ -187,8 +192,6 @@ int main(int argc, char* argv[])
         qCritical() << error;
     }
 
-    id starting = takeValue(WebEidStarting);
-    NSLog(@"web-eid-safari: is starting %@", starting);
     if (![(NSNumber*)starting boolValue]) {
         WebEidDialog::showAboutPage();
     }
