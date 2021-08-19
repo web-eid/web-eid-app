@@ -36,7 +36,8 @@
 
 @implementation NSApplication (MacController)
 
-+ (QVariant)toQVariant:(id)data {
++ (QVariant)toQVariant:(id)data
+{
     if (data == nil) {
         return {};
     }
@@ -55,7 +56,8 @@
     return {};
 }
 
-+ (QVariantList)toQVariantList:(NSArray *)data {
++ (QVariantList)toQVariantList:(NSArray*)data
+{
     QVariantList result;
     if (data == nil) {
         return result;
@@ -66,7 +68,8 @@
     return result;
 }
 
-+ (QVariantMap)toQVariantMap:(NSDictionary *)data {
++ (QVariantMap)toQVariantMap:(NSDictionary*)data
+{
     QVariantMap result;
     if (data == nil) {
         return result;
@@ -77,7 +80,8 @@
     return result;
 }
 
-+ (id)toID:(const QVariant&)data {
++ (id)toID:(const QVariant&)data
+{
     switch (data.type()) {
         case QVariant::String: return data.toString().toNSString();
         case QVariant::Map: return [NSApplication toNSDictionary:data.toMap()];
@@ -86,15 +90,17 @@
     }
 }
 
-+ (NSArray*)toNSArray:(const QVariantList&)data {
++ (NSArray*)toNSArray:(const QVariantList&)data
+{
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    for (const QVariant &item: data) {
+    for (const QVariant& item : data) {
         [result addObject:[NSApplication toID:item]];
     }
     return result;
 }
 
-+ (NSDictionary*)toNSDictionary:(const QVariantMap&)data {
++ (NSDictionary*)toNSDictionary:(const QVariantMap&)data
+{
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     for (QVariantMap::const_iterator i = data.cbegin(); i != data.cend(); ++i) {
         result[i.key().toNSString()] = [NSApplication toID:i.value()];
@@ -102,7 +108,8 @@
     return result;
 }
 
-- (void)notificationEvent:(NSNotification *)notification {
+- (void)notificationEvent:(NSNotification*)notification
+{
     NSString *nonce = notification.object;
     NSDictionary *req = takeValue(nonce);
     NSLog(@"web-eid-safari: msg from extension nonce (%@) request: %@", nonce, req);
@@ -111,13 +118,16 @@
     }
 
     NSDictionary *resp;
-    if([@"status" isEqualToString:req[@"command"]]) {
-        resp = [NSApplication toNSDictionary:{{QStringLiteral("version"), qApp->applicationVersion()}}];
+    if ([@"status" isEqualToString:req[@"command"]]) {
+        resp = [NSApplication
+            toNSDictionary: {{QStringLiteral("version"), qApp->applicationVersion()}}];
     } else {
         try {
-            const auto argumentJson = QJsonDocument::fromJson(QByteArray::fromNSData(req[@"arguments"]));
-            Controller controller(std::make_unique<CommandWithArguments>(commandNameToCommandType(QString::fromNSString(req[@"command"])),
-                                                                        argumentJson.object().toVariantMap()));
+            const auto argumentJson =
+                QJsonDocument::fromJson(QByteArray::fromNSData(req[@"arguments"]));
+            Controller controller(std::make_unique<CommandWithArguments>(
+                commandNameToCommandType(QString::fromNSString(req[@"command"])),
+                argumentJson.object().toVariantMap()));
             controller.run();
             QEventLoop e;
             QObject::connect(&controller, &Controller::quit, &e, &QEventLoop::quit);
@@ -144,12 +154,12 @@ public:
 
     bool isSafariExtensionContainingApp() override { return true; }
     bool isSafariExtensionEnabled() override { return safariExtensionEnabled; }
-    void showSafariSettings() override {
-        [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension completionHandler:nil];
+    void showSafariSettings() override
+    {
+        [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension
+                                                     completionHandler:nil];
     }
-    void setSafariExtensionEnabled(bool value) {
-        safariExtensionEnabled = value;
-    }
+    void setSafariExtensionEnabled(bool value) { safariExtensionEnabled = value; }
 
 private:
     bool safariExtensionEnabled = false;
@@ -157,9 +167,6 @@ private:
 
 int main(int argc, char* argv[])
 {
-    id starting = takeValue(WebEidStarting);
-    NSLog(@"web-eid-safari: is starting %@", starting);
-
     Q_INIT_RESOURCE(web_eid_resources);
     Q_INIT_RESOURCE(translations);
 
@@ -171,6 +178,16 @@ int main(int argc, char* argv[])
         NSLog(@"Extension state %@, error %@", @(state ? state.enabled : 0), error);
         appPtr->setSafariExtensionEnabled(bool(state.enabled));
     }];
+
+    id starting = [getUserDefaults() objectForKey:WebEidStarting];
+    NSLog(@"web-eid-safari: is starting %@", starting);
+    if ([(NSNumber*)starting boolValue]) {
+        QTimer::singleShot(0, appPtr, [] {
+            id starting = takeValue(WebEidStarting);
+            NSLog(@"web-eid-safari: started %@", starting);
+        });
+        return QApplication::exec();
+    }
 
     try {
         if (auto args = app.parseArgs()) {
@@ -192,8 +209,5 @@ int main(int argc, char* argv[])
         qCritical() << error;
     }
 
-    if (![(NSNumber*)starting boolValue]) {
-        WebEidDialog::showAboutPage();
-    }
-    return QApplication::exec();
+    return -1;
 }

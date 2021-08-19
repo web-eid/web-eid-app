@@ -78,8 +78,8 @@
         return NO;
     }
     NSLog(@"web-eid-safari-extension: started app");
-    for (int i = 0; i < 10 && [getUserDefaults() boolForKey:WebEidStarting]; ++i) {
-        [NSThread sleepForTimeInterval:1.0];
+    for (int i = 0; i < 20 && [getUserDefaults() boolForKey:WebEidStarting]; ++i) {
+        [NSThread sleepForTimeInterval:0.5];
         NSLog(@"web-eid-safari-extension: waiting to be running %@", [getUserDefaults() objectForKey:WebEidStarting]);
     }
     if ([(NSNumber*)takeValue(WebEidStarting) boolValue]) {
@@ -102,6 +102,8 @@
         [context completeRequestReturningItems:@[ response ] completionHandler:nil];
         return;
     }
+
+    NSLog(@"web-eid-safari-extension: sending message to app %@", message);
 
     // Save context
     NSString *nonce = [[[NSUUID alloc] init] UUIDString];

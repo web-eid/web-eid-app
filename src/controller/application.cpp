@@ -50,6 +50,7 @@ Application::Application(int& argc, char** argv, const QString& name) : QApplica
     setApplicationVersion(QStringLiteral(PROJECT_VERSION));
     setOrganizationDomain(QStringLiteral("web-eid.eu"));
     setOrganizationName(QStringLiteral("RIA"));
+    setQuitOnLastWindowClosed(false);
 
     translator = new QTranslator(this);
     QApplication::installTranslator(translator);
