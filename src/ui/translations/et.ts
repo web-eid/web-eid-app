@@ -205,23 +205,23 @@
     </message>
     <message>
         <source>Error communicating with the card. More detailed information can be found in the log files.</source>
-        <translation>Viga kaardiga suhtlemisel. Täpsem informatsioon on leitav logifailidest.</translation>
+        <translation>Toiming ebaõnnestus. Täpsem informatsioon on leitav logifailidest.</translation>
     </message>
     <message>
         <source>Version: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Versioon: %1</translation>
     </message>
     <message>
         <source>The extension is currently disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Web eID laiendus on keelatud. ID-kaardiga autentimiseks ja allkirjastamiseks tuleb veebilehitsejas laiendus lubada.</translation>
     </message>
     <message>
         <source>Show Safari settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ava Safari seaded...</translation>
     </message>
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Rakendus Web eID laienduse kasutamiseks.&lt;/b&gt; Antud rakendust ei saa kasutada iseseisvalt. Laienduse eemaldamiseks kustutage see rakendus.</translation>
     </message>
 </context>
 </TS>

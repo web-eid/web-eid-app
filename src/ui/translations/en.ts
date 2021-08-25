@@ -137,7 +137,7 @@
     </message>
     <message>
         <source>Operation not supported by ID-card</source>
-        <translation>Operation not supported by ID-card</translation>
+        <translation>Operation not supported</translation>
     </message>
     <message>
         <source>Error communicating with the card.</source>
@@ -205,7 +205,7 @@
     </message>
     <message>
         <source>Error communicating with the card. More detailed information can be found in the log files.</source>
-        <translation>Error communicating with the card. More detailed information can be found in the log files.</translation>
+        <translation>Operation failed. More detailed information can be found in the log files.</translation>
     </message>
     <message>
         <source>Version: %1</source>
@@ -213,15 +213,15 @@
     </message>
     <message>
         <source>The extension is currently disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</translation>
     </message>
     <message>
         <source>Show Safari settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Open Safari settings…</translation>
     </message>
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</translation>
     </message>
 </context>
 </TS>

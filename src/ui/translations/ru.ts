@@ -31,7 +31,7 @@
     </message>
     <message>
         <source>The smart card service required to use the ID-card is not running. Please start the smart card service and try again.</source>
-        <translation>Необходимая для использования ID-карты услуга считывания смарт-карты не работает. Пожалуйста, запустите ее.</translation>
+        <translation>При использовании ID-карты нужная услуга Чипкарта не работает. Пожалуйста запустите услугу Чипкарты и попробуйте заново.</translation>
     </message>
     <message>
         <source>Card reader not connected. Please connect the card reader to the computer.</source>
@@ -91,7 +91,7 @@
     </message>
     <message>
         <source>PinPad timed out waiting for customer interaction.</source>
-        <translation>Время сеанса считывателя PinPad истекло.</translation>
+        <translation>Операция PinPad считывателя истекла.</translation>
     </message>
     <message>
         <source>PIN entry cancelled.</source>
@@ -207,23 +207,23 @@
     </message>
     <message>
         <source>Error communicating with the card. More detailed information can be found in the log files.</source>
-        <translation>Ошибка связи с картой. Более подробную информацию можно найти в файлах регистрации.</translation>
+        <translation>Операция не удалась. Более подробную информацию можно найти в файлах регистрации.</translation>
     </message>
     <message>
         <source>Version: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Версия: %1</translation>
     </message>
     <message>
         <source>The extension is currently disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Web eID расширение запрещено. Для входа или подписания с помощью ИД-карты надо в интернет браузере расширение разрешить.</translation>
     </message>
     <message>
         <source>Show Safari settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Откройте настройки Safari...</translation>
     </message>
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Приложение для испольсования расширения Web eID.&lt;/b&gt; Данное приложение невозможно использовать самостоятельно. Для удаления расширения удалите это приложение.</translation>
     </message>
 </context>
 </TS>
