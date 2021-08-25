@@ -54,7 +54,7 @@
         <translation>Autentimine</translation>
     </message>
     <message>
-        <source>Sign</source>
+        <source>Signing</source>
         <translation>Allkirjastamine</translation>
     </message>
     <message>
@@ -70,7 +70,7 @@
         <translation>PIN-kood on lukus. Tühista blokeering ja proovi uuesti.</translation>
     </message>
     <message numerus="yes">
-        <source>%n attempts left</source>
+        <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
             <numerusform>PIN-koodi on vähemalt ühe korra valesti sisestatud. %n katse jäänud.</numerusform>
             <numerusform>PIN-koodi on vähemalt ühe korra valesti sisestatud. %n katset jäänud.</numerusform>
@@ -132,7 +132,7 @@
         <translation>Sisestatud ID-kaardiga ei saa soovitud toimingut teostada. Palun veendu, et ID-kaart on Web eID rakenduse poolt toetatud.</translation>
     </message>
     <message>
-        <source>Operation not supported by ID-card</source>
+        <source>Operation not supported</source>
         <translation>Toiming ei ole toetatud</translation>
     </message>
     <message>
@@ -184,7 +184,7 @@
         <translation>Loen kaardilt andmeid</translation>
     </message>
     <message>
-        <source>Retry</source>
+        <source>Try again</source>
         <translation>Proovi uuesti</translation>
     </message>
     <message>
@@ -204,24 +204,28 @@
         <translation>https://www.id.ee/artikkel/kuidas-kontrollida-id-kaardi-ja-lugeja-tookorras-olekut/</translation>
     </message>
     <message>
-        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
-        <translation>Viga kaardiga suhtlemisel. Täpsem informatsioon on leitav logifailidest.</translation>
+        <source>Operation failed. More detailed information can be found in the log files.</source>
+        <translation>Toiming ebaõnnestus. Täpsem informatsioon on leitav logifailidest.</translation>
     </message>
     <message>
         <source>Version: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Versioon: %1</translation>
     </message>
     <message>
-        <source>The extension is currently disabled</source>
-        <translation type="unfinished"></translation>
+        <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
+        <translation>Web eID laiendus on keelatud. ID-kaardiga autentimiseks ja allkirjastamiseks tuleb veebilehitsejas laiendus lubada.</translation>
     </message>
     <message>
-        <source>Show Safari settings...</source>
-        <translation type="unfinished"></translation>
+        <source>Open Safari settings...</source>
+        <translation>Ava Safari seaded...</translation>
     </message>
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Rakendus Web eID laienduse kasutamiseks.&lt;/b&gt; Antud rakendust ei saa kasutada iseseisvalt. Laienduse eemaldamiseks kustutage see rakendus.</translation>
+    </message>
+    <message>
+        <source>About Web eID</source>
+        <translation>Web eID teave</translation>
     </message>
 </context>
 </TS>

@@ -326,7 +326,7 @@ color: #76767B;
              <enum>Qt::TabFocus</enum>
             </property>
             <property name="text">
-             <string>Error communicating with the card. More detailed information can be found in the log files.</string>
+             <string>Operation failed. More detailed information can be found in the log files.</string>
             </property>
            </widget>
           </item>
@@ -611,7 +611,7 @@ color: #76767B;
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
-            <string notr="true">Web eID</string>
+            <string>About Web eID</string>
            </property>
           </widget>
          </item>
@@ -639,7 +639,7 @@ color: #76767B;
              <enum>Qt::TabFocus</enum>
             </property>
             <property name="text">
-             <string>The extension is currently disabled</string>
+             <string>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</string>
             </property>
            </widget>
           </item>

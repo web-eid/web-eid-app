@@ -54,7 +54,7 @@
         <translation>Authentication</translation>
     </message>
     <message>
-        <source>Sign</source>
+        <source>Signing</source>
         <translation>Signing</translation>
     </message>
     <message>
@@ -70,7 +70,7 @@
         <translation>PIN is locked. Unblock and try again.</translation>
     </message>
     <message numerus="yes">
-        <source>%n attempts left</source>
+        <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
             <numerusform>The PIN has been entered incorrectly at least once. %n attempt left.</numerusform>
             <numerusform>The PIN has been entered incorrectly at least once. %n attempts left.</numerusform>
@@ -136,8 +136,8 @@
         <translation>The desired operation cannot be performed with the inserted ID-card. Make sure that the ID-card is supported by the Web eID application.</translation>
     </message>
     <message>
-        <source>Operation not supported by ID-card</source>
-        <translation>Operation not supported by ID-card</translation>
+        <source>Operation not supported</source>
+        <translation>Operation not supported</translation>
     </message>
     <message>
         <source>Error communicating with the card.</source>
@@ -184,7 +184,7 @@
         <translation>PIN2 for signing</translation>
     </message>
     <message>
-        <source>Retry</source>
+        <source>Try again</source>
         <translation>Try again</translation>
     </message>
     <message>
@@ -204,24 +204,28 @@
         <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
     </message>
     <message>
-        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
-        <translation>Error communicating with the card. More detailed information can be found in the log files.</translation>
+        <source>Operation failed. More detailed information can be found in the log files.</source>
+        <translation>Operation failed. More detailed information can be found in the log files.</translation>
     </message>
     <message>
         <source>Version: %1</source>
         <translation>Version: %1</translation>
     </message>
     <message>
-        <source>The extension is currently disabled</source>
-        <translation type="unfinished"></translation>
+        <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
+        <translation>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</translation>
     </message>
     <message>
-        <source>Show Safari settings...</source>
-        <translation type="unfinished"></translation>
+        <source>Open Safari settings...</source>
+        <translation>Open Safari settings...</translation>
     </message>
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</translation>
+    </message>
+    <message>
+        <source>About Web eID</source>
+        <translation>About Web eID</translation>
     </message>
 </context>
 </TS>

@@ -50,7 +50,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sign</source>
+        <source>Signing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -66,7 +66,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <source>%n attempts left</source>
+        <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
@@ -112,7 +112,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Operation not supported by ID-card</source>
+        <source>Operation not supported</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -148,7 +148,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Retry</source>
+        <source>Try again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -204,7 +204,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
+        <source>Operation failed. More detailed information can be found in the log files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -212,15 +212,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The extension is currently disabled</source>
+        <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show Safari settings...</source>
+        <source>Open Safari settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About Web eID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
