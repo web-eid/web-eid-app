@@ -54,7 +54,7 @@
         <translation>Authentication</translation>
     </message>
     <message>
-        <source>Sign</source>
+        <source>Signing</source>
         <translation>Signing</translation>
     </message>
     <message>
@@ -70,7 +70,7 @@
         <translation>PIN is locked. Unblock and try again.</translation>
     </message>
     <message numerus="yes">
-        <source>%n attempts left</source>
+        <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
             <numerusform>The PIN has been entered incorrectly at least once. %n attempt left.</numerusform>
             <numerusform>The PIN has been entered incorrectly at least once. %n attempts left.</numerusform>
@@ -184,7 +184,7 @@
         <translation>PIN2 for signing</translation>
     </message>
     <message>
-        <source>Retry</source>
+        <source>Try again</source>
         <translation>Try again</translation>
     </message>
     <message>
@@ -222,6 +222,10 @@
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
         <translation>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</translation>
+    </message>
+    <message>
+        <source>About Web eID</source>
+        <translation>About Web eID</translation>
     </message>
 </context>
 </TS>

@@ -611,7 +611,7 @@ color: #76767B;
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
-            <string notr="true">Web eID</string>
+            <string>About Web eID</string>
            </property>
           </widget>
          </item>

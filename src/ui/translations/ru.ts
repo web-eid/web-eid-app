@@ -54,7 +54,7 @@
         <translation>Аутентификация</translation>
     </message>
     <message>
-        <source>Sign</source>
+        <source>Signing</source>
         <translation>Подписание</translation>
     </message>
     <message>
@@ -70,11 +70,11 @@
         <translation>PIN-код заблокирован. Разблокируйте и попробуйте еще раз.</translation>
     </message>
     <message numerus="yes">
-        <source>%n attempts left</source>
+        <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
             <numerusform>По меньшей мере один раз был введен неправильный PIN-код. Осталось %n попыток.</numerusform>
             <numerusform>По меньшей мере один раз был введен неправильный PIN-код. Осталось %n попыток.</numerusform>
-            <numerusform></numerusform>
+            <numerusform>По меньшей мере один раз был введен неправильный PIN-код. Осталось %n попыток.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -82,7 +82,7 @@
         <translation>
             <numerusform>Неверный PIN-код, осталась %n попытка.</numerusform>
             <numerusform>Неверный PIN-код, осталась %n попытки.</numerusform>
-            <numerusform></numerusform>
+            <numerusform>Неверный PIN-код, осталась %n попытки.</numerusform>
         </translation>
     </message>
     <message>
@@ -186,7 +186,7 @@
         <translation>для подписания код PIN2</translation>
     </message>
     <message>
-        <source>Retry</source>
+        <source>Try again</source>
         <translation>Попробуйте еще раз</translation>
     </message>
     <message>
@@ -224,6 +224,10 @@
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
         <translation>&lt;b&gt;Приложение для испольсования расширения Web eID.&lt;/b&gt; Данное приложение невозможно использовать самостоятельно. Для удаления расширения удалите это приложение.</translation>
+    </message>
+    <message>
+        <source>About Web eID</source>
+        <translation>О Web eID</translation>
     </message>
 </context>
 </TS>

@@ -54,7 +54,7 @@
         <translation>Autentimine</translation>
     </message>
     <message>
-        <source>Sign</source>
+        <source>Signing</source>
         <translation>Allkirjastamine</translation>
     </message>
     <message>
@@ -70,7 +70,7 @@
         <translation>PIN-kood on lukus. Tühista blokeering ja proovi uuesti.</translation>
     </message>
     <message numerus="yes">
-        <source>%n attempts left</source>
+        <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
             <numerusform>PIN-koodi on vähemalt ühe korra valesti sisestatud. %n katse jäänud.</numerusform>
             <numerusform>PIN-koodi on vähemalt ühe korra valesti sisestatud. %n katset jäänud.</numerusform>
@@ -184,7 +184,7 @@
         <translation>Loen kaardilt andmeid</translation>
     </message>
     <message>
-        <source>Retry</source>
+        <source>Try again</source>
         <translation>Proovi uuesti</translation>
     </message>
     <message>
@@ -222,6 +222,10 @@
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
         <translation>&lt;b&gt;Rakendus Web eID laienduse kasutamiseks.&lt;/b&gt; Antud rakendust ei saa kasutada iseseisvalt. Laienduse eemaldamiseks kustutage see rakendus.</translation>
+    </message>
+    <message>
+        <source>About Web eID</source>
+        <translation>Web eID teave</translation>
     </message>
 </context>
 </TS>

@@ -254,7 +254,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             break;
         case CommandType::SIGN:
             ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
-            ui->pinInputPageTitleLabel->setText(tr("Sign"));
+            ui->pinInputPageTitleLabel->setText(tr("Signing"));
             ui->pinInputDescriptionLabel->setText(
                 tr("By signing, I agree to the transfer of my name and personal identification "
                    "code to the service provider."));
@@ -388,7 +388,7 @@ void WebEidDialog::onRetryImpl(const QString& error)
     ui->connectCardLabel->setText(error);
     ui->messagePageTitleLabel->setText(tr("Operation failed"));
     ui->cardChipIcon->setPixmap(QStringLiteral(":/images/no-id-card.svg"));
-    setupOK([this] { emit retry(); }, tr("Retry"), true);
+    setupOK([this] { emit retry(); }, tr("Try again"), true);
     ui->pageStack->setCurrentIndex(int(Page::ALERT));
 }
 
@@ -465,7 +465,9 @@ void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetrie
     ui->pinInput->setProperty("warning", QVariant(pinRetriesCount.first != pinRetriesCount.second));
     style()->polish(ui->pinInput);
     if (pinRetriesCount.first != pinRetriesCount.second) {
-        ui->pinErrorLabel->setText(tr("%n attempts left", nullptr, int(pinRetriesCount.first)));
+        ui->pinErrorLabel->setText(
+            tr("The PIN has been entered incorrectly at least once. %n attempts left.", nullptr,
+               int(pinRetriesCount.first)));
         ui->pinErrorLabel->show();
     }
 }
@@ -523,8 +525,7 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     case RetriableError::SMART_CARD_CHANGE_REQUIRED:
         return {tr("The desired operation cannot be performed with the inserted ID-card. Make sure "
                    "that the ID-card is supported by the Web eID application."),
-                tr("Operation not supported"),
-                QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
         return {tr("Error communicating with the card."), tr("Operation failed"),
@@ -543,14 +544,12 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     case RetriableError::UNSUPPORTED_CARD:
         return {tr("The card in the reader is not supported. Make sure that the entered ID-card is "
                    "supported by the Web eID application."),
-                tr("Operation not supported"),
-                QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::NO_VALID_CERTIFICATE_AVAILABLE:
         return {tr("The certificates of the ID-card have expired. Valid certificates are required "
                    "for the electronic use of the ID-card."),
-                tr("Operation not supported"),
-                QStringLiteral(":/images/no-id-card.svg")};
+                tr("Operation not supported"), QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::UNKNOWN_ERROR:
         return {tr("Unknown error"), tr("Unknown error"),
