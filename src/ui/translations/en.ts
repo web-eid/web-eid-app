@@ -216,8 +216,8 @@
         <translation>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</translation>
     </message>
     <message>
-        <source>Open Safari settings…</source>
-        <translation>Open Safari settings…</translation>
+        <source>Open Safari settings...</source>
+        <translation>Open Safari settings...</translation>
     </message>
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>

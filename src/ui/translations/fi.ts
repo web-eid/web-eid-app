@@ -216,7 +216,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open Safari settings…</source>
+        <source>Open Safari settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -218,7 +218,7 @@
         <translation>Web eID расширение запрещено. Для входа или подписания с помощью ИД-карты надо в интернет браузере расширение разрешить.</translation>
     </message>
     <message>
-        <source>Open Safari settings…</source>
+        <source>Open Safari settings...</source>
         <translation>Откройте настройки Safari...</translation>
     </message>
     <message>

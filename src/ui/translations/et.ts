@@ -216,7 +216,7 @@
         <translation>Web eID laiendus on keelatud. ID-kaardiga autentimiseks ja allkirjastamiseks tuleb veebilehitsejas laiendus lubada.</translation>
     </message>
     <message>
-        <source>Open Safari settings…</source>
+        <source>Open Safari settings...</source>
         <translation>Ava Safari seaded...</translation>
     </message>
     <message>
