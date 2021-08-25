@@ -132,7 +132,7 @@
         <translation>Sisestatud ID-kaardiga ei saa soovitud toimingut teostada. Palun veendu, et ID-kaart on Web eID rakenduse poolt toetatud.</translation>
     </message>
     <message>
-        <source>Operation not supported by ID-card</source>
+        <source>Operation not supported</source>
         <translation>Toiming ei ole toetatud</translation>
     </message>
     <message>
@@ -204,7 +204,7 @@
         <translation>https://www.id.ee/artikkel/kuidas-kontrollida-id-kaardi-ja-lugeja-tookorras-olekut/</translation>
     </message>
     <message>
-        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
+        <source>Operation failed. More detailed information can be found in the log files.</source>
         <translation>Toiming ebaõnnestus. Täpsem informatsioon on leitav logifailidest.</translation>
     </message>
     <message>
@@ -212,11 +212,11 @@
         <translation>Versioon: %1</translation>
     </message>
     <message>
-        <source>The extension is currently disabled</source>
+        <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
         <translation>Web eID laiendus on keelatud. ID-kaardiga autentimiseks ja allkirjastamiseks tuleb veebilehitsejas laiendus lubada.</translation>
     </message>
     <message>
-        <source>Show Safari settings...</source>
+        <source>Open Safari settings…</source>
         <translation>Ava Safari seaded...</translation>
     </message>
     <message>

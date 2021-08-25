@@ -138,7 +138,7 @@
         <translation>Со вставленной ID-картой невозможно выполнить данную операцию. Пожалуйста, убедитесь, что ID-карта поддерживается приложением Web eID.</translation>
     </message>
     <message>
-        <source>Operation not supported by ID-card</source>
+        <source>Operation not supported</source>
         <translation>Операция не поддерживается</translation>
     </message>
     <message>
@@ -206,7 +206,7 @@
         <translation>https://www.id.ee/ru/artikkel/kak-proverit-rabochee-sostoyanie-id-karty-i-schityvatelya/</translation>
     </message>
     <message>
-        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
+        <source>Operation failed. More detailed information can be found in the log files.</source>
         <translation>Операция не удалась. Более подробную информацию можно найти в файлах регистрации.</translation>
     </message>
     <message>
@@ -214,11 +214,11 @@
         <translation>Версия: %1</translation>
     </message>
     <message>
-        <source>The extension is currently disabled</source>
+        <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
         <translation>Web eID расширение запрещено. Для входа или подписания с помощью ИД-карты надо в интернет браузере расширение разрешить.</translation>
     </message>
     <message>
-        <source>Show Safari settings...</source>
+        <source>Open Safari settings…</source>
         <translation>Откройте настройки Safari...</translation>
     </message>
     <message>

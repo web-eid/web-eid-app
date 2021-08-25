@@ -112,7 +112,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Operation not supported by ID-card</source>
+        <source>Operation not supported</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -204,7 +204,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error communicating with the card. More detailed information can be found in the log files.</source>
+        <source>Operation failed. More detailed information can be found in the log files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -212,11 +212,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The extension is currently disabled</source>
+        <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show Safari settings...</source>
+        <source>Open Safari settings…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

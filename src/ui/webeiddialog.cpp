@@ -114,7 +114,7 @@ void WebEidDialog::showAboutPage()
     d->ui->aboutAlert->hide();
     auto app = static_cast<Application*>(QCoreApplication::instance());
     if (app->isSafariExtensionContainingApp()) {
-        d->setupOK([app] { app->showSafariSettings(); }, tr("Show Safari settings..."), true);
+        d->setupOK([app] { app->showSafariSettings(); }, tr("Open Safari settings…"), true);
         d->ui->aboutAlert->setVisible(app->isSafariExtensionEnabled());
     } else {
         d->ui->okButton->hide();
@@ -523,7 +523,7 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     case RetriableError::SMART_CARD_CHANGE_REQUIRED:
         return {tr("The desired operation cannot be performed with the inserted ID-card. Make sure "
                    "that the ID-card is supported by the Web eID application."),
-                tr("Operation not supported by ID-card"),
+                tr("Operation not supported"),
                 QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
@@ -543,13 +543,13 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
     case RetriableError::UNSUPPORTED_CARD:
         return {tr("The card in the reader is not supported. Make sure that the entered ID-card is "
                    "supported by the Web eID application."),
-                tr("Operation not supported by ID-card"),
+                tr("Operation not supported"),
                 QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::NO_VALID_CERTIFICATE_AVAILABLE:
         return {tr("The certificates of the ID-card have expired. Valid certificates are required "
                    "for the electronic use of the ID-card."),
-                tr("Operation not supported by ID-card"),
+                tr("Operation not supported"),
                 QStringLiteral(":/images/no-id-card.svg")};
 
     case RetriableError::UNKNOWN_ERROR:
