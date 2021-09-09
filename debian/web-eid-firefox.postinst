@@ -1,14 +1,6 @@
 #!/bin/bash
 set -e
 
-# Chrome extension
-
-mkdir -p /etc/opt/chrome/native-messaging-hosts
-ln -sf /usr/share/chrome-token-signing/eu.webeid.json \
-	/etc/opt/chrome/native-messaging-hosts/eu.webeid.json
-
-# Firefox extension
-
 POLICIES=/usr/lib/firefox/distribution
 mkdir -p ${POLICIES}
 if [ ! -f ${POLICIES}/policies.json ]; then

@@ -11,13 +11,35 @@ Standards-Version: 3.9.8
 Homepage: https://github.com/web-eid/web-eid-app
 
 Package: web-eid
-Architecture: any
-Depends:
- pcscd,
- jq,
- ${shlibs:Depends},
- ${misc:Depends}
+Architecture: all
+Recommends: web-eid-firefox, web-eid-chrome
+Replaces: chrome-token-signing
+Breaks: chrome-token-signing
 Description: Web eID browser extension helper application
  The Web eID application performs cryptographic digital signing and
  authentication operations with electronic ID smart cards for the Web eID
  browser extension.
+
+Package: web-eid-native
+Architecture: any
+Depends: pcscd, ${shlibs:Depends}, ${misc:Depends}
+Replaces: token-signing-native
+Breaks: token-signing-native
+Description: Web eID browser extension helper application
+ Native messaging client for Chrome and Firefox extensions.
+
+Package: web-eid-firefox
+Architecture: all
+Depends: jq, web-eid-native (= ${binary:Version})
+Replaces: token-signing-firefox
+Breaks: token-signing-firefox
+Description: Web eID browser extension for Firefox
+ Firefox extension for native messaging client.
+
+Package: web-eid-chrome
+Architecture: all
+Depends: web-eid-native (= ${binary:Version})
+Replaces: token-signing-chrome
+Breaks: token-signing-chrome
+Description: Web eID browser extension for Chrome
+ Chrome extension for native messaging client.
