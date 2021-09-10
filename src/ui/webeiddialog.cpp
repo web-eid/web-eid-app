@@ -481,10 +481,13 @@ void WebEidDialog::displayPinBlockedError()
 {
     ui->pinTitleLabel->hide();
     ui->pinInput->hide();
+    ui->pinTimeoutTimer->stop();
+    ui->pinEntryTimeoutProgressBar->hide();
     ui->pinErrorLabel->setText(tr("PIN is locked. Unblock and try again."));
     ui->pinErrorLabel->show();
     ui->okButton->hide();
     ui->cancelButton->setEnabled(true);
+    ui->cancelButton->show();
     ui->helpButton->show();
 }
 
