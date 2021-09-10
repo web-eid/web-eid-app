@@ -64,6 +64,7 @@ public:
                 break;
             case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:
                 qInfo() << "Command" << commandType() << "PIN entry timeout";
+                emit cancel();
                 break;
             case electronic_id::VerifyPinFailed::Status::PIN_BLOCKED:
                 qInfo() << "Command" << commandType() << "PIN blocked";

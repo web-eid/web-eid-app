@@ -111,7 +111,13 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
                 {QStringLiteral("signature-algo"), signature.second}};
 
     } catch (const VerifyPinFailed& failure) {
-        emit verifyPinFailed(failure.status(), failure.retries());
+        switch (failure.status()) {
+        case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL:
+        case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:
+            break;
+        default:
+            emit verifyPinFailed(failure.status(), failure.retries());
+        }
         if (failure.retries() > 0) {
             throw CommandHandlerVerifyPinFailed(failure.what());
         }
