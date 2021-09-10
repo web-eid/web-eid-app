@@ -59,7 +59,7 @@ public: // slots
     // Called when CommandHandlerRunThread finishes execution.
     void onCertificatesLoaded();
 
-    // Called either directly from onDialogOK() or from the dialog when waiting for PIN-pad.
+    // Called either directly from onDialogOK().
     void onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCertAndPinInfo);
 
     // Called from CommandHandlerConfirm thread.
