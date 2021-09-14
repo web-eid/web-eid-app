@@ -109,7 +109,7 @@
     </message>
     <message>
         <source>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</source>
-        <translation>Lugejas oleva ID-kaardi sertifikaat ei ühti esitatud sertifikaadiga. Palun sisesta ID-kaart, mis kuulub %1.</translation>
+        <translation>Lugejas oleva ID-kaardi sertifikaat ei ühti esitatud sertifikaadiga. Palun sisesta ID-kaart, mis kuulub isikule %1.</translation>
     </message>
     <message>
         <source>Launch the Smart Card service</source>
