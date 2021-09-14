@@ -12,11 +12,11 @@
     <name>CertificateWidget</name>
     <message>
         <source> (Not effective)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Еще не действует)</translation>
     </message>
     <message>
         <source> (Expired)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Истекший)</translation>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
@@ -243,11 +243,11 @@
     </message>
     <message>
         <source>Time remaining: &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Осталось времени: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Помощь найдёте по ссылке: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
     </message>
 </context>
 </TS>

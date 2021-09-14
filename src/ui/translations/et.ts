@@ -12,11 +12,11 @@
     <name>CertificateWidget</name>
     <message>
         <source> (Not effective)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Veel ei kehti)</translation>
     </message>
     <message>
         <source> (Expired)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Aegunud)</translation>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
@@ -109,7 +109,7 @@
     </message>
     <message>
         <source>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</source>
-        <translation>Lugejas oleva ID-kaardi sertifikaat ei ühti esitatud sertifikaadiga. Palun sisesta ID-kaart, mis kuulub  %1.</translation>
+        <translation>Lugejas oleva ID-kaardi sertifikaat ei ühti esitatud sertifikaadiga. Palun sisesta ID-kaart, mis kuulub %1.</translation>
     </message>
     <message>
         <source>Launch the Smart Card service</source>
@@ -241,11 +241,11 @@
     </message>
     <message>
         <source>Time remaining: &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Aega jäänud: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Saa abi siit: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
     </message>
 </context>
 </TS>
