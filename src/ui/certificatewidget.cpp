@@ -28,6 +28,16 @@
 #include <QPainter>
 #include <QStyleOption>
 
+namespace
+{
+
+inline QString displayInRed(const QString& text)
+{
+    return QStringLiteral("<span style=\"color: #CD2541\">%1</span>").arg(text);
+}
+
+} // namespace
+
 // We use two separate widgets, CertificateWidget and CertificateButton, for accessibility, to
 // support screen readers.
 
@@ -75,20 +85,17 @@ void CertificateWidgetInfo::setCertificateInfo(const CardCertificateAndPinInfo& 
 {
     certAndPinInfo = cardCertPinInfo;
     const auto certInfo = cardCertPinInfo.certInfo;
-    QString warning;
-    auto showRed = [](const QString& text, bool show) {
-        return show ? QStringLiteral("<span style=\"color: #CD2541\">%1</span>").arg(text) : text;
-    };
+    QString warning, effectiveDate = certInfo.effectiveDate, expiryDate = certInfo.expiryDate;
     if (certInfo.notEffective) {
-        warning = showRed(CertificateWidget::tr(" (Not effective)"), true);
+        effectiveDate = displayInRed(effectiveDate);
+        warning = displayInRed(CertificateWidget::tr(" (Not effective)"));
     }
     if (certInfo.isExpired) {
-        warning = showRed(CertificateWidget::tr(" (Expired)"), true);
+        expiryDate = displayInRed(expiryDate);
+        warning = displayInRed(CertificateWidget::tr(" (Expired)"));
     }
     info->setText(CertificateWidget::tr("<b>%1</b><br />Issuer: %2<br />Valid: %3 to %4%5")
-                      .arg(certInfo.subject, certInfo.issuer,
-                           showRed(certInfo.effectiveDate, certInfo.notEffective),
-                           showRed(certInfo.expiryDate, certInfo.isExpired), warning));
+                      .arg(certInfo.subject, certInfo.issuer, effectiveDate, expiryDate, warning));
     info->parentWidget()->setDisabled(certInfo.notEffective || certInfo.isExpired
                                       || cardCertPinInfo.pinInfo.pinIsBlocked);
     if (warning.isEmpty() && cardCertPinInfo.pinInfo.pinIsBlocked) {
