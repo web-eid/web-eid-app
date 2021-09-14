@@ -245,7 +245,7 @@
     </message>
     <message>
         <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
-        <translation>Saa abi siit: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
+        <translation>Abi saab siit: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
     </message>
 </context>
 </TS>
