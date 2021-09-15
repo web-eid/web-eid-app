@@ -247,5 +247,9 @@
         <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
         <translation>Abi saab siit: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
     </message>
+    <message>
+        <source>Incorrect PIN.</source>
+        <translation>Vale PIN-kood.</translation>
+    </message>
 </context>
 </TS>

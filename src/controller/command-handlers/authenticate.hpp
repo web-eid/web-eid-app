@@ -37,7 +37,7 @@ public:
 
 signals:
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const quint8 retriesLeft);
+                         const qint8 retriesLeft);
 
 private:
     void validateAndStoreOriginCertificate(const QVariantMap& args);

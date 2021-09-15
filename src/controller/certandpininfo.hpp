@@ -41,10 +41,10 @@ struct CertificateInfo
 struct PinInfo
 {
     using PinMinMaxLength = std::pair<size_t, size_t>;
-    using PinRetriesCount = std::pair<size_t, size_t>;
+    using PinRetriesCount = std::pair<int8_t, int8_t>;
 
     PinMinMaxLength pinMinMaxLength = {0, 0};
-    PinRetriesCount pinRetriesCount = {0, 0};
+    PinRetriesCount pinRetriesCount = {0, -1};
     bool readerHasPinPad = false;
     bool pinIsBlocked = false;
 

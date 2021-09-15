@@ -296,7 +296,7 @@ void WebEidDialog::onCertificateNotFound(const QString& certificateSubject)
 }
 
 void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                                     const quint8 retriesLeft)
+                                     const qint8 retriesLeft)
 {
     using Status = electronic_id::VerifyPinFailed::Status;
 
@@ -305,7 +305,8 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     // FIXME: don't allow retry in case of UNKNOWN_ERROR
     switch (status) {
     case Status::RETRY_ALLOWED:
-        message = tr("Incorrect PIN, %n attempts left.", nullptr, retriesLeft);
+        message = retriesLeft == -1 ? tr("Incorrect PIN.")
+                                    : tr("Incorrect PIN, %n attempts left.", nullptr, retriesLeft);
         style()->unpolish(ui->pinInput);
         ui->pinInput->setProperty("warning", true);
         style()->polish(ui->pinInput);
@@ -466,9 +467,9 @@ void WebEidDialog::setupOK(const std::function<void()>& func, const QString& lab
 void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount)
 {
     style()->unpolish(ui->pinInput);
-    ui->pinInput->setProperty("warning", QVariant(pinRetriesCount.first != pinRetriesCount.second));
+    ui->pinInput->setProperty("warning", QVariant(pinRetriesCount.second != -1 && pinRetriesCount.first != pinRetriesCount.second));
     style()->polish(ui->pinInput);
-    if (pinRetriesCount.first != pinRetriesCount.second) {
+    if (pinRetriesCount.second != -1 && pinRetriesCount.first != pinRetriesCount.second) {
         ui->pinErrorLabel->setText(
             tr("The PIN has been entered incorrectly at least once. %n attempts left.", nullptr,
                int(pinRetriesCount.first)));

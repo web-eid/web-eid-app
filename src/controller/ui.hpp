@@ -68,5 +68,5 @@ public: // slots
 
     virtual void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                                   const quint8 retriesLeft) = 0;
+                                   const qint8 retriesLeft) = 0;
 };

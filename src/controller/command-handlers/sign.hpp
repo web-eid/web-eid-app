@@ -38,7 +38,7 @@ public:
 signals:
     void certificateNotFound(const QString& subjectOfUserCertFromArgs);
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const quint8 retriesLeft);
+                         const qint8 retriesLeft);
 
 private:
     void emitCertificatesReady(
