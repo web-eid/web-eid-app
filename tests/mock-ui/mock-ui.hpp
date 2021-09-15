@@ -55,7 +55,7 @@ public: // slots
 
     void onRetry(const RetriableError) override { emit rejected(); }
 
-    void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status, const quint8) override {}
+    void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status, const qint8) override {}
 
     void onSmartCardStatusUpdate(const RetriableError) override { emit rejected(); }
 };

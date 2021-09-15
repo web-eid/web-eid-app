@@ -66,7 +66,7 @@ public: // slots
 
     void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) override;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                           const quint8 retriesLeft) override;
+                           const qint8 retriesLeft) override;
 
 private:
     bool event(QEvent* event) override;

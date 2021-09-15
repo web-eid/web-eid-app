@@ -247,5 +247,9 @@
         <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Incorrect PIN.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

@@ -249,5 +249,9 @@
         <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
         <translation>Помощь найдёте по ссылке: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
     </message>
+    <message>
+        <source>Incorrect PIN.</source>
+        <translation>Неверный PIN-код.</translation>
+    </message>
 </context>
 </TS>
