@@ -41,17 +41,24 @@
     return self;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
     [NSDistributedNotificationCenter.defaultCenter removeObserver:self name:WebEidExtension object:nil];
 }
 
-- (void)notificationEvent:(NSNotification *)notification {
+- (void)notificationEvent:(NSNotification*)notification
+{
     // Received notification from App
     NSString *nonce = notification.object;
     NSDictionary *resp = takeValue(nonce);
     NSLog(@"web-eid-safari-extension: from app nonce (%@) request: %@", nonce, resp);
     if (resp == nil) {
         return;
+    }
+
+    for (int i = 0; i < 20 && [NSRunningApplication runningApplicationsWithBundleIdentifier:WebEidApp].count > 0; ++i) {
+        [NSThread sleepForTimeInterval:0.5];
+        NSLog(@"web-eid-safari-extension: web-eid-safari is still running");
     }
 
     // Forward to background script
@@ -62,11 +69,8 @@
     [context completeRequestReturningItems:@[ response ] completionHandler:nil];
 }
 
-- (BOOL)execNativeApp {
-    if ([NSRunningApplication runningApplicationsWithBundleIdentifier:WebEidApp].count > 0) {
-        NSLog(@"web-eid-safari-extension: web-eid-safari is running");
-        return YES;
-    }
+- (BOOL)execNativeApp
+{
     NSURL *appURL = [NSWorkspace.sharedWorkspace URLForApplicationWithBundleIdentifier:WebEidApp];
     if (appURL == nil) {
         NSLog(@"web-eid-safari-extension: failed to get app url");
@@ -90,10 +94,20 @@
     return YES;
 }
 
-- (void)beginRequestWithExtensionContext:(NSExtensionContext *)context
+- (void)beginRequestWithExtensionContext:(NSExtensionContext*)context
 {
     id message = [context.inputItems.firstObject userInfo][SFExtensionMessageKey];
     NSLog(@"web-eid-safari-extension: msg from background.js %@", message);
+
+    if ([@"status" isEqualToString:message[@"command"]]) {
+        NSString *version = [NSString stringWithFormat:@"%@.%@",
+                             NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"],
+                             NSBundle.mainBundle.infoDictionary[@"CFBundleVersion"]];
+        NSExtensionItem *response = [[NSExtensionItem alloc] init];
+        response.userInfo = @{ SFExtensionMessageKey: @{@"version": version} };
+        [context completeRequestReturningItems:@[ response ] completionHandler:nil];
+        return;
+    }
 
     if (![self execNativeApp]) {
         NSDictionary *resp = @{@"code": @"ERR_WEBEID_NATIVE_FATAL", @"message": @"Failed to start app"};
