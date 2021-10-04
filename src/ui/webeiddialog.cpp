@@ -52,7 +52,6 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     setWindowFlag(Qt::CustomizeWindowHint);
     setWindowFlag(Qt::WindowTitleHint);
     setWindowTitle(qApp->applicationDisplayName());
-    ui->aboutPageLabel->setText(qApp->applicationDisplayName());
     ui->aboutVersion->setText(tr("Version: %1").arg(qApp->applicationVersion()));
 
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
