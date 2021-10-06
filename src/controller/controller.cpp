@@ -30,13 +30,8 @@
 #include "utils.hpp"
 #include "inputoutputmode.hpp"
 #include "writeresponse.hpp"
-#include "logging.hpp"
-
-#include "magic_enum/magic_enum.hpp"
 
 #include <QApplication>
-#include <QScopedPointer>
-#include <QVariantMap>
 
 using namespace pcsc_cpp;
 using namespace electronic_id;
@@ -77,6 +72,7 @@ void Controller::run()
             << (isInStdinMode ? "stdin/stdout" : "command-line") << "mode";
 
     try {
+        // TODO: cut out stdin mode separate class to avoid bugs in safari mode
         if (isInStdinMode) {
             // In stdin/stdout mode we first output the version as required by the WebExtension
             // and then wait for the actual command.
@@ -327,12 +323,9 @@ void Controller::onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo)
 void Controller::onDialogCancel()
 {
     qDebug() << "User cancelled";
-
+    _result = makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled"));
+    writeResponseToStdOut(isInStdinMode, _result, commandType());
     disposeUI();
-
-    writeResponseToStdOut(isInStdinMode,
-                          makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled")),
-                          commandType());
     exit();
 }
 
@@ -340,12 +333,10 @@ void Controller::onCriticalFailure(const QString& error)
 {
     qCritical() << "Exiting due to command" << std::string(commandType())
                 << "fatal error:" << error;
-    writeResponseToStdOut(isInStdinMode, makeErrorObject(RESP_TECH_ERROR, error), commandType());
-
+    _result = makeErrorObject(RESP_TECH_ERROR, error);
+    writeResponseToStdOut(isInStdinMode, _result, commandType());
     disposeUI();
-
     WebEidUI::showFatalError();
-
     exit();
 }
 
