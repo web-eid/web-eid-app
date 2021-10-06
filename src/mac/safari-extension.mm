@@ -35,6 +35,7 @@
 
 - (id)init {
     if (self = [super init]) {
+        NSLog(@"web-eid-safari-extension: starting");
         contexts = [[NSMutableDictionary<NSString *, NSExtensionContext *> alloc] init];
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(notificationEvent:) name:WebEidExtension object:nil];
     }
@@ -43,6 +44,7 @@
 
 - (void)dealloc
 {
+    NSLog(@"web-eid-safari-extension: stopping");
     [NSDistributedNotificationCenter.defaultCenter removeObserver:self name:WebEidExtension object:nil];
 }
 

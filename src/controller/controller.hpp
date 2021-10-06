@@ -24,14 +24,7 @@
 
 #include "commandhandler.hpp"
 
-#include "ui.hpp"
-
-#include "pcsc-cpp/pcsc-cpp.hpp"
-
-#include "observer_ptr.hpp"
-
 #include <unordered_map>
-#include <cstdint>
 
 class ControllerChildThread;
 class CardEventMonitorThread;
@@ -42,7 +35,7 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    explicit Controller(CommandWithArgumentsPtr cmd) : QObject(nullptr), command(std::move(cmd)) {}
+    explicit Controller(CommandWithArgumentsPtr cmd) : command(std::move(cmd)) {}
 
     const QVariantMap& result() const { return _result; }
 
