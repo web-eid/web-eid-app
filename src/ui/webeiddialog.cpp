@@ -128,6 +128,7 @@ void WebEidDialog::showAboutPage()
     d->ui->pageStack->setCurrentIndex(int(Page::ABOUT));
     d->adjustSize();
     d->open();
+    connect(d, &WebEidDialog::finished, qApp, &QApplication::quit);
 }
 
 void WebEidDialog::showFatalErrorPage()
@@ -187,46 +188,37 @@ void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
 void WebEidDialog::onMultipleCertificatesReady(
     const QUrl& origin, const std::vector<CardCertificateAndPinInfo>& certificateAndPinInfos)
 {
-    try {
-        ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
-        setupCertificateAndPinInfo(certificateAndPinInfos);
+    ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
+    setupCertificateAndPinInfo(certificateAndPinInfos);
 
-        switch (currentCommand) {
-        case CommandType::GET_SIGNING_CERTIFICATE:
-            setupOK([this] {
-                try {
-                    if (CertificateButton* button =
-                            qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
-                        emit accepted(button->certificateInfo());
-                    } else {
-                        THROW(ProgrammingError, "CertificateButton not found");
-                    }
-                }
-                CATCH_AND_EMIT_FAILURE_AND_RETURN()
-            });
-
-            break;
-        case CommandType::AUTHENTICATE:
-            // Authenticate continues with the selected certificate to onSingleCertificateReady().
-            setupOK([this, origin] {
-                try {
-                    if (CertificateButton* button =
-                            qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
+    if (CertificateButton* button =
+            qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
+        try {
+            switch (currentCommand) {
+            case CommandType::GET_SIGNING_CERTIFICATE:
+                setupOK([this, button] { emit accepted(button->certificateInfo()); });
+                break;
+            case CommandType::AUTHENTICATE:
+                // Authenticate continues with the selected certificate to
+                // onSingleCertificateReady().
+                setupOK([this, origin, button] {
+                    try {
                         onSingleCertificateReady(origin, button->certificateInfo());
-                    } else {
-                        THROW(ProgrammingError, "CertificateButton not found");
                     }
-                }
-                CATCH_AND_EMIT_FAILURE_AND_RETURN()
-            });
-            break;
-        default:
-            THROW(ProgrammingError, "Command " + std::string(currentCommand) + " not allowed here");
-        }
+                    CATCH_AND_EMIT_FAILURE_AND_RETURN()
+                });
+                break;
+            default:
+                THROW(ProgrammingError,
+                      "Command " + std::string(currentCommand) + " not allowed here");
+            }
 
-        ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
+            ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
+        }
+        CATCH_AND_EMIT_FAILURE_AND_RETURN()
+    } else {
+        emit failure(QStringLiteral("CertificateButton not found"));
     }
-    CATCH_AND_EMIT_FAILURE_AND_RETURN()
 }
 
 /** This slot is used by all commands in case there is only a single certificate available. It
