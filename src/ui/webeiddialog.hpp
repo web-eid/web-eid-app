@@ -52,7 +52,7 @@ public:
     QString getPin() override;
 
     static void showAboutPage();
-    void showFatalErrorPage();
+    static void showFatalErrorPage();
 
 public: // slots
     void onSmartCardStatusUpdate(const RetriableError status) override;

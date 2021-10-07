@@ -43,6 +43,5 @@ void WebEidUI::showAboutPage()
 
 void WebEidUI::showFatalError()
 {
-    auto dialog = WebEidDialog {};
-    dialog.showFatalErrorPage();
+    WebEidDialog::showFatalErrorPage();
 }
