@@ -35,13 +35,6 @@
 #include <QUrl>
 #include <application.hpp>
 
-#define CATCH_AND_EMIT_FAILURE_AND_RETURN()                                                        \
-    catch (std::exception & e)                                                                     \
-    {                                                                                              \
-        emit failure(e.what());                                                                    \
-        return;                                                                                    \
-    }
-
 using namespace electronic_id;
 
 class WebEidDialog::Private : public Ui::WebEidDialog
@@ -133,16 +126,20 @@ void WebEidDialog::showAboutPage()
 
 void WebEidDialog::showFatalErrorPage()
 {
-    ui->messagePageTitleLabel->setText(tr("Operation failed"));
-    ui->fatalError->show();
-    ui->fatalHelp->show();
-    ui->connectCardLabel->hide();
-    ui->cardChipIcon->hide();
-    ui->helpButton->show();
-    ui->cancelButton->show();
-    ui->okButton->hide();
-    ui->pageStack->setCurrentIndex(int(Page::ALERT));
-    exec();
+    WebEidDialog* d = new WebEidDialog();
+    d->setAttribute(Qt::WA_DeleteOnClose);
+    d->ui->messagePageTitleLabel->setText(tr("Operation failed"));
+    d->ui->fatalError->show();
+    d->ui->fatalHelp->show();
+    d->ui->connectCardLabel->hide();
+    d->ui->cardChipIcon->hide();
+    d->ui->helpButton->show();
+    d->ui->cancelButton->show();
+    d->ui->okButton->hide();
+    d->ui->pageStack->setCurrentIndex(int(Page::ALERT));
+    d->adjustSize();
+    d->open();
+    connect(d, &WebEidDialog::finished, qApp, &QApplication::quit);
 }
 
 void WebEidDialog::showWaitingForCardPage(const CommandType commandType)
@@ -193,29 +190,21 @@ void WebEidDialog::onMultipleCertificatesReady(
 
     if (CertificateButton* button =
             qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
-        try {
-            switch (currentCommand) {
-            case CommandType::GET_SIGNING_CERTIFICATE:
-                setupOK([this, button] { emit accepted(button->certificateInfo()); });
-                break;
-            case CommandType::AUTHENTICATE:
-                // Authenticate continues with the selected certificate to
-                // onSingleCertificateReady().
-                setupOK([this, origin, button] {
-                    try {
-                        onSingleCertificateReady(origin, button->certificateInfo());
-                    }
-                    CATCH_AND_EMIT_FAILURE_AND_RETURN()
-                });
-                break;
-            default:
-                THROW(ProgrammingError,
-                      "Command " + std::string(currentCommand) + " not allowed here");
-            }
 
+        switch (currentCommand) {
+        case CommandType::GET_SIGNING_CERTIFICATE:
+            setupOK([this, button] { emit accepted(button->certificateInfo()); });
             ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
+            break;
+        case CommandType::AUTHENTICATE:
+            // Authenticate continues with the selected certificate to onSingleCertificateReady().
+            onSingleCertificateReady(origin, button->certificateInfo());
+            break;
+        default:
+            emit failure(QStringLiteral("Command %1 not allowed here")
+                             .arg(std::string(currentCommand).c_str()));
+            return;
         }
-        CATCH_AND_EMIT_FAILURE_AND_RETURN()
     } else {
         emit failure(QStringLiteral("CertificateButton not found"));
     }
@@ -279,8 +268,10 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         }
 
         ui->pageStack->setCurrentIndex(int(WebEidDialog::Page::PIN_INPUT));
+    } catch (std::exception& e) {
+        emit failure(e.what());
+        return;
     }
-    CATCH_AND_EMIT_FAILURE_AND_RETURN()
 }
 
 void WebEidDialog::onRetry(const RetriableError error)
