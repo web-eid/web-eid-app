@@ -188,25 +188,35 @@ void WebEidDialog::onMultipleCertificatesReady(
     ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
     setupCertificateAndPinInfo(certificateAndPinInfos);
 
-    if (CertificateButton* button =
-            qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
+    switch (currentCommand) {
+    case CommandType::GET_SIGNING_CERTIFICATE:
+        setupOK([this] {
+            if (CertificateButton* button =
+                    qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
 
-        switch (currentCommand) {
-        case CommandType::GET_SIGNING_CERTIFICATE:
-            setupOK([this, button] { emit accepted(button->certificateInfo()); });
-            ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
-            break;
-        case CommandType::AUTHENTICATE:
+                emit accepted(button->certificateInfo());
+            } else {
+                emit failure(QStringLiteral("CertificateButton not found"));
+            }
+        });
+        ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
+        break;
+    case CommandType::AUTHENTICATE:
+        setupOK([this, origin] {
             // Authenticate continues with the selected certificate to onSingleCertificateReady().
-            onSingleCertificateReady(origin, button->certificateInfo());
-            break;
-        default:
-            emit failure(QStringLiteral("Command %1 not allowed here")
-                             .arg(std::string(currentCommand).c_str()));
-            return;
-        }
-    } else {
-        emit failure(QStringLiteral("CertificateButton not found"));
+            if (CertificateButton* button =
+                    qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
+
+                onSingleCertificateReady(origin, button->certificateInfo());
+            } else {
+                emit failure(QStringLiteral("CertificateButton not found"));
+            }
+        });
+        ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
+        break;
+    default:
+        emit failure(
+            QStringLiteral("Command %1 not allowed here").arg(std::string(currentCommand).c_str()));
     }
 }
 
