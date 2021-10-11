@@ -18,6 +18,8 @@
     <Variable Name="ChromeSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1"/>
     <Variable Name="EdgeSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1"/>
     <Variable Name="FirefoxSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1"/>
+    <Variable Name="ForceChromeExtensionActivation" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="0"/>
+    <Variable Name="ForceEdgeExtensionActivation" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="0"/>
 
     <util:ProductSearch Id="WebEIDInstalled" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
       Result="version" Variable="Installed"/>
@@ -33,14 +35,18 @@
           SourceFile="$(var.webeid).x86.qt.msi" Compressed="yes">
         <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFilesFolder]Web eID"/>
         <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]"/>
+        <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]"/>
         <MsiProperty Name="EDGEINSTALL" Value="[EdgeSupport]"/>
+        <MsiProperty Name="EDGEPOLICY" Value="[ForceEdgeExtensionActivation]"/>
         <MsiProperty Name="FIREFOXINSTALL" Value="[FirefoxSupport]"/>
       </MsiPackage>
       <MsiPackage Id="WebEID.X64" InstallCondition="VersionNT64" ForcePerMachine="yes"
           SourceFile="$(var.webeid).x64.qt.msi" Compressed="yes">
         <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFiles64Folder]Web eID"/>
         <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]"/>
+        <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]"/>
         <MsiProperty Name="EDGEINSTALL" Value="[EdgeSupport]"/>
+        <MsiProperty Name="EDGEPOLICY" Value="[ForceEdgeExtensionActivation]"/>
         <MsiProperty Name="FIREFOXINSTALL" Value="[FirefoxSupport]"/>
       </MsiPackage>
     </Chain>
