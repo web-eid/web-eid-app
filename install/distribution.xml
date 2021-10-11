@@ -88,7 +88,7 @@ function pm_chrome_selected() {
         <line choice="chrome"/>
     </choices-outline>
     <choice id="default" title="SU_BASE" start_enabled="false" visible="false">
-        <pkg-ref id="eu.web-eid.web-eid">web-eid-base.pkg</pkg-ref>
+        <pkg-ref id="eu.web-eid.web-eid">web-eid-native.pkg</pkg-ref>
     </choice>
     <choice id="firefox" title="SU_FIREFOX" description="SU_FIREFOX" start_selected="pm_firefox_selected()">
         <pkg-ref id="eu.web-eid.web-eid-firefox">web-eid-firefox.pkg</pkg-ref>
