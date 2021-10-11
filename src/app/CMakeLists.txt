@@ -94,18 +94,24 @@ elseif(APPLE)
     add_custom_target(macdeployqt DEPENDS web-eid
         COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
     )
-    add_custom_target(installer-firefox DEPENDS macdeployqt
+    add_custom_target(installer-native DEPENDS macdeployqt
+        COMMAND rm -rf root_native
+        COMMAND DESTDIR=root_native ${CMAKE_COMMAND} --install . --component main
+        COMMAND pkgbuild --root root_native --identifier "eu.web-eid.$<TARGET_NAME:web-eid>"
+            "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
+            --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-native_${PROJECT_VERSION}.pkg
+        COMMAND_EXPAND_LISTS
+    )
+    add_custom_target(installer-firefox DEPENDS installer-native
         COMMAND rm -rf root_firefox
-        COMMAND DESTDIR=root_firefox ${CMAKE_COMMAND} --install . --component main
         COMMAND DESTDIR=root_firefox ${CMAKE_COMMAND} --install . --component firefox
         COMMAND pkgbuild --root root_firefox --scripts scripts --identifier "eu.web-eid.$<TARGET_NAME:web-eid>-firefox"
             "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
             --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-firefox_${PROJECT_VERSION}.pkg
         COMMAND_EXPAND_LISTS
     )
-    add_custom_target(installer-chrome DEPENDS macdeployqt
+    add_custom_target(installer-chrome DEPENDS installer-native
         COMMAND rm -rf root_chrome
-        COMMAND DESTDIR=root_chrome ${CMAKE_COMMAND} --install . --component main
         COMMAND DESTDIR=root_chrome ${CMAKE_COMMAND} --install . --component chrome
         COMMAND pkgbuild --root root_chrome --identifier "eu.web-eid.$<TARGET_NAME:web-eid>-chrome"
             "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
@@ -113,12 +119,10 @@ elseif(APPLE)
         COMMAND_EXPAND_LISTS
     )
     add_custom_target(installer DEPENDS installer-chrome installer-firefox
-        COMMAND mkdir -p root_bundle packages
+        COMMAND mkdir -p packages
+        COMMAND cp web-eid-native_*.pkg packages/web-eid-native.pkg
         COMMAND cp web-eid-chrome_*.pkg packages/web-eid-chrome.pkg
         COMMAND cp web-eid-firefox_*.pkg packages/web-eid-firefox.pkg
-        COMMAND pkgbuild --root root_bundle --identifier "eu.web-eid.web-eid"
-            "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
-            --version "${PROJECT_VERSION}" packages/web-eid-base.pkg
         COMMAND productbuild --distribution ${CMAKE_SOURCE_DIR}/install/distribution.xml
             "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>" --resources ${CMAKE_SOURCE_DIR}/install/
             --version "${PROJECT_VERSION}" --package-path packages/ web-eid_${PROJECT_VERSION}.pkg
