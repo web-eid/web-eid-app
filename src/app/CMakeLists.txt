@@ -83,7 +83,7 @@ elseif(APPLE)
     set_source_files_properties(${CMAKE_SOURCE_DIR}/install/appicon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     set_source_files_properties(InfoPlist.strings PROPERTIES MACOSX_PACKAGE_LOCATION Resources/en.lproj)
     set_target_properties(web-eid PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in)
-    configure_file(${CMAKE_SOURCE_DIR}/install/macos-postinstall.in scripts/postinstall @ONLY)
+    configure_file(${CMAKE_SOURCE_DIR}/install/macos-postinstall.in root_firefox_scripts/postinstall @ONLY)
     install(TARGETS web-eid DESTINATION /Applications/Utilities COMPONENT main)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json COMPONENT chrome
         DESTINATION "/Library/Google/Chrome/NativeMessagingHosts")
@@ -105,7 +105,7 @@ elseif(APPLE)
     add_custom_target(installer-firefox DEPENDS installer-native
         COMMAND rm -rf root_firefox
         COMMAND DESTDIR=root_firefox ${CMAKE_COMMAND} --install . --component firefox
-        COMMAND pkgbuild --root root_firefox --scripts scripts --identifier "eu.web-eid.$<TARGET_NAME:web-eid>-firefox"
+        COMMAND pkgbuild --root root_firefox --scripts root_firefox_scripts --identifier "eu.web-eid.$<TARGET_NAME:web-eid>-firefox"
             "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
             --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-firefox_${PROJECT_VERSION}.pkg
         COMMAND_EXPAND_LISTS
@@ -118,10 +118,22 @@ elseif(APPLE)
             --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-chrome_${PROJECT_VERSION}.pkg
         COMMAND_EXPAND_LISTS
     )
-    add_custom_target(installer DEPENDS installer-chrome installer-firefox
+    add_custom_target(installer-chrome-policy
+        COMMAND rm -rf root_chrome_policy root_chrome_policy_scripts
+        COMMAND mkdir -p root_chrome_policy root_chrome_policy_scripts
+        COMMAND cp ${CMAKE_SOURCE_DIR}/install/macos-chrome-policy.plist root_chrome_policy_scripts/chrome-policy.plist
+        COMMAND cp ${CMAKE_SOURCE_DIR}/install/macos-postinstall-chrome-policy root_chrome_policy_scripts/postinstall
+        COMMAND /bin/sh -c "\"$<$<BOOL:${SIGNCERT}>:security;cms;-S;-N;Developer ID Application: ${SIGNCERT};-i;${CMAKE_SOURCE_DIR}/install/macos-chrome-policy.plist;-o;root_chrome_policy_scripts/chrome-policy.plist>\""
+        COMMAND pkgbuild --root root_chrome_policy --scripts root_chrome_policy_scripts --identifier "eu.web-eid.$<TARGET_NAME:web-eid>-chrome-policy"
+            "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>"
+            --version "${PROJECT_VERSION}" $<TARGET_NAME:web-eid>-chrome-policy_${PROJECT_VERSION}.pkg
+        COMMAND_EXPAND_LISTS
+    )
+    add_custom_target(installer DEPENDS installer-chrome installer-chrome-policy installer-firefox
         COMMAND mkdir -p packages
         COMMAND cp web-eid-native_*.pkg packages/web-eid-native.pkg
         COMMAND cp web-eid-chrome_*.pkg packages/web-eid-chrome.pkg
+        COMMAND cp web-eid-chrome-policy_*.pkg packages/web-eid-chrome-policy.pkg
         COMMAND cp web-eid-firefox_*.pkg packages/web-eid-firefox.pkg
         COMMAND productbuild --distribution ${CMAKE_SOURCE_DIR}/install/distribution.xml
             "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>" --resources ${CMAKE_SOURCE_DIR}/install/

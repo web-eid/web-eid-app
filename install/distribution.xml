@@ -35,6 +35,7 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
 "SU_BASE" = "Base components";
 "SU_FIREFOX" = "Firefox authentication and signing support";
 "SU_CHROME" = "Chrome authentication and signing support";
+"SU_CHROME_POLICY" = "Chrome extension will be activated automatically";
 ]]>
         </strings>
         <strings language="et">
@@ -45,6 +46,7 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
 "SU_BASE" = "Baas komponendid";
 "SU_FIREFOX" = "Firefoxi autentimise ja allkirjastamise tugi";
 "SU_CHROME" = "Chrome'i autentimise ja allkirjastamise tugi";
+"SU_CHROME_POLICY" = "Chrome laiendus aktiveeritakse automaatselt";
 ]]>
         </strings>
         <strings language="ru">
@@ -55,6 +57,7 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
 "SU_BASE" = "Base components";
 "SU_FIREFOX" = "Поддержка аутентиф. и подпис. в Firefox";
 "SU_CHROME" = "Поддержка аутентиф. и подпис. в Chrome";
+"SU_CHROME_POLICY" = "Плагин для Chrome активируется автоматически";
 ]]>
         </strings>
     </localization>
@@ -80,12 +83,22 @@ function pm_chrome_selected() {
   return my.target.receiptForIdentifier("eu.web-eid.web-eid") == null ||
      my.target.receiptForIdentifier("eu.web-eid.web-eid-chrome") != null;
 }
+
+function pm_chrome_policy_visible() {
+  return system.compareVersions(system.version.ProductVersion, '10.16') < 0;
+}
+
+function pm_chrome_policy_selected() {
+  return pm_chrome_policy_visible() && pm_chrome_selected() &&
+    my.target.receiptForIdentifier("eu.web-eid.web-eid-chrome-policy") != null;
+}
 ]]>
     </script>
     <choices-outline>
         <line choice="default"/>
         <line choice="firefox"/>
         <line choice="chrome"/>
+        <line choice="chrome_policy"/>
     </choices-outline>
     <choice id="default" title="SU_BASE" start_enabled="false" visible="false">
         <pkg-ref id="eu.web-eid.web-eid">web-eid-native.pkg</pkg-ref>
@@ -95,5 +108,13 @@ function pm_chrome_selected() {
     </choice>
     <choice id="chrome" title="SU_CHROME" description="SU_CHROME" start_selected="pm_chrome_selected()">
         <pkg-ref id="eu.web-eid.web-eid-chrome">web-eid-chrome.pkg</pkg-ref>
+    </choice>
+    <choice id="chrome_policy" title="SU_CHROME_POLICY" description="SU_CHROME_POLICY"
+            start_selected="pm_chrome_policy_selected()"
+            start_enabled="pm_chrome_selected()"
+            start_visible="pm_chrome_policy_visible()"
+            enabled="choices.chrome.selected"
+            selected="choices.chrome.selected ? choices.chrome_policy.selected : false">
+        <pkg-ref id="eu.web-eid.web-eid-chrome-policy">web-eid-chrome-policy.pkg</pkg-ref>
     </choice>
 </installer-gui-script>
