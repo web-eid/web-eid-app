@@ -112,7 +112,7 @@
     }
 
     if (![self execNativeApp]) {
-        NSDictionary *resp = @{@"code": @"ERR_WEBEID_NATIVE_FATAL", @"message": @"Failed to start app"};
+        NSDictionary *resp = @{@"error": @{@"code": @"ERR_WEBEID_NATIVE_FATAL", @"message": @"Failed to start app"}};
         NSExtensionItem *response = [[NSExtensionItem alloc] init];
         response.userInfo = @{ SFExtensionMessageKey: resp };
         [context completeRequestReturningItems:@[ response ] completionHandler:nil];

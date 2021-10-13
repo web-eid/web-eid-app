@@ -135,7 +135,7 @@
             resp = [NSApplication toNSDictionary:controller.result()];
         } catch (const std::exception& error) {
             qCritical() << error;
-            resp = @{@"code": @"ERR_WEBEID_NATIVE_FATAL", @"message": @(error.what())};
+            resp = @{@"error": @{@"code": @"ERR_WEBEID_NATIVE_FATAL", @"message": @(error.what())}};
         }
     }
 
