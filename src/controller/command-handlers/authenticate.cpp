@@ -47,8 +47,7 @@ QByteArray jsonDocToBase64(const QJsonDocument& doc)
         .toBase64(JWT_BASE64_OPTIONS);
 }
 
-QByteArray createAuthenticationToken(const QSslCertificate& certificate,
-                                     const QByteArray& certificateDer,
+QByteArray createAuthenticationToken(const QByteArray& certificateDer,
                                      const QString& signatureAlgorithm, const QString& nonce,
                                      const QString& origin,
                                      const QSslCertificate& originCertificate)
@@ -59,18 +58,9 @@ QByteArray createAuthenticationToken(const QSslCertificate& certificate,
         {"x5c", QJsonArray({QString(certificateDer.toBase64())})},
     });
 
-    const QString sub =
-        certificate.subjectInfo("SN").isEmpty() && certificate.subjectInfo("GN").isEmpty()
-        ? certificate.subjectInfo(QSslCertificate::CommonName).join(',')
-        : QStringLiteral("%1,%2").arg(certificate.subjectInfo("SN").join(','),
-                                      certificate.subjectInfo("GN").join(','));
     auto tokenPayload = QJsonObject {
-        {"iat", QString::number(QDateTime::currentDateTimeUtc().toSecsSinceEpoch())},
-        {"exp",
-         QString::number(QDateTime::currentDateTimeUtc().addSecs(5 * 60).toSecsSinceEpoch())},
-        {"sub", sub},
         {"nonce", nonce},
-        {"iss", QStringLiteral("web-eid app %1").arg(qApp->applicationVersion())},
+        {"iss", QStringLiteral("https://web-eid.eu/web-eid-app/releases/%1").arg(qApp->applicationVersion())},
     };
 
     auto aud = QJsonArray({origin});
@@ -149,8 +139,8 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window,
         QString::fromStdString(cardCertAndPin.cardInfo->eid().authSignatureAlgorithm());
 
     const auto token =
-        createAuthenticationToken(cardCertAndPin.certificate, cardCertAndPin.certificateBytesInDer,
-                                  signatureAlgorithm, nonce, origin.url(), originCertificate);
+        createAuthenticationToken(cardCertAndPin.certificateBytesInDer, signatureAlgorithm, nonce,
+                                  origin.url(), originCertificate);
 
     auto pin = getPin(cardCertAndPin.cardInfo->eid().smartcard(), window);
 
