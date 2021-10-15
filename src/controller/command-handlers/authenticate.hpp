@@ -40,8 +40,5 @@ signals:
                          const qint8 retriesLeft);
 
 private:
-    void validateAndStoreOriginCertificate(const QVariantMap& args);
-
-    QString nonce;
-    QSslCertificate originCertificate;
+    QString challengeNonce;
 };
