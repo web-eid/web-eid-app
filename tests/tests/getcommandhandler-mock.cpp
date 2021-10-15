@@ -33,18 +33,8 @@
 using namespace std::string_literals;
 
 const QVariantMap AUTHENTICATE_COMMAND_ARGUMENT = {
-    {"nonce", "12345678912345678912345678912345678912345678"},
+    {"challenge-nonce", "12345678912345678912345678912345678912345678"},
     {"origin", "https://ria.ee"},
-    {"origin-cert",
-     "MIIBkTCCATegAwIBAgIUHO7Fd2Vd7ie30o8xYHrUOUlLfU0wCgYIKoZIzj0EAwIw"
-     "HjELMAkGA1UEBhMCZWUxDzANBgNVBAMMBnJpYS5lZTAeFw0xOTEyMTcyMTA1NTda"
-     "Fw0yMDEyMTYyMTA1NTdaMB4xCzAJBgNVBAYTAmVlMQ8wDQYDVQQDDAZyaWEuZWUw"
-     "WTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQ+8dFJ3OuJwRW+23o5jwjmH6/dX4l/"
-     "hDfCfKys3WLcLp0NtmDRzQqV5N6oOjjjxkp0Ryyk14JSl/CFM45Elj9ao1MwUTAd"
-     "BgNVHQ4EFgQU93MZD9u2Um1ciNn3+B/Ed4BXVe8wHwYDVR0jBBgwFoAU93MZD9u2"
-     "Um1ciNn3+B/Ed4BXVe8wDwYDVR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNIADBF"
-     "AiBmfEe2K+kBdcg2VpDQkUj65gSxuRJubWyKqMp3PbhOzQIhAMEwHl8MXKojadt6"
-     "/jYGfoB1Qgp0McItzDpecJ7yxpkc"},
 };
 
 const QVariantMap GET_CERTIFICATE_COMMAND_ARGUMENT = {{"origin", "https://dummy-origin"}};

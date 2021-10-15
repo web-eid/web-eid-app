@@ -38,55 +38,25 @@ using namespace electronic_id;
 namespace
 {
 
-const auto JWT_BASE64_OPTIONS = QByteArray::Base64UrlEncoding | QByteArray::OmitTrailingEquals;
+// Use common base64-encoding defaults.
+constexpr auto BASE64_OPTIONS = QByteArray::Base64Encoding | QByteArray::KeepTrailingEquals;
 
-QByteArray jsonDocToBase64(const QJsonDocument& doc)
+QVariantMap createAuthenticationToken(const QString& signatureAlgorithm,
+                                      const QByteArray& certificateDer, const QByteArray& signature)
 {
-    return QString(doc.toJson(QJsonDocument::JsonFormat::Compact))
-        .toUtf8()
-        .toBase64(JWT_BASE64_OPTIONS);
-}
-
-QByteArray createAuthenticationToken(const QSslCertificate& certificate,
-                                     const QByteArray& certificateDer,
-                                     const QString& signatureAlgorithm, const QString& nonce,
-                                     const QString& origin,
-                                     const QSslCertificate& originCertificate)
-{
-    const auto tokenHeader = QJsonDocument(QJsonObject {
-        {"typ", "JWT"},
-        {"alg", signatureAlgorithm},
-        {"x5c", QJsonArray({QString(certificateDer.toBase64())})},
-    });
-
-    const QString sub =
-        certificate.subjectInfo("SN").isEmpty() && certificate.subjectInfo("GN").isEmpty()
-        ? certificate.subjectInfo(QSslCertificate::CommonName).join(',')
-        : QStringLiteral("%1,%2").arg(certificate.subjectInfo("SN").join(','),
-                                      certificate.subjectInfo("GN").join(','));
-    auto tokenPayload = QJsonObject {
-        {"iat", QString::number(QDateTime::currentDateTimeUtc().toSecsSinceEpoch())},
-        {"exp",
-         QString::number(QDateTime::currentDateTimeUtc().addSecs(5 * 60).toSecsSinceEpoch())},
-        {"sub", sub},
-        {"nonce", nonce},
-        {"iss", QStringLiteral("web-eid app %1").arg(qApp->applicationVersion())},
+    return QVariantMap {
+        {"unverifiedCertificate", QString(certificateDer.toBase64(BASE64_OPTIONS))},
+        {"algorithm", signatureAlgorithm},
+        {"signature", QString(signature)},
+        {"format", QStringLiteral("web-eid:1.0")},
+        {"appVersion",
+         QStringLiteral("https://web-eid.eu/web-eid-app/releases/%1")
+             .arg(qApp->applicationVersion())},
     };
-
-    auto aud = QJsonArray({origin});
-    if (!originCertificate.isNull()) {
-        const auto originCertFingerprint =
-            QString(originCertificate.digest(QCryptographicHash::Sha256).toHex());
-        // urn:cert:sha-256 as per https://tools.ietf.org/id/draft-seantek-certspec-00.html
-        aud.append("urn:cert:sha-256:" + originCertFingerprint);
-    }
-    tokenPayload[QStringLiteral("aud")] = aud;
-
-    return jsonDocToBase64(tokenHeader) + '.' + jsonDocToBase64(QJsonDocument(tokenPayload));
 }
 
-QByteArray signToken(const ElectronicID& eid, const QByteArray& token,
-                     const pcsc_cpp::byte_vector& pin)
+QByteArray createSignature(const QString& origin, const QString& challengeNonce,
+                           const ElectronicID& eid, const pcsc_cpp::byte_vector& pin)
 {
     static const auto SIGNATURE_ALGO_TO_HASH =
         std::map<JsonWebSignatureAlgorithm, QCryptographicHash::Algorithm> {
@@ -103,18 +73,21 @@ QByteArray signToken(const ElectronicID& eid, const QByteArray& token,
 
     const auto hashAlgo = SIGNATURE_ALGO_TO_HASH.at(eid.authSignatureAlgorithm());
 
-    const auto tokenHashQBytearray = QCryptographicHash::hash(token, hashAlgo);
-    const auto tokenHash =
-        pcsc_cpp::byte_vector {tokenHashQBytearray.cbegin(), tokenHashQBytearray.cend()};
+    // Take the hash of the origin and nonce to ensure field separation.
+    const auto originHash = QCryptographicHash::hash(origin.toUtf8(), hashAlgo);
+    const auto challengeNonceHash = QCryptographicHash::hash(challengeNonce.toUtf8(), hashAlgo);
 
-    const auto signature = eid.signWithAuthKey(pin, tokenHash);
+    // The value that is signed is hash(origin)+hash(challenge).
+    const auto hashToBeSignedQBytearray =
+        QCryptographicHash::hash(originHash + challengeNonceHash, hashAlgo);
+    const auto hashToBeSigned =
+        pcsc_cpp::byte_vector {hashToBeSignedQBytearray.cbegin(), hashToBeSignedQBytearray.cend()};
 
-    const auto signatureBase64 =
-        QByteArray::fromRawData(reinterpret_cast<const char*>(signature.data()),
-                                int(signature.size()))
-            .toBase64(JWT_BASE64_OPTIONS);
+    const auto signature = eid.signWithAuthKey(pin, hashToBeSigned);
 
-    return token + '.' + signatureBase64;
+    return QByteArray::fromRawData(reinterpret_cast<const char*>(signature.data()),
+                                   int(signature.size()))
+        .toBase64(BASE64_OPTIONS);
 }
 
 } // namespace
@@ -122,24 +95,22 @@ QByteArray signToken(const ElectronicID& eid, const QByteArray& token,
 Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(cmd)
 {
     const auto arguments = cmd.second;
-    requireArgumentsAndOptionalLang({"nonce", "origin", "origin-cert"}, arguments,
-                                    "\"nonce\": \"<challenge nonce>\", "
-                                    "\"origin\": \"<origin URL>\", "
-                                    "\"origin-cert\": \"<Base64-encoded origin certificate>\"");
+    requireArgumentsAndOptionalLang({"challenge-nonce", "origin"}, arguments,
+                                    "\"challenge-nonce\": \"<challenge nonce>\", "
+                                    "\"origin\": \"<origin URL>\"");
 
-    nonce = validateAndGetArgument<QString>(QStringLiteral("nonce"), arguments);
+    challengeNonce = validateAndGetArgument<QString>(QStringLiteral("challenge-nonce"), arguments);
     // nonce must contain at least 256 bits of entropy and is usually Base64-encoded, so the
     // required byte length is 44, the length of 32 Base64-encoded bytes.
-    if (nonce.length() < 44) {
+    if (challengeNonce.length() < 44) {
         THROW(CommandHandlerInputDataError,
-              "Challenge nonce argument 'nonce' must be at least 44 characters long");
+              "Challenge nonce argument 'challenge-nonce' must be at least 44 characters long");
     }
-    if (nonce.length() > 128) {
+    if (challengeNonce.length() > 128) {
         THROW(CommandHandlerInputDataError,
-              "Challenge nonce argument 'nonce' cannot be longer than 128 characters");
+              "Challenge nonce argument 'challenge-nonce' cannot be longer than 128 characters");
     }
     validateAndStoreOrigin(arguments);
-    validateAndStoreOriginCertificate(arguments);
 }
 
 QVariantMap Authenticate::onConfirm(WebEidUI* window,
@@ -148,21 +119,19 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window,
     const auto signatureAlgorithm =
         QString::fromStdString(cardCertAndPin.cardInfo->eid().authSignatureAlgorithm());
 
-    const auto token =
-        createAuthenticationToken(cardCertAndPin.certificate, cardCertAndPin.certificateBytesInDer,
-                                  signatureAlgorithm, nonce, origin.url(), originCertificate);
-
     auto pin = getPin(cardCertAndPin.cardInfo->eid().smartcard(), window);
 
     try {
-        const auto signedToken = signToken(cardCertAndPin.cardInfo->eid(), token, pin);
+        const auto signature =
+            createSignature(origin.url(), challengeNonce, cardCertAndPin.cardInfo->eid(), pin);
 
         // Erase the PIN memory.
-        // TODO: Use a scope guard. Verify that the buffers are actually zeroed
-        // and no copies remain.
+        // TODO: Use a scope guard. Verify that the buffers are actually zeroed and no copies
+        // remain.
         std::fill(pin.begin(), pin.end(), '\0');
 
-        return {{QStringLiteral("auth-token"), QString(signedToken)}};
+        return createAuthenticationToken(signatureAlgorithm, cardCertAndPin.certificateBytesInDer,
+                                         signature);
 
     } catch (const VerifyPinFailed& failure) {
         switch (failure.status()) {
@@ -184,31 +153,4 @@ void Authenticate::connectSignals(const WebEidUI* window)
     CertificateReader::connectSignals(window);
 
     connect(this, &Authenticate::verifyPinFailed, window, &WebEidUI::onVerifyPinFailed);
-}
-
-void Authenticate::validateAndStoreOriginCertificate(const QVariantMap& args)
-{
-    originCertificate = parseAndValidateCertificate(QStringLiteral("origin-cert"), args, true);
-    if (originCertificate.isNull()) {
-        return;
-    }
-
-    const auto certHostnames = originCertificate.subjectInfo(QSslCertificate::CommonName);
-    if (certHostnames.size() != 1) {
-        // TODO: add support for multi-domain certificates
-        THROW(CommandHandlerInputDataError,
-              "Origin certificate does not contain exactly 1 host name (it contains "
-                  + std::to_string(certHostnames.size()) + ")");
-    }
-    if (origin.host() != certHostnames[0]
-        // Certificate hostname may be a wildcard, e.g. *.ria.ee, use QDir::match() for glob
-        // matching. Origin hostname may be either e.g. www.ria.ee that matches *.ria.ee directly,
-        && !QDir::match(certHostnames[0], origin.host())
-        // or ria.ee that needs an extra dot prefix to match.
-        && !QDir::match(certHostnames[0], '.' + origin.host())) {
-        THROW(CommandHandlerInputDataError,
-              "Origin host name '" + origin.host().toStdString()
-                  + "' does not match origin certificate host name '"
-                  + certHostnames[0].toStdString() + "'");
-    }
 }

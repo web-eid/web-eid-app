@@ -41,7 +41,7 @@ void requireArgumentsAndOptionalLang(QStringList argNames, const QVariantMap& ar
     // QMap::keys() also returns a list containing all the keys in the map in ascending order.
     if (argCopy.keys() != argNames) {
         THROW(CommandHandlerInputDataError,
-              "Argument must be '{" + argDescriptions
+              "Arguments must be '{" + argDescriptions
                   + ", \"lang\": \"<OPTIONAL user interface language>\"}'");
     }
 }
