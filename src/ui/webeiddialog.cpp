@@ -113,7 +113,8 @@ void WebEidDialog::showAboutPage()
     auto app = static_cast<Application*>(QCoreApplication::instance());
     if (app->isSafariExtensionContainingApp()) {
         d->setupOK([app] { app->showSafariSettings(); }, tr("Open Safari settings..."), true);
-        d->ui->aboutAlert->setVisible(app->isSafariExtensionEnabled());
+        connect(app, &Application::safariExtensionEnabled, d->ui->aboutAlert, &QLabel::setVisible);
+        d->ui->aboutAlert->hide();
     } else {
         d->ui->okButton->hide();
     }
