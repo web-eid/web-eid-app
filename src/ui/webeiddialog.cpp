@@ -277,7 +277,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         }
 
         ui->pageStack->setCurrentIndex(int(WebEidDialog::Page::PIN_INPUT));
-    } catch (std::exception& e) {
+    } catch (const std::exception& e) {
         emit failure(e.what());
         return;
     }
@@ -482,6 +482,7 @@ void WebEidDialog::displayPinBlockedError()
     ui->pinTitleLabel->hide();
     ui->pinInput->hide();
     ui->pinTimeoutTimer->stop();
+    ui->pinTimeRemaining->hide();
     ui->pinEntryTimeoutProgressBar->hide();
     ui->pinErrorLabel->setText(tr("PIN is locked. Unblock and try again."));
     ui->pinErrorLabel->show();
