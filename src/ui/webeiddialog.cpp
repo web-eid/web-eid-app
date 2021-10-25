@@ -113,8 +113,8 @@ void WebEidDialog::showAboutPage()
     auto app = static_cast<Application*>(QCoreApplication::instance());
     if (app->isSafariExtensionContainingApp()) {
         d->setupOK([app] { app->showSafariSettings(); }, tr("Open Safari settings..."), true);
-        connect(app, &Application::safariExtensionEnabled, d->ui->aboutAlert, &QLabel::setVisible);
-        d->ui->aboutAlert->hide();
+        connect(app, &Application::safariExtensionEnabled, d->ui->aboutAlert, &QLabel::setHidden);
+        app->requestSafariExtensionState();
     } else {
         d->ui->okButton->hide();
     }
@@ -468,7 +468,9 @@ void WebEidDialog::setupOK(const std::function<void()>& func, const QString& lab
 void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount)
 {
     style()->unpolish(ui->pinInput);
-    ui->pinInput->setProperty("warning", QVariant(pinRetriesCount.second != -1 && pinRetriesCount.first != pinRetriesCount.second));
+    ui->pinInput->setProperty(
+        "warning",
+        QVariant(pinRetriesCount.second != -1 && pinRetriesCount.first != pinRetriesCount.second));
     style()->polish(ui->pinInput);
     if (pinRetriesCount.second != -1 && pinRetriesCount.first != pinRetriesCount.second) {
         ui->pinErrorLabel->setText(
