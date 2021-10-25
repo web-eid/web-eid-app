@@ -43,6 +43,7 @@ jobs:
 
   coverity:
     name: Run Coverity tests
+    if: contains(github.repository, 'web-eid/web-eid-app') && contains(github.ref, 'coverity_scan')
     runs-on: ubuntu-latest
     container: mrts/qt-cmake-gtest-valgrind-ubuntu
 
