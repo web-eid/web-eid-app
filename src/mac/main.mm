@@ -153,12 +153,17 @@ public:
     using Application::Application;
 
     bool isSafariExtensionContainingApp() final { return true; }
+    void requestSafariExtensionState() final {
+        [SFSafariExtensionManager getStateOfSafariExtensionWithIdentifier:WebEidExtension completionHandler:^(SFSafariExtensionState *state, NSError *error) {
+            NSLog(@"Extension state %@, error %@", @(state ? state.enabled : 0), error);
+            emit safariExtensionEnabled(bool(state.enabled));
+        }];
+    }
     void showSafariSettings() final
     {
         [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension
                                                      completionHandler:nil];
     }
-    void setSafariExtensionEnabled(bool value) { emit safariExtensionEnabled(value); }
 };
 
 int main(int argc, char* argv[])
@@ -170,10 +175,6 @@ int main(int argc, char* argv[])
     auto appPtr = &app;
 
     [NSDistributedNotificationCenter.defaultCenter addObserver:NSApp selector:@selector(notificationEvent:) name:WebEidApp object:nil];
-    [SFSafariExtensionManager getStateOfSafariExtensionWithIdentifier:WebEidExtension completionHandler:^(SFSafariExtensionState *state, NSError *error) {
-        NSLog(@"Extension state %@, error %@", @(state ? state.enabled : 0), error);
-        appPtr->setSafariExtensionEnabled(bool(state.enabled));
-    }];
 
     id starting = [getUserDefaults() objectForKey:WebEidStarting];
     NSLog(@"web-eid-safari: is starting %@", starting);
