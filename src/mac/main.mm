@@ -163,6 +163,7 @@ public:
     {
         [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension
                                                      completionHandler:nil];
+        quit();
     }
 };
 
