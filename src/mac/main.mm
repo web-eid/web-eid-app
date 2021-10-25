@@ -152,17 +152,13 @@ class SafariApplication final : public Application
 public:
     using Application::Application;
 
-    bool isSafariExtensionContainingApp() override { return true; }
-    bool isSafariExtensionEnabled() override { return safariExtensionEnabled; }
-    void showSafariSettings() override
+    bool isSafariExtensionContainingApp() final { return true; }
+    void showSafariSettings() final
     {
         [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension
                                                      completionHandler:nil];
     }
-    void setSafariExtensionEnabled(bool value) { safariExtensionEnabled = value; }
-
-private:
-    bool safariExtensionEnabled = false;
+    void setSafariExtensionEnabled(bool value) { emit safariExtensionEnabled(value); }
 };
 
 int main(int argc, char* argv[])
