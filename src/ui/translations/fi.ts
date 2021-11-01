@@ -255,5 +255,9 @@
         <source>Select another certificate</source>
         <translation type="unfinished">Valitse toinen varmenne</translation>
     </message>
+    <message>
+        <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
+        <translation type="unfinished">Toimenpide epäonnistui. Varmista, että käytetään vastaavan kortinlukijan ajuria. Lue lisää &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;täältä&lt;/a&gt;.</translation>
+    </message>
 </context>
 </TS>

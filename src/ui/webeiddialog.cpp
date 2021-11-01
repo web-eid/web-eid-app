@@ -330,6 +330,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     case Status::PIN_ENTRY_CANCEL:
         message = tr("PIN entry cancelled.");
         break;
+    case Status::PIN_ENTRY_DISABLED:
     case Status::UNKNOWN_ERROR:
         message = tr("Technical error");
         break;
@@ -569,6 +570,13 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
         return {tr("The certificates of the ID-card have expired. Valid certificates are required "
                    "for the electronic use of the ID-card."),
                 tr("Operation not supported"), QStringLiteral(":/images/no-id-card.svg")};
+
+    case RetriableError::PIN_VERIFY_DISABLED:
+        return {
+            tr("Operation failed. Make sure that the driver of the corresponding card reader is "
+               "used. Read more <a "
+               "href=\"https://www.id.ee/en/article/using-pinpad-card-reader-drivers/\">here</a>."),
+            tr("Card driver error"), QStringLiteral(":/images/cardreader.svg")};
 
     case RetriableError::UNKNOWN_ERROR:
         return {tr("Unknown error"), tr("Unknown error"),

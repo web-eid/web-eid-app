@@ -257,5 +257,9 @@
         <source>Select another certificate</source>
         <translation>Выберите другой сертификат</translation>
     </message>
+    <message>
+        <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
+        <translation>Операция не удалась. Убедитесь, что используется драйвер соответствующего считывателя карт. Подробнее читайте &lt;a href=&quot;https://www.id.ee/ru/artikkel/ispolzovanie-drajverov-schityvatelya-kart-pinpad/&quot;&gt;здесь&lt;/a&gt;.</translation>
+    </message>
 </context>
 </TS>

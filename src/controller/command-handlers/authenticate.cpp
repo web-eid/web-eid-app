@@ -138,6 +138,9 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window,
         case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL:
         case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:
             break;
+        case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_DISABLED:
+            emit retry(RetriableError::NO_VALID_CERTIFICATE_AVAILABLE);
+            break;
         default:
             emit verifyPinFailed(failure.status(), failure.retries());
         }
