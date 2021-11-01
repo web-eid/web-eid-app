@@ -255,5 +255,9 @@
         <source>Select another certificate</source>
         <translation>Select another certificate</translation>
     </message>
+    <message>
+        <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
+        <translation>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</translation>
+    </message>
 </context>
 </TS>

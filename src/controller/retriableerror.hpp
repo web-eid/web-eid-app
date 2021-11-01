@@ -47,6 +47,7 @@ enum class RetriableError {
     UNSUPPORTED_CARD,
     // CertificateReader::run
     NO_VALID_CERTIFICATE_AVAILABLE,
+    PIN_VERIFY_DISABLED,
     // default
     UNKNOWN_ERROR
 };
