@@ -102,7 +102,7 @@
     NSLog(@"web-eid-safari-extension: msg from background.js %@", message);
 
     if ([@"status" isEqualToString:message[@"command"]]) {
-        NSString *version = [NSString stringWithFormat:@"%@.%@",
+        NSString *version = [NSString stringWithFormat:@"%@+%@",
                              NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"],
                              NSBundle.mainBundle.infoDictionary[@"CFBundleVersion"]];
         NSExtensionItem *response = [[NSExtensionItem alloc] init];
