@@ -30,5 +30,7 @@
 	<true/>
 	<key>LSMinimumSystemVersion</key>
 	<string>${CMAKE_OSX_DEPLOYMENT_TARGET}</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
