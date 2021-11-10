@@ -408,7 +408,7 @@ void WebEidDialog::setupCertificateAndPinInfo(
             previous = ui->selectionGroup->buttons().last();
         }
         CertificateButton* button = new CertificateButton(certAndPin, ui->selectCertificatePage);
-        ui->selectCertificateInfo->addWidget(button);
+        ui->selectCertificateInfo->insertWidget(ui->selectCertificateInfo->count() - 1, button);
         ui->selectionGroup->addButton(button);
         setTabOrder(previous, button);
     }

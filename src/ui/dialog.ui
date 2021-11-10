@@ -153,6 +153,22 @@ color: #003168;
 }
 #aboutVersion {
 color: #76767B;
+}
+QScrollBar:vertical {
+width: 10px;
+margin-left: 5px;
+}
+QScrollBar::handle:vertical
+{
+background-color: #D6D6D6;
+min-height: 5px;
+border-radius: 2px;
+}
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
+{
+background: none;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="WebEidDialogLayout">
@@ -447,11 +463,63 @@ color: #76767B;
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="selectCertificateInfo">
-         <property name="spacing">
-          <number>6</number>
+        <widget class="QScrollArea" name="selectCertificateInfoArea">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>150</height>
+          </size>
          </property>
-        </layout>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="selectCertificateInfoContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>460</width>
+            <height>200</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="selectCertificateInfo">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <spacer name="selectCertificateInfoSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>
