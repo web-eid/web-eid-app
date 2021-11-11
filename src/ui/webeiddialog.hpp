@@ -35,7 +35,7 @@
  * - pin input.
  */
 // clang-format on
-class WebEidDialog : public WebEidUI
+class WebEidDialog final : public WebEidUI
 {
     Q_OBJECT
 
@@ -43,31 +43,31 @@ public:
     enum class Page { WAITING, ALERT, SELECT_CERTIFICATE, PIN_INPUT, ABOUT };
 
     explicit WebEidDialog(QWidget* parent = nullptr);
-    ~WebEidDialog() override;
+    ~WebEidDialog() final;
 
-    void showWaitingForCardPage(const CommandType commandType) override;
-    QString getPin() override;
+    void showWaitingForCardPage(const CommandType commandType) final;
+    QString getPin() final;
 
     static void showAboutPage();
     static void showFatalErrorPage();
 
 public: // slots
-    void onSmartCardStatusUpdate(const RetriableError status) override;
+    void onSmartCardStatusUpdate(const RetriableError status) final;
     void onMultipleCertificatesReady(
         const QUrl& origin,
-        const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) override;
+        const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) final;
     void onSingleCertificateReady(const QUrl& origin,
-                                  const CardCertificateAndPinInfo& cardCertAndPinInfo) override;
+                                  const CardCertificateAndPinInfo& cardCertAndPinInfo) final;
 
-    void onRetry(const RetriableError error) override;
+    void onRetry(const RetriableError error) final;
 
-    void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) override;
+    void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) final;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                           const qint8 retriesLeft) override;
+                           const qint8 retriesLeft) final;
 
 private:
-    bool event(QEvent* event) override;
-    void reject() override;
+    bool event(QEvent* event) final;
+    void reject() final;
 
     void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
 
@@ -76,7 +76,7 @@ private:
     void
     setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
-    void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinInfo);
+    void setupPinInputValidator(PinInfo::PinMinMaxLength pinInfo);
     void setupOK(const std::function<void()>& func, const QString& label = {},
                  bool enabled = false);
     void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);

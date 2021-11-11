@@ -251,5 +251,9 @@
         <source>Incorrect PIN.</source>
         <translation>Väärä PIN koodi.</translation>
     </message>
+    <message>
+        <source>Select another certificate</source>
+        <translation type="unfinished">Valitse toinen varmenne</translation>
+    </message>
 </context>
 </TS>

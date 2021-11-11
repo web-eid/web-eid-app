@@ -253,5 +253,9 @@
         <source>Incorrect PIN.</source>
         <translation>Неверный PIN-код.</translation>
     </message>
+    <message>
+        <source>Select another certificate</source>
+        <translation>Выберите другой сертификат</translation>
+    </message>
 </context>
 </TS>

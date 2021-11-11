@@ -251,5 +251,9 @@
         <source>Incorrect PIN.</source>
         <translation>Vale PIN-kood.</translation>
     </message>
+    <message>
+        <source>Select another certificate</source>
+        <translation>Vali teine sertifikaat</translation>
+    </message>
 </context>
 </TS>
