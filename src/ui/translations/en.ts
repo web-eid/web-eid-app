@@ -251,5 +251,9 @@
         <source>Incorrect PIN.</source>
         <translation>Incorrect PIN.</translation>
     </message>
+    <message>
+        <source>Select another certificate</source>
+        <translation>Select another certificate</translation>
+    </message>
 </context>
 </TS>
