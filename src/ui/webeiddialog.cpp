@@ -82,8 +82,10 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 
     ui->pinInputValidator = new QRegularExpressionValidator(ui->pinInput);
     ui->pinInput->setValidator(ui->pinInputValidator);
-    connect(ui->pinInput, &QLineEdit::textChanged, ui->okButton,
-            [this] { ui->okButton->setEnabled(ui->pinInput->hasAcceptableInput()); });
+    connect(ui->pinInput, &QLineEdit::textChanged, ui->okButton, [this] {
+        showPinInputWarning(false);
+        ui->okButton->setEnabled(ui->pinInput->hasAcceptableInput());
+    });
 
     ui->pinEntryTimeoutProgressBar->setMaximum(PinInfo::PIN_PAD_PIN_ENTRY_TIMEOUT);
     ui->pinTimeoutTimer = new QTimeLine(ui->pinEntryTimeoutProgressBar->maximum() * 1000,
@@ -308,9 +310,7 @@ void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Statu
     case Status::RETRY_ALLOWED:
         message = retriesLeft == -1 ? tr("Incorrect PIN.")
                                     : tr("Incorrect PIN, %n attempts left.", nullptr, retriesLeft);
-        style()->unpolish(ui->pinInput);
-        ui->pinInput->setProperty("warning", true);
-        style()->polish(ui->pinInput);
+        showPinInputWarning(true);
         break;
     case Status::PIN_BLOCKED:
         displayPinBlockedError();
@@ -467,11 +467,8 @@ void WebEidDialog::setupOK(const std::function<void()>& func, const QString& lab
 
 void WebEidDialog::displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount)
 {
-    style()->unpolish(ui->pinInput);
-    ui->pinInput->setProperty(
-        "warning",
-        QVariant(pinRetriesCount.second != -1 && pinRetriesCount.first != pinRetriesCount.second));
-    style()->polish(ui->pinInput);
+    showPinInputWarning(pinRetriesCount.second != -1
+                        && pinRetriesCount.first != pinRetriesCount.second);
     if (pinRetriesCount.second != -1 && pinRetriesCount.first != pinRetriesCount.second) {
         ui->pinErrorLabel->setText(
             tr("The PIN has been entered incorrectly at least once. %n attempts left.", nullptr,
@@ -493,6 +490,13 @@ void WebEidDialog::displayPinBlockedError()
     ui->cancelButton->setEnabled(true);
     ui->cancelButton->show();
     ui->helpButton->show();
+}
+
+void WebEidDialog::showPinInputWarning(bool show)
+{
+    style()->unpolish(ui->pinInput);
+    ui->pinInput->setProperty("warning", show);
+    style()->polish(ui->pinInput);
 }
 
 void WebEidDialog::resizeHeight()
