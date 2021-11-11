@@ -24,9 +24,6 @@
 
 #include "ui.hpp"
 
-class CertificateListWidget;
-class QLabel;
-
 // clang-format off
 /**
  * The WebEidDialog class contains all UI elements of the web-eid application.
@@ -80,12 +77,12 @@ private:
     setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
     void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinInfo);
-
     void setupOK(const std::function<void()>& func, const QString& label = {},
                  bool enabled = false);
     void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);
     void displayPinBlockedError();
 
+    void showPinInputWarning(bool show);
     void resizeHeight();
 
     std::tuple<QString, QString, QString>
