@@ -35,7 +35,7 @@
     </message>
     <message>
         <source>By authenticating, I agree to the transfer of my name and personal identification code to the service provider.</source>
-        <translation>Isikutuvastamisel nõustun oma nime ja isikukoodi edastamisega teenusepakkujale.</translation>
+        <translation>Isikutuvastusel nõustun oma nime ja isikukoodi edastamisega teenusepakkujale.</translation>
     </message>
     <message>
         <source>By signing, I agree to the transfer of my name and personal identification code to the service provider.</source>
@@ -59,11 +59,11 @@
     </message>
     <message>
         <source>Enter PIN1 for authentication</source>
-        <translation>Sisesta isikutuvastamiseks PIN1-kood</translation>
+        <translation>Sisesta isikutuvastuseks PIN1-kood</translation>
     </message>
     <message>
         <source>Authenticate</source>
-        <translation>Isikutuvastamine</translation>
+        <translation>Isikutuvastus</translation>
     </message>
     <message>
         <source>Signing</source>
@@ -185,7 +185,7 @@
     </message>
     <message>
         <source>PIN1 for authentication</source>
-        <translation>isikutuvastamiseks PIN1-kood</translation>
+        <translation>isikutuvastuseks PIN1-kood</translation>
     </message>
     <message>
         <source>PIN2 for signing</source>
@@ -225,7 +225,7 @@
     </message>
     <message>
         <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
-        <translation>Web eID laiendus on keelatud. ID-kaardiga isikutuvastamiseks ja allkirjastamiseks tuleb veebilehitsejas laiendus lubada.</translation>
+        <translation>Web eID laiendus on keelatud. ID-kaardiga isikutuvastuseks ja allkirjastamiseks tuleb veebilehitsejas laiendus lubada.</translation>
     </message>
     <message>
         <source>Open Safari settings...</source>
