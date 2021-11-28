@@ -30,8 +30,8 @@ struct CertificateInfo
 {
     electronic_id::CertificateType type = electronic_id::CertificateType::NONE;
 
-    bool isExpired;
-    bool notEffective;
+    bool isExpired = false;
+    bool notEffective = false;
     QString subject;
     QString issuer;
     QString effectiveDate;
@@ -55,7 +55,7 @@ struct CardCertificateAndPinInfo
 {
     electronic_id::CardInfo::ptr cardInfo;
     QByteArray certificateBytesInDer;
-    QSslCertificate certificate;
+    QSslCertificate certificate {};
     CertificateInfo certInfo;
     PinInfo pinInfo;
 };

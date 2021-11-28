@@ -233,6 +233,7 @@ The Web eID native application is built with the [Qt](https://www.qt.io/) framew
 - command handlers that implement the actual PKI operations (authenticate, get signing certificate, sign) using the `libelectronic-id` library (in `src/controller/command-handlers`),
 - thread management code, including the card reader and smart card event monitoring thread (in `src/controller/threads`),
 - a dynamic user interface dialog built with Qt Widgets (interface in `src/controller/ui.hpp`, implementation in `src/ui`).
+- Code is compatible with Qt5 and Qt6 versions.
 
 The controller has an event-driven internal design that supports unexpected events like card or reader removal or insertion during all operations. Communication with the smart card and card monitoring run in separate threads to assure responsive, non-blocking operations.
 
@@ -290,13 +291,13 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 
 - Install _CMake_, _Google Test_, _OpenSSL_ and _Qt_ with _Homebrew_:
 
-      brew install cmake web-eid/gtest/gtest openssl qt@5 node
+      brew install cmake web-eid/gtest/gtest openssl qt@6 node
 
 - Create symlink to _OpenSSL_ location and setup environment variables required
   by _CMake_:
 
       export OPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1
-      export Qt5_DIR=/usr/local/opt/qt5
+      export QT_DIR=/usr/local/opt/qt6/lib/cmake/Qt6
 
 ## Building and testing
 
@@ -328,16 +329,14 @@ Use _Powershell_ to run the following commands to build the project.
 
 - Make the build directory and run _CMake_:
 
-      mkdir build
-      cd build
       cmake -A x64 `
           "-DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
-          "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" ..
+          "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" -B build -S .
 
 - Run the build and installer build:
 
-      cmake --build . --config ${BUILD_TYPE}
-      cmake --build . --config ${BUILD_TYPE} --target installer
+      cmake --build build --config ${BUILD_TYPE}
+      cmake --build build --config ${BUILD_TYPE} --target installer
 
 - Add _Qt_ binary directory to path:
 
@@ -345,7 +344,7 @@ Use _Powershell_ to run the following commands to build the project.
 
 - Run tests:
 
-      ctest -V -C ${BUILD_TYPE}
+      ctest -V -C ${BUILD_TYPE} --test-dir build
 
 ## Adding and updating translations
 

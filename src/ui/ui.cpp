@@ -25,8 +25,7 @@
 WebEidUI* WebEidUI::createAndShowDialog(const CommandType command)
 {
     auto dialog = new WebEidDialog {};
-    // close() deletes the dialog automatically if the Qt::WA_DeleteOnClose flag is set.
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(dialog, &WebEidDialog::finished, dialog, &WebEidDialog::deleteLater);
 
     dialog->showWaitingForCardPage(command);
     dialog->activateWindow();

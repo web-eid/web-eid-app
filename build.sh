@@ -13,10 +13,7 @@ cd "$PROJECT_ROOT/lib/libelectronic-id"
 
 # Build everything
 
-mkdir -p "$PROJECT_ROOT/build"
-cd "$PROJECT_ROOT/build"
-
 BUILD_TYPE=RelWithDebInfo
 
-cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
-cmake --build . --config $BUILD_TYPE # -- VERBOSE=1
+cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build -S .
+cmake --build build --config $BUILD_TYPE # -- VERBOSE=1

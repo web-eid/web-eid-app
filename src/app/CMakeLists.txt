@@ -52,7 +52,7 @@ if(WIN32)
         COMMAND ${CANDLE_CMD}
         COMMAND ${LIGHT_CMD} -o "${MSI_FILE}.msi"
         #Build MSI with QT
-        COMMAND ${CANDLE_CMD} -dqt_path=${_qt5Core_install_prefix}
+        COMMAND ${CANDLE_CMD} -dqt_path=${qtCore_install_prefix} -dqt_version_major=${QT_VERSION_MAJOR}
         COMMAND ${LIGHT_CMD} -o "${MSI_FILE}.qt.msi"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
@@ -100,7 +100,7 @@ elseif(APPLE)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json COMPONENT chrome
         DESTINATION "/Library/Application Support/Google/Chrome/External Extensions")
     add_custom_target(macdeployqt DEPENDS web-eid
-        COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
+        COMMAND ${qtCore_install_prefix}/macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
     )
     add_custom_target(installer-native DEPENDS macdeployqt
         COMMAND rm -rf root_native

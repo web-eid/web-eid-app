@@ -4,15 +4,27 @@ on: [push, pull_request]
 
 env:
   BUILD_TYPE: RelWithDebInfo
+  BUILD_DIR: build
   BUILD_NUMBER: ${{github.run_number}}
   OPENSSL_ROOT_DIR: /usr/local/opt/openssl@1.1
-  Qt5_DIR: /usr/local/opt/qt5
   QT_QPA_PLATFORM: offscreen
+  MAKEFLAGS: -j3
   MACOSX_DEPLOYMENT_TARGET: 10.15
 
 jobs:
   build:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        qt: [qt@5, qt@6]
+        include:
+        - qt: qt@5
+          dir: qt5/lib/cmake/Qt5
+        - qt: qt@6
+          dir: qt6/lib/cmake/Qt6
+    env:
+      Qt5_DIR: /usr/local/opt/${{matrix.dir}}
+      QT_DIR: /usr/local/opt/${{matrix.dir}}
 
     steps:
       - name: Checkout code
@@ -21,30 +33,24 @@ jobs:
           submodules: recursive
 
       - name: Install libraries
-        run: brew install web-eid/gtest/gtest qt@5
+        run: brew install web-eid/gtest/gtest ${{matrix.qt}}
 
-      - name: Create build directory
-        run: mkdir build
-
-      - name: Configure CMake
-        working-directory: ${{github.workspace}}/build
-        run: cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      - name: Configure
+        run: cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -B ${BUILD_DIR} -S .
 
       - name: Build
-        working-directory: ${{github.workspace}}/build
         run: |
-          cmake --build . --config ${BUILD_TYPE}
-          cmake --build . --config ${BUILD_TYPE} --target installer
-          cmake --build . --config ${BUILD_TYPE} --target installer-safari
+          cmake --build ${BUILD_DIR} --config ${BUILD_TYPE}
+          cmake --build ${BUILD_DIR} --config ${BUILD_TYPE} --target installer
+          cmake --build ${BUILD_DIR} --config ${BUILD_TYPE} --target installer-safari
 
       - name: Test
-        working-directory: ${{github.workspace}}/build
-        run: ctest -V -C ${BUILD_TYPE}
+        run: ctest -V -C ${BUILD_TYPE} --test-dir ${BUILD_DIR}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: web-eid-app-macos-build-${{github.run_number}}
+          name: web-eid-app-macos-build-${{github.run_number}}-${{matrix.qt}}
           path: |
             build/*/*/*.pkg
             build/*/*/*.dmg

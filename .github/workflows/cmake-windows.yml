@@ -11,12 +11,19 @@ jobs:
     runs-on: windows-2019
     strategy:
       matrix:
+        suffix: [qt5]
+        qtver: [5.12.12]
+        toolset: [14.29]
         arch: [x86, x64]
         include:
         - arch: x86
           qt: win32_msvc2017
         - arch: x64
           qt: win64_msvc2017_64
+        - suffix: qt6
+          qtver: 6.3.0
+          arch: x64
+          qt: win64_msvc2019_64
 
     steps:
       - name: Checkout code
@@ -34,16 +41,16 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: "5.12.12"
+          version: ${{ matrix.qtver }}
           arch: ${{ matrix.qt }}
 
       - name: Setup MS Visual C++ dev env
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
-          toolset: 14.29
+          toolset: ${{ matrix.toolset }}
 
-      - name: Configure CMake
+      - name: Configure
         run: |
           cmake "-GNinja" `
             "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
@@ -61,7 +68,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: web-eid-app-windows-build-${{github.run_number}}
+          name: web-eid-app-windows-build-${{github.run_number}}-${{ matrix.suffix }}
           path: |
             build/src/app/*.msi
             build/**/*.pdb
@@ -85,7 +92,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: "5.12.12"
+          version: 5.12.12
           arch: win64_msvc2017_64
 
       - name: Setup MS Visual C++ dev env
@@ -103,7 +110,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
-          name: web-eid-app-windows-build-${{github.run_number}}
+          name: web-eid-app-windows-build-${{github.run_number}}-qt5
           path: build
 
       - name: Build

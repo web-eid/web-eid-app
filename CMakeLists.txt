@@ -23,7 +23,10 @@ set(FIREFOX_URL "https://addons.mozilla.org/firefox/downloads/latest/web-eid-web
 set(SIGNCERT "" CACHE STRING "Common name of certificate to used sign binaries, empty skip signing")
 set(CROSSSIGNCERT "" CACHE STRING "Common name of certificate to used cross sign binaries, empty skip signing")
 
-find_package(Qt5 COMPONENTS Core Widgets Network Test LinguistTools Svg REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} 5.9.0 REQUIRED COMPONENTS Core Widgets Network Test LinguistTools Svg)
+get_target_property(qtCore_install_prefix Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
+get_filename_component(qtCore_install_prefix ${qtCore_install_prefix} DIRECTORY)
 
 add_subdirectory(lib/libelectronic-id)
 
