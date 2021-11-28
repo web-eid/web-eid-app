@@ -241,9 +241,7 @@ void Controller::stopCardEventMonitorThread()
 void Controller::disposeUI()
 {
     if (window) {
-        window->disconnect();
-        // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
-        window->close();
+        window->accept();
         window = nullptr;
     }
 }

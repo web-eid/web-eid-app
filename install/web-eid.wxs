@@ -87,18 +87,24 @@
             <File Source="$(var.VCPATH)\vcruntime140$(var.qt_suffix).dll"/>
 <?if $(var.Platform) = x64 AND $(env.VisualStudioVersion) = "16.0" ?>
             <File Source="$(var.VCPATH)\vcruntime140_1$(var.qt_suffix).dll"/>
+            <File Source="$(var.VCPATH)\msvcp140_1$(var.qt_suffix).dll"/>
+            <File Source="$(var.VCPATH)\msvcp140_2$(var.qt_suffix).dll"/>
 <?endif?>
             <File Source="$(var.ssl_path)\libcrypto-1_1$(var.ssl_suffix).dll"/>
             <File Source="$(var.ssl_path)\libssl-1_1$(var.ssl_suffix).dll"/>
-            <File Source="$(var.qt_path)\bin\Qt5Core$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\bin\Qt5Gui$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\bin\Qt5Network$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\bin\Qt5Svg$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\bin\Qt5Widgets$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\bin\libEGL$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\bin\libGLESv2$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\bin\D3DCompiler_47.dll"/>
-            <File Source="$(var.qt_path)\bin\opengl32sw.dll" />
+            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Core$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Gui$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Network$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Svg$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Widgets$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\D3DCompiler_47.dll"/>
+            <File Source="$(var.qt_path)\opengl32sw.dll" />
+<?if $(var.qt_version_major) = "5" ?>
+            <File Source="$(var.qt_path)\libEGL$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\libGLESv2$(var.qt_suffix).dll"/>
+<?else ?>
+            <File Source="$(var.qt_path)\Qt6SvgWidgets$(var.qt_suffix).dll"/>
+<?endif?>
 <?endif?>
           </Component>
           <Component Id="ChromeEdge" Transitive="yes">
@@ -120,21 +126,28 @@
               Key="Software\Mozilla\PKCS11Modules\idemiaawppkcs11" />
           </Component>
 <?ifdef var.qt_path ?>
-          <Directory Id="platforms" Name="platforms" FileSource="$(var.qt_path)\plugins\platforms">
+          <Directory Id="platforms" Name="platforms" FileSource="$(var.qt_path)\..\plugins\platforms">
             <Component Id="qwindows.dll">
               <File Name="qwindows$(var.qt_suffix).dll"/>
             </Component>
           </Directory>
-          <Directory Id="styles" Name="styles" FileSource="$(var.qt_path)\plugins\styles">
+          <Directory Id="styles" Name="styles" FileSource="$(var.qt_path)\..\plugins\styles">
             <Component Id="qwindowsvistastyle.dll">
               <File Name="qwindowsvistastyle$(var.qt_suffix).dll"/>
             </Component>
           </Directory>
-          <Directory Id="imageformats" Name="imageformats" FileSource="$(var.qt_path)\plugins\imageformats">
+          <Directory Id="imageformats" Name="imageformats" FileSource="$(var.qt_path)\..\plugins\imageformats">
             <Component Id="imageformats.dll">
-              <File Name="qsvg.dll"/>
+              <File Name="qsvg$(var.qt_suffix).dll"/>
             </Component>
           </Directory>
+<?if $(var.qt_version_major) = "6" ?>
+          <Directory Id="tls" Name="tls" FileSource="$(var.qt_path)\..\plugins\tls">
+            <Component Id="qopensslbackend.dll">
+              <File Name="qopensslbackend$(var.qt_suffix).dll"/>
+            </Component>
+          </Directory>
+<?endif?>
 <?endif?>
         </Directory>
       </Directory>
@@ -176,6 +189,9 @@
       <ComponentRef Id="qwindows.dll" />
       <ComponentRef Id="qwindowsvistastyle.dll" />
       <ComponentRef Id="imageformats.dll" />
+<?if $(var.qt_version_major) = "6" ?>
+      <ComponentRef Id="qopensslbackend.dll" />
+<?endif?>
 <?endif?>
     </Feature>
   </Product>

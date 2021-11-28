@@ -40,18 +40,17 @@ add_library(controller STATIC
 
 if(APPLE)
     target_sources(controller PRIVATE application.mm)
-    set_source_files_properties(application.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc" )
-    target_link_libraries(controller "-framework Cocoa" "-fobjc-arc")
+    set_source_files_properties(application.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+    target_link_libraries(controller "-framework Cocoa" "-framework AppKit" "-fobjc-arc")
 endif()
 
 set_property(SOURCE application.cpp APPEND PROPERTY COMPILE_DEFINITIONS PROJECT_VERSION="${SEMVER_VERSION_STRING}")
 target_include_directories(controller PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(controller electronic-id Qt5::Network Qt5::Widgets $<$<BOOL:${APPLE}>:-framework\ AppKit>)
-
-if(APPLE)
-    set_source_files_properties(application.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc" )
-    target_link_options(controller PUBLIC "-fobjc-arc")
-endif()
+target_link_libraries(controller
+    electronic-id
+    Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Widgets
+)
 
 # %{function}:%{file}:%{line} works in Qt log message pattern only if code
 # is compiled in debug mode or if QT_MESSAGELOGCONTEXT is set in compiler flags.

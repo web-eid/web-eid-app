@@ -107,7 +107,7 @@ void Application::loadTranslations(const QString& lang)
     if (SUPPORTED_LANGS.contains(lang)) {
         locale = QLocale(lang);
     }
-    translator->load(locale, QStringLiteral(":/translations/"));
+    void(translator->load(locale, QStringLiteral(":/translations/")));
 }
 
 CommandWithArgumentsPtr Application::parseArgs()

@@ -128,7 +128,7 @@ void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
 {
     QPainter p(this);
     QStyleOptionButton opt;
-    opt.init(this);
+    opt.initFrom(this);
     // Applies style sheet styling to the custom widget.
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
@@ -162,7 +162,7 @@ void CertificateButton::paintEvent(QPaintEvent* /*event*/)
 {
     QPainter p(this);
     QStyleOptionButton opt;
-    opt.init(this);
+    opt.initFrom(this);
     if (isChecked()) {
         opt.state |= QStyle::State_On;
     }
