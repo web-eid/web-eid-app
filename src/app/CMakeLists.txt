@@ -175,8 +175,6 @@ else()
         DESTINATION ${CMAKE_INSTALL_DATADIR}/web-eid)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
         DESTINATION "${MOZILLA_INSTALL_DIR}" RENAME eu.webeid.json)
-    install(FILES ${CMAKE_SOURCE_DIR}/install/eu.webeid.chrome-policy.json
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/web-eid)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
         DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/google-chrome/extensions")
     install(FILES ${CMAKE_SOURCE_DIR}/install/web-eid.desktop

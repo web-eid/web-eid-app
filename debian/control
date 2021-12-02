@@ -14,7 +14,6 @@ Package: web-eid
 Architecture: all
 Depends: web-eid-native
 Recommends: web-eid-firefox, web-eid-chrome
-Suggests: web-eid-chrome-policy
 Replaces: chrome-token-signing
 Breaks: chrome-token-signing
 Description: Web eID application suite (metapackage)
@@ -51,11 +50,3 @@ Description: Web eID browser extension for Chrome
  The Web eID extension for Chrome communicates with the Web eID native
  application using Native messaging to enable usage of electronic ID smart
  cards for secure authentication and digital signing of documents on the web.
-
-Package: web-eid-chrome-policy
-Architecture: all
-Depends: web-eid-chrome (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Replaces: chrome-token-signing-policy
-Breaks: chrome-token-signing-policy
-Description: Chrome policy to enable Web eID browser extension
- Chrome policy for enabling extension by default.
