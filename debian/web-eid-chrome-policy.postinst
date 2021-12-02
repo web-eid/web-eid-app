@@ -1,8 +1,0 @@
-#!/bin/bash
-set -e
-
-mkdir -p /etc/opt/chrome/policies/managed
-ln -sf /usr/share/web-eid/eu.webeid.chrome-policy.json \
-	/etc/opt/chrome/policies/managed/eu.webeid.chrome-policy.json
-
-#DEBHELPER#
