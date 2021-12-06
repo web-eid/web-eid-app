@@ -38,6 +38,12 @@ add_library(controller STATIC
     writeresponse.hpp
 )
 
+if(APPLE)
+    target_sources(controller PRIVATE application.mm)
+    set_source_files_properties(application.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc" )
+    target_link_libraries(controller "-framework Cocoa" "-fobjc-arc")
+endif()
+
 set_property(SOURCE application.cpp APPEND PROPERTY COMPILE_DEFINITIONS PROJECT_VERSION="${SEMVER_VERSION_STRING}")
 target_include_directories(controller PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(controller electronic-id Qt5::Network Qt5::Widgets $<$<BOOL:${APPLE}>:-framework\ AppKit>)

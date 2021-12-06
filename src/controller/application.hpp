@@ -22,11 +22,16 @@
 
 #pragma once
 
-#include <QApplication>
-
 #include "commands.hpp"
 
+#include <QApplication>
+
 #include <stdexcept>
+
+#ifdef Q_OS_MAC
+#include <QMenuBar>
+#include <memory>
+#endif
 
 class ArgumentError : public std::runtime_error
 {
@@ -49,6 +54,9 @@ public:
     // see class SafariApplication in src/mac/main.mm and WebEidDialog::showAboutPage().
     virtual bool isSafariExtensionContainingApp() { return false; }
     virtual void requestSafariExtensionState() {}
+#ifdef Q_OS_MAC
+    void showAbout();
+#endif
     virtual void showSafariSettings() {}
 
 signals:
@@ -56,6 +64,9 @@ signals:
 
 private:
     QTranslator* translator;
+#ifdef Q_OS_MAC
+    std::unique_ptr<QMenuBar> menuBar;
+#endif
 };
 
 #if defined(qApp)

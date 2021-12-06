@@ -8,6 +8,7 @@ env:
   OPENSSL_ROOT_DIR: /usr/local/opt/openssl@1.1
   Qt5_DIR: /usr/local/opt/qt5
   QT_QPA_PLATFORM: offscreen
+  MACOSX_DEPLOYMENT_TARGET: 10.15
 
 jobs:
   build:

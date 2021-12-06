@@ -130,7 +130,7 @@ void WebEidDialog::showAboutPage()
     auto app = static_cast<Application*>(QCoreApplication::instance());
     if (app->isSafariExtensionContainingApp()) {
         d->setupOK([app] { app->showSafariSettings(); }, tr("Open Safari settings..."), true);
-        connect(app, &Application::safariExtensionEnabled, d, [d] (bool value) {
+        connect(app, &Application::safariExtensionEnabled, d, [d](bool value) {
             d->ui->aboutAlert->setHidden(value);
             d->resizeHeight();
         });
