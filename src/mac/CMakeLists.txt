@@ -49,7 +49,7 @@ set_target_properties(web-eid-safari PROPERTIES
     XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "eu.web-eid.web-eid-safari"
 )
-target_link_libraries(web-eid-safari SafariServices controller ui pcsc "-framework Cocoa")
+target_link_libraries(web-eid-safari SafariServices controller ui pcsc)
 add_custom_command(TARGET web-eid-safari POST_BUILD
     COMMAND mkdir -p $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns
     COMMAND cp -a $<TARGET_BUNDLE_DIR:web-eid-safari-extension> $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 The Web eID Project
+ * Copyright (c) 2022 The Web eID Project
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,10 @@
 
 #include "application.hpp"
 
+#include <QUrl>
+
 #import <AppKit/AppKit.h>
+#import <Cocoa/Cocoa.h>
 
 bool Application::isDarkTheme() const
 {
@@ -33,4 +36,14 @@ bool Application::isDarkTheme() const
         return [appearance isEqualToString:NSAppearanceNameDarkAqua];
     }
     return false;
+}
+
+void Application::showAbout()
+{
+    NSLog(@"web-eid-app: starting app");
+    NSError *error = nil;
+    NSRunningApplication *app = [NSWorkspace.sharedWorkspace launchApplicationAtURL:QUrl::fromLocalFile(qApp->applicationFilePath()).toNSURL() options:NSWorkspaceLaunchNewInstance configuration:@{} error:&error];
+    if (app == nil) {
+        NSLog(@"web-eid-app: failed to start app: %@", error);
+    }
 }

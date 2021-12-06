@@ -65,6 +65,13 @@ Application::Application(int& argc, char** argv, const QString& name) : QApplica
 
     registerMetatypes();
     setupLogging();
+
+#ifdef Q_OS_MAC
+    menuBar = std::make_unique<QMenuBar>();
+    QAction* about = menuBar->addMenu(tr("&File"))->addAction(tr("&About"));
+    about->setMenuRole(QAction::AboutRole);
+    connect(about, &QAction::triggered, this, &Application::showAbout);
+#endif
 }
 
 #ifndef Q_OS_MAC
