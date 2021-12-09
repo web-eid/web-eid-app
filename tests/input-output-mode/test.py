@@ -50,7 +50,7 @@ class Test(unittest.TestCase):
         message = {
             'command': 'authenticate',
             'arguments': {
-                'challenge-nonce': '12345678123456781234567812345678912356789123',
+                'challengeNonce': '12345678123456781234567812345678912356789123',
                 'origin': 'https://ria.ee'
             }
         }
@@ -63,10 +63,10 @@ class Test(unittest.TestCase):
         message = {
             'command': 'sign',
             'arguments': {
-                'doc-hash': b64encode(b'x' * 48).decode('ascii'),
-                'hash-algo': 'SHA-384',
+                'hash': b64encode(b'x' * 48).decode('ascii'),
+                'hashFunction': 'SHA-384',
                 'origin': 'https://ria.ee',
-                'user-eid-cert': self.__class__.signingCertificate,
+                'certificate': self.__class__.signingCertificate,
             }
         }
         response = self.exchange_message_with_app(message)

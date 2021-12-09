@@ -95,20 +95,20 @@ QByteArray createSignature(const QString& origin, const QString& challengeNonce,
 Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(cmd)
 {
     const auto arguments = cmd.second;
-    requireArgumentsAndOptionalLang({"challenge-nonce", "origin"}, arguments,
-                                    "\"challenge-nonce\": \"<challenge nonce>\", "
+    requireArgumentsAndOptionalLang({"challengeNonce", "origin"}, arguments,
+                                    "\"challengeNonce\": \"<challenge nonce>\", "
                                     "\"origin\": \"<origin URL>\"");
 
-    challengeNonce = validateAndGetArgument<QString>(QStringLiteral("challenge-nonce"), arguments);
+    challengeNonce = validateAndGetArgument<QString>(QStringLiteral("challengeNonce"), arguments);
     // nonce must contain at least 256 bits of entropy and is usually Base64-encoded, so the
     // required byte length is 44, the length of 32 Base64-encoded bytes.
     if (challengeNonce.length() < 44) {
         THROW(CommandHandlerInputDataError,
-              "Challenge nonce argument 'challenge-nonce' must be at least 44 characters long");
+              "Challenge nonce argument 'challengeNonce' must be at least 44 characters long");
     }
     if (challengeNonce.length() > 128) {
         THROW(CommandHandlerInputDataError,
-              "Challenge nonce argument 'challenge-nonce' cannot be longer than 128 characters");
+              "Challenge nonce argument 'challengeNonce' cannot be longer than 128 characters");
     }
     validateAndStoreOrigin(arguments);
 }
