@@ -33,7 +33,7 @@
 using namespace std::string_literals;
 
 const QVariantMap AUTHENTICATE_COMMAND_ARGUMENT = {
-    {"challenge-nonce", "12345678912345678912345678912345678912345678"},
+    {"challengeNonce", "12345678912345678912345678912345678912345678"},
     {"origin", "https://ria.ee"},
 };
 

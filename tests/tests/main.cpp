@@ -168,13 +168,13 @@ void WebEidTests::getCertificate_outputsSupportedAlgos()
     QSignalSpy certificateReadySpy(g_cached_GetCertificate.get(),
                                    &GetCertificate::singleCertificateReady);
     QVariantMap ES224_ALGO {
-        {"crypto-algo", "ECC"}, {"hash-algo", "SHA-224"}, {"padding-algo", "NONE"}};
+        {"cryptoAlgorithm", "ECC"}, {"hashFunction", "SHA-224"}, {"paddingScheme", "NONE"}};
 
     // act
     runEventLoopVerifySignalsEmitted(certificateReadySpy);
 
     // assert
-    QCOMPARE(controller->result()["supported-signature-algos"].toList()[0].toMap(), ES224_ALGO);
+    QCOMPARE(controller->result()["supportedSignatureAlgorithms"].toList()[0].toMap(), ES224_ALGO);
 }
 
 void WebEidTests::authenticate_validArgumentsResultInValidToken()

@@ -51,18 +51,18 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
     const auto arguments = cmd.second;
 
     requireArgumentsAndOptionalLang(
-        {"doc-hash", "hash-algo", "user-eid-cert", "origin"}, arguments,
-        "\"doc-hash\": \"<Base64-encoded document hash>\", "
-        "\"hash-algo\": \"<the hash algorithm that was used for computing 'doc-hash', any of "
+        {"hash", "hashFunction", "certificate", "origin"}, arguments,
+        "\"hash\": \"<Base64-encoded document hash>\", "
+        "\"hashFunction\": \"<the hash algorithm that was used for computing 'hash', any of "
             + HashAlgorithm::allSupportedAlgorithmNames()
-            + ">\", \"user-eid-cert\": \"<Base64-encoded user eID certificate previously "
+            + ">\", \"certificate\": \"<Base64-encoded user eID certificate previously "
               "retrieved with get-cert>\", "
               "\"origin\": \"<origin URL>\"");
 
     validateAndStoreDocHashAndHashAlgo(arguments);
 
     userEidCertificateFromArgs =
-        parseAndValidateCertificate(QStringLiteral("user-eid-cert"), arguments);
+        parseAndValidateCertificate(QStringLiteral("certificate"), arguments);
     validateAndStoreOrigin(arguments);
 }
 
@@ -108,7 +108,7 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
         std::fill(pin.begin(), pin.end(), '\0');
 
         return {{QStringLiteral("signature"), signature.first},
-                {QStringLiteral("signature-algo"), signature.second}};
+                {QStringLiteral("signatureAlgorithm"), signature.second}};
 
     } catch (const VerifyPinFailed& failure) {
         switch (failure.status()) {
@@ -135,12 +135,12 @@ void Sign::connectSignals(const WebEidUI* window)
 
 void Sign::validateAndStoreDocHashAndHashAlgo(const QVariantMap& args)
 {
-    docHash = QByteArray::fromBase64(
-        validateAndGetArgument<QByteArray>(QStringLiteral("doc-hash"), args));
+    docHash =
+        QByteArray::fromBase64(validateAndGetArgument<QByteArray>(QStringLiteral("hash"), args));
 
-    QString hashAlgoInput = validateAndGetArgument<QString>(QStringLiteral("hash-algo"), args);
+    QString hashAlgoInput = validateAndGetArgument<QString>(QStringLiteral("hashFunction"), args);
     if (hashAlgoInput.size() > 8) {
-        THROW(CommandHandlerInputDataError, "hash-algo value is invalid");
+        THROW(CommandHandlerInputDataError, "hashFunction value is invalid");
     }
     hashAlgo = HashAlgorithm(hashAlgoInput.toStdString());
 

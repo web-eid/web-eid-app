@@ -52,23 +52,23 @@ either contains the requested Base64-encoded certificate and supported
 signature algorithms, or an error object with a symbolic error code. Successful
 output example:
 
-    {"certificate":"MIID7DCCA02gAwIBAgIQOZYpcFbeurZbzz9ngqCZsTAKBggqhkjOPQQDBDBgMQswCQYDVQQGEwJFRTEbMBkGA1UECgwSU0sgSUQgU29sdXRpb25zIEFTMRcwFQYDVQRhDA5OVFJFRS0xMDc0NzAxMzEbMBkGA1UEAwwSVEVTVCBvZiBFU1RFSUQyMDE4MB4XDTE4MTAyMzE1MzM1OVoXDTIzMTAyMjIxNTk1OVowfzELMAkGA1UEBhMCRUUxKjAoBgNVBAMMIUrDlUVPUkcsSkFBSy1LUklTVEpBTiwzODAwMTA4NTcxODEQMA4GA1UEBAwHSsOVRU9SRzEWMBQGA1UEKgwNSkFBSy1LUklTVEpBTjEaMBgGA1UEBRMRUE5PRUUtMzgwMDEwODU3MTgwdjAQBgcqhkjOPQIBBgUrgQQAIgNiAASKvaAJSGYBrLcvq0KjgM1sOAS9vbtqeSS2OkqyY4i5AazaetYmCtXKOqUUeljOJUGBUzljDFlAEPHs5Fn+vFT7+cGkOVCA93PBYKVsA9avcWyMwgQQJoW6kA4ZN9yD/mijggGrMIIBpzAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIGQDBIBgNVHSAEQTA/MDIGCysGAQQBg5EhAQIBMCMwIQYIKwYBBQUHAgEWFWh0dHBzOi8vd3d3LnNrLmVlL0NQUzAJBgcEAIvsQAECMB0GA1UdDgQWBBRYwsjA5GJ7HWPvD8ByThPTZ6j3PDCBigYIKwYBBQUHAQMEfjB8MAgGBgQAjkYBATAIBgYEAI5GAQQwEwYGBACORgEGMAkGBwQAjkYBBgEwUQYGBACORgEFMEcwRRY/aHR0cHM6Ly9zay5lZS9lbi9yZXBvc2l0b3J5L2NvbmRpdGlvbnMtZm9yLXVzZS1vZi1jZXJ0aWZpY2F0ZXMvEwJFTjAfBgNVHSMEGDAWgBTAhJkpxE6fOwI09pnhClYACCk+ezBzBggrBgEFBQcBAQRnMGUwLAYIKwYBBQUHMAGGIGh0dHA6Ly9haWEuZGVtby5zay5lZS9lc3RlaWQyMDE4MDUGCCsGAQUFBzAChilodHRwOi8vYy5zay5lZS9UZXN0X29mX0VTVEVJRDIwMTguZGVyLmNydDAKBggqhkjOPQQDBAOBjAAwgYgCQgDBTN1LM08SeH18xKQplqAmV8AQhVvrOxRELCmYp54Qr0XTi2i7kMw0k8gVOV84RlPQP6/ayjs4+ytRbIdkBZK1vQJCARF17/gWYUu7bmy/AXT6fWgyuDV5j2UC2cWDFhPUYyS99rdLGSfP10rP9mPK87Y+4HkfJB/qDyENnJYPa5mUsuFK","supported-signature-algos":[{"crypto-algo":"ECC","hash-algo":"SHA-224","padding-algo":"NONE"},{"crypto-algo":"ECC","hash-algo":"SHA-256","padding-algo":"NONE"},{"crypto-algo":"ECC","hash-algo":"SHA-384","padding-algo":"NONE"},{"crypto-algo":"ECC","hash-algo":"SHA-512","padding-algo":"NONE"},{"crypto-algo":"ECC","hash-algo":"SHA3-224","padding-algo":"NONE"},{"crypto-algo":"ECC","hash-algo":"SHA3-256","padding-algo":"NONE"},{"crypto-algo":"ECC","hash-algo":"SHA3-384","padding-algo":"NONE"},{"crypto-algo":"ECC","hash-algo":"SHA3-512","padding-algo":"NONE"}]}
+    {"certificate":"MIID7DCCA02gAwIBAgIQOZYpcFbeurZbzz9ngqCZsTAKBggqhkjOPQQDBDBgMQswCQYDVQQGEwJFRTEbMBkGA1UECgwSU0sgSUQgU29sdXRpb25zIEFTMRcwFQYDVQRhDA5OVFJFRS0xMDc0NzAxMzEbMBkGA1UEAwwSVEVTVCBvZiBFU1RFSUQyMDE4MB4XDTE4MTAyMzE1MzM1OVoXDTIzMTAyMjIxNTk1OVowfzELMAkGA1UEBhMCRUUxKjAoBgNVBAMMIUrDlUVPUkcsSkFBSy1LUklTVEpBTiwzODAwMTA4NTcxODEQMA4GA1UEBAwHSsOVRU9SRzEWMBQGA1UEKgwNSkFBSy1LUklTVEpBTjEaMBgGA1UEBRMRUE5PRUUtMzgwMDEwODU3MTgwdjAQBgcqhkjOPQIBBgUrgQQAIgNiAASKvaAJSGYBrLcvq0KjgM1sOAS9vbtqeSS2OkqyY4i5AazaetYmCtXKOqUUeljOJUGBUzljDFlAEPHs5Fn+vFT7+cGkOVCA93PBYKVsA9avcWyMwgQQJoW6kA4ZN9yD/mijggGrMIIBpzAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIGQDBIBgNVHSAEQTA/MDIGCysGAQQBg5EhAQIBMCMwIQYIKwYBBQUHAgEWFWh0dHBzOi8vd3d3LnNrLmVlL0NQUzAJBgcEAIvsQAECMB0GA1UdDgQWBBRYwsjA5GJ7HWPvD8ByThPTZ6j3PDCBigYIKwYBBQUHAQMEfjB8MAgGBgQAjkYBATAIBgYEAI5GAQQwEwYGBACORgEGMAkGBwQAjkYBBgEwUQYGBACORgEFMEcwRRY/aHR0cHM6Ly9zay5lZS9lbi9yZXBvc2l0b3J5L2NvbmRpdGlvbnMtZm9yLXVzZS1vZi1jZXJ0aWZpY2F0ZXMvEwJFTjAfBgNVHSMEGDAWgBTAhJkpxE6fOwI09pnhClYACCk+ezBzBggrBgEFBQcBAQRnMGUwLAYIKwYBBQUHMAGGIGh0dHA6Ly9haWEuZGVtby5zay5lZS9lc3RlaWQyMDE4MDUGCCsGAQUFBzAChilodHRwOi8vYy5zay5lZS9UZXN0X29mX0VTVEVJRDIwMTguZGVyLmNydDAKBggqhkjOPQQDBAOBjAAwgYgCQgDBTN1LM08SeH18xKQplqAmV8AQhVvrOxRELCmYp54Qr0XTi2i7kMw0k8gVOV84RlPQP6/ayjs4+ytRbIdkBZK1vQJCARF17/gWYUu7bmy/AXT6fWgyuDV5j2UC2cWDFhPUYyS99rdLGSfP10rP9mPK87Y+4HkfJB/qDyENnJYPa5mUsuFK","supportedSignatureAlgorithms":[{"cryptoAlgorithm":"ECC","hashFunction":"SHA-224","paddingScheme":"NONE"},{"cryptoAlgorithm":"ECC","hashFunction":"SHA-256","paddingScheme":"NONE"},{"cryptoAlgorithm":"ECC","hashFunction":"SHA-384","paddingScheme":"NONE"},{"cryptoAlgorithm":"ECC","hashFunction":"SHA-512","paddingScheme":"NONE"},{"cryptoAlgorithm":"ECC","hashFunction":"SHA3-224","paddingScheme":"NONE"},{"cryptoAlgorithm":"ECC","hashFunction":"SHA3-256","paddingScheme":"NONE"},{"cryptoAlgorithm":"ECC","hashFunction":"SHA3-384","paddingScheme":"NONE"},{"cryptoAlgorithm":"ECC","hashFunction":"SHA3-512","paddingScheme":"NONE"}]}
 
 Error example:
 
     {"error": {"code": "ERR_WEBEID_NATIVE_FATAL", "message": "Invalid origin"}}
 
-The `supported-signature-algos` field contains an array of objects that
+The `supportedSignatureAlgorithms` field contains an array of objects that
 specify the signature algorithms that the card supports. Each object has three
 members:
 
-- `crypto-algo`, the cryptographic algorithm, `ECC` for elliptic curve
+- `cryptoAlgorithm`, the cryptographic algorithm, `ECC` for elliptic curve
   cryptography or `RSA` for the Rivest-Shamir-Adleman algorithm;
 
-- `hash-algo`, the cryptographic hash algorithm, any of the SHA-2 or SHA-3
-  standard algorithms, see _Allowed hash algorithms_ below in section _Sign_;
+- `hashFunction`, the cryptographic hash function, any of the SHA-2 or SHA-3
+  standard algorithms, see _Allowed hash functions_ below in section _Sign_;
 
-- `padding-algo`, the padding scheme used, for example `PKCS1.5` for PKCS#1
+- `paddingScheme`, the padding scheme used, for example `PKCS1.5` for PKCS#1
   v1.5 padding.
 
 ### Authenticate
@@ -79,7 +79,7 @@ and signs it with the authentication key.
 Authentication command requires the challenge nonce and origin URL as
 JSON-encoded command-line arguments:
 
-    web-eid -c authenticate '{"challenge-nonce": "12345678901234567890123456789012345678901234", "origin": "https://ria.ee"}'
+    web-eid -c authenticate '{"challengeNonce": "12345678901234567890123456789012345678901234", "origin": "https://ria.ee"}'
 
 The result will be written to standard output as a JSON-encoded message that
 either contains the authentication token or an error code. Successful output
@@ -100,31 +100,31 @@ architecture document](https://github.com/web-eid/web-eid-system-architecture-do
 
 Signing command signs the provided document hash with the signing key.
 
-Signing command requires the Base64-encoded document hash, hash algorithm,
+Signing command requires the Base64-encoded document hash, hash function,
 origin URL and previously retrieved Base64-encoded user signing certificate as
 JSON-encoded command-line arguments:
 
-    web-eid -c sign '{"doc-hash": "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4", "hash-algo": "SHA-384", "origin": "https://ria.ee", "user-eid-cert": "MIID7DCCA02gAwIBAgIQGWaqJX+JmHFbyFd4ba1pajAKBggqhkjOPQQDBDBgMQswCQYDVQQGEwJFRTEbMBkGA1UECgwSU0sgSUQgU29sdXRpb25zIEFTMRcwFQYDVQRhDA5OVFJFRS0xMDc0NzAxMzEbMBkGA1UEAwwSVEVTVCBvZiBFU1RFSUQyMDE4MB4XDTE4MTAxODA5NTA0N1oXDTIzMTAxNzIxNTk1OVowfzELMAkGA1UEBhMCRUUxKjAoBgNVBAMMIUrDlUVPUkcsSkFBSy1LUklTVEpBTiwzODAwMTA4NTcxODEQMA4GA1UEBAwHSsOVRU9SRzEWMBQGA1UEKgwNSkFBSy1LUklTVEpBTjEaMBgGA1UEBRMRUE5PRUUtMzgwMDEwODU3MTgwdjAQBgcqhkjOPQIBBgUrgQQAIgNiAATF0tc74ZjE9UNp4iWwMFQ/zolrDB9XH//FJdwT6ynQBT8v6HNdxRF+z+8P81eRMHNb+VehUNUob/s5et7iW0bK28yQrlTcyHfQNxHMfBJFzDl+6QImU2fXKKK4oopV28ujggGrMIIBpzAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIGQDBIBgNVHSAEQTA/MDIGCysGAQQBg5EhAQIBMCMwIQYIKwYBBQUHAgEWFWh0dHBzOi8vd3d3LnNrLmVlL0NQUzAJBgcEAIvsQAECMB0GA1UdDgQWBBTig5wckMK9lsiS+SbcAuZUPIWx1DCBigYIKwYBBQUHAQMEfjB8MAgGBgQAjkYBATAIBgYEAI5GAQQwEwYGBACORgEGMAkGBwQAjkYBBgEwUQYGBACORgEFMEcwRRY/aHR0cHM6Ly9zay5lZS9lbi9yZXBvc2l0b3J5L2NvbmRpdGlvbnMtZm9yLXVzZS1vZi1jZXJ0aWZpY2F0ZXMvEwJFTjAfBgNVHSMEGDAWgBTAhJkpxE6fOwI09pnhClYACCk+ezBzBggrBgEFBQcBAQRnMGUwLAYIKwYBBQUHMAGGIGh0dHA6Ly9haWEuZGVtby5zay5lZS9lc3RlaWQyMDE4MDUGCCsGAQUFBzAChilodHRwOi8vYy5zay5lZS9UZXN0X29mX0VTVEVJRDIwMTguZGVyLmNydDAKBggqhkjOPQQDBAOBjAAwgYgCQgFgoBAifjq0O56O8ivxAWI6zyBwQ8Vpag1qanuh7Qcxspac4mZshc+maWG2ZcxLSNSOJ1a8kxOKe+3PCbittcfwPgJCANc9dTngWTc/8PLLXM62W3FeRnhQqFtw+5askIKEBw5e6maOrxP2mcz9yvnfg0jS52gQ0r905Af0bwp6vVxObxVU"}'
+    web-eid -c sign '{"hash": "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4", "hashFunction": "SHA-384", "origin": "https://ria.ee", "certificate": "MIID7DCCA02gAwIBAgIQGWaqJX+JmHFbyFd4ba1pajAKBggqhkjOPQQDBDBgMQswCQYDVQQGEwJFRTEbMBkGA1UECgwSU0sgSUQgU29sdXRpb25zIEFTMRcwFQYDVQRhDA5OVFJFRS0xMDc0NzAxMzEbMBkGA1UEAwwSVEVTVCBvZiBFU1RFSUQyMDE4MB4XDTE4MTAxODA5NTA0N1oXDTIzMTAxNzIxNTk1OVowfzELMAkGA1UEBhMCRUUxKjAoBgNVBAMMIUrDlUVPUkcsSkFBSy1LUklTVEpBTiwzODAwMTA4NTcxODEQMA4GA1UEBAwHSsOVRU9SRzEWMBQGA1UEKgwNSkFBSy1LUklTVEpBTjEaMBgGA1UEBRMRUE5PRUUtMzgwMDEwODU3MTgwdjAQBgcqhkjOPQIBBgUrgQQAIgNiAATF0tc74ZjE9UNp4iWwMFQ/zolrDB9XH//FJdwT6ynQBT8v6HNdxRF+z+8P81eRMHNb+VehUNUob/s5et7iW0bK28yQrlTcyHfQNxHMfBJFzDl+6QImU2fXKKK4oopV28ujggGrMIIBpzAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIGQDBIBgNVHSAEQTA/MDIGCysGAQQBg5EhAQIBMCMwIQYIKwYBBQUHAgEWFWh0dHBzOi8vd3d3LnNrLmVlL0NQUzAJBgcEAIvsQAECMB0GA1UdDgQWBBTig5wckMK9lsiS+SbcAuZUPIWx1DCBigYIKwYBBQUHAQMEfjB8MAgGBgQAjkYBATAIBgYEAI5GAQQwEwYGBACORgEGMAkGBwQAjkYBBgEwUQYGBACORgEFMEcwRRY/aHR0cHM6Ly9zay5lZS9lbi9yZXBvc2l0b3J5L2NvbmRpdGlvbnMtZm9yLXVzZS1vZi1jZXJ0aWZpY2F0ZXMvEwJFTjAfBgNVHSMEGDAWgBTAhJkpxE6fOwI09pnhClYACCk+ezBzBggrBgEFBQcBAQRnMGUwLAYIKwYBBQUHMAGGIGh0dHA6Ly9haWEuZGVtby5zay5lZS9lc3RlaWQyMDE4MDUGCCsGAQUFBzAChilodHRwOi8vYy5zay5lZS9UZXN0X29mX0VTVEVJRDIwMTguZGVyLmNydDAKBggqhkjOPQQDBAOBjAAwgYgCQgFgoBAifjq0O56O8ivxAWI6zyBwQ8Vpag1qanuh7Qcxspac4mZshc+maWG2ZcxLSNSOJ1a8kxOKe+3PCbittcfwPgJCANc9dTngWTc/8PLLXM62W3FeRnhQqFtw+5askIKEBw5e6maOrxP2mcz9yvnfg0jS52gQ0r905Af0bwp6vVxObxVU"}'
 
-Allowed hash algorithm values are SHA-224, SHA-256, SHA-384, SHA-512, SHA3-224,
-SHA3-256, SHA3-384, SHA3-512, and the hash algorithm has to be supported by the
-card (see the `hash-algo` member of `supported-signature-algos` array elements
+Allowed hash function values are SHA-224, SHA-256, SHA-384, SHA-512, SHA3-224,
+SHA3-256, SHA3-384, SHA3-512, and the hash function has to be supported by the
+card (see the `hashFunction` member of `supportedSignatureAlgorithms` array elements
 in the `get-signing-certificate` command output). The document hash length has to match
-the hash algorithm output length and the hash algorithm has to be supported by
+the hash function output length and the hash function has to be supported by
 the electronic ID signing implementation.
 
-The user signing certificate for the `user-eid-cert` field can be retrieved
+The user signing certificate for the `certificate` field can be retrieved
 with the `get-signing-certificate` command as described above:
 
     web-eid -c get-signing-certificate '{...other arguments as above...}'
 
 The result will be written to standard output as a JSON-encoded message that
 either contains the Base64-encoded signature and the signature algorithm used
-(see the description of the `supported-signature-algos` field above in section
+(see the description of the `supportedSignatureAlgorithms` field above in section
 _Get certificate_), or an error code. Successful output example:
 
     {
-        "signature-algo": {"hash-algo": "SHA-384", "padding-algo": "NONE", "crypto-algo": "ECC"},
+        "signatureAlgorithm": {"hashFunction": "SHA-384", "paddingScheme": "NONE", "cryptoAlgorithm": "ECC"},
         "signature": "oIw20YRlryXgAhGbHEKBCzQetVAE/S2VjqEQ1h+Kc9Scujcl37oOCmAgoHmEkG4Fpmp/z2waGw8ciJ1yXNpgzIaLhtyytFnFmcwR3zp6OKZTqHuEvTEAxZkxC6gLCxJh"
     }
 
