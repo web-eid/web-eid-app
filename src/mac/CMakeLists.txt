@@ -11,7 +11,7 @@ set(JSPATH ${CMAKE_CURRENT_SOURCE_DIR}/js/dist/safari)
 set(EXTENSION ${JSPATH}/manifest.json ${JSPATH}/background.js ${JSPATH}/content.js ${JSPATH}/background.js.map ${JSPATH}/content.js.map ${JSPATH}/web-eid-icon-128.png)
 add_custom_command(OUTPUT ${EXTENSION}
     COMMAND ${CMAKE_COMMAND} -E env PATH="$ENV{PATH}:${BINPATH}" ${NPM_EXECUTABLE} install
-    COMMAND ${CMAKE_COMMAND} -E env PATH="$ENV{PATH}:${BINPATH}" ${NPM_EXECUTABLE} run clean build
+    COMMAND ${CMAKE_COMMAND} -E env PATH="$ENV{PATH}:${BINPATH}" TOKEN_SIGNING_BACKWARDS_COMPATIBILITY=true ${NPM_EXECUTABLE} run clean build
     COMMENT "Generating extension js"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/js
 )
