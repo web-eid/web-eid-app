@@ -1,5 +1,5 @@
 # Helper
-add_library(SafariServices INTERFACE)
+add_library(SafariServices INTERFACE shared.hpp)
 target_compile_options(SafariServices INTERFACE -fobjc-arc)
 target_link_options(SafariServices INTERFACE -fobjc-arc -fobjc-link-runtime)
 target_link_libraries(SafariServices INTERFACE "-framework SafariServices")
