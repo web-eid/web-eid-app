@@ -186,6 +186,16 @@ else()
             RENAME web-eid.png
         )
     endforeach()
+
+    set(CPACK_GENERATOR "RPM" "DEB")
+    set(CPACK_PACKAGE_NAME "web-eid")
+    set(CPACK_PACKAGE_RELEASE 1)
+    set(CPACK_PACKAGE_CONTACT "Andrus Randveer")
+    set(CPACK_PACKAGE_VENDOR "RIA")
+    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/")
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${SEMVER_VERSION_STRING}-${CPACK_PACKAGE_RELEASE}.${CMAKE_SYSTEM_PROCESSOR}")
+    include(CPack)
+
     add_custom_target(installer
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         COMMAND dch --distribution unstable -v ${PROJECT_VERSION} "Release: ${PROJECT_VERSION}."
