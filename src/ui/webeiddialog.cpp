@@ -115,13 +115,16 @@ void WebEidDialog::showAboutPage()
     auto app = static_cast<Application*>(QCoreApplication::instance());
     if (app->isSafariExtensionContainingApp()) {
         d->setupOK([app] { app->showSafariSettings(); }, tr("Open Safari settings..."), true);
-        connect(app, &Application::safariExtensionEnabled, d->ui->aboutAlert, &QLabel::setHidden);
+        connect(app, &Application::safariExtensionEnabled, d, [d] (bool value) {
+            d->ui->aboutAlert->setHidden(value);
+            d->resizeHeight();
+        });
         app->requestSafariExtensionState();
     } else {
         d->ui->okButton->hide();
     }
     d->ui->pageStack->setCurrentIndex(int(Page::ABOUT));
-    d->adjustSize();
+    d->resizeHeight();
     d->open();
     connect(d, &WebEidDialog::finished, qApp, &QApplication::quit);
 }
@@ -139,7 +142,7 @@ void WebEidDialog::showFatalErrorPage()
     d->ui->cancelButton->show();
     d->ui->okButton->hide();
     d->ui->pageStack->setCurrentIndex(int(Page::ALERT));
-    d->adjustSize();
+    d->resizeHeight();
     d->open();
     connect(d, &WebEidDialog::finished, qApp, &QApplication::quit);
 }
