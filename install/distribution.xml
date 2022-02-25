@@ -18,14 +18,35 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
     <welcome language="ru" mime-type="text/html"><![CDATA[<html><body><br />
 <p style="margin: 0px; font: 13px 'Lucida Grande'">Вам будут предложены шаги по установке данного ПО.</p></body></html>]]></welcome>
     <conclusion language="en" mime-type="text/html"><![CDATA[<html><body><br />
-<p style="margin: 0px; font: 14px 'Lucida Grande'">Installation completed successfully!</p><br /><br />
-</body></html>]]></conclusion>
+<p style="margin: 0px; font: 14px 'Lucida Grande'">In order to use ID-card in e-services <b>make sure that the extension is installed and enabled</b>.<br /><ol>
+<li style="margin: 0px; font: 12px 'Lucida Grande'">Open browser</li>
+<li style="margin: 0px; font: 12px 'Lucida Grande'">Go to <b>Extensions</b></li>
+<li style="margin: 0px; font: 12px 'Lucida Grande'">Enable <b>Web eID</b></li>
+</ol></p>
+<p style="margin: 0px; font: 12px 'Lucida Grande'">The guide can be found <a href="https://www.id.ee/en/article/configuring-browsers-for-using-id-card/">here</a>.</p><br /><br /><br />
+<p style="margin: 0px; font: 12px 'Lucida Grande'">Additional software is available in App Store:<br /><ul>
+<li style="margin: 0px; font: 12px 'Lucida Grande'"><a href="macappstore://itunes.apple.com/ee/developer/ria/id556524921?mt=12">Web eID</a> - ID-card support in Safari <b>(required)</b></li>
+</ul></p></body></html>]]></conclusion>
     <conclusion language="et" mime-type="text/html"><![CDATA[<html><body><br />
-<p style="margin: 0px; font: 14px 'Lucida Grande'">Tarkvara paigaldus õnnestus!</p><br /><br />
-</body></html>]]></conclusion>
+<p style="margin: 0px; font: 14px 'Lucida Grande'">ID-kaardi kasutamiseks e-teenustes <b>veendu, et laiendus on paigaldatud ning aktiveeritud</b>.<br /><ol>
+<li style="margin: 0px; font: 12px 'Lucida Grande'">Ava veebilehitseja</li>
+<li style="margin: 0px; font: 12px 'Lucida Grande'">Ava menüüst <b>Laiendused</b></li>
+<li style="margin: 0px; font: 12px 'Lucida Grande'">Luba <b>Web eID<b/></li>
+</ol></p>
+<p style="margin: 0px; font: 12px 'Lucida Grande'">Juhend on leitav <a href="https://www.id.ee/artikkel/veebibrauserite-seadistamine-id-kaardi-kasutamiseks/">siit</a>.</p><br /><br /><br />
+<p style="margin: 0px; font: 12px 'Lucida Grande'">Lisaks tuleb App Store'ist arvutisse paigaldada:<br /><ul>
+<li style="margin: 0px; font: 12px 'Lucida Grande'"><a href="macappstore://itunes.apple.com/ee/developer/ria/id556524921?mt=12">Web eID</a> - ID-kaardi tugi Safaris <b>(kohustuslik)</b></li>
+</ul></p></body></html>]]></conclusion>
     <conclusion language="ru" mime-type="text/html"><![CDATA[<html><body><br />
-<p style="margin: 0px; font: 14px 'Lucida Grande'">Installation completed successfully!</p><br /><br />
-</body></html>]]></conclusion>
+<p style="margin: 0px; font: 14px 'Lucida Grande'">Для использования ID-карты в э-услугах, <b>убедитесь, что расширение установлено и включено</b>.<br /><ol>
+<li style="margin: 0px; font: 12px 'Lucida Grande'">Открой интерет браузер</li>
+<li style="margin: 0px; font: 12px 'Lucida Grande'">Открой в меню <b>Расширения</b></li>
+<li style="margin: 0px; font: 12px 'Lucida Grande'">Разреши <b>Web eID</b></li>
+</ol></p>
+<p style="margin: 0px; font: 12px 'Lucida Grande'">Руководство можно найти <a href="https://www.id.ee/ru/artikkel/nastrojka-veb-brauzerov-dlya-ispolzovaniya-id-karty/">здесь</a>.</p><br /><br /><br />
+<p style="margin: 0px; font: 12px 'Lucida Grande'">Необходимо также загрузить из магазина приложений App Store и установить на компьютер:<br /><ul>
+<li style="margin: 0px; font: 12px 'Lucida Grande'"><a href="macappstore://itunes.apple.com/ee/developer/ria/id556524921?mt=12">Web eID</a> - Поддержка ID-карт в Safari <b>(обязательна)</b></li>
+</ul></p></body></html>]]></conclusion>
     <localization>
         <strings language="en">
 <![CDATA[
