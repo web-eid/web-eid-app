@@ -38,7 +38,14 @@
   <String Id="SuccessRepairHeader">Tarkvara parandus õnnestus</String>
   <String Id="SuccessUninstallHeader">Tarkvara eemaldatud</String>
   <String Id="SuccessInstallHeader">Tarkvara paigaldus õnnestus!</String>
-  <String Id="SuccessInstallMessage"></String>
+  <String Id="SuccessInstallMessage">
+
+Aktiveeri veebilehitsejas laiendus ID-kaardi kasutamiseks.
+
+1. Ava veebilehitseja
+2. Ava menüüst Laiendused
+3. Luba Web eID
+Juhend on leitav &lt;a href="https://www.id.ee/artikkel/veebibrauserite-seadistamine-id-kaardi-kasutamiseks/"&gt;siit&lt;/a&gt;.</String>
   <String Id="SuccessHeader">Toiming õnnestus</String>
   <String Id="SuccessLaunchButton">&amp;Käivita ID-kaardi haldusvahend</String><!--Seda teadet ei kuvata.-->
   <String Id="SuccessRestartText">Enne tarkvara kasutamist tuleb arvuti taaskäivitada.</String>

@@ -81,7 +81,7 @@
     <Image X="0" Y="0" Width="165" Height="400" ImageFile="logoside.png"/>
     <Text X="185" Y="11" Width="-11" Height="32" FontId="1" DisablePrefix="yes">#(loc.Title)</Text>
     <Text Name="SuccessHeader" X="185" Y="50" Width="-11" Height="30" FontId="2" TabStop="yes" HideWhenDisabled="yes" DisablePrefix="yes">#(loc.SuccessHeader)</Text>
-    <Text Name="SuccessInstallHeader" X="185" Y="50" Width="-11" Height="250" TabStop="yes" FontId="5" HideWhenDisabled="yes" DisablePrefix="yes">#(loc.SuccessInstallHeader) #(loc.SuccessInstallMessage)</Text>
+    <Hypertext Name="SuccessInstallHeader" X="185" Y="50" Width="-11" Height="250" TabStop="yes" FontId="5" HideWhenDisabled="yes" DisablePrefix="yes">#(loc.SuccessInstallHeader) #(loc.SuccessInstallMessage)</Hypertext>
     <Text Name="SuccessRepairHeader" X="185" Y="50" Width="-11" Height="100" FontId="2" TabStop="yes" HideWhenDisabled="yes" DisablePrefix="yes">#(loc.SuccessRepairHeader)</Text>
     <Text Name="SuccessUninstallHeader" X="185" Y="50" Width="-11" Height="30" FontId="2" TabStop="yes" HideWhenDisabled="yes" DisablePrefix="yes">#(loc.SuccessUninstallHeader)</Text>
     <Button Name="LaunchButton" X="-91" Y="-11" Width="175" Height="23" TabStop="yes" FontId="0" HideWhenDisabled="yes">#(loc.SuccessLaunchButton)</Button>

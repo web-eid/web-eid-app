@@ -38,7 +38,14 @@
   <String Id="SuccessRepairHeader">Repair completed successfully.</String>
   <String Id="SuccessUninstallHeader">Uninstall completed</String>
   <String Id="SuccessInstallHeader">Installation completed successfully!</String>
-  <String Id="SuccessInstallMessage"></String>
+  <String Id="SuccessInstallMessage">
+
+Enable extension in the web browser to use the ID-card.
+
+1. Open browser
+2. Go to Extensions
+3. Enable Web eID
+The guide can be found &lt;a href="https://www.id.ee/en/article/configuring-browsers-for-using-id-card/"&gt;here&lt;/a&gt;.</String>
   <String Id="SuccessHeader">Setup successful</String>
   <String Id="SuccessLaunchButton">&amp;Launch ID-card utility</String>
   <String Id="SuccessRestartText">You must restart your computer before you can use the software.</String>
