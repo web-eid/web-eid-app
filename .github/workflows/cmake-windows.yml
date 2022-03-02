@@ -8,7 +8,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2019
     strategy:
       matrix:
         arch: [x86, x64]
@@ -29,40 +29,34 @@ jobs:
         with:
           vcpkgArguments: gtest openssl
           vcpkgTriplet: ${{ matrix.arch }}-windows
-          vcpkgGitCommitId: 8dddc6c899ce6fdbeab38b525a31e7f23cb2d5bb # Pull in CMake 3.21.0 fix
+          vcpkgGitCommitId: b25cb779e5783531cc66562e224079b376055939
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: "5.12.11"
+          version: "5.12.12"
           arch: ${{ matrix.qt }}
 
       - name: Setup MS Visual C++ dev env
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
-          toolset: 14.16 # Latest MS VC 2017
-
-      - name: Create build directory
-        run: mkdir build
+          toolset: 14.29
 
       - name: Configure CMake
-        working-directory: ${{github.workspace}}/build
         run: |
           cmake "-GNinja" `
             "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
-            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" ..
+            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" -S . -B build
 
       - name: Build
-        working-directory: ${{github.workspace}}/build
         run: |
-          cmake --build . --config ${env:BUILD_TYPE}
-          cmake --build . --config ${env:BUILD_TYPE} --target installer
+          cmake --build build --config ${env:BUILD_TYPE}
+          cmake --build build --config ${env:BUILD_TYPE} --target installer
 
       - name: Test
         if: matrix.arch == 'x64'
-        working-directory: ${{github.workspace}}/build
-        run: ctest -V -C ${env:BUILD_TYPE}
+        run: ctest -V -C ${env:BUILD_TYPE} --test-dir build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -74,7 +68,7 @@ jobs:
 
   bundle:
     needs: build
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -86,29 +80,25 @@ jobs:
         with:
           vcpkgArguments: gtest openssl
           vcpkgTriplet: x64-windows
-          vcpkgGitCommitId: 8dddc6c899ce6fdbeab38b525a31e7f23cb2d5bb # Pull in CMake 3.21.0 fix
+          vcpkgGitCommitId: b25cb779e5783531cc66562e224079b376055939
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: "5.12.11"
+          version: "5.12.12"
           arch: win64_msvc2017_64
 
       - name: Setup MS Visual C++ dev env
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
-          toolset: 14.16 # Latest MS VC 2017
-
-      - name: Create build directory
-        run: mkdir build
+          toolset: 14.29
 
       - name: Configure CMake
-        working-directory: ${{github.workspace}}/build
         run: |
           cmake "-GNinja" `
             "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
-            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" ..
+            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" -S . -B build
 
       - name: Download artifacts
         uses: actions/download-artifact@v2
@@ -117,9 +107,8 @@ jobs:
           path: build
 
       - name: Build
-        working-directory: ${{github.workspace}}/build
         run: |
-          cmake --build . --config ${env:BUILD_TYPE} --target bundle
+          cmake --build build --config ${env:BUILD_TYPE} --target bundle
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
