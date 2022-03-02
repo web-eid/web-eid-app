@@ -8,8 +8,8 @@
 <?define qt_suffix="" ?>
 <?endif ?>
 
-<?ifndef env.VisualStudioVersion ?>
-<?define VCVER = "142" ?>
+<?if $(env.VisualStudioVersion) = "17.0" ?>
+<?define VCVER = "143" ?>
 <?elseif $(env.VisualStudioVersion) = "16.0" ?>
 <?define VCVER = "142" ?>
 <?elseif $(env.VisualStudioVersion) = "15.0" ?>

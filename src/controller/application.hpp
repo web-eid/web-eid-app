@@ -26,6 +26,8 @@
 
 #include "commands.hpp"
 
+#include <stdexcept>
+
 class ArgumentError : public std::runtime_error
 {
 public:
