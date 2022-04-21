@@ -30,7 +30,8 @@
 <?define VCPATH = "$(env.VCTOOLSREDISTDIR)\$(var.Platform)\Microsoft.VC$(var.VCVER).CRT" ?>
 <?endif ?>
 
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Product Name="Web eID software" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
       Id="*" Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="RIA">
     <Package Platform="$(var.Platform)" Keywords="Installer" InstallerVersion="405" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated"/>
@@ -157,6 +158,10 @@
             Value='gnmckgbandlkacikdndelhfghdejfido'/>
       </Component>
     </Directory>
+
+    <util:CloseApplication Id="CloseBrowsersChrome" CloseMessage="yes" Target="chrome.exe" Description="Please close browsers before continuing." PromptToContinue="yes" RebootPrompt="no" ElevatedCloseMessage="yes" />
+    <util:CloseApplication Id="CloseBrowsersFirefox" CloseMessage="yes" Target="firefox.exe" Description="Please close browsers before continuing." PromptToContinue="yes" RebootPrompt="no" ElevatedCloseMessage="yes" />
+    <util:CloseApplication Id="CloseBrowsersEdge" CloseMessage="yes" Target="msedge.exe" Description="Please close browsers before continuing." PromptToContinue="yes" RebootPrompt="no" ElevatedCloseMessage="yes" />
 
     <Feature Id="Install" Level="1" Title="Web eID" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER">
       <ComponentRef Id="Application"/>

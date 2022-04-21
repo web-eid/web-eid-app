@@ -39,11 +39,12 @@ if(WIN32)
         -dFIREFOX_URL="${FIREFOX_URL}"
         -dFIREFOX_UUID="${FIREFOX_UUID}"
         -dapp_path=$<TARGET_FILE:web-eid>
+        -ext WixUtilExtension
         ${CMAKE_SOURCE_DIR}/install/web-eid.wxs
         ${CMAKE_SOURCE_DIR}/install/WelcomeDlg2.wxs
         ${CMAKE_SOURCE_DIR}/install/WixUI_Minimal2.wxs
     )
-    list(APPEND LIGHT_CMD "$ENV{WIX}bin\\light.exe" -nologo -ext WixUIExtension
+    list(APPEND LIGHT_CMD "$ENV{WIX}bin\\light.exe" -nologo -ext WixUIExtension -ext WixUtilExtension
         web-eid.wixobj WelcomeDlg2.wixobj WixUI_Minimal2.wixobj
         -dWixUIDialogBmp=${CMAKE_SOURCE_DIR}/install/dlgbmp.bmp
     )
