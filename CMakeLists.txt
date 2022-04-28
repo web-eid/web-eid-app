@@ -10,7 +10,7 @@ elseif($ENV{CI_PIPELINE_IID})
 else()
     set(BUILD_NUMBER 0)
 endif()
-project(web-eid VERSION 2.0.1.${BUILD_NUMBER})
+project(web-eid VERSION 2.0.2.${BUILD_NUMBER})
 
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION_TWEAK})
@@ -20,8 +20,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE YES)
 set(FIREFOX_UUID "{e68418bc-f2b0-4459-a9ea-3e72b6751b07}" CACHE STRING "Firefox Extension UUID")
 set(FIREFOX_URL "https://addons.mozilla.org/firefox/downloads/latest/web-eid-webextension/latest.xpi" CACHE STRING "Mozilla AMO URL")
 
-set(SIGNCERT "" CACHE STRING "Common name of certificate to used sign binaries, empty skip signing")
-set(CROSSSIGNCERT "" CACHE STRING "Common name of certificate to used cross sign binaries, empty skip signing")
+set(SIGNCERT "" CACHE STRING "Common name of certificate to used sign binaries, empty skips signing  (Windows/macOS)")
+set(CROSSSIGNCERT "" CACHE STRING "Common name of certificate to used cross sign binaries, empty skips signing (Windows)")
+set(SAFARI_PROVISIONPROFILE "" CACHE STRING "Provision profile to include in application (macOS)")
 
 find_package(Qt5 COMPONENTS Core Widgets Network Test LinguistTools Svg REQUIRED)
 
