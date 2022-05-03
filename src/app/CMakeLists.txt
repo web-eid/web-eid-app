@@ -36,6 +36,7 @@ if(WIN32)
         -dqt_suffix="$<$<CONFIG:Debug>:d>"
         -djson=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
         -djsonfirefox=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
+        -dinstall_path=${CMAKE_SOURCE_DIR}/install
         -dFIREFOX_URL="${FIREFOX_URL}"
         -dFIREFOX_UUID="${FIREFOX_UUID}"
         -dapp_path=$<TARGET_FILE:web-eid>
@@ -92,6 +93,10 @@ elseif(APPLE)
         DESTINATION "/Library/Google/Chrome/NativeMessagingHosts")
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json COMPONENT firefox
         DESTINATION "/Library/Application Support/Mozilla/NativeMessagingHosts" RENAME eu.webeid.json)
+    install(FILES ${CMAKE_SOURCE_DIR}/install/onepinopenscpkcs11-mac.json COMPONENT firefox
+        DESTINATION "/Library/Application Support/Mozilla/PKCS11Modules" RENAME onepinopenscpkcs11.json)
+    install(FILES ${CMAKE_SOURCE_DIR}/install/idemiaawppkcs11-mac.json COMPONENT firefox
+        DESTINATION "/Library/Application Support/Mozilla/PKCS11Modules" RENAME idemiaawppkcs11.json)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json COMPONENT chrome
         DESTINATION "/Library/Application Support/Google/Chrome/External Extensions")
     add_custom_target(macdeployqt DEPENDS web-eid
