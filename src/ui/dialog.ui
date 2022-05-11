@@ -153,6 +153,11 @@ color: #003168;
 }
 #aboutVersion {
 color: #76767B;
+}
+#selectAnotherCertificate {
+color: #113F8E;
+border: 0px;
+height: 24px;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="WebEidDialogLayout">
@@ -520,7 +525,51 @@ color: #76767B;
         </layout>
        </item>
        <item>
-        <widget class="CertificateWidget" name="pinInputCertificateInfo" native="true"/>
+        <layout class="QVBoxLayout" name="pinInputPageContentLayout">
+         <property name="spacing">
+          <number>8</number>
+         </property>
+         <item>
+          <widget class="CertificateWidget" name="pinInputCertificateInfo" native="true"/>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="selectAnotherCertificateLayout">
+           <item>
+            <widget class="QToolButton" name="selectAnotherCertificate">
+             <property name="text">
+              <string>Select another certificate</string>
+             </property>
+             <property name="icon">
+              <iconset resource="web-eid-resources.qrc">
+               <normaloff>:/images/left.svg</normaloff>:/images/left.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="selectAnotherCertificateSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QVBoxLayout" name="pinLayout">
@@ -533,7 +582,6 @@ color: #76767B;
             <font>
              <family>Roboto</family>
              <pointsize>-1</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>

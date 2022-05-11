@@ -78,6 +78,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->selectionGroup = new QButtonGroup(this);
     ui->fatalError->hide();
     ui->fatalHelp->hide();
+    ui->selectAnotherCertificate->hide();
 
     connect(ui->pageStack, &QStackedWidget::currentChanged, this, &WebEidDialog::resizeHeight);
     connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
@@ -222,20 +223,16 @@ void WebEidDialog::onMultipleCertificatesReady(
         ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
         break;
     case CommandType::AUTHENTICATE:
+        ui->selectAnotherCertificate->disconnect();
+        ui->selectAnotherCertificate->setVisible(certificateAndPinInfos.size() > 1);
+        connect(ui->selectAnotherCertificate, &QPushButton::clicked, this,
+                [this, origin, certificateAndPinInfos] {
+                    onMultipleCertificatesReady(origin, certificateAndPinInfos);
+                });
         setupOK([this, origin, certificateAndPinInfos] {
             // Authenticate continues with the selected certificate to onSingleCertificateReady().
             if (CertificateButton* button =
                     qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
-                ui->cancelButton->disconnect();
-                ui->cancelButton->setText(tr("Select another certificate"));
-                connect(ui->cancelButton, &QPushButton::clicked, this,
-                        [this, origin, certificateAndPinInfos] {
-                            ui->cancelButton->disconnect();
-                            ui->cancelButton->setText(tr("Cancel"));
-                            connect(ui->cancelButton, &QPushButton::clicked, this,
-                                    &WebEidDialog::reject);
-                            onMultipleCertificatesReady(origin, certificateAndPinInfos);
-                        });
                 onSingleCertificateReady(origin, button->certificateInfo());
             } else {
                 emit failure(QStringLiteral("CertificateButton not found"));
