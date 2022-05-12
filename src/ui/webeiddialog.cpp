@@ -83,8 +83,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
             [this] { ui->okButton->setEnabled(true); });
     connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::reject);
-    connect(ui->helpButton, &QPushButton::clicked, this, [this] {
-        ui->helpButton->setDown(false);
+    connect(ui->helpButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(
             tr("https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/"));
     });
