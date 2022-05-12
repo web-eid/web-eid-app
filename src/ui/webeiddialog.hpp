@@ -61,7 +61,7 @@ public: // slots
 
     void onRetry(const RetriableError error) final;
 
-    void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) final;
+    void onSigningCertificateMismatch() final;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                            const qint8 retriesLeft) final;
 

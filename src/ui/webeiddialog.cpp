@@ -314,11 +314,10 @@ void WebEidDialog::onRetry(const RetriableError error)
     onRetryImpl(std::get<0>(retriableErrorToTextTitleAndIcon(error)));
 }
 
-void WebEidDialog::onCertificateNotFound(const QString& certificateSubject)
+void WebEidDialog::onSigningCertificateMismatch()
 {
-    onRetryImpl(tr("The certificate of the ID-card in the reader does not match the submitted "
-                   "certificate. Please insert the ID-card belonging to %1.")
-                    .arg(certificateSubject));
+    onRetryImpl(tr("The certificate of the ID card in the reader does not match the originally "
+                   "submitted certificate. Please insert the original ID card."));
 }
 
 void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,

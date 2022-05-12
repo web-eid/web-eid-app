@@ -112,10 +112,6 @@
         <translation>Waiting for card</translation>
     </message>
     <message>
-        <source>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</source>
-        <translation>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</translation>
-    </message>
-    <message>
         <source>Launch the Smart Card service</source>
         <translation>Launch the Smart Card service</translation>
     </message>
@@ -258,6 +254,10 @@
     <message>
         <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
         <translation>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
+        <translation>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</translation>
     </message>
 </context>
 </TS>

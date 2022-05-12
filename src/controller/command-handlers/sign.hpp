@@ -36,7 +36,7 @@ public:
                           const CardCertificateAndPinInfo& cardCertAndPin) override;
 
 signals:
-    void certificateNotFound(const QString& subjectOfUserCertFromArgs);
+    void signingCertificateMismatch();
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                          const qint8 retriesLeft);
 
@@ -47,5 +47,5 @@ private:
 
     QByteArray docHash;
     electronic_id::HashAlgorithm hashAlgo;
-    QSslCertificate userEidCertificateFromArgs;
+    QByteArray userEidCertificateFromArgs;
 };
