@@ -184,10 +184,6 @@
         <translation>Kirjautumalla suostun antamaan nimeni ja henkilötunnukseni palveluntarjoajalle.</translation>
     </message>
     <message>
-        <source>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</source>
-        <translation>Kortinlukijassa olevan henkilökortin varmenne ei täsmää toimitetun varmenteen kanssa. Syötä henkilökortti joka kuuluu %1.</translation>
-    </message>
-    <message>
         <source>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</source>
         <translation>Henkilökortin varmenteet ovat vanhentuneet. Varmenteiden tulee olla voimassa, jotta henkilökorttia voi käyttää sähköisesti.</translation>
     </message>
@@ -258,6 +254,10 @@
     <message>
         <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
         <translation type="unfinished">Toimenpide epäonnistui. Varmista, että käytetään vastaavan kortinlukijan ajuria. Lue lisää &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;täältä&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
+        <translation type="unfinished">Lukijassa oleva henkilökortin varmenne ei vastaa alun perin lähetettyä varmennetta. Aseta alkuperäinen henkilökortti kortinlukijaan.</translation>
     </message>
 </context>
 </TS>

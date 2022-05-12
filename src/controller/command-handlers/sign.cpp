@@ -61,8 +61,9 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
 
     validateAndStoreDocHashAndHashAlgo(arguments);
 
-    userEidCertificateFromArgs =
-        parseAndValidateCertificate(QStringLiteral("certificate"), arguments);
+    userEidCertificateFromArgs = QByteArray::fromBase64(
+        validateAndGetArgument<QString>(QStringLiteral("certificate"), arguments, false)
+            .toLatin1());
     validateAndStoreOrigin(arguments);
 }
 
@@ -72,17 +73,14 @@ void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& c
 
     for (const auto& cardCertAndPin : cardCertAndPinInfos) {
         // Check if the certificate read from the eID matches the certificate provided as argument.
-        if (cardCertAndPin.certificate.digest(QCryptographicHash::Sha256)
-            == userEidCertificateFromArgs.digest(QCryptographicHash::Sha256)) {
+        if (cardCertAndPin.certificate.toDer() == userEidCertificateFromArgs) {
             cardWithCertificateFromArgs = &cardCertAndPin;
         }
     }
 
     // No eID had the certificate provided as argument.
     if (!cardWithCertificateFromArgs) {
-        const auto certSubject =
-            userEidCertificateFromArgs.subjectInfo(QSslCertificate::CommonName).join(' ');
-        emit certificateNotFound(certSubject);
+        emit signingCertificateMismatch();
         return;
     }
 
@@ -132,7 +130,8 @@ void Sign::connectSignals(const WebEidUI* window)
 {
     CertificateReader::connectSignals(window);
 
-    connect(this, &Sign::certificateNotFound, window, &WebEidUI::onCertificateNotFound);
+    connect(this, &Sign::signingCertificateMismatch, window,
+            &WebEidUI::onSigningCertificateMismatch);
     connect(this, &Sign::verifyPinFailed, window, &WebEidUI::onVerifyPinFailed);
 }
 

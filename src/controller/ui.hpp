@@ -66,7 +66,7 @@ public: // slots
 
     virtual void onRetry(const RetriableError error) = 0;
 
-    virtual void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) = 0;
+    virtual void onSigningCertificateMismatch() = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                    const qint8 retriesLeft) = 0;
 };

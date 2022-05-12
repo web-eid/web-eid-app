@@ -114,10 +114,6 @@
         <translation>Считываю данные с карты</translation>
     </message>
     <message>
-        <source>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</source>
-        <translation>Сертификат ID-карты в считывателе не соответствует указанному сертификату. Пожалуйста, вставьте ID-карту, принадлежащую следующему лицу: %1.</translation>
-    </message>
-    <message>
         <source>Launch the Smart Card service</source>
         <translation>Запустите услугу считывания смарт-карты</translation>
     </message>
@@ -260,6 +256,10 @@
     <message>
         <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
         <translation>Операция не удалась. Убедитесь, что используется драйвер соответствующего считывателя карт. Подробнее читайте &lt;a href=&quot;https://www.id.ee/ru/artikkel/ispolzovanie-drajverov-schityvatelya-kart-pinpad/&quot;&gt;здесь&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
+        <translation type="unfinished">Сертификат ID-карты в считывателе не соответствует указанному сертификату. Пожалуйста, вставьте оригинальную ID-карту.</translation>
     </message>
 </context>
 </TS>

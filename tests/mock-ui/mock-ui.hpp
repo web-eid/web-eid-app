@@ -51,7 +51,7 @@ public: // slots
         emit accepted(cardCertAndPin);
     }
 
-    void onCertificateNotFound(const QString&) override {}
+    void onSigningCertificateMismatch() override {}
 
     void onRetry(const RetriableError) override { emit rejected(); }
 

@@ -67,22 +67,6 @@ template QString validateAndGetArgument<QString>(const QString& argName, const Q
 template QByteArray validateAndGetArgument<QByteArray>(const QString& argName,
                                                        const QVariantMap& args, bool allowNull);
 
-QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QVariantMap& args,
-                                            bool allowNull)
-{
-    const auto certStr = validateAndGetArgument<QString>(certArgName, args, allowNull);
-    if (allowNull && certStr.isNull()) {
-        return QSslCertificate();
-    }
-    const auto cert =
-        QSslCertificate(QByteArray::fromBase64(certStr.toUtf8()), QSsl::EncodingFormat::Der);
-    if (cert.isNull()) {
-        THROW(CommandHandlerInputDataError, "Invalid certificate passed as argument");
-    }
-
-    return cert;
-}
-
 template <typename T, typename C>
 inline void eraseData(T& data)
 {
