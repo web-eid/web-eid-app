@@ -74,11 +74,6 @@ if(SIGNCERT)
             --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-extension.entitlements
             $<TARGET_BUNDLE_DIR:web-eid-safari-extension>
     )
-    if(SAFARI_PROVISIONPROFILE)
-        add_custom_command(TARGET macdeployqt-safari POST_BUILD
-            COMMAND cp -a ${SAFARI_PROVISIONPROFILE} $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/embedded.provisionprofile
-        )
-    endif()
     add_custom_command(TARGET macdeployqt-safari POST_BUILD
         COMMAND codesign -f -s "Apple Distribution: ${SIGNCERT}"
             $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/Frameworks/*.*
