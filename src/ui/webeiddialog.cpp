@@ -159,8 +159,7 @@ void WebEidDialog::showFatalErrorPage()
     d->ui->okButton->hide();
     d->ui->pageStack->setCurrentIndex(int(Page::ALERT));
     d->resizeHeight();
-    d->open();
-    connect(d, &WebEidDialog::finished, qApp, &QApplication::quit);
+    d->exec();
 }
 
 void WebEidDialog::showWaitingForCardPage(const CommandType commandType)
