@@ -57,5 +57,10 @@ public: // slots
 
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status, const qint8) override {}
 
-    void onSmartCardStatusUpdate(const RetriableError) override { emit rejected(); }
+    void onSmartCardStatusUpdate(const RetriableError) override
+    {
+        emit rejected();
+        // Schedule invoking Controller::exit().
+        emit destroyed();
+    }
 };

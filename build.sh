@@ -13,6 +13,8 @@ cd "$PROJECT_ROOT/lib/libelectronic-id"
 
 # Build everything
 
+cd "$PROJECT_ROOT"
+
 BUILD_TYPE=RelWithDebInfo
 
 cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build -S .
