@@ -241,7 +241,9 @@ void Controller::stopCardEventMonitorThread()
 void Controller::disposeUI()
 {
     if (window) {
-        window->accept();
+        window->disconnect();
+        // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
+        window->close();
         window = nullptr;
     }
 }
@@ -320,11 +322,15 @@ void Controller::onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo)
 
 void Controller::onDialogCancel()
 {
+    REQUIRE_NON_NULL(window)
+
     qDebug() << "User cancelled";
+
+    // Schedule application exit when the UI dialog is destroyed.
+    connect(window, &WebEidUI::destroyed, this, &Controller::exit);
+
     _result = makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled"));
     writeResponseToStdOut(isInStdinMode, _result, commandType());
-    disposeUI();
-    exit();
 }
 
 void Controller::onCriticalFailure(const QString& error)

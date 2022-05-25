@@ -11,7 +11,8 @@ from base64 import b64encode, b64decode
 
 BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
-WEBEID_APP = os.path.join(BASE_DIR, 'build', 'src', 'app', 'web-eid')
+WEBEID_APP = os.path.join(BASE_DIR, 'build', 'src', 'app',
+    ('RelWithDebInfo' if os.name == 'nt' else ''), 'web-eid')
 
 DEFAULT_ARGUMENTS = {
     'origin': 'https://ria.ee',

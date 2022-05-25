@@ -269,6 +269,7 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 - Download Visual Studio 2019 community installer from https://visualstudio.microsoft.com/ and install _Desktop C++ Development_
 - Download WIX toolset from https://wixtoolset.org/ and install version 3.11.2
 - Download and install Git for Windows from https://git-scm.com/download/win
+- Download and install CMake from https://cmake.org/download/
 - Install _vcpkg_ by running the following commands in Powershell:
 
       git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
@@ -281,7 +282,7 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
       .\vcpkg install --recurse --triplet x64-windows --clean-after-build gtest openssl
 
 - Install _Qt_ with the official [_Qt Online Installer_](https://www.qt.io/download-qt-installer),
-  choose _Custom installation > Qt 5.15.2 > MSVC 2019 64-bit_.
+  choose _Custom installation > Qt 6.2.4 > MSVC 2019 64-bit_.
 
 ### macOS
 
@@ -313,11 +314,7 @@ Use _Powershell_ to run the following commands to build the project.
 
 - Set the _Qt_ installation directory variable:
 
-      $QT_ROOT = "C:\Qt\5.15.2\msvc2019_64"
-
-- Set the _Qt_ _CMake_ directory environment variable:
-
-      $env:Qt5_DIR = "${QT_ROOT}\lib\cmake\Qt5"
+      $QT_ROOT = "C:\Qt\6.2.4\msvc2019_64"
 
 - Set the _vcpkg_ installation directory variable:
 
@@ -327,11 +324,11 @@ Use _Powershell_ to run the following commands to build the project.
 
       $BUILD_TYPE = "RelWithDebInfo"
 
-- Make the build directory and run _CMake_:
+- Run _CMake_:
 
-      cmake -A x64 `
+      cmake "-DCMAKE_PREFIX_PATH=${QT_ROOT}" `
           "-DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
-          "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" -B build -S .
+          "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" -A x64 -B build -S .
 
 - Run the build and installer build:
 
@@ -340,7 +337,7 @@ Use _Powershell_ to run the following commands to build the project.
 
 - Add _Qt_ binary directory to path:
 
-      $env:PATH += "${QT_ROOT}\bin"
+      $env:PATH += ";${QT_ROOT}\bin"
 
 - Run tests:
 
