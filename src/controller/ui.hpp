@@ -58,6 +58,7 @@ signals:
     void failure(const QString& error);
 
 public: // slots
+    virtual void quit() = 0;
     virtual void onSmartCardStatusUpdate(const RetriableError status) = 0;
     virtual void onMultipleCertificatesReady(
         const QUrl& origin, const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) = 0;

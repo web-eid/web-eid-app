@@ -63,4 +63,10 @@ public: // slots
         // Schedule invoking Controller::exit().
         emit destroyed();
     }
+
+    void quit() final
+    {
+        // Schedule invoking Controller::exit().
+        emit destroyed();
+    }
 };

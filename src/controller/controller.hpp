@@ -65,6 +65,9 @@ public: // slots
     void onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo);
     void onDialogCancel();
 
+    // Called when user presses cancel on PIN pad.
+    void onPinPadCancel();
+
     // Failure handler, reports the error and quits the application.
     void onCriticalFailure(const QString& error);
 

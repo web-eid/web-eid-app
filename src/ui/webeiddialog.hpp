@@ -24,6 +24,8 @@
 
 #include "ui.hpp"
 
+#include <QCloseEvent>
+
 // clang-format off
 /**
  * The WebEidDialog class contains all UI elements of the web-eid application.
@@ -64,10 +66,24 @@ public: // slots
     void onSigningCertificateMismatch() final;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                            const qint8 retriesLeft) final;
+    void quit() final
+    {
+        closeUnconditionally = true;
+        close();
+    }
 
 private:
     bool event(QEvent* event) final;
     void reject() final;
+
+    void closeEvent(QCloseEvent* event) final
+    {
+        if (closeUnconditionally) {
+            event->accept();
+        } else {
+            WebEidUI::closeEvent(event);
+        }
+    }
 
     void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
 
@@ -94,4 +110,5 @@ private:
 
     CommandType currentCommand = CommandType::NONE;
     QString pin;
+    bool closeUnconditionally = false;
 };
