@@ -37,6 +37,11 @@
 #include <QUrl>
 #include <application.hpp>
 
+#ifdef Q_OS_LINUX
+#include <stdio.h>
+#include <unistd.h>
+#endif
+
 using namespace electronic_id;
 
 class WebEidDialog::Private : public Ui::WebEidDialog
@@ -86,8 +91,28 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::reject);
     connect(ui->helpButton, &QPushButton::clicked, this, [this] {
         ui->helpButton->setDown(false);
+#ifdef Q_OS_LINUX
+        // Launching Chrome in Linux causes the message "Opening in existing browser session." to be
+        // printed to stdout, which ruins the browser-app communication channel. Redirect stdout to
+        // pipe before launching the browser and restore it after to avoid this.
+        int unusedPipe[2];
+        int pipeFailed = pipe(unusedPipe);
+        int savedStdout;
+        if (!pipeFailed) {
+            savedStdout = dup(1); // Save the original stdout.
+            dup2(unusedPipe[1], 1); // Redirect stdout to pipe.
+        }
+#endif
         QDesktopServices::openUrl(
             tr("https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/"));
+#ifdef Q_OS_LINUX
+        if (!pipeFailed) {
+            fflush(stdout);
+            dup2(savedStdout, 1); // Restore the original stdout.
+            ::close(unusedPipe[1]);
+            ::close(unusedPipe[0]);
+        }
+#endif
     });
 
     // Hide PIN-related widgets by default.
