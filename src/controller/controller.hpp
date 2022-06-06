@@ -79,7 +79,7 @@ private:
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
     void stopCardEventMonitorThread();
     void disposeUI();
-    void exit();
+    void exit(); // private slot
     void waitForChildThreads();
     CommandType commandType();
 

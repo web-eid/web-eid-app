@@ -55,6 +55,8 @@ QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessag
 
 void interruptThread(QThread* thread)
 {
+    REQUIRE_NON_NULL(thread)
+
     qDebug() << "Interrupting thread" << uintptr_t(thread);
     thread->disconnect();
     thread->requestInterruption();
@@ -274,9 +276,6 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
 
     qDebug() << "Command completed";
 
-    // Schedule application exit when the UI dialog is destroyed.
-    connect(window, &WebEidUI::destroyed, this, &Controller::exit);
-
     try {
         _result = res;
         writeResponseToStdOut(isInStdinMode, res, commandHandler->commandType());
@@ -286,6 +285,7 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
     }
 
     window->quit();
+    exit();
 }
 
 void Controller::onRetry()
@@ -331,29 +331,31 @@ void Controller::onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo)
 
 void Controller::onDialogCancel()
 {
-    REQUIRE_NON_NULL(window)
+    stopCardEventMonitorThread();
 
     qDebug() << "User cancelled";
 
-    // Schedule application exit when the UI dialog is destroyed.
-    connect(window, &WebEidUI::destroyed, this, &Controller::exit);
-
     _result = makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled"));
     writeResponseToStdOut(isInStdinMode, _result, commandType());
+
+    exit();
 }
 
 void Controller::onPinPadCancel()
 {
     REQUIRE_NON_NULL(window)
 
-    onDialogCancel();
     window->quit();
+    onDialogCancel();
 }
 
 void Controller::onCriticalFailure(const QString& error)
 {
+    stopCardEventMonitorThread();
+
     qCritical() << "Exiting due to command" << std::string(commandType())
                 << "fatal error:" << error;
+
     _result = makeErrorObject(RESP_TECH_ERROR, error);
     writeResponseToStdOut(isInStdinMode, _result, commandType());
     disposeUI();

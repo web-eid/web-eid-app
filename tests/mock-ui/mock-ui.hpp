@@ -53,20 +53,14 @@ public: // slots
 
     void onSigningCertificateMismatch() override {}
 
-    void onRetry(const RetriableError) override { emit rejected(); }
+    void onRetry(const RetriableError) override { reject(); }
 
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status, const qint8) override {}
 
     void onSmartCardStatusUpdate(const RetriableError) override
     {
-        emit rejected();
-        // Schedule invoking Controller::exit().
-        emit destroyed();
+        reject();
     }
 
-    void quit() final
-    {
-        // Schedule invoking Controller::exit().
-        emit destroyed();
-    }
+    void quit() final {}
 };

@@ -24,7 +24,7 @@
 
 #include "ui.hpp"
 
-#include <QCloseEvent>
+class QCloseEvent;
 
 // clang-format off
 /**
@@ -76,14 +76,7 @@ private:
     bool event(QEvent* event) final;
     void reject() final;
 
-    void closeEvent(QCloseEvent* event) final
-    {
-        if (closeUnconditionally) {
-            event->accept();
-        } else {
-            WebEidUI::closeEvent(event);
-        }
-    }
+    void closeEvent(QCloseEvent* event) final;
 
     void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
 
