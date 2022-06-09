@@ -1,7 +1,0 @@
-{
-  "name": "onepinopenscpkcs11",
-  "description": "OpenSC PKCS#11 Module",
-  "type": "pkcs11",
-  "path": "/Library/OpenSC/lib/onepin-opensc-pkcs11.so",
-  "allowed_extensions": ["{02274e0c-d135-45f0-8a9c-32b35110e10d}", "{e68418bc-f2b0-4459-a9ea-3e72b6751b07}"]
-}
