@@ -113,17 +113,11 @@
             <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.json"
               Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\eu.webeid"/>
           </Component>
-          <Component Id="Firefox" Transitive="yes" Guid="f60c4395-0952-4bc4-a09e-661341c19d2c">
+          <Component Id="Firefox" Transitive="yes">
             <Condition><![CDATA[(FIREFOXINSTALL = 1)]]></Condition>
             <File Source="$(var.jsonfirefox)"/>
-            <File Source="$(var.install_path)\onepinopenscpkcs11-win.json" Name="onepinopenscpkcs11.json"/>
-            <File Source="$(var.install_path)\idemiaawppkcs11-win.json" Name="idemiaawppkcs11.json"/>
             <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.firefox.json"
               Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" />
-            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]onepinopenscpkcs11.json"
-              Key="Software\Mozilla\PKCS11Modules\onepinopenscpkcs11" />
-            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]idemiaawppkcs11.json"
-              Key="Software\Mozilla\PKCS11Modules\idemiaawppkcs11" />
           </Component>
 <?ifdef var.qt_path ?>
           <Directory Id="platforms" Name="platforms" FileSource="$(var.qt_path)\..\plugins\platforms">
