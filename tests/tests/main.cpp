@@ -230,8 +230,11 @@ void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy)
 
     // Run the event loop, verify that signals were emitted.
     QVERIFY(actionSpy.wait());
+    qDebug() << "After actionSpy.wait()";
+    qDebug() << "quitSpy.count():" << quitSpy.count();
     if (quitSpy.count() < 1) {
         QVERIFY(quitSpy.wait());
+        qDebug() << "After quitSpy.wait()";
     }
 }
 

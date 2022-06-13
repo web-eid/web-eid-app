@@ -60,6 +60,8 @@ public: // slots
     void onSmartCardStatusUpdate(const RetriableError) override
     {
         reject();
+        qDebug() << "onSmartCardStatusUpdate: close";
+        close();
     }
 
     void quit() final {}

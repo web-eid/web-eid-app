@@ -367,20 +367,24 @@ void Controller::exit()
 {
     if (window) {
         window->disconnect();
+        window->close();
         window = nullptr;
     }
     waitForChildThreads();
+    qDebug() << "Controller::exit";
     emit quit();
 }
 
 void Controller::waitForChildThreads()
 {
+    qDebug() << "waitForChildThreads";
     // Waiting for child threads must not happen in destructor.
     // See https://tombarta.wordpress.com/2008/07/10/gcc-pure-virtual-method-called/ for details.
     for (const auto& childThread : childThreads) {
         auto thread = childThread.second;
         if (thread) {
             interruptThread(thread);
+            qDebug() << "interruptThread" << thread;
             // Waiting for PIN input on PIN pad may take a long time, call processEvents() so that
             // the UI doesn't freeze.
             while (thread->isRunning()) {
@@ -389,6 +393,7 @@ void Controller::waitForChildThreads()
             }
         }
     }
+    qDebug() << "waitForChildThreads DONE";
 }
 
 CommandType Controller::commandType()
