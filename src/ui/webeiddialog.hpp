@@ -91,17 +91,17 @@ private:
 
     void
     setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
+    void setupPinPrompt(const PinInfo& pinInfo);
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
     void setupPinInputValidator(const CardCertificateAndPinInfo& certAndPin);
     void setupOK(const std::function<void()>& func, const QString& label = {},
                  bool enabled = false);
-    void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);
     void displayPinBlockedError();
 
     void showPinInputWarning(bool show);
     void resizeHeight();
 
-    QPixmap pixmap(const QString& name) const;
+    QPixmap pixmap(const QLatin1String& name) const;
     std::tuple<QString, QString, QPixmap>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
 
