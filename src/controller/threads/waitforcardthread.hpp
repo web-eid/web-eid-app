@@ -60,7 +60,10 @@ private:
         }
         CATCH_PCSC_CPP_RETRIABLE_ERRORS(return warnAndEmitStatusUpdate)
         CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(return warnAndEmitStatusUpdate)
-        catch (const std::exception& error) { emit failure(error.what()); }
+        catch (const std::exception& error)
+        {
+            emit failure(error.what());
+        }
         return true;
     }
 

@@ -85,7 +85,10 @@ RetriableError toRetriableError(const electronic_id::AutoSelectFailed::Reason re
     {                                                                                              \
         ERROR_HANDLER(RetriableError::SMART_CARD_TRANSACTION_FAILED, error);                       \
     }                                                                                              \
-    catch (const pcsc_cpp::ScardError& error) { ERROR_HANDLER(RetriableError::SCARD_ERROR, error); }
+    catch (const pcsc_cpp::ScardError& error)                                                      \
+    {                                                                                              \
+        ERROR_HANDLER(RetriableError::SCARD_ERROR, error);                                         \
+    }
 
 #define CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(ERROR_HANDLER)                                     \
     catch (const electronic_id::SmartCardChangeRequiredError& error)                               \
