@@ -127,6 +127,10 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         showPinInputWarning(false);
         ui->okButton->setEnabled(ui->pinInput->hasAcceptableInput());
     });
+#ifdef Q_OS_MAC
+    // Fix pressing Enter in PIN input field in macOS.
+    connect(ui->pinInput, &QLineEdit::returnPressed, ui->okButton, &QPushButton::click);
+#endif
 
     ui->pinEntryTimeoutProgressBar->setMaximum(PinInfo::PIN_PAD_PIN_ENTRY_TIMEOUT);
     ui->pinTimeoutTimer = new QTimeLine(ui->pinEntryTimeoutProgressBar->maximum() * 1000,
