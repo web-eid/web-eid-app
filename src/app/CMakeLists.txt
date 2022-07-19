@@ -27,8 +27,7 @@ if(WIN32)
         get_filename_component(SSL_PATH "${OPENSSL_INCLUDE_DIR}/../bin" ABSOLUTE)
     endif()
     set(WEBEID_PATH web-eid.exe)
-    set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION})
-    set(MSI_FILE ${BASE_FILE}.${PLATFORM})
+    set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.${PLATFORM})
     list(APPEND CANDLE_CMD "$ENV{WIX}bin\\candle.exe" -nologo -arch ${PLATFORM}
         -dMSI_VERSION=${PROJECT_VERSION}
         -dPlatform=${PLATFORM}
@@ -49,10 +48,10 @@ if(WIN32)
     )
     add_custom_target(installer DEPENDS web-eid
         COMMAND ${CANDLE_CMD}
-        COMMAND ${LIGHT_CMD} -o "${MSI_FILE}.msi"
+        COMMAND ${LIGHT_CMD} -o "${BASE_FILE}.msi"
         #Build MSI with QT
         COMMAND ${CANDLE_CMD} -dqt_path=${qtCore_install_prefix} -dqt_version_major=${QT_VERSION_MAJOR}
-        COMMAND ${LIGHT_CMD} -o "${MSI_FILE}.qt.msi"
+        COMMAND ${LIGHT_CMD} -o "${BASE_FILE}.qt.msi"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
     add_custom_target(bundle
@@ -69,7 +68,7 @@ if(WIN32)
             COMMAND_EXPAND_LISTS
         )
         add_custom_command(TARGET installer POST_BUILD
-            COMMAND ${SIGNCMD} "${MSI_FILE}.msi" "${MSI_FILE}.qt.msi"
+            COMMAND ${SIGNCMD} "${BASE_FILE}.msi" "${BASE_FILE}.qt.msi"
             WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
         )
         add_custom_command(TARGET bundle POST_BUILD
