@@ -55,7 +55,7 @@ add_custom_command(TARGET web-eid-safari POST_BUILD
     COMMAND mkdir -p $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns
     COMMAND cp -a $<TARGET_BUNDLE_DIR:web-eid-safari-extension> $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns
 )
-install(TARGETS web-eid-safari DESTINATION /Applications/Utilities)
+
 add_custom_target(macdeployqt-safari DEPENDS web-eid-safari
     COMMAND ${qtCore_install_prefix}/macdeployqt $<TARGET_BUNDLE_DIR:web-eid-safari>
 )
@@ -75,12 +75,19 @@ if(SIGNCERT)
             --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-extension.entitlements
             $<TARGET_BUNDLE_DIR:web-eid-safari-extension>
     )
+    set(ENTITLEMENTS ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements)
+    if(SAFARI_PROVISIONPROFILE)
+        add_custom_command(TARGET macdeployqt-safari POST_BUILD
+            COMMAND cp -a ${SAFARI_PROVISIONPROFILE} $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/embedded.provisionprofile
+        )
+        set(ENTITLEMENTS ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-prov.entitlements)
+    endif()
     add_custom_command(TARGET macdeployqt-safari POST_BUILD
         COMMAND codesign -f -s "Apple Distribution: ${SIGNCERT}"
             $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/Frameworks/*.*
             $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns/*/*.dylib
         COMMAND codesign -f -s "Apple Distribution: ${SIGNCERT}"
-            --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements
+            --entitlements ${ENTITLEMENTS}
             $<TARGET_BUNDLE_DIR:web-eid-safari>
     )
 endif()
