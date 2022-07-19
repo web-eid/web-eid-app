@@ -31,17 +31,8 @@
       Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" Win64="yes"/>
 
     <Chain>
-      <MsiPackage Id="WebEID.X86" InstallCondition="NOT VersionNT64" ForcePerMachine="yes"
-          SourceFile="$(var.webeid).x86.qt.msi" Compressed="yes">
-        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFilesFolder]Web eID"/>
-        <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]"/>
-        <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]"/>
-        <MsiProperty Name="EDGEINSTALL" Value="[EdgeSupport]"/>
-        <MsiProperty Name="EDGEPOLICY" Value="[ForceEdgeExtensionActivation]"/>
-        <MsiProperty Name="FIREFOXINSTALL" Value="[FirefoxSupport]"/>
-      </MsiPackage>
-      <MsiPackage Id="WebEID.X64" InstallCondition="VersionNT64" ForcePerMachine="yes"
-          SourceFile="$(var.webeid).x64.qt.msi" Compressed="yes">
+      <MsiPackage Id="WebEID" InstallCondition="VersionNT64" ForcePerMachine="yes"
+          SourceFile="$(var.webeid).qt.msi" Compressed="yes">
         <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFiles64Folder]Web eID"/>
         <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]"/>
         <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]"/>
