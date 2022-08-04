@@ -138,7 +138,7 @@ elseif(APPLE)
         COMMAND cp web-eid-chrome-policy_*.pkg packages/web-eid-chrome-policy.pkg
         COMMAND cp web-eid-firefox_*.pkg packages/web-eid-firefox.pkg
         COMMAND productbuild --distribution ${CMAKE_SOURCE_DIR}/install/distribution.xml
-            "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>" --resources ${CMAKE_SOURCE_DIR}/install/
+            "$<$<BOOL:${SIGNCERT}>:--sign;Developer ID Installer: ${SIGNCERT}>" --resources ${CMAKE_SOURCE_DIR}/install/
             --version "${PROJECT_VERSION}" --package-path packages/ web-eid_${PROJECT_VERSION}.pkg
         COMMAND mkdir -p tmp
         COMMAND cp ${CMAKE_SOURCE_DIR}/install/DS_Store tmp/.DS_Store
