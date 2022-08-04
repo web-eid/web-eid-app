@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 The Web eID Project
+ * Copyright (c) 2021-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,8 @@
  */
 
 #include "certificatewidget.hpp"
+
+#include "application.hpp"
 
 #include <QEvent>
 #include <QHBoxLayout>
@@ -47,6 +49,10 @@ CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
 {
     icon->setPixmap(QStringLiteral(":/images/id-card.svg"));
     warnIcon->setPixmap(QStringLiteral(":/images/fatal.svg"));
+    if (qApp->isDarkTheme()) {
+        icon->setPixmap(QStringLiteral(":/images/id-card_dark.svg"));
+        warnIcon->setPixmap(QStringLiteral(":/images/fatal_dark.svg"));
+    }
     warnIcon->hide();
     warnIcon->installEventFilter(self);
     warn->setObjectName(QStringLiteral("warn"));
@@ -122,7 +128,7 @@ void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
 {
     QPainter p(this);
     QStyleOptionButton opt;
-    opt.init(this);
+    opt.initFrom(this);
     // Applies style sheet styling to the custom widget.
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
@@ -156,7 +162,7 @@ void CertificateButton::paintEvent(QPaintEvent* /*event*/)
 {
     QPainter p(this);
     QStyleOptionButton opt;
-    opt.init(this);
+    opt.initFrom(this);
     if (isChecked()) {
         opt.state |= QStyle::State_On;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -58,6 +58,7 @@ signals:
     void failure(const QString& error);
 
 public: // slots
+    virtual void quit() = 0;
     virtual void onSmartCardStatusUpdate(const RetriableError status) = 0;
     virtual void onMultipleCertificatesReady(
         const QUrl& origin, const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) = 0;
@@ -66,7 +67,7 @@ public: // slots
 
     virtual void onRetry(const RetriableError error) = 0;
 
-    virtual void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) = 0;
+    virtual void onSigningCertificateMismatch() = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                    const qint8 retriesLeft) = 0;
 };

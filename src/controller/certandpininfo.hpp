@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,8 @@ struct CertificateInfo
 {
     electronic_id::CertificateType type = electronic_id::CertificateType::NONE;
 
-    bool isExpired;
-    bool notEffective;
+    bool isExpired = false;
+    bool notEffective = false;
     QString subject;
     QString issuer;
     QString effectiveDate;
@@ -55,7 +55,7 @@ struct CardCertificateAndPinInfo
 {
     electronic_id::CardInfo::ptr cardInfo;
     QByteArray certificateBytesInDer;
-    QSslCertificate certificate;
+    QSslCertificate certificate {};
     CertificateInfo certInfo;
     PinInfo pinInfo;
 };

@@ -1,5 +1,5 @@
 # Helper
-add_library(SafariServices INTERFACE)
+add_library(SafariServices INTERFACE shared.hpp)
 target_compile_options(SafariServices INTERFACE -fobjc-arc)
 target_link_options(SafariServices INTERFACE -fobjc-arc -fobjc-link-runtime)
 target_link_libraries(SafariServices INTERFACE "-framework SafariServices")
@@ -49,6 +49,7 @@ set_target_properties(web-eid-safari PROPERTIES
     XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "eu.web-eid.web-eid-safari"
 )
+target_compile_definitions(web-eid-safari PUBLIC QT_DEPRECATED_WARNINGS_SINCE=051200)
 target_link_libraries(web-eid-safari SafariServices controller ui pcsc "-framework Cocoa")
 add_custom_command(TARGET web-eid-safari POST_BUILD
     COMMAND mkdir -p $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns
@@ -56,7 +57,7 @@ add_custom_command(TARGET web-eid-safari POST_BUILD
 )
 install(TARGETS web-eid-safari DESTINATION /Applications/Utilities)
 add_custom_target(macdeployqt-safari DEPENDS web-eid-safari
-    COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid-safari>
+    COMMAND ${qtCore_install_prefix}/macdeployqt $<TARGET_BUNDLE_DIR:web-eid-safari>
 )
 
 # Installer

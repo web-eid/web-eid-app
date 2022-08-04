@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,22 +66,6 @@ template QString validateAndGetArgument<QString>(const QString& argName, const Q
                                                  bool allowNull);
 template QByteArray validateAndGetArgument<QByteArray>(const QString& argName,
                                                        const QVariantMap& args, bool allowNull);
-
-QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QVariantMap& args,
-                                            bool allowNull)
-{
-    const auto certStr = validateAndGetArgument<QString>(certArgName, args, allowNull);
-    if (allowNull && certStr.isNull()) {
-        return QSslCertificate();
-    }
-    const auto cert =
-        QSslCertificate(QByteArray::fromBase64(certStr.toUtf8()), QSsl::EncodingFormat::Der);
-    if (cert.isNull()) {
-        THROW(CommandHandlerInputDataError, "Invalid certificate passed as argument");
-    }
-
-    return cert;
-}
 
 template <typename T, typename C>
 inline void eraseData(T& data)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -75,7 +75,7 @@ private slots:
     void quit_exits();
 
 private:
-    void runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy);
+    void runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool waitForQuit = true);
     void initGetCert();
     void initAuthenticate();
     void initCard(bool withSigningScript = true);
@@ -101,7 +101,7 @@ void WebEidTests::statusUpdate_withUnsupportedCard_hasExpectedStatus()
     QSignalSpy statusUpdateSpy(controller.get(), &Controller::statusUpdate);
 
     // act
-    runEventLoopVerifySignalsEmitted(statusUpdateSpy);
+    runEventLoopVerifySignalsEmitted(statusUpdateSpy, false);
 
     // assert
     const auto statusArgument = qvariant_cast<RetriableError>(statusUpdateSpy.first().at(0));
@@ -220,7 +220,7 @@ void WebEidTests::quit_exits()
     }
 }
 
-void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy)
+void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool waitForQuit)
 {
     // Waits until Controller emits quit.
     QSignalSpy quitSpy(controller.get(), &Controller::quit);
@@ -230,7 +230,7 @@ void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy)
 
     // Run the event loop, verify that signals were emitted.
     QVERIFY(actionSpy.wait());
-    if (quitSpy.count() != 1) {
+    if (waitForQuit && quitSpy.count() < 1) {
         QVERIFY(quitSpy.wait());
     }
 }

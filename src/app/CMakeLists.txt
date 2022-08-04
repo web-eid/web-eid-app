@@ -21,11 +21,13 @@ if(WIN32)
         set(PLATFORM x86)
     endif()
     find_package(OpenSSL REQUIRED)
-    get_filename_component(SSL_PATH "${OPENSSL_CRYPTO_LIBRARY}" DIRECTORY)
-    get_filename_component(SSL_PATH "${SSL_PATH}/../bin" ABSOLUTE)
+    if(OPENSSL_ROOT_DIR)
+        set(SSL_PATH "${OPENSSL_ROOT_DIR}/bin")
+    else()
+        get_filename_component(SSL_PATH "${OPENSSL_INCLUDE_DIR}/../bin" ABSOLUTE)
+    endif()
     set(WEBEID_PATH web-eid.exe)
-    set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION})
-    set(MSI_FILE ${BASE_FILE}.${PLATFORM})
+    set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.${PLATFORM})
     list(APPEND CANDLE_CMD "$ENV{WIX}bin\\candle.exe" -nologo -arch ${PLATFORM}
         -dMSI_VERSION=${PROJECT_VERSION}
         -dPlatform=${PLATFORM}
@@ -46,10 +48,10 @@ if(WIN32)
     )
     add_custom_target(installer DEPENDS web-eid
         COMMAND ${CANDLE_CMD}
-        COMMAND ${LIGHT_CMD} -o "${MSI_FILE}.msi"
+        COMMAND ${LIGHT_CMD} -o "${BASE_FILE}.msi"
         #Build MSI with QT
-        COMMAND ${CANDLE_CMD} -dqt_path=${_qt5Core_install_prefix}
-        COMMAND ${LIGHT_CMD} -o "${MSI_FILE}.qt.msi"
+        COMMAND ${CANDLE_CMD} -dqt_path=${qtCore_install_prefix} -dqt_version_major=${QT_VERSION_MAJOR}
+        COMMAND ${LIGHT_CMD} -o "${BASE_FILE}.qt.msi"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
     add_custom_target(bundle
@@ -66,7 +68,7 @@ if(WIN32)
             COMMAND_EXPAND_LISTS
         )
         add_custom_command(TARGET installer POST_BUILD
-            COMMAND ${SIGNCMD} "${MSI_FILE}.msi" "${MSI_FILE}.qt.msi"
+            COMMAND ${SIGNCMD} "${BASE_FILE}.msi" "${BASE_FILE}.qt.msi"
             WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
         )
         add_custom_command(TARGET bundle POST_BUILD
@@ -92,7 +94,7 @@ elseif(APPLE)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json COMPONENT chrome
         DESTINATION "/Library/Application Support/Google/Chrome/External Extensions")
     add_custom_target(macdeployqt DEPENDS web-eid
-        COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
+        COMMAND ${qtCore_install_prefix}/macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
     )
     add_custom_target(installer-native DEPENDS macdeployqt
         COMMAND rm -rf root_native
@@ -136,7 +138,7 @@ elseif(APPLE)
         COMMAND cp web-eid-chrome-policy_*.pkg packages/web-eid-chrome-policy.pkg
         COMMAND cp web-eid-firefox_*.pkg packages/web-eid-firefox.pkg
         COMMAND productbuild --distribution ${CMAKE_SOURCE_DIR}/install/distribution.xml
-            "$<$<BOOL:${SIGNCERT}>:--sign;${SIGNCERT}>" --resources ${CMAKE_SOURCE_DIR}/install/
+            "$<$<BOOL:${SIGNCERT}>:--sign;Developer ID Installer: ${SIGNCERT}>" --resources ${CMAKE_SOURCE_DIR}/install/
             --version "${PROJECT_VERSION}" --package-path packages/ web-eid_${PROJECT_VERSION}.pkg
         COMMAND mkdir -p tmp
         COMMAND cp ${CMAKE_SOURCE_DIR}/install/DS_Store tmp/.DS_Store

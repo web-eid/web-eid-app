@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,6 +56,7 @@ QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessag
 void interruptThread(QThread* thread)
 {
     qDebug() << "Interrupting thread" << uintptr_t(thread);
+    thread->disconnect();
     thread->requestInterruption();
     ControllerChildThread::waitForControllerNotify.wakeAll();
 }
@@ -84,12 +85,12 @@ void Controller::run()
         }
 
         REQUIRE_NON_NULL(command)
-        // If quit is requested, respond with empty JSON object and quit immediately.
         switch (command->first) {
         case CommandType::ABOUT:
             WebEidUI::showAboutPage();
             return;
         case CommandType::QUIT:
+            // If quit is requested, respond with empty JSON object and quit immediately.
             qInfo() << "Quit requested, exiting";
             writeResponseToStdOut(true, {}, "quit");
             emit quit();
@@ -269,6 +270,13 @@ void Controller::onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCe
 
 void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
 {
+    REQUIRE_NON_NULL(window)
+
+    qDebug() << "Command completed";
+
+    // Schedule application exit when the UI dialog is destroyed.
+    connect(window, &WebEidUI::destroyed, this, &Controller::exit);
+
     try {
         _result = res;
         writeResponseToStdOut(isInStdinMode, res, commandHandler->commandType());
@@ -276,7 +284,8 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
         qCritical() << "Command" << std::string(commandType())
                     << "fatal error while writing response to stdout:" << error;
     }
-    exit();
+
+    window->quit();
 }
 
 void Controller::onRetry()
@@ -306,7 +315,7 @@ void Controller::connectRetry(const ControllerChildThread* childThread)
 
     connect(childThread, &ControllerChildThread::retry, window, &WebEidUI::onRetry);
     // This connection handles cancel events from PIN pad.
-    connect(childThread, &ControllerChildThread::cancel, this, &Controller::onDialogCancel);
+    connect(childThread, &ControllerChildThread::cancel, this, &Controller::onPinPadCancel);
     connect(window, &WebEidUI::retry, this, &Controller::onRetry);
 }
 
@@ -316,17 +325,29 @@ void Controller::onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo)
         onConfirmCommandHandler(cardCertAndPinInfo);
     } else {
         // This should not happen, and when it does, OK should be equivalent to cancel.
-        onDialogCancel();
+        onPinPadCancel();
     }
 }
 
 void Controller::onDialogCancel()
 {
+    REQUIRE_NON_NULL(window)
+
     qDebug() << "User cancelled";
+
+    // Schedule application exit when the UI dialog is destroyed.
+    connect(window, &WebEidUI::destroyed, this, &Controller::exit);
+
     _result = makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled"));
     writeResponseToStdOut(isInStdinMode, _result, commandType());
-    disposeUI();
-    exit();
+}
+
+void Controller::onPinPadCancel()
+{
+    REQUIRE_NON_NULL(window)
+
+    onDialogCancel();
+    window->quit();
 }
 
 void Controller::onCriticalFailure(const QString& error)
@@ -342,6 +363,10 @@ void Controller::onCriticalFailure(const QString& error)
 
 void Controller::exit()
 {
+    if (window) {
+        window->disconnect();
+        window = nullptr;
+    }
     waitForChildThreads();
     emit quit();
 }

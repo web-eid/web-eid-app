@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,11 +51,22 @@ public: // slots
         emit accepted(cardCertAndPin);
     }
 
-    void onCertificateNotFound(const QString&) override {}
+    void onSigningCertificateMismatch() override {}
 
     void onRetry(const RetriableError) override { emit rejected(); }
 
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status, const qint8) override {}
 
-    void onSmartCardStatusUpdate(const RetriableError) override { emit rejected(); }
+    void onSmartCardStatusUpdate(const RetriableError) override
+    {
+        emit rejected();
+        // Schedule invoking Controller::exit().
+        emit destroyed();
+    }
+
+    void quit() final
+    {
+        // Schedule invoking Controller::exit().
+        emit destroyed();
+    }
 };

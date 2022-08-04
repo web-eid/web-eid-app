@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -64,6 +64,9 @@ public: // slots
     // User events from the dialog.
     void onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo);
     void onDialogCancel();
+
+    // Called when user presses cancel on PIN pad.
+    void onPinPadCancel();
 
     // Failure handler, reports the error and quits the application.
     void onCriticalFailure(const QString& error);

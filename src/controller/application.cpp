@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 The Web eID Project
+ * Copyright (c) 2021-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,9 @@
 #include <QFontDatabase>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QPalette>
+#include <QProcess>
+#include <QSettings>
 #include <QTranslator>
 
 inline CommandWithArguments::second_type parseArgumentJson(const QString& argumentStr)
@@ -62,7 +65,40 @@ Application::Application(int& argc, char** argv, const QString& name) : QApplica
 
     registerMetatypes();
     setupLogging();
+
+#ifdef Q_OS_MAC
+    menuBar = std::make_unique<QMenuBar>();
+    QAction* about = menuBar->addMenu(tr("&File"))->addAction(tr("&About"));
+    about->setMenuRole(QAction::AboutRole);
+    connect(about, &QAction::triggered, this, &Application::showAbout);
+#endif
 }
+
+#ifndef Q_OS_MAC
+bool Application::isDarkTheme() const
+{
+#ifdef Q_OS_WIN
+    QSettings settings(
+        "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        QSettings::NativeFormat);
+    return settings.value("AppsUseLightTheme", 1).toInt() == 0;
+#elif 0 // Disabled as there is currently no straightforward way to detect dark mode in Linux.
+    static const bool isDarkTheme = [] {
+        QProcess p;
+        p.start(QStringLiteral("gsettings"), {"get", "org.gnome.desktop.interface", "gtk-theme"});
+        if (p.waitForFinished()) {
+            return p.readAllStandardOutput().contains("dark");
+        }
+        int text_hsv_value = palette().color(QPalette::WindowText).value();
+        int bg_hsv_value = palette().color(QPalette::Window).value();
+        return text_hsv_value > bg_hsv_value;
+    }();
+    return isDarkTheme;
+#else
+    return false;
+#endif
+}
+#endif
 
 void Application::loadTranslations(const QString& lang)
 {
@@ -71,7 +107,7 @@ void Application::loadTranslations(const QString& lang)
     if (SUPPORTED_LANGS.contains(lang)) {
         locale = QLocale(lang);
     }
-    translator->load(locale, QStringLiteral(":/translations/"));
+    void(translator->load(locale, QStringLiteral(":/translations/")));
 }
 
 CommandWithArgumentsPtr Application::parseArgs()

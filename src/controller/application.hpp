@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 The Web eID Project
+ * Copyright (c) 2021-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,11 +22,16 @@
 
 #pragma once
 
-#include <QApplication>
-
 #include "commands.hpp"
 
+#include <QApplication>
+
 #include <stdexcept>
+
+#ifdef Q_OS_MAC
+#include <QMenuBar>
+#include <memory>
+#endif
 
 class ArgumentError : public std::runtime_error
 {
@@ -40,6 +45,7 @@ class Application : public QApplication
 public:
     Application(int& argc, char** argv, const QString& name);
 
+    bool isDarkTheme() const;
     void loadTranslations(const QString& lang = {});
     CommandWithArgumentsPtr parseArgs();
     static void registerMetatypes();
@@ -48,6 +54,9 @@ public:
     // see class SafariApplication in src/mac/main.mm and WebEidDialog::showAboutPage().
     virtual bool isSafariExtensionContainingApp() { return false; }
     virtual void requestSafariExtensionState() {}
+#ifdef Q_OS_MAC
+    void showAbout();
+#endif
     virtual void showSafariSettings() {}
 
 signals:
@@ -55,4 +64,12 @@ signals:
 
 private:
     QTranslator* translator;
+#ifdef Q_OS_MAC
+    std::unique_ptr<QMenuBar> menuBar;
+#endif
 };
+
+#if defined(qApp)
+#undef qApp
+#endif
+#define qApp (static_cast<Application*>(QCoreApplication::instance()))

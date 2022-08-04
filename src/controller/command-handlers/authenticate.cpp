@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -137,6 +137,9 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window,
         switch (failure.status()) {
         case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL:
         case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:
+            break;
+        case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_DISABLED:
+            emit retry(RetriableError::PIN_VERIFY_DISABLED);
             break;
         default:
             emit verifyPinFailed(failure.status(), failure.retries());

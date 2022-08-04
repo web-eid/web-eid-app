@@ -108,10 +108,6 @@
         <translation>PIN-koodi sisestamine katkestati.</translation>
     </message>
     <message>
-        <source>The certificate of the ID-card in the reader does not match the submitted certificate. Please insert the ID-card belonging to %1.</source>
-        <translation>Lugejas oleva ID-kaardi sertifikaat ei ühti esitatud sertifikaadiga. Palun sisesta ID-kaart, mis kuulub isikule %1.</translation>
-    </message>
-    <message>
         <source>Launch the Smart Card service</source>
         <translation>Käivita Kiipkaardi teenus</translation>
     </message>
@@ -250,6 +246,18 @@
     <message>
         <source>Incorrect PIN.</source>
         <translation>Vale PIN-kood.</translation>
+    </message>
+    <message>
+        <source>Select another certificate</source>
+        <translation>Vali teine sertifikaat</translation>
+    </message>
+    <message>
+        <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
+        <translation>Toiming ebaõnnestus. Palun veendu, et kasutusel on vastava kaardilugeja driver. Loe lähemalt &lt;a href=&quot;https://www.id.ee/artikkel/pinpad-kaardilugeja-draiverite-kasutamine/&quot;&gt;siit&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
+        <translation>Lugejas oleva ID-kaardi sertifikaat ei ühti algselt esitatud sertifikaadiga. Palun sisesta algne ID-kaart.</translation>
     </message>
 </context>
 </TS>

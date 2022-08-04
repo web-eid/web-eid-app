@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ public:
                           const CardCertificateAndPinInfo& cardCertAndPin) override;
 
 signals:
-    void certificateNotFound(const QString& subjectOfUserCertFromArgs);
+    void signingCertificateMismatch();
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                          const qint8 retriesLeft);
 
@@ -47,5 +47,5 @@ private:
 
     QByteArray docHash;
     electronic_id::HashAlgorithm hashAlgo;
-    QSslCertificate userEidCertificateFromArgs;
+    QByteArray userEidCertificateFromArgs;
 };

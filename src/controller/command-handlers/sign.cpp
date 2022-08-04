@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,8 +61,9 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
 
     validateAndStoreDocHashAndHashAlgo(arguments);
 
-    userEidCertificateFromArgs =
-        parseAndValidateCertificate(QStringLiteral("certificate"), arguments);
+    userEidCertificateFromArgs = QByteArray::fromBase64(
+        validateAndGetArgument<QString>(QStringLiteral("certificate"), arguments, false)
+            .toLatin1());
     validateAndStoreOrigin(arguments);
 }
 
@@ -72,17 +73,14 @@ void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& c
 
     for (const auto& cardCertAndPin : cardCertAndPinInfos) {
         // Check if the certificate read from the eID matches the certificate provided as argument.
-        if (cardCertAndPin.certificate.digest(QCryptographicHash::Sha256)
-            == userEidCertificateFromArgs.digest(QCryptographicHash::Sha256)) {
+        if (cardCertAndPin.certificate.toDer() == userEidCertificateFromArgs) {
             cardWithCertificateFromArgs = &cardCertAndPin;
         }
     }
 
     // No eID had the certificate provided as argument.
     if (!cardWithCertificateFromArgs) {
-        const auto certSubject =
-            userEidCertificateFromArgs.subjectInfo(QSslCertificate::CommonName).join(' ');
-        emit certificateNotFound(certSubject);
+        emit signingCertificateMismatch();
         return;
     }
 
@@ -115,6 +113,9 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
         case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL:
         case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:
             break;
+        case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_DISABLED:
+            emit retry(RetriableError::PIN_VERIFY_DISABLED);
+            break;
         default:
             emit verifyPinFailed(failure.status(), failure.retries());
         }
@@ -129,7 +130,8 @@ void Sign::connectSignals(const WebEidUI* window)
 {
     CertificateReader::connectSignals(window);
 
-    connect(this, &Sign::certificateNotFound, window, &WebEidUI::onCertificateNotFound);
+    connect(this, &Sign::signingCertificateMismatch, window,
+            &WebEidUI::onSigningCertificateMismatch);
     connect(this, &Sign::verifyPinFailed, window, &WebEidUI::onVerifyPinFailed);
 }
 

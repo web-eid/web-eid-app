@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,8 @@
 
 #include "ui.hpp"
 
+#include <QCloseEvent>
+
 // clang-format off
 /**
  * The WebEidDialog class contains all UI elements of the web-eid application.
@@ -35,7 +37,7 @@
  * - pin input.
  */
 // clang-format on
-class WebEidDialog : public WebEidUI
+class WebEidDialog final : public WebEidUI
 {
     Q_OBJECT
 
@@ -43,31 +45,45 @@ public:
     enum class Page { WAITING, ALERT, SELECT_CERTIFICATE, PIN_INPUT, ABOUT };
 
     explicit WebEidDialog(QWidget* parent = nullptr);
-    ~WebEidDialog() override;
+    ~WebEidDialog() final;
 
-    void showWaitingForCardPage(const CommandType commandType) override;
-    QString getPin() override;
+    void showWaitingForCardPage(const CommandType commandType) final;
+    QString getPin() final;
 
     static void showAboutPage();
     static void showFatalErrorPage();
 
 public: // slots
-    void onSmartCardStatusUpdate(const RetriableError status) override;
+    void onSmartCardStatusUpdate(const RetriableError status) final;
     void onMultipleCertificatesReady(
         const QUrl& origin,
-        const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) override;
+        const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) final;
     void onSingleCertificateReady(const QUrl& origin,
-                                  const CardCertificateAndPinInfo& cardCertAndPinInfo) override;
+                                  const CardCertificateAndPinInfo& cardCertAndPinInfo) final;
 
-    void onRetry(const RetriableError error) override;
+    void onRetry(const RetriableError error) final;
 
-    void onCertificateNotFound(const QString& subjectOfUserCertFromArgs) override;
+    void onSigningCertificateMismatch() final;
     void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                           const qint8 retriesLeft) override;
+                           const qint8 retriesLeft) final;
+    void quit() final
+    {
+        closeUnconditionally = true;
+        close();
+    }
 
 private:
-    bool event(QEvent* event) override;
-    void reject() override;
+    bool event(QEvent* event) final;
+    void reject() final;
+
+    void closeEvent(QCloseEvent* event) final
+    {
+        if (closeUnconditionally) {
+            event->accept();
+        } else {
+            WebEidUI::closeEvent(event);
+        }
+    }
 
     void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
 
@@ -76,7 +92,7 @@ private:
     void
     setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
-    void setupPinInputValidator(const PinInfo::PinMinMaxLength& pinInfo);
+    void setupPinInputValidator(const CardCertificateAndPinInfo& certAndPin);
     void setupOK(const std::function<void()>& func, const QString& label = {},
                  bool enabled = false);
     void displayPinRetriesRemaining(PinInfo::PinRetriesCount pinRetriesCount);
@@ -85,7 +101,8 @@ private:
     void showPinInputWarning(bool show);
     void resizeHeight();
 
-    std::tuple<QString, QString, QString>
+    QPixmap pixmap(const QString& name) const;
+    std::tuple<QString, QString, QPixmap>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
 
     class Private;
@@ -93,4 +110,5 @@ private:
 
     CommandType currentCommand = CommandType::NONE;
     QString pin;
+    bool closeUnconditionally = false;
 };

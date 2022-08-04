@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2022 The Web eID Project
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,27 +20,30 @@
  * SOFTWARE.
  */
 
-#pragma once
+#include "application.hpp"
 
-#include "qeid.hpp"
+#include <QUrl>
 
-#include <QString>
+#import <AppKit/AppKit.h>
+#import <Cocoa/Cocoa.h>
 
-struct CertificateInfo
+bool Application::isDarkTheme() const
 {
-    using PinMinMaxLength = std::pair<size_t, size_t>;
-    using PinRetriesCount = std::pair<size_t, size_t>;
+    if (__builtin_available(macOS 10.14, *))
+    {
+        auto appearance = [NSApp.effectiveAppearance bestMatchFromAppearancesWithNames:
+            @[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+        return [appearance isEqualToString:NSAppearanceNameDarkAqua];
+    }
+    return false;
+}
 
-    electronic_id::CertificateType type;
-    QString icon;
-
-    QString subject;
-    QString issuer;
-    QString effectiveDate;
-    QString expiryDate;
-
-    PinMinMaxLength pinMinMaxLength;
-    PinRetriesCount pinRetriesCount;
-};
-
-Q_DECLARE_METATYPE(CertificateInfo)
+void Application::showAbout()
+{
+    NSLog(@"web-eid-app: starting app");
+    NSError *error = nil;
+    NSRunningApplication *app = [NSWorkspace.sharedWorkspace launchApplicationAtURL:QUrl::fromLocalFile(qApp->applicationFilePath()).toNSURL() options:NSWorkspaceLaunchNewInstance configuration:@{} error:&error];
+    if (app == nil) {
+        NSLog(@"web-eid-app: failed to start app: %@", error);
+    }
+}

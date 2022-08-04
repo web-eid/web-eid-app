@@ -11,7 +11,12 @@ from base64 import b64encode, b64decode
 
 BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
-WEBEID_APP = os.path.join(BASE_DIR, 'build', 'src', 'app', 'web-eid')
+WEBEID_APP = os.path.join(BASE_DIR, 'build', 'src', 'app',
+    ('RelWithDebInfo' if os.name == 'nt' else ''), 'web-eid')
+
+DEFAULT_ARGUMENTS = {
+    'origin': 'https://ria.ee',
+}
 
 
 class Test(unittest.TestCase):
@@ -38,9 +43,7 @@ class Test(unittest.TestCase):
     def test_1_get_certificate(self):
         message = {
             'command': 'get-signing-certificate',
-            'arguments': {
-                'origin': 'https://ria.ee',
-            }
+            'arguments': DEFAULT_ARGUMENTS
         }
         response = self.exchange_message_with_app(message)
         self.assertIn('certificate', response)
@@ -50,8 +53,8 @@ class Test(unittest.TestCase):
         message = {
             'command': 'authenticate',
             'arguments': {
+                **DEFAULT_ARGUMENTS,
                 'challengeNonce': '12345678123456781234567812345678912356789123',
-                'origin': 'https://ria.ee'
             }
         }
         response = self.exchange_message_with_app(message)
@@ -63,9 +66,9 @@ class Test(unittest.TestCase):
         message = {
             'command': 'sign',
             'arguments': {
+                **DEFAULT_ARGUMENTS,
                 'hash': b64encode(b'x' * 48).decode('ascii'),
                 'hashFunction': 'SHA-384',
-                'origin': 'https://ria.ee',
                 'certificate': self.__class__.signingCertificate,
             }
         }

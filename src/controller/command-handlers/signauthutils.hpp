@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,9 +40,6 @@ extern template QString validateAndGetArgument<QString>(const QString& argName,
                                                         const QVariantMap& args, bool allowNull);
 extern template QByteArray
 validateAndGetArgument<QByteArray>(const QString& argName, const QVariantMap& args, bool allowNull);
-
-QSslCertificate parseAndValidateCertificate(const QString& certArgName, const QVariantMap& args,
-                                            bool allowNull = false);
 
 pcsc_cpp::byte_vector getPin(const pcsc_cpp::SmartCard& card, WebEidUI* window);
 

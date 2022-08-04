@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Estonian Information System Authority
+ * Copyright (c) 2020-2022 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,7 @@ enum class RetriableError {
     UNSUPPORTED_CARD,
     // CertificateReader::run
     NO_VALID_CERTIFICATE_AVAILABLE,
+    PIN_VERIFY_DISABLED,
     // default
     UNKNOWN_ERROR
 };

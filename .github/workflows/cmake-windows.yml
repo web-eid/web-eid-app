@@ -11,16 +11,23 @@ jobs:
     runs-on: windows-2019
     strategy:
       matrix:
+        suffix: [qt5]
+        qtver: [5.12.12]
+        toolset: [14.29]
         arch: [x86, x64]
         include:
         - arch: x86
           qt: win32_msvc2017
         - arch: x64
           qt: win64_msvc2017_64
+        - suffix: qt6
+          qtver: 6.3.1
+          arch: x64
+          qt: win64_msvc2019_64
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
 
@@ -28,22 +35,22 @@ jobs:
         uses: lukka/run-vcpkg@v7
         with:
           vcpkgArguments: gtest openssl
-          vcpkgTriplet: ${{ matrix.arch }}-windows
-          vcpkgGitCommitId: b25cb779e5783531cc66562e224079b376055939
+          vcpkgTriplet: ${{matrix.arch}}-windows
+          vcpkgGitCommitId: 9b064ff07b987c8f213fdbf4358122fd4fe38ef1
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: "5.12.12"
+          version: ${{ matrix.qtver }}
           arch: ${{ matrix.qt }}
 
       - name: Setup MS Visual C++ dev env
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
-          toolset: 14.29
+          toolset: ${{ matrix.toolset }}
 
-      - name: Configure CMake
+      - name: Configure
         run: |
           cmake "-GNinja" `
             "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
@@ -53,66 +60,17 @@ jobs:
         run: |
           cmake --build build --config ${env:BUILD_TYPE}
           cmake --build build --config ${env:BUILD_TYPE} --target installer
+          cmake --build build --config ${env:BUILD_TYPE} --target bundle
 
       - name: Test
         if: matrix.arch == 'x64'
         run: ctest -V -C ${env:BUILD_TYPE} --test-dir build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: web-eid-app-windows-build-${{github.run_number}}
+          name: web-eid-app-windows-build-${{github.run_number}}-${{matrix.suffix}}
           path: |
             build/src/app/*.msi
-            build/**/*.pdb
-
-  bundle:
-    needs: build
-    runs-on: windows-2019
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
-
-      - name: Prepare vcpkg and libraries
-        uses: lukka/run-vcpkg@v7
-        with:
-          vcpkgArguments: gtest openssl
-          vcpkgTriplet: x64-windows
-          vcpkgGitCommitId: b25cb779e5783531cc66562e224079b376055939
-
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v2
-        with:
-          version: "5.12.12"
-          arch: win64_msvc2017_64
-
-      - name: Setup MS Visual C++ dev env
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
-          toolset: 14.29
-
-      - name: Configure CMake
-        run: |
-          cmake "-GNinja" `
-            "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
-            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" -S . -B build
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: web-eid-app-windows-build-${{github.run_number}}
-          path: build
-
-      - name: Build
-        run: |
-          cmake --build build --config ${env:BUILD_TYPE} --target bundle
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: web-eid-app-windows-build-${{github.run_number}}
-          path: |
             build/src/app/*.exe
+            build/**/*.pdb
