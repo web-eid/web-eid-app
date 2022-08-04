@@ -1,0 +1,32 @@
+name: CMake (Fedora Linux)
+
+on: [push, pull_request]
+
+env:
+  BUILD_TYPE: RelWithDebInfo
+  BUILD_NUMBER: ${{github.run_number}}
+  QT_QPA_PLATFORM: offscreen
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: 'fedora:36'
+
+    steps:
+      - name: Install Deps
+        run: dnf install -y git gcc-c++ cmake rpm-build openssl-devel pcsc-lite-devel qt5-qtsvg-devel qt5-linguist gtest-devel
+
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build -S .
+
+      - name: Build
+        run: cmake --build build --config $BUILD_TYPE --target package
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: web-eid-app-fedora-build-${{github.run_number}}
+          path: build/*rpm
