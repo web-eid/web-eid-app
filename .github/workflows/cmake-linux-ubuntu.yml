@@ -13,12 +13,41 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: mrts/qt-cmake-gtest-valgrind-ubuntu
+    container: ${{matrix.container}}
+    strategy:
+      matrix:
+        container: ['ubuntu:18.04', 'ubuntu:20.04', 'ubuntu:22.04']
+        include:
+        - container: 'ubuntu:18.04'
+          name: ubuntu1804
+        - container: 'ubuntu:20.04'
+          name: ubuntu2004
+        - container: 'ubuntu:22.04'
+          name: ubuntu2204
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
         with:
           submodules: recursive
+
+      - name: Install dependencies
+        if: matrix.container != 'ubuntu:22.04'
+        run: apt update -qq && apt install --no-install-recommends -y lsb-release fakeroot build-essential devscripts cdbs pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libqt5svg5-dev qttools5-dev-tools qttools5-dev
+
+      - name: Install dependencies
+        if: matrix.container == 'ubuntu:22.04'
+        run: apt update -qq && apt install --no-install-recommends -y lsb-release fakeroot build-essential devscripts cdbs pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools libqt6core5compat6-dev
+
+      - name: Ubuntu 18.04 workarounds
+        if: matrix.container == 'ubuntu:18.04'
+        run: |
+          mkdir gtest
+          cd gtest
+          cmake /usr/src/gtest
+          cmake --build . --target install
+          apt --no-install-recommends -y install clang-10
+          echo "CC=clang-10" >> $GITHUB_ENV
+          echo "CXX=clang++-10" >> $GITHUB_ENV
 
       - name: Create build directory
         run: mkdir build
@@ -34,34 +63,29 @@ jobs:
           # Debian creates artifacts outside of project dir, copy them back to make them available in the build artifacts
           cp -r ../../web-eid*.* src/app
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
-          name: web-eid-app-ubuntu-build-${{github.run_number}}
+          name: web-eid-app-ubuntu-build-${{matrix.name}}-${{github.run_number}}
           path: build/src/app/*.*deb
 
 
   coverity:
     name: Run Coverity tests
-    if: contains(github.repository, 'web-eid/web-eid-app') && contains(github.ref, 'coverity_scan')
+    if: github.repository == 'web-eid/web-eid-app' && contains(github.ref, 'coverity_scan')
     runs-on: ubuntu-latest
     container: mrts/qt-cmake-gtest-valgrind-ubuntu
 
     env:
       TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
-      PROJECTNAME: 'web-eid/web-eid-app'
+      PROJECTNAME: web-eid/web-eid-app
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
 
-      - name: Create build directory
-        run: mkdir build
-
       - name: Configure CMake
-        working-directory: ${{github.workspace}}/build
-        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build -S .
 
       - name: Download Coverity Build Tool
         working-directory: ${{github.workspace}}/build
@@ -71,10 +95,9 @@ jobs:
           tar xzf cov-analysis-linux64.tar.gz --strip 1 -C cov-analysis-linux64
 
       - name: Build
-        working-directory: ${{github.workspace}}/build
         run: |
-          export PATH=$PWD/cov-analysis-linux64/bin:$PATH
-          cov-build --dir cov-int cmake --build . --config $BUILD_TYPE
+          export PATH=$PWD/build/cov-analysis-linux64/bin:$PATH
+          cov-build --dir cov-int cmake --build build --config $BUILD_TYPE
 
       - name: Submit the result to Coverity Scan
         working-directory: ${{github.workspace}}/build
