@@ -36,7 +36,7 @@ jobs:
         with:
           vcpkgArguments: gtest openssl
           vcpkgTriplet: ${{matrix.arch}}-windows
-          vcpkgGitCommitId: 9b064ff07b987c8f213fdbf4358122fd4fe38ef1
+          vcpkgGitCommitId: 2f0872b7d592635e8e4919d178650d549c211464
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
@@ -53,7 +53,7 @@ jobs:
       - name: Configure
         run: |
           cmake "-GNinja" `
-            "-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_ROOT}}/scripts/buildsystems/vcpkg.cmake" `
+            "-DCMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
             "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" -S . -B build
 
       - name: Build

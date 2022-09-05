@@ -6,7 +6,11 @@ Build-Depends:
  cdbs,
  debhelper (>= 10),
  libpcsclite-dev,
- qtbase5-dev
+ libssl-dev,
+ libgtest-dev,
+ qt6-tools-dev | qttools5-dev,
+ qt6-l10n-tools | qttools5-dev-tools,
+ libqt6svg6-dev | libqt5svg5-dev
 Standards-Version: 3.9.8
 Homepage: https://github.com/web-eid/web-eid-app
 
