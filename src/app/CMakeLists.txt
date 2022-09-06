@@ -167,19 +167,17 @@ else()
     file(DOWNLOAD ${FIREFOX_URL} ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi)
     set(WEBEID_PATH ${CMAKE_INSTALL_FULL_BINDIR}/web-eid)
     install(TARGETS web-eid DESTINATION ${CMAKE_INSTALL_BINDIR})
-    if(MOZILLA_INSTALL_DIR)
-        message("Using defined mozilla dir: ${MOZILLA_INSTALL_DIR}")
-    elseif(NOT EXISTS "/etc/debian_version" AND "${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
-        set(MOZILLA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib64/mozilla/native-messaging-hosts)
+    if(EXISTS "/etc/debian_version")
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/mozilla/native-messaging-hosts RENAME eu.webeid.json)
     else()
-        set(MOZILLA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/mozilla/native-messaging-hosts)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/mozilla/native-messaging-hosts RENAME eu.webeid.json)
     endif()
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
         DESTINATION ${CMAKE_INSTALL_DATADIR}/web-eid)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
-        DESTINATION ${MOZILLA_INSTALL_DIR} RENAME eu.webeid.json)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
-        DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/google-chrome/extensions)
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/google-chrome/extensions)
     install(FILES ${CMAKE_SOURCE_DIR}/install/web-eid.desktop
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi
@@ -191,6 +189,7 @@ else()
             RENAME web-eid.png
         )
     endforeach()
+
     add_custom_target(installer
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         COMMAND dch --distribution unstable -v ${PROJECT_VERSION} "Release: ${PROJECT_VERSION}."
