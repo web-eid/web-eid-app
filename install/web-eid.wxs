@@ -90,8 +90,8 @@
             <File Source="$(var.VCPATH)\msvcp140_1$(var.qt_suffix).dll"/>
             <File Source="$(var.VCPATH)\msvcp140_2$(var.qt_suffix).dll"/>
 <?endif?>
-            <File Source="$(var.ssl_path)\libcrypto-3$(var.ssl_suffix).dll"/>
-            <File Source="$(var.ssl_path)\libssl-3$(var.ssl_suffix).dll"/>
+            <File Source="$(var.ssl_path)\libcrypto-1_1$(var.ssl_suffix).dll"/>
+            <File Source="$(var.ssl_path)\libssl-1_1$(var.ssl_suffix).dll"/>
             <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Core$(var.qt_suffix).dll"/>
             <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Gui$(var.qt_suffix).dll"/>
             <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Network$(var.qt_suffix).dll"/>
