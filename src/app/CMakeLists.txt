@@ -165,7 +165,7 @@ elseif(APPLE)
 else()
     include(GNUInstallDirs)
     file(DOWNLOAD ${FIREFOX_URL} ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi)
-    set(WEBEID_PATH ${CMAKE_INSTALL_FULL_BINDIR}/web-eid)
+    set(WEBEID_PATH ${CMAKE_INSTALL_BINDIR}/web-eid)
     install(TARGETS web-eid DESTINATION ${CMAKE_INSTALL_BINDIR})
     if(EXISTS "/etc/debian_version")
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
