@@ -11,19 +11,17 @@ jobs:
     runs-on: windows-2019
     strategy:
       matrix:
-        suffix: [qt5]
-        qtver: [5.12.12]
+        suffix: [qt6]
+        qtver: [6.3.1]
         toolset: [14.29]
-        arch: [x86, x64]
+        arch: [x64]
         include:
-        - arch: x86
-          qt: win32_msvc2017
         - arch: x64
-          qt: win64_msvc2017_64
-        - suffix: qt6
-          qtver: 6.3.1
-          arch: x64
           qt: win64_msvc2019_64
+        - suffix: qt5
+          qtver: 5.12.12
+          arch: x86
+          qt: win32_msvc2017
 
     steps:
       - name: Checkout code
@@ -36,10 +34,10 @@ jobs:
         with:
           vcpkgArguments: gtest openssl
           vcpkgTriplet: ${{matrix.arch}}-windows
-          vcpkgGitCommitId: 2f0872b7d592635e8e4919d178650d549c211464
+          vcpkgGitCommitId: 9b064ff07b987c8f213fdbf4358122fd4fe38ef1
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
           version: ${{ matrix.qtver }}
           arch: ${{ matrix.qt }}
