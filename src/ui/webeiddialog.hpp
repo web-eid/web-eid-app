@@ -101,7 +101,7 @@ private:
     void showPinInputWarning(bool show);
     void resizeHeight();
 
-    QPixmap pixmap(const QLatin1String& name) const;
+    QPixmap pixmap(QLatin1String name) const;
     std::tuple<QString, QString, QPixmap>
     retriableErrorToTextTitleAndIcon(const RetriableError error);
 
