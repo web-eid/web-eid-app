@@ -461,7 +461,7 @@ void WebEidDialog::setupPinPrompt(const PinInfo& pinInfo)
     ui->cancelButton->setHidden(pinInfo.readerHasPinPad);
     ui->pinTimeRemaining->setVisible(pinInfo.readerHasPinPad);
     ui->pinInput->setHidden(pinInfo.readerHasPinPad);
-    ui->selectAnotherCertificate->setHidden(pinInfo.readerHasPinPad);
+    ui->selectAnotherCertificate->setHidden(currentCommand != CommandType::AUTHENTICATE || pinInfo.readerHasPinPad);
     showPinInputWarning(pinInfo.pinRetriesCount.second != -1
                         && pinInfo.pinRetriesCount.first != pinInfo.pinRetriesCount.second);
     if (pinInfo.pinRetriesCount.second != -1
@@ -553,7 +553,7 @@ void WebEidDialog::resizeHeight()
     adjustSize();
 }
 
-QPixmap WebEidDialog::pixmap(const QLatin1String& name) const
+QPixmap WebEidDialog::pixmap(QLatin1String name) const
 {
     return {QStringLiteral(":/images/%1%2.svg")
                 .arg(name, qApp->isDarkTheme() ? QLatin1String("_dark") : QLatin1String())};
