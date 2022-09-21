@@ -47,7 +47,7 @@
     </message>
     <message>
         <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Pomoć potražite ovdje: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Select a certificate</source>
@@ -250,16 +250,24 @@
         <translation>Osobna iskaznica u čitaču nije podržana. Provjerite je li umetnuta osobna iskaznica podržana od strane Web eID aplikacije.</translation>
     </message>
     <message>
-        <source>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</source>
-        <translation>Vjerodajnica na osobnoj iskaznici je istekla. Valjana osobna iskaznica je neophodna za elektroničku uporabu.</translation>
-    </message>
-    <message>
         <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
         <translation>Radnja nije uspjela. Provjerite koristi li se ispravan pokretački program za osobnu iskaznicu. Pročitajte više o tome na &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;ovdje&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>Unknown error</source>
         <translation>Nepoznata greška</translation>
+    </message>
+    <message>
+        <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
+        <translation type="unfinished">Umetnuta iskaznica ne sadrži potvrdu za traženu operaciju. Molimo umetnite osobnu iskaznicu koja podržava traženu operaciju.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
+        <translation type="unfinished">Unesite PIN za autentifikaciju u dijaloški prozor PIN-a koji se otvara.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
+        <translation type="unfinished">Unesite PIN za prijavu u dijaloški prozor PIN-a koji se otvara.</translation>
     </message>
 </context>
 </TS>

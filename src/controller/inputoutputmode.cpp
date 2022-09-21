@@ -25,13 +25,13 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#ifdef _WIN32
+#ifdef Q_OS_WIN
 #include <stdio.h>
 #include <io.h>
 #include <fcntl.h>
 #endif
 
-#ifdef _WIN32
+#ifdef Q_OS_WIN
 // On Windows, the default I/O mode is O_TEXT. Set this to O_BINARY
 // to avoid unwanted modifications of the input/output streams.
 // See http://msdn.microsoft.com/en-us/library/tw4k6df8.aspx
@@ -64,7 +64,7 @@ void writeResponseLength(std::ostream& stream, const uint32_t responseLength)
 CommandWithArgumentsPtr readCommandFromStdin()
 {
 
-#ifdef _WIN32
+#ifdef Q_OS_WIN
     setIoStreamsToBinaryMode();
 #endif
 

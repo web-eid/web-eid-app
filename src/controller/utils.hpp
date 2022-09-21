@@ -24,13 +24,6 @@
 
 #include "pcsc-cpp/pcsc-cpp-utils.hpp"
 
-#define REQUIRE_NON_NULL(val)                                                                      \
-    if (!val) {                                                                                    \
-        throw std::logic_error("Null " + std::string(#val) + " in "                                \
-                               + pcsc_cpp::removeAbsolutePathPrefix(__FILE__) + ':'                \
-                               + std::to_string(__LINE__) + ':' + __func__);                       \
-    }
-
 #define REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(vec)                                              \
     if (vec.empty()) {                                                                             \
         throw std::logic_error(std::string(#vec) + " is empty in "                                 \

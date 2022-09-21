@@ -184,10 +184,6 @@
         <translation>Kirjautumalla suostun antamaan nimeni ja henkilötunnukseni palveluntarjoajalle.</translation>
     </message>
     <message>
-        <source>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</source>
-        <translation>Henkilökortin varmenteet ovat vanhentuneet. Varmenteiden tulee olla voimassa, jotta henkilökorttia voi käyttää sähköisesti.</translation>
-    </message>
-    <message>
         <source>An error occurred in the Smart Card service required to use the ID-card. Make sure that the ID-card and the card reader are connected correctly or relaunch the Smart Card service.</source>
         <translation>Henkilökortin käyttöön vaadittavassa älykorttipalvelussa tapahtui virhe. Varmista, että henkilökortti ja kortinlukija on kytketty oikein tai käynnistä älykorttipalvelu uudelleen.</translation>
     </message>
@@ -258,6 +254,18 @@
     <message>
         <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
         <translation>Lukijassa oleva henkilökortin varmenne ei vastaa alun perin lähetettyä varmennetta. Aseta alkuperäinen henkilökortti kortinlukijaan.</translation>
+    </message>
+    <message>
+        <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
+        <translation type="unfinished">Asennettu henkilökortti ei sisällä varmennetta pyydettyä toimintoa varten. Aseta sisään henkilökortti, joka tukee pyydettyä toimintoa.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
+        <translation type="unfinished">Syötä PIN todennusta varten avautuvaan PIN-valintaikkunaan.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
+        <translation type="unfinished">Syötä PIN kirjautumista varten avautuvaan PIN-valintaikkunaan.</translation>
     </message>
 </context>
 </TS>

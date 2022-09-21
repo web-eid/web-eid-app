@@ -88,6 +88,8 @@ private:
         }
     }
 
+    void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
+
     void onRetryImpl(const std::function<QString()>& text);
 
     void setTrText(QWidget* label, const std::function<QString()>& text);

@@ -48,7 +48,7 @@ QPair<QString, QVariantMap> signHash(const ElectronicID& eid, const pcsc_cpp::by
 
 Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
 {
-    const auto arguments = cmd.second;
+    const auto& arguments = cmd.second;
 
     requireArgumentsAndOptionalLang(
         {"hash", "hashFunction", "certificate", "origin"}, arguments,
@@ -119,7 +119,9 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
         default:
             emit verifyPinFailed(failure.status(), failure.retries());
         }
-        if (failure.retries() > 0) {
+        // Retries > 0 means that there are retries remaining,
+        // < 0 means that retry count is unknown, == 0 means that the PIN is blocked.
+        if (failure.retries() != 0) {
             throw CommandHandlerVerifyPinFailed(failure.what());
         }
         throw;
