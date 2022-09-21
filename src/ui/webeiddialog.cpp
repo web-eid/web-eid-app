@@ -170,9 +170,8 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
             tr("Time remaining: <b>%1</b>").arg(ui->pinEntryTimeoutProgressBar->maximum() - value));
     });
 
-    connect(this, &WebEidDialog::languageChange, this, [this]{
-        ui->pinInputCertificateInfo->languageChange();
-    });
+    connect(this, &WebEidDialog::languageChange, this,
+            [this] { ui->pinInputCertificateInfo->languageChange(); });
 }
 
 WebEidDialog::~WebEidDialog()
@@ -318,6 +317,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
 {
     ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
     ui->pinInputOriginLabel->setText(ui->selectCertificateOriginLabel->text());
+    const bool useExternalPinDialog = certAndPin.cardInfo->eid().providesExternalPinDialog();
 
     switch (currentCommand) {
     case CommandType::GET_SIGNING_CERTIFICATE:
@@ -333,7 +333,11 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             return tr("By authenticating, I agree to the transfer of my name and personal "
                       "identification code to the service provider.");
         });
-        setTrText(ui->pinTitleLabel, [] { return tr("Enter PIN1 for authentication"); });
+        setTrText(ui->pinTitleLabel, [useExternalPinDialog] {
+            return useExternalPinDialog
+                ? tr("Please enter PIN for authentication in the PIN dialog window that opens.")
+                : tr("Enter PIN1 for authentication");
+        });
         break;
     case CommandType::SIGN:
         ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
@@ -342,7 +346,11 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
             return tr("By signing, I agree to the transfer of my name and personal identification "
                       "code to the service provider.");
         });
-        setTrText(ui->pinTitleLabel, [] { return tr("Enter PIN2 for signing"); });
+        setTrText(ui->pinTitleLabel, [useExternalPinDialog] {
+            return useExternalPinDialog
+                ? tr("Please enter PIN for signing in the PIN dialog window that opens.")
+                : tr("Enter PIN2 for signing");
+        });
         break;
     default:
         emit failure(QStringLiteral("Only SELECT_CERTIFICATE, AUTHENTICATE or SIGN allowed"));
@@ -353,6 +361,9 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         displayPinBlockedError();
     } else if (certAndPin.certInfo.isExpired || certAndPin.certInfo.notEffective) {
         ui->pinTitleLabel->hide();
+    } else if (useExternalPinDialog) {
+        connectOkToCachePinAndEmitSelectedCertificate(certAndPin);
+        ui->pinInput->setText("unused"); // Dummy value as empty PIN is not allowed.
     } else if (certAndPin.pinInfo.readerHasPinPad) {
         setupPinPadProgressBarAndEmitWait(certAndPin);
     } else {
@@ -458,6 +469,30 @@ void WebEidDialog::setTrText(QWidget* label, const std::function<QString()>& tex
             [label, text] { label->setProperty("text", text()); });
 }
 
+void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
+    const CardCertificateAndPinInfo& certAndPin)
+{
+    setupOK([this, certAndPin] {
+        ui->pinInput->hide();
+        ui->pinTitleLabel->hide();
+        ui->pinErrorLabel->hide();
+        ui->okButton->setDisabled(true);
+        ui->cancelButton->setDisabled(true);
+        // Cache the PIN in an instance variable for later use in getPin().
+        // This is required as accessing widgets from background threads is not allowed,
+        // so getPin() cannot access pinInput directly.
+        // QString uses QAtomicPointer internally and is thread-safe.
+        pin = ui->pinInput->text();
+
+        // TODO: We need to erase the PIN in the widget buffer, this needs further work.
+        // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
+        // custom Qt widget.
+        ui->pinInput->clear();
+
+        emit accepted(certAndPin);
+    });
+}
+
 void WebEidDialog::setupCertificateAndPinInfo(
     const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos)
 {
@@ -470,7 +505,8 @@ void WebEidDialog::setupCertificateAndPinInfo(
         CertificateButton* button = new CertificateButton(certAndPin, ui->selectCertificatePage);
         ui->selectCertificateInfo->addWidget(button);
         ui->selectionGroup->addButton(button);
-        connect(this, &WebEidDialog::languageChange, button, [button] { button->languageChange(); });
+        connect(this, &WebEidDialog::languageChange, button,
+                [button] { button->languageChange(); });
         setTabOrder(previous, button);
     }
 }
@@ -524,8 +560,16 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPin
 void WebEidDialog::setupPinInput(const CardCertificateAndPinInfo& certAndPin)
 {
     setupPinPrompt(certAndPin.pinInfo);
-    const auto regexpWithOrWithoutLetters = certAndPin.cardInfo->eid().allowsUsingLettersInPin()
-        ? QStringLiteral("[0-9a-zA-Z]{%1,%2}")
+    // The allowed character ranges are from the SafeNet eToken guide:
+    // 1. English uppercase letters (ASCII 0x41...0x5A).
+    // 2. English lowercase letters (ASCII 0x61...0x7A).
+    // 3. Numeric (ASCII 0x30...0x39).
+    // 4. Special characters
+    //    (ASCII 0x20...0x2F, space../ + 0x3A...0x40, :..@ + 0x5B...0x60, [..` + 0x7B...0x7F, {..~).
+    // 5. We additionally allow uppercase and lowercase Unicode letters.
+    const auto regexpWithOrWithoutLetters =
+        certAndPin.cardInfo->eid().allowsUsingLettersAndSpecialCharactersInPin()
+        ? QStringLiteral("[0-9 -/:-@[-`{-~\\p{L}]{%1,%2}")
         : QStringLiteral("[0-9]{%1,%2}");
     const auto numericMinMaxRegexp =
         QRegularExpression(regexpWithOrWithoutLetters.arg(certAndPin.pinInfo.pinMinMaxLength.first)
@@ -533,25 +577,7 @@ void WebEidDialog::setupPinInput(const CardCertificateAndPinInfo& certAndPin)
     ui->pinInputValidator->setRegularExpression(numericMinMaxRegexp);
     ui->pinInput->setMaxLength(int(certAndPin.pinInfo.pinMinMaxLength.second));
     ui->pinInput->setFocus();
-    setupOK([this, certAndPin] {
-        ui->pinInput->hide();
-        ui->pinTitleLabel->hide();
-        ui->pinErrorLabel->hide();
-        ui->okButton->setDisabled(true);
-        ui->cancelButton->setDisabled(true);
-        // Cache the PIN in an instance variable for later use in getPin().
-        // This is required as accessing widgets from background threads is not allowed,
-        // so getPin() cannot access pinInput directly.
-        // QString uses QAtomicPointer internally and is thread-safe.
-        pin = ui->pinInput->text();
-
-        // TODO: We need to erase the PIN in the widget buffer, this needs further work.
-        // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
-        // custom Qt widget.
-        ui->pinInput->clear();
-
-        emit accepted(certAndPin);
-    });
+    connectOkToCachePinAndEmitSelectedCertificate(certAndPin);
 }
 
 void WebEidDialog::setupOK(const std::function<void()>& func, const std::function<QString()>& text,
@@ -659,8 +685,8 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
                 tr("Operation not supported"), pixmap("no-id-card"_L1)};
 
     case RetriableError::NO_VALID_CERTIFICATE_AVAILABLE:
-        return {tr("The certificates of the ID-card have expired. Valid certificates are required "
-                   "for the electronic use of the ID-card."),
+        return {tr("The inserted ID-card does not contain a certificate for the requested "
+                   "operation. Please insert an ID-card that supports the requested operation."),
                 tr("Operation not supported"), pixmap("no-id-card"_L1)};
 
     case RetriableError::PIN_VERIFY_DISABLED:

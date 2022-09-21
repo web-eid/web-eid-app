@@ -168,10 +168,6 @@
         <translation>Lugejas on mittetoetatud kaart. Palun veendu, et sisestatud ID-kaart on Web eID rakenduses toetatud.</translation>
     </message>
     <message>
-        <source>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</source>
-        <translation>ID-kaardi sertifikaadid on aegunud. ID-kaardi elektrooniliseks kasutamiseks on vaja kehtivaid sertifikaate.</translation>
-    </message>
-    <message>
         <source>Unknown error</source>
         <translation>Tundmatu viga</translation>
     </message>
@@ -258,6 +254,18 @@
     <message>
         <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
         <translation>Lugejas oleva ID-kaardi sertifikaat ei ühti algselt esitatud sertifikaadiga. Palun sisesta algne ID-kaart.</translation>
+    </message>
+    <message>
+        <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
+        <translation>Sisestatud ID-kaardil ei ole sertifikaati soovitud toimingu jaoks. Palun sisestage soovitud toimingut toetav ID-kaart.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
+        <translation>Palun sisesta avanevas PIN-dialoogiaknas isikutuvastuseks PIN-kood.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
+        <translation>Palun sisesta avanevas PIN-dialoogiaknas allkirjastamiseks PIN-kood.</translation>
     </message>
 </context>
 </TS>

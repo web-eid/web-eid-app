@@ -172,10 +172,6 @@
         <translation>The card in the reader is not supported. Make sure that the entered ID-card is supported by the Web eID application.</translation>
     </message>
     <message>
-        <source>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</source>
-        <translation>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</translation>
-    </message>
-    <message>
         <source>Unknown error</source>
         <translation>Unknown error</translation>
     </message>
@@ -258,6 +254,18 @@
     <message>
         <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
         <translation>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</translation>
+    </message>
+    <message>
+        <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
+        <translation>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
+        <translation>Please enter PIN for authentication in the PIN dialog window that opens.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
+        <translation>Please enter PIN for signing in the PIN dialog window that opens.</translation>
     </message>
 </context>
 </TS>

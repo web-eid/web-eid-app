@@ -16,3 +16,5 @@ src/app/web-eid
 tests-build/
 tests/tests/web-eid-tests
 build-web-eid-*/
+CMakeSettings.json
+.vs/

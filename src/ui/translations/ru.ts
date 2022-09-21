@@ -174,10 +174,6 @@
         <translation>В считывателе неподдерживаемая карта. Пожалуйста, убедитесь, что вставленная ID-карта поддерживается приложением Web eID.</translation>
     </message>
     <message>
-        <source>The certificates of the ID-card have expired. Valid certificates are required for the electronic use of the ID-card.</source>
-        <translation>Сертификаты ID-карты устарели. Для электронного использования ID-карты необходим действующий сертификат.</translation>
-    </message>
-    <message>
         <source>Unknown error</source>
         <translation>Неизвестная ошибка</translation>
     </message>
@@ -260,6 +256,18 @@
     <message>
         <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
         <translation>Сертификат ID-карты в считывателе не соответствует указанному сертификату. Пожалуйста, вставьте оригинальную ID-карту.</translation>
+    </message>
+    <message>
+        <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
+        <translation>Выбранная Вами ИД-карта не имеет сертификата для запрошенной операции. Пожалуйста, введите ID-карту, которая поддерживает желаемую операцию.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
+        <translation>Введите PIN-код для аутентификации личности в открывшемся диалоговом окне PIN-кода.</translation>
+    </message>
+    <message>
+        <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
+        <translation>Пожалуйста, введите свой PIN-код для подписания в открывшемся диалоговом окне PIN-кода.</translation>
     </message>
 </context>
 </TS>

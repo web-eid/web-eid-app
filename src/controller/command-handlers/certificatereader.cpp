@@ -85,7 +85,11 @@ void CertificateReader::run(const std::vector<CardInfo::ptr>& cards)
     std::vector<CardCertificateAndPinInfo> certInfos;
     certInfos.reserve(cards.size());
     for (const auto& card : cards) {
-        certInfos.emplace_back(getCertificateWithStatusAndInfo(card, certificateType));
+        try {
+            certInfos.push_back(getCertificateWithStatusAndInfo(card, certificateType));
+        } catch (const WrongCertificateTypeError&) {
+            // Ignore eIDs that don't support the given ceritifcate type.
+        }
     }
 
     if (certInfos.empty()) {
