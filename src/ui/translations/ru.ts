@@ -259,7 +259,7 @@
     </message>
     <message>
         <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
-        <translation type="unfinished">Сертификат ID-карты в считывателе не соответствует указанному сертификату. Пожалуйста, вставьте оригинальную ID-карту.</translation>
+        <translation>Сертификат ID-карты в считывателе не соответствует указанному сертификату. Пожалуйста, вставьте оригинальную ID-карту.</translation>
     </message>
 </context>
 </TS>

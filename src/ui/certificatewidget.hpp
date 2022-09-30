@@ -32,7 +32,8 @@ class CertificateWidgetInfo
 {
 public:
     CardCertificateAndPinInfo certificateInfo() const;
-    void setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo);
+    virtual void setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo);
+    void languageChange();
 
 protected:
     CertificateWidgetInfo(QWidget* self);
@@ -68,5 +69,6 @@ public:
 
 private:
     bool eventFilter(QObject* object, QEvent* event) final;
+    void setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo) final;
     void paintEvent(QPaintEvent* event) final;
 };

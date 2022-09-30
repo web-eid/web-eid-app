@@ -2,19 +2,19 @@ QWidget {
 background-color: #232325;
 color: white;
 }
-QPushButton {
+QPushButton, #langButton {
 border-color: #4E4E53;
 background-color: #4E4E53;
 }
-QPushButton::disabled {
+QPushButton::disabled, #langButton::disabled {
 border-color: #27272A;
 background-color: #27272A;
 }
-QPushButton::hover {
+QPushButton::hover, #langButton::hover {
 background-color: #76767B;
 border-color: #76767B;
 }
-QPushButton::focus {
+QPushButton::focus, #langButton::focus {
 background-color: #76767B;
 border-color: #DEDEDE;
 }
@@ -33,6 +33,13 @@ border-color: #008EEA;
 QPushButton:default::focus {
 background-color: #008EEA;
 border-color: #DEDEDE;
+}
+#langButton::menu-indicator {
+image: url(:images/down_dark.svg);
+}
+#langButton > QMenu {
+border-color: #4E4E53;
+background-color: #4E4E53;
 }
 CertificateButton, CertificateWidget {
 border-color: #4E4E53;
@@ -83,5 +90,8 @@ color: white;
 color: white;
 }
 #aboutVersion {
+color: white;
+}
+#selectAnotherCertificate {
 color: white;
 }

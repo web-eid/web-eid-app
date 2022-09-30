@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>464</height>
+    <height>495</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -26,25 +26,25 @@ font-size: 14px;
 font-family: &quot;Roboto&quot;;
 color: black;
 }
-QPushButton {
+QPushButton, #langButton {
 font-size: 17px;
 border: 3px solid #EFEFEF;
 border-radius: 3px;
 height: 39px;
-padding-left: 19px;
-padding-right: 19px;
+padding-left: 17px;
+padding-right: 17px;
 min-width: 30px;
 background-color: #EFEFEF;
 }
-QPushButton::disabled {
+QPushButton::disabled, #langButton::disabled {
 background-color: #FAFAFA;
 border-color: #FAFAFA;
 }
-QPushButton::hover {
+QPushButton::hover, #langButton::hover {
 background-color: #DEDEDE;
 border-color: #DEDEDE;
 }
-QPushButton::focus {
+QPushButton::focus, #langButton::focus {
 background-color: #DEDEDE;
 border-color: #76767B;
 }
@@ -64,6 +64,23 @@ border-color: #003168
 QPushButton:default::focus {
 background-color: #003168;
 border-color: #008EEA;
+}
+#langButton {
+padding-left: 15px;
+padding-right: 30px;
+height: 36px;
+}
+#langButton::menu-indicator {
+image: url(:images/down.svg);
+subcontrol-origin: padding;
+subcontrol-position: right center;
+left: -8px;
+}
+#langButton &gt; QMenu {
+font-size: 17px;
+border: 3px solid #EFEFEF;
+border-radius: 3px;
+background-color: #EFEFEF;
 }
 CertificateButton, CertificateWidget {
 border: 1px solid rgba(0,49,104,0.1);
@@ -805,6 +822,9 @@ height: 24px;
    </item>
    <item>
     <layout class="QHBoxLayout" name="buttonLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
      <item>
       <widget class="QPushButton" name="cancelButton">
        <property name="cursor">
@@ -819,13 +839,23 @@ height: 24px;
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="langButton">
+       <property name="text">
+        <string notr="true">EN</string>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="buttonSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
+         <width>0</width>
          <height>20</height>
         </size>
        </property>

@@ -12,6 +12,7 @@ qt_add_translation(SOURCES
     translations/en.ts
     translations/et.ts
     translations/fi.ts
+    translations/hr.ts
     translations/ru.ts
 )
 add_library(ui STATIC

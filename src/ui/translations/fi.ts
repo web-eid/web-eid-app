@@ -249,15 +249,15 @@
     </message>
     <message>
         <source>Select another certificate</source>
-        <translation type="unfinished">Valitse toinen varmenne</translation>
+        <translation>Valitse toinen varmenne</translation>
     </message>
     <message>
         <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
-        <translation type="unfinished">Toimenpide epäonnistui. Varmista, että käytetään vastaavan kortinlukijan ajuria. Lue lisää &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;täältä&lt;/a&gt;.</translation>
+        <translation>Toimenpide epäonnistui. Varmista, että käytetään vastaavan kortinlukijan ajuria. Lue lisää &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;täältä&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
-        <translation type="unfinished">Lukijassa oleva henkilökortin varmenne ei vastaa alun perin lähetettyä varmennetta. Aseta alkuperäinen henkilökortti kortinlukijaan.</translation>
+        <translation>Lukijassa oleva henkilökortin varmenne ei vastaa alun perin lähetettyä varmennetta. Aseta alkuperäinen henkilökortti kortinlukijaan.</translation>
     </message>
 </context>
 </TS>

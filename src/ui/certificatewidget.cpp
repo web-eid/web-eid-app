@@ -89,6 +89,7 @@ void CertificateWidgetInfo::drawWarnIcon()
 
 void CertificateWidgetInfo::setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo)
 {
+    warn->setText(CertificateWidget::tr("Pin locked"));
     certAndPinInfo = cardCertPinInfo;
     const auto certInfo = cardCertPinInfo.certInfo;
     QString warning, effectiveDate = certInfo.effectiveDate, expiryDate = certInfo.expiryDate;
@@ -108,6 +109,11 @@ void CertificateWidgetInfo::setCertificateInfo(const CardCertificateAndPinInfo& 
         warnIcon->show();
         warn->show();
     }
+}
+
+void CertificateWidgetInfo::languageChange()
+{
+    setCertificateInfo(certAndPinInfo);
 }
 
 CertificateWidget::CertificateWidget(QWidget* parent) : QWidget(parent), CertificateWidgetInfo(this)
@@ -143,10 +149,6 @@ CertificateButton::CertificateButton(const CardCertificateAndPinInfo& cardCertPi
     CertificateWidgetInfo::icon->setAttribute(Qt::WA_TransparentForMouseEvents);
     info->setAttribute(Qt::WA_TransparentForMouseEvents);
     setCertificateInfo(cardCertPinInfo);
-    const auto certInfo = cardCertPinInfo.certInfo;
-    setText(
-        tr("%1 Issuer: %2 Valid: %3 to %4")
-            .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate));
 }
 
 bool CertificateButton::eventFilter(QObject* object, QEvent* event)
@@ -156,6 +158,15 @@ bool CertificateButton::eventFilter(QObject* object, QEvent* event)
         return true;
     }
     return QAbstractButton::eventFilter(object, event);
+}
+
+void CertificateButton::setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo)
+{
+    CertificateWidgetInfo::setCertificateInfo(cardCertPinInfo);
+    const auto certInfo = cardCertPinInfo.certInfo;
+    setText(
+        tr("%1 Issuer: %2 Valid: %3 to %4")
+            .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate));
 }
 
 void CertificateButton::paintEvent(QPaintEvent* /*event*/)
