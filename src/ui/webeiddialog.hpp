@@ -53,7 +53,7 @@ public:
     static void showAboutPage();
     static void showFatalErrorPage();
 
-public: // slots
+    // slots
     void onSmartCardStatusUpdate(const RetriableError status) final;
     void onMultipleCertificatesReady(
         const QUrl& origin,
@@ -72,6 +72,9 @@ public: // slots
         close();
     }
 
+signals:
+    void languageChange();
+
 private:
     bool event(QEvent* event) final;
     void reject() final;
@@ -85,23 +88,27 @@ private:
         }
     }
 
-    void onRetryImpl(const QString& error);
+    void onRetryImpl(const std::function<QString()>& text);
 
+    void setTrText(QWidget* label, const std::function<QString()>& text);
     void
     setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
     void setupPinPrompt(const PinInfo& pinInfo);
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
     void setupPinInput(const CardCertificateAndPinInfo& certAndPin);
-    void setupOK(const std::function<void()>& func, const QString& label = {},
+    void setupOK(const std::function<void()>& func, const std::function<QString()>& text = {},
                  bool enabled = false);
     void displayPinBlockedError();
 
     void showPinInputWarning(bool show);
     void resizeHeight();
 
+    Q_DISABLE_COPY(WebEidDialog)
+    WebEidDialog(WebEidDialog&&) = delete;
+    WebEidDialog& operator=(WebEidDialog&&) = delete;
+
     QPixmap pixmap(QLatin1String name) const;
-    std::tuple<QString, QString, QPixmap>
-    retriableErrorToTextTitleAndIcon(const RetriableError error);
+    std::tuple<QString, QString, QPixmap> retriableErrorToTextTitleAndIcon(RetriableError error);
 
     class Private;
     Private* ui;

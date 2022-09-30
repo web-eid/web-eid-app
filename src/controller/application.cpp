@@ -103,9 +103,12 @@ bool Application::isDarkTheme() const
 void Application::loadTranslations(const QString& lang)
 {
     QLocale locale;
-    static const QStringList SUPPORTED_LANGS {"en", "et", "fi", "ru"};
-    if (SUPPORTED_LANGS.contains(lang)) {
-        locale = QLocale(lang);
+    static const QStringList SUPPORTED_LANGS {QStringLiteral("en"), QStringLiteral("et"),
+                                              QStringLiteral("fi"), QStringLiteral("hr"),
+                                              QStringLiteral("ru")};
+    QString langSetting = QSettings().value(QStringLiteral("lang"), lang).toString();
+    if (SUPPORTED_LANGS.contains(langSetting)) {
+        locale = QLocale(langSetting);
     }
     void(translator->load(locale, QStringLiteral(":/translations/")));
 }

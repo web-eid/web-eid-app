@@ -2,17 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="hr">
 <context>
-    <name>Application</name>
-    <message>
-        <source>&amp;File</source>
-        <translation>&amp;Datoteka</translation>
-    </message>
-    <message>
-        <source>&amp;About</source>
-        <translation>&amp;O programu</translation>
-    </message>
-</context>
-<context>
     <name>CertificateButton</name>
     <message>
         <source>%1 Issuer: %2 Valid: %3 to %4</source>
@@ -110,7 +99,7 @@
     </message>
     <message>
         <source>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</source>
-        <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
+        <translation type="unfinished">https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
     </message>
     <message>
         <source>Time remaining: &lt;b&gt;%1&lt;/b&gt;</source>
