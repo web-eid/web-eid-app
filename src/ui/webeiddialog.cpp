@@ -251,8 +251,7 @@ void WebEidDialog::onMultipleCertificatesReady(
         ui->selectAnotherCertificate->setVisible(certificateAndPinInfos.size() > 1);
         connect(ui->selectAnotherCertificate, &QPushButton::clicked, this,
                 [this, origin, certificateAndPinInfos] {
-                    // Clear the PIN input.
-                    ui->pinInput->setText({});
+                    ui->pinInput->clear();
                     onMultipleCertificatesReady(origin, certificateAndPinInfos);
                 });
         setupOK([this, origin, certificateAndPinInfos] {
@@ -316,15 +315,12 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
 
     if (certAndPin.pinInfo.pinIsBlocked) {
         displayPinBlockedError();
-
-    } else if (certAndPin.pinInfo.readerHasPinPad) {
-        setupPinPadProgressBarAndEmitWait(certAndPin);
-
     } else if (certAndPin.certInfo.isExpired || certAndPin.certInfo.notEffective) {
         ui->pinTitleLabel->hide();
+    } else if (certAndPin.pinInfo.readerHasPinPad) {
+        setupPinPadProgressBarAndEmitWait(certAndPin);
     } else {
-        connectOkToCachePinAndEmitSelectedCertificate(certAndPin);
-        setupPinInputValidator(certAndPin);
+        setupPinInput(certAndPin);
     }
 
     ui->pageStack->setCurrentIndex(int(WebEidDialog::Page::PIN_INPUT));
@@ -341,10 +337,9 @@ void WebEidDialog::onSigningCertificateMismatch()
                    "submitted certificate. Please insert the original ID card."));
 }
 
-void WebEidDialog::onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                                     const qint8 retriesLeft)
+void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const qint8 retriesLeft)
 {
-    using Status = electronic_id::VerifyPinFailed::Status;
+    using Status = VerifyPinFailed::Status;
 
     QString message;
 
@@ -405,31 +400,6 @@ bool WebEidDialog::event(QEvent* event)
     return WebEidUI::event(event);
 }
 
-void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
-    const CardCertificateAndPinInfo& certAndPin)
-{
-    setupOK([this, certAndPin] {
-        ui->pinInput->hide();
-        ui->pinTitleLabel->hide();
-        ui->pinErrorLabel->hide();
-        ui->okButton->setDisabled(true);
-        ui->cancelButton->setDisabled(true);
-        // Cache the PIN in an instance variable for later use in getPin().
-        // This is required as accessing widgets from background threads is not allowed,
-        // so getPin() cannot access pinInput directly.
-        // QString uses QAtomicPointer internally and is thread-safe.
-        pin = ui->pinInput->text();
-
-        // TODO: We need to erase the PIN in the widget buffer, this needs further work.
-        // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
-        // custom Qt widget.
-        // Clear the PIN input.
-        ui->pinInput->setText({});
-
-        emit accepted(certAndPin);
-    });
-}
-
 void WebEidDialog::onRetryImpl(const QString& error)
 {
     ui->connectCardLabel->setText(error);
@@ -459,17 +429,17 @@ void WebEidDialog::setupPinPrompt(const PinInfo& pinInfo)
 {
     ui->okButton->setHidden(pinInfo.readerHasPinPad);
     ui->cancelButton->setHidden(pinInfo.readerHasPinPad);
-    ui->pinTimeRemaining->setVisible(pinInfo.readerHasPinPad);
     ui->pinInput->setHidden(pinInfo.readerHasPinPad);
-    ui->selectAnotherCertificate->setHidden(currentCommand != CommandType::AUTHENTICATE || pinInfo.readerHasPinPad);
-    showPinInputWarning(pinInfo.pinRetriesCount.second != -1
-                        && pinInfo.pinRetriesCount.first != pinInfo.pinRetriesCount.second);
-    if (pinInfo.pinRetriesCount.second != -1
-        && pinInfo.pinRetriesCount.first != pinInfo.pinRetriesCount.second) {
+    ui->pinTimeRemaining->setVisible(pinInfo.readerHasPinPad);
+    ui->pinEntryTimeoutProgressBar->setVisible(pinInfo.readerHasPinPad);
+    bool showPinError = pinInfo.pinRetriesCount.second != -1
+        && pinInfo.pinRetriesCount.first != pinInfo.pinRetriesCount.second;
+    ui->pinErrorLabel->setVisible(showPinError);
+    showPinInputWarning(showPinError);
+    if (showPinError) {
         ui->pinErrorLabel->setText(
             tr("The PIN has been entered incorrectly at least once. %n attempts left.", nullptr,
                int(pinInfo.pinRetriesCount.first)));
-        ui->pinErrorLabel->show();
     }
 }
 
@@ -480,9 +450,9 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPin
     setWindowFlag(Qt::WindowCloseButtonHint, false);
     show();
 
+    ui->selectAnotherCertificate->hide();
     ui->pinTimeRemaining->setText(
         tr("Time remaining: <b>%1</b>").arg(ui->pinEntryTimeoutProgressBar->maximum()));
-    ui->pinEntryTimeoutProgressBar->show();
     ui->pinTitleLabel->setText(tr("Please enter %1 in PinPad reader")
                                    .arg(currentCommand == CommandType::AUTHENTICATE
                                             ? tr("PIN1 for authentication")
@@ -499,7 +469,7 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPin
     emit waitingForPinPad(certAndPin);
 }
 
-void WebEidDialog::setupPinInputValidator(const CardCertificateAndPinInfo& certAndPin)
+void WebEidDialog::setupPinInput(const CardCertificateAndPinInfo& certAndPin)
 {
     setupPinPrompt(certAndPin.pinInfo);
     const auto regexpWithOrWithoutLetters = certAndPin.cardInfo->eid().allowsUsingLettersInPin()
@@ -511,6 +481,25 @@ void WebEidDialog::setupPinInputValidator(const CardCertificateAndPinInfo& certA
     ui->pinInputValidator->setRegularExpression(numericMinMaxRegexp);
     ui->pinInput->setMaxLength(int(certAndPin.pinInfo.pinMinMaxLength.second));
     ui->pinInput->setFocus();
+    setupOK([this, certAndPin] {
+        ui->pinInput->hide();
+        ui->pinTitleLabel->hide();
+        ui->pinErrorLabel->hide();
+        ui->okButton->setDisabled(true);
+        ui->cancelButton->setDisabled(true);
+        // Cache the PIN in an instance variable for later use in getPin().
+        // This is required as accessing widgets from background threads is not allowed,
+        // so getPin() cannot access pinInput directly.
+        // QString uses QAtomicPointer internally and is thread-safe.
+        pin = ui->pinInput->text();
+
+        // TODO: We need to erase the PIN in the widget buffer, this needs further work.
+        // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
+        // custom Qt widget.
+        ui->pinInput->clear();
+
+        emit accepted(certAndPin);
+    });
 }
 
 void WebEidDialog::setupOK(const std::function<void()>& func, const QString& label, bool enabled)

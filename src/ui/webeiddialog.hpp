@@ -85,15 +85,13 @@ private:
         }
     }
 
-    void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
-
     void onRetryImpl(const QString& error);
 
     void
     setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
     void setupPinPrompt(const PinInfo& pinInfo);
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
-    void setupPinInputValidator(const CardCertificateAndPinInfo& certAndPin);
+    void setupPinInput(const CardCertificateAndPinInfo& certAndPin);
     void setupOK(const std::function<void()>& func, const QString& label = {},
                  bool enabled = false);
     void displayPinBlockedError();
