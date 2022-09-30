@@ -150,6 +150,10 @@
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic"
           Value="https://clients2.google.com/service/update2/crx"/>
+        <!-- Block chrome-token-signing extension to avoid conflicts -->
+        <RegistryValue Root='HKLM' Type='string' Name="56791"
+            Key='SOFTWARE\Policies\Google\Chrome\ExtensionInstallBlocklist'
+            Value='ckjefchnfjhjfedoccjbhjpbncimppeg'/>
       </Component>
       <Component Id="ChromePolicy" Win64="no" Transitive="yes">
         <Condition><![CDATA[(CHROMEINSTALL = 1 AND CHROMEPOLICY = 1)]]></Condition>
@@ -162,6 +166,10 @@
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido"
           Value="https://edge.microsoft.com/extensionwebstorebase/v1/crx"/>
+        <!-- Block chrome-token-signing extension to avoid conflicts -->
+        <RegistryValue Root='HKLM' Type='string' Name="56791"
+            Key='SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallBlocklist'
+            Value='fofaekogmodbjplbmlbmjiglndceaajh'/>
       </Component>
       <Component Id="EdgePolicy" Win64="no" Transitive="yes">
         <Condition><![CDATA[(EDGEINSTALL = 1 AND EDGEPOLICY = 1)]]></Condition>
