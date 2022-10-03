@@ -103,9 +103,23 @@ bool Application::isDarkTheme() const
 void Application::loadTranslations(const QString& lang)
 {
     QLocale locale;
-    static const QStringList SUPPORTED_LANGS {"en", "et", "fi", "ru"};
+    static const QStringList SUPPORTED_LANGS {QStringLiteral("en"), QStringLiteral("et"),
+                                              QStringLiteral("fi"), QStringLiteral("ru")};
     if (SUPPORTED_LANGS.contains(lang)) {
         locale = QLocale(lang);
+    } else {
+        locale = []() -> QLocale {
+            switch (QLocale().language()) {
+            case QLocale::Russian:
+                return {QLocale::Russian, QLocale::Russia};
+            case QLocale::Estonian:
+                return {QLocale::Estonian, QLocale::Estonia};
+            case QLocale::Finnish:
+                return {QLocale::Finnish, QLocale::Finland};
+            default:
+                return {QLocale::English, QLocale::UnitedStates};
+            }
+        }();
     }
     void(translator->load(locale, QStringLiteral(":/translations/")));
 }
@@ -117,8 +131,8 @@ CommandWithArgumentsPtr Application::parseArgs()
                                     QStringLiteral("parent-window"));
     QCommandLineParser parser;
     parser.setApplicationDescription(
-        "Application that communicates with the Web eID browser extension via standard input and "
-        "output, but also works standalone in command-line mode. Performs PKI cryptographic "
+        "Application that communicates with the Web eID browser extension via standard input "
+        "and output, but also works standalone in command-line mode. Performs PKI cryptographic "
         "operations with eID smart cards for signing and authentication purposes.");
 
     parser.addHelpOption();
@@ -161,7 +175,7 @@ CommandWithArgumentsPtr Application::parseArgs()
     if (arguments().size() == 1) {
         return std::make_unique<CommandWithArguments>(CommandType::ABOUT, QVariantMap());
     }
-    return nullptr;
+    return {};
 }
 
 void Application::registerMetatypes()
