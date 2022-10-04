@@ -97,7 +97,7 @@ jobs:
       - name: Build
         run: |
           export PATH=$PWD/build/cov-analysis-linux64/bin:$PATH
-          cov-build --dir cov-int cmake --build build --config $BUILD_TYPE
+          cov-build --dir build/cov-int cmake --build build --config $BUILD_TYPE
 
       - name: Submit the result to Coverity Scan
         working-directory: ${{github.workspace}}/build
