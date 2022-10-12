@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         suffix: [qt6]
-        qtver: [6.3.1]
+        qtver: [6.3.2]
         toolset: [14.29]
         arch: [x64]
         include:
@@ -20,6 +20,7 @@ jobs:
           qt: win64_msvc2019_64
         - suffix: qt5
           qtver: 5.12.12
+          toolset: 14.16
           arch: x86
           qt: win32_msvc2017
 
