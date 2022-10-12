@@ -7,6 +7,7 @@ env:
   BUILD_DIR: build
   BUILD_NUMBER: ${{github.run_number}}
   OPENSSL_ROOT_DIR: /usr/local/opt/openssl@1.1
+  QT_DIR: /usr/local/opt/qt6/lib/cmake/Qt6
   QT_QPA_PLATFORM: offscreen
   MAKEFLAGS: -j3
   MACOSX_DEPLOYMENT_TARGET: 10.15
@@ -14,17 +15,6 @@ env:
 jobs:
   build:
     runs-on: macos-latest
-    strategy:
-      matrix:
-        qt: [qt@5, qt@6]
-        include:
-        - qt: qt@5
-          dir: qt5/lib/cmake/Qt5
-        - qt: qt@6
-          dir: qt6/lib/cmake/Qt6
-    env:
-      Qt5_DIR: /usr/local/opt/${{matrix.dir}}
-      QT_DIR: /usr/local/opt/${{matrix.dir}}
 
     steps:
       - name: Checkout code
@@ -33,7 +23,7 @@ jobs:
           submodules: recursive
 
       - name: Install libraries
-        run: brew install web-eid/gtest/gtest ${{matrix.qt}}
+        run: brew install web-eid/gtest/gtest qt@6
 
       - name: Configure
         run: cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -B ${BUILD_DIR} -S .
@@ -50,7 +40,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: web-eid-app-macos-build-${{github.run_number}}-${{matrix.qt}}
+          name: web-eid-app-macos-build-${{github.run_number}}
           path: |
             build/*/*/*.pkg
             build/*/*/*.dmg
