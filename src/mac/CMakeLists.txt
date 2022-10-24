@@ -8,7 +8,7 @@ target_link_libraries(SafariServices INTERFACE "-framework SafariServices")
 find_program(NPM_EXECUTABLE NAMES npm REQUIRED)
 get_filename_component(BINPATH ${NPM_EXECUTABLE} PATH)
 set(JSPATH ${CMAKE_CURRENT_SOURCE_DIR}/js/dist/safari)
-set(EXTENSION ${JSPATH}/manifest.json ${JSPATH}/background.js ${JSPATH}/content.js ${JSPATH}/background.js.map ${JSPATH}/content.js.map ${JSPATH}/web-eid-icon-128.png)
+set(EXTENSION ${JSPATH}/manifest.json ${JSPATH}/background.js ${JSPATH}/content.js ${JSPATH}/background.js.map ${JSPATH}/web-eid-icon-128.png)
 add_custom_command(OUTPUT ${EXTENSION}
     COMMAND ${CMAKE_COMMAND} -E env PATH="$ENV{PATH}:${BINPATH}" ${NPM_EXECUTABLE} install
     COMMAND ${CMAKE_COMMAND} -E env PATH="$ENV{PATH}:${BINPATH}" TOKEN_SIGNING_BACKWARDS_COMPATIBILITY=true ${NPM_EXECUTABLE} run clean build
