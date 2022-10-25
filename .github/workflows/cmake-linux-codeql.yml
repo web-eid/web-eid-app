@@ -1,0 +1,44 @@
+name: CodeQL code analysis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ main ]
+
+jobs:
+  analyze:
+    name: Run CodeQL tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install dependencies
+      run: sudo apt update -qq && sudo apt install --no-install-recommends -y git pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
+
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - uses: github/codeql-action/init@v2
+      with:
+        languages: cpp
+        queries: +security-and-quality
+
+    - uses: github/codeql-action/autobuild@v2
+
+    - uses: github/codeql-action/analyze@v2
+      with:
+        upload: False
+        output: sarif-results
+
+    - uses: advanced-security/filter-sarif@develop
+      with:
+        patterns: |
+          -**/*autogen*/**
+        input: sarif-results/cpp.sarif
+        output: sarif-results/cpp.sarif
+
+    - uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: sarif-results/cpp.sarif
