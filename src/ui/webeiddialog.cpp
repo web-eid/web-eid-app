@@ -94,7 +94,14 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         ui->langButton->setText(action->text());
         qApp->loadTranslations();
     });
+#ifdef Q_OS_LINUX
+    setStyleSheet(styleSheet() + QStringLiteral("#langButton {padding-right: 15px;}"));
+    connect(ui->langButton, &QToolButton::clicked, this, [this, langMenu] {
+        langMenu->exec(mapToGlobal(ui->langButton->geometry().bottomLeft()));
+    });
+#else
     ui->langButton->setMenu(langMenu);
+#endif
     ui->langButton->setText(
         QSettings().value(QStringLiteral("lang"), ui->langButton->text()).toString().toUpper());
 
