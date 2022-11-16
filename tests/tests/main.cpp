@@ -122,7 +122,7 @@ void WebEidTests::getCertificate_validCertificateHasExpectedCertificateSubject()
 
     // assert
     const auto certInfo = getCertAndPinInfoFromSignalSpy(certificateReadySpy);
-    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
+    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK, MARI-LIIS, 61709210125"));
 
     const auto certBytes =
         QByteArray::fromBase64(controller->result()["certificate"].toString().toUtf8());
@@ -149,7 +149,7 @@ void WebEidTests::getCertificate_expiredCertificateHasExpectedCertificateSubject
 
     // assert
     const auto certInfo = getCertAndPinInfoFromSignalSpy(certificateReadySpy);
-    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
+    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK, MARI-LIIS, 61709210125"));
 
     const auto certBytes =
         QByteArray::fromBase64(controller->result()["certificate"].toString().toUtf8());
@@ -191,7 +191,7 @@ void WebEidTests::authenticate_validArgumentsResultInValidToken()
 
     // assert
     const auto certInfo = getCertAndPinInfoFromSignalSpy(authenticateSpy);
-    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
+    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK, MARI-LIIS, 61709210125"));
 
     QCOMPARE(controller->result()["unverifiedCertificate"].toString().left(25),
              QStringLiteral("MIIGRzCCBC+gAwIBAgIQRA7X0"));
