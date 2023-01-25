@@ -45,9 +45,9 @@ class Application : public QApplication
 public:
     Application(int& argc, char** argv, const QString& name);
 
-    bool isDarkTheme() const;
+    static bool isDarkTheme();
     void loadTranslations(const QString& lang = {});
-    CommandWithArgumentsPtr parseArgs();
+    static CommandWithArgumentsPtr parseArgs();
     static void registerMetatypes();
 
     // Methods specific to Safari web extension's containing app,

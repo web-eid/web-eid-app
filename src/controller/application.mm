@@ -27,7 +27,7 @@
 #import <AppKit/AppKit.h>
 #import <Cocoa/Cocoa.h>
 
-bool Application::isDarkTheme() const
+bool Application::isDarkTheme()
 {
     if (__builtin_available(macOS 10.14, *))
     {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="hr">
+<TS version="2.1" language="hr_HR">
 <context>
     <name>CertificateButton</name>
     <message>
@@ -268,6 +268,11 @@
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
         <translation type="unfinished">Unesite PIN za prijavu u dijaloški prozor PIN-a koji se otvara.</translation>
+    </message>
+    <message>
+        <source>EN</source>
+        <comment>Active language</comment>
+        <translation>HR</translation>
     </message>
 </context>
 </TS>

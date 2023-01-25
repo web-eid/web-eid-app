@@ -56,7 +56,7 @@ Application::Application(int& argc, char** argv, const QString& name) : QApplica
     setQuitOnLastWindowClosed(false);
 
     translator = new QTranslator(this);
-    QApplication::installTranslator(translator);
+    installTranslator(translator);
     loadTranslations();
 
     for (const QString& font : QDir(QStringLiteral(":/fonts")).entryList()) {
@@ -75,7 +75,7 @@ Application::Application(int& argc, char** argv, const QString& name) : QApplica
 }
 
 #ifndef Q_OS_MAC
-bool Application::isDarkTheme() const
+bool Application::isDarkTheme()
 {
 #ifdef Q_OS_WIN
     QSettings settings(
@@ -102,10 +102,10 @@ bool Application::isDarkTheme() const
 
 void Application::loadTranslations(const QString& lang)
 {
-    QLocale locale;
     static const QStringList SUPPORTED_LANGS {QStringLiteral("en"), QStringLiteral("et"),
                                               QStringLiteral("fi"), QStringLiteral("hr"),
                                               QStringLiteral("ru")};
+    QLocale locale;
     QString langSetting = QSettings().value(QStringLiteral("lang"), lang).toString();
     if (SUPPORTED_LANGS.contains(langSetting)) {
         locale = QLocale(langSetting);
@@ -119,10 +119,10 @@ CommandWithArgumentsPtr Application::parseArgs()
                                     QStringLiteral("Parent window handle (unused)"),
                                     QStringLiteral("parent-window"));
     QCommandLineParser parser;
-    parser.setApplicationDescription(
+    parser.setApplicationDescription(QStringLiteral(
         "Application that communicates with the Web eID browser extension via standard input and "
         "output, but also works standalone in command-line mode. Performs PKI cryptographic "
-        "operations with eID smart cards for signing and authentication purposes.");
+        "operations with eID smart cards for signing and authentication purposes."));
 
     parser.addHelpOption();
     parser.addOptions({{{"c", "command-line-mode"},

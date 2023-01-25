@@ -24,7 +24,7 @@
 
 #include "application.hpp"
 #include "signauthutils.hpp"
-#include "utils.hpp"
+#include "utils/utils.hpp"
 #include "magic_enum/magic_enum.hpp"
 
 using namespace electronic_id;

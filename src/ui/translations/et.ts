@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="et">
+<TS version="2.1" language="et_EE">
 <context>
     <name>CertificateButton</name>
     <message>
@@ -266,6 +266,11 @@
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
         <translation>Palun sisesta avanevas PIN-dialoogiaknas allkirjastamiseks PIN-kood.</translation>
+    </message>
+    <message>
+        <source>EN</source>
+        <comment>Active language</comment>
+        <translation>ET</translation>
     </message>
 </context>
 </TS>
