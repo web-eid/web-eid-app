@@ -26,7 +26,7 @@
 #include "certandpininfo.hpp"
 #include "retriableerror.hpp"
 
-#include "observer_ptr.hpp"
+#include "utils/observer_ptr.hpp"
 
 #include <QDialog>
 

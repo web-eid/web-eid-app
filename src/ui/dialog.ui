@@ -26,7 +26,7 @@ font-size: 14px;
 font-family: &quot;Roboto&quot;;
 color: black;
 }
-QPushButton, #langButton {
+QPushButton {
 font-size: 17px;
 border: 3px solid #EFEFEF;
 border-radius: 3px;
@@ -36,15 +36,15 @@ padding-right: 17px;
 min-width: 30px;
 background-color: #EFEFEF;
 }
-QPushButton::disabled, #langButton::disabled {
+QPushButton::disabled {
 background-color: #FAFAFA;
 border-color: #FAFAFA;
 }
-QPushButton::hover, #langButton::hover {
+QPushButton::hover {
 background-color: #DEDEDE;
 border-color: #DEDEDE;
 }
-QPushButton::focus, #langButton::focus {
+QPushButton::focus {
 background-color: #DEDEDE;
 border-color: #76767B;
 }
@@ -66,21 +66,39 @@ background-color: #003168;
 border-color: #008EEA;
 }
 #langButton {
-padding-left: 15px;
-padding-right: 30px;
-height: 36px;
+color: #003168;
+border: 0px;
+border-radius: 3px;
+max-height: 22px;
+max-width: 55px;
+padding-left: 0px;
+padding-right: 0px;
+font-size: 14px;
+text-align: left;
+background-position: right;
+background-repeat: no-repeat;
+background-origin: content;
+background-image: url(:images/down.svg);
 }
-#langButton::menu-indicator {
-image: url(:images/down.svg);
-subcontrol-origin: padding;
-subcontrol-position: right center;
-left: -8px;
+#langButton::hover {
+background-color: #EFEFEF;
 }
-#langButton &gt; QMenu {
-font-size: 17px;
+#langMenu {
 border: 3px solid #EFEFEF;
 border-radius: 3px;
 background-color: #EFEFEF;
+}
+#langMenu &gt; QPushButton {
+color: #003168;
+border: 0px;
+max-height: 22px;
+padding-left: 7px;
+padding-right: 7px;
+font-size: 14px;
+text-align: left;
+}
+#langMenu &gt; QPushButton:checked {
+font-weight: bold;
 }
 CertificateButton, CertificateWidget {
 border: 1px solid rgba(0,49,104,0.1);
@@ -835,16 +853,6 @@ height: 24px;
        </property>
        <property name="autoDefault">
         <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="langButton">
-       <property name="text">
-        <string notr="true">EN</string>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
        </property>
       </widget>
      </item>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="en">
+<TS version="2.1" language="en_US">
 <context>
     <name>CertificateButton</name>
     <message>
@@ -266,6 +266,11 @@
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
         <translation>Please enter PIN for signing in the PIN dialog window that opens.</translation>
+    </message>
+    <message>
+        <source>EN</source>
+        <comment>Active language</comment>
+        <translation>EN</translation>
     </message>
 </context>
 </TS>

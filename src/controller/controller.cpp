@@ -27,7 +27,7 @@
 #include "threads/commandhandlerrunthread.hpp"
 #include "threads/waitforcardthread.hpp"
 
-#include "utils.hpp"
+#include "utils/utils.hpp"
 #include "inputoutputmode.hpp"
 #include "writeresponse.hpp"
 

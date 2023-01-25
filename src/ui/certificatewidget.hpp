@@ -25,19 +25,21 @@
 #include <QAbstractButton>
 
 #include "certandpininfo.hpp"
+#include "utils/qdisablecopymove.hpp"
 
 class QLabel;
 
 class CertificateWidgetInfo
 {
 public:
+    virtual ~CertificateWidgetInfo() = default;
     CardCertificateAndPinInfo certificateInfo() const;
     virtual void setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo);
     void languageChange();
 
 protected:
-    CertificateWidgetInfo(QWidget* self);
-    Q_DISABLE_COPY(CertificateWidgetInfo)
+    explicit CertificateWidgetInfo(QWidget* self);
+    Q_DISABLE_COPY_MOVE(CertificateWidgetInfo)
 
     void drawWarnIcon();
 

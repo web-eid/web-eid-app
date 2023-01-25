@@ -24,7 +24,7 @@
 
 #include "ui.hpp"
 #include "commandhandler.hpp"
-#include "utils.hpp"
+#include "utils/utils.hpp"
 
 using namespace electronic_id;
 

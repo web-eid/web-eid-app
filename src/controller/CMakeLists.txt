@@ -20,9 +20,8 @@ add_library(controller STATIC
     controller.hpp
     inputoutputmode.cpp
     inputoutputmode.hpp
-    logging.hpp
     logging.cpp
-    observer_ptr.hpp
+    logging.hpp
     qeid.hpp
     retriableerror.cpp
     retriableerror.hpp
@@ -33,7 +32,9 @@ add_library(controller STATIC
     threads/controllerchildthread.hpp
     threads/waitforcardthread.hpp
     ui.hpp
-    utils.hpp
+    utils/observer_ptr.hpp
+    utils/qdisablecopymove.hpp
+    utils/utils.hpp
     writeresponse.cpp
     writeresponse.hpp
 )

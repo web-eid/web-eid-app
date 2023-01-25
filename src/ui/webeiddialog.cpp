@@ -26,6 +26,7 @@
 
 #include "ui_dialog.h"
 
+#include <QActionGroup>
 #include <QButtonGroup>
 #include <QDesktopServices>
 #include <QFile>
@@ -36,13 +37,13 @@
 #include <QSettings>
 #include <QStyle>
 #include <QTimeLine>
-#include <QUrl>
-#include <application.hpp>
 
 #ifdef Q_OS_LINUX
 #include <stdio.h>
 #include <unistd.h>
 #endif
+
+#include <unordered_map>
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 4, 0)
 constexpr inline QLatin1String operator"" _L1(const char* str, size_t size) noexcept
@@ -58,16 +59,16 @@ using namespace electronic_id;
 class WebEidDialog::Private : public Ui::WebEidDialog
 {
 public:
-    // Non-owning observer pointers.
-    QRegularExpressionValidator* pinInputValidator;
-    QTimeLine* pinTimeoutTimer;
-    QButtonGroup* selectionGroup;
+    observer_ptr<QRegularExpressionValidator> pinInputValidator;
+    observer_ptr<QTimeLine> pinTimeoutTimer;
+    observer_ptr<QButtonGroup> selectionGroup;
+    observer_ptr<QToolButton> langButton;
 };
 
 WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 {
     ui->setupUi(this);
-    if (qApp->isDarkTheme()) {
+    if (Application::isDarkTheme()) {
         QFile f(QStringLiteral(":dark.qss"));
         if (f.open(QFile::ReadOnly | QFile::Text)) {
             setStyleSheet(styleSheet() + QTextStream(&f).readAll());
@@ -81,29 +82,58 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     }
     setWindowFlag(Qt::CustomizeWindowHint);
     setWindowFlag(Qt::WindowTitleHint);
-    setWindowTitle(qApp->applicationDisplayName());
-    setTrText(ui->aboutVersion, [] { return tr("Version: %1").arg(qApp->applicationVersion()); });
-    QMenu* langMenu = new QMenu(ui->langButton);
-    langMenu->addAction(QStringLiteral("EN"));
-    langMenu->addAction(QStringLiteral("ET"));
-    langMenu->addAction(QStringLiteral("FI"));
-    langMenu->addAction(QStringLiteral("HR"));
-    langMenu->addAction(QStringLiteral("RU"));
-    connect(langMenu, &QMenu::triggered, qApp, [this](QAction* action) {
-        QSettings().setValue(QStringLiteral("lang"), action->text().toLower());
-        ui->langButton->setText(action->text());
-        qApp->loadTranslations();
+    setWindowTitle(QApplication::applicationDisplayName());
+    setTrText(ui->aboutVersion,
+              [] { return tr("Version: %1").arg(QApplication::applicationVersion()); });
+
+    ui->langButton = new QToolButton(this);
+    ui->langButton->setObjectName("langButton");
+    static const std::vector<std::pair<QString, QString>> LANG_LIST {
+        {QStringLiteral("et"), QStringLiteral("Eesti")},
+        {QStringLiteral("en"), QStringLiteral("English")},
+        {QStringLiteral("ru"), QStringLiteral("Русский")},
+        {QStringLiteral("fi"), QStringLiteral("Finnish")},
+        {QStringLiteral("hr"), QStringLiteral("Hrvatska")}};
+    ui->langButton->setText(tr("EN", "Active language"));
+    if (auto i = std::find_if(
+            LANG_LIST.cbegin(), LANG_LIST.cend(),
+            [&](const auto& elem) { return elem.first == ui->langButton->text().toLower(); });
+        i != LANG_LIST.cend()) {
+        ui->langButton->setAccessibleName(i->second);
+    }
+    connect(ui->langButton, &QToolButton::clicked, this, [this] {
+        if (auto* menu = findChild<QWidget*>(QStringLiteral("langMenu"))) {
+            menu->deleteLater();
+            return;
+        }
+        auto* menu = new QWidget(this);
+        menu->setObjectName("langMenu");
+        auto* layout = new QVBoxLayout(menu);
+        layout->setContentsMargins(1, 1, 1, 1);
+        layout->setSpacing(1);
+        auto* langGroup = new QButtonGroup(menu);
+        langGroup->setExclusive(true);
+        for (const auto& [lang, title] : LANG_LIST) {
+            auto* action = new QPushButton(menu);
+            action->setText(title);
+            action->setProperty("lang", lang);
+            action->setAutoDefault(false);
+            layout->addWidget(action);
+            langGroup->addButton(action);
+            action->setCheckable(true);
+            action->setChecked(lang == ui->langButton->text().toLower());
+        }
+        menu->adjustSize();
+        menu->move(ui->langButton->geometry().bottomRight() - QPoint(menu->width() - 1, -2));
+        menu->show();
+        connect(langGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), menu,
+                [this, menu](QAbstractButton* action) {
+                    QSettings().setValue(QStringLiteral("lang"), action->property("lang"));
+                    ui->langButton->setText(action->property("lang").toString().toUpper());
+                    qApp->loadTranslations();
+                    menu->deleteLater();
+                });
     });
-#ifdef Q_OS_LINUX
-    setStyleSheet(styleSheet() + QStringLiteral("#langButton {padding-right: 15px;}"));
-    connect(ui->langButton, &QToolButton::clicked, this, [this, langMenu] {
-        langMenu->exec(mapToGlobal(ui->langButton->geometry().bottomLeft()));
-    });
-#else
-    ui->langButton->setMenu(langMenu);
-#endif
-    ui->langButton->setText(
-        QSettings().value(QStringLiteral("lang"), ui->langButton->text()).toString().toUpper());
 
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
     auto pinInputFont = ui->pinInput->font();
@@ -119,7 +149,10 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 
     connect(ui->pageStack, &QStackedWidget::currentChanged, this, &WebEidDialog::resizeHeight);
     connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
-            [this] { ui->okButton->setEnabled(true); });
+            [this] {
+                ui->okButton->setEnabled(true);
+                ui->okButton->setFocus();
+            });
     connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::reject);
     connect(ui->helpButton, &QPushButton::clicked, this, [this] {
         ui->helpButton->setDown(false);
@@ -188,11 +221,11 @@ WebEidDialog::~WebEidDialog()
 
 void WebEidDialog::showAboutPage()
 {
-    WebEidDialog* d = new WebEidDialog();
+    auto* d = new WebEidDialog();
     d->setAttribute(Qt::WA_DeleteOnClose);
     d->ui->helpButton->hide();
     d->ui->aboutAlert->hide();
-    auto app = static_cast<Application*>(QCoreApplication::instance());
+    auto* app = static_cast<Application*>(QCoreApplication::instance());
     if (app->isSafariExtensionContainingApp()) {
         d->setupOK([app] { app->showSafariSettings(); },
                    [] { return tr("Open Safari settings..."); }, true);
@@ -212,7 +245,7 @@ void WebEidDialog::showAboutPage()
 
 void WebEidDialog::showFatalErrorPage()
 {
-    WebEidDialog* d = new WebEidDialog();
+    auto* d = new WebEidDialog();
     d->setAttribute(Qt::WA_DeleteOnClose);
     d->setTrText(d->ui->messagePageTitleLabel, [] { return tr("Operation failed"); });
     d->ui->fatalError->show();
@@ -249,9 +282,9 @@ void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
     currentCommand = CommandType::INSERT_CARD;
 
     setTrText(ui->connectCardLabel,
-              [this, status] { return std::get<0>(retriableErrorToTextTitleAndIcon(status)); });
+              [status] { return std::get<0>(retriableErrorToTextTitleAndIcon(status)); });
     setTrText(ui->messagePageTitleLabel,
-              [this, status] { return std::get<1>(retriableErrorToTextTitleAndIcon(status)); });
+              [status] { return std::get<1>(retriableErrorToTextTitleAndIcon(status)); });
     ui->cardChipIcon->setPixmap(std::get<2>(retriableErrorToTextTitleAndIcon(status)));
 
     // In case the insert card page is not shown, switch back to it.
@@ -276,9 +309,8 @@ void WebEidDialog::onMultipleCertificatesReady(
     switch (currentCommand) {
     case CommandType::GET_SIGNING_CERTIFICATE:
         setupOK([this] {
-            if (CertificateButton* button =
+            if (auto* button =
                     qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
-
                 emit accepted(button->certificateInfo());
             } else {
                 emit failure(QStringLiteral("CertificateButton not found"));
@@ -296,7 +328,7 @@ void WebEidDialog::onMultipleCertificatesReady(
                 });
         setupOK([this, origin, certificateAndPinInfos] {
             // Authenticate continues with the selected certificate to onSingleCertificateReady().
-            if (CertificateButton* button =
+            if (auto* button =
                     qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
                 onSingleCertificateReady(origin, button->certificateInfo());
             } else {
@@ -306,8 +338,8 @@ void WebEidDialog::onMultipleCertificatesReady(
         ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
         break;
     default:
-        emit failure(
-            QStringLiteral("Command %1 not allowed here").arg(std::string(currentCommand).c_str()));
+        emit failure(QStringLiteral("Command %1 not allowed here")
+                         .arg(QString::fromStdString(currentCommand)));
     }
 }
 
@@ -370,7 +402,8 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         ui->pinTitleLabel->hide();
     } else if (useExternalPinDialog) {
         connectOkToCachePinAndEmitSelectedCertificate(certAndPin);
-        ui->pinInput->setText("unused"); // Dummy value as empty PIN is not allowed.
+        ui->pinInput->setText(
+            QString::fromLatin1("unused")); // Dummy value as empty PIN is not allowed.
     } else if (certAndPin.pinInfo.readerHasPinPad) {
         setupPinPadProgressBarAndEmitWait(certAndPin);
     } else {
@@ -382,7 +415,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
 
 void WebEidDialog::onRetry(const RetriableError error)
 {
-    onRetryImpl([this, error] { return std::get<0>(retriableErrorToTextTitleAndIcon(error)); });
+    onRetryImpl([error] { return std::get<0>(retriableErrorToTextTitleAndIcon(error)); });
 }
 
 void WebEidDialog::onSigningCertificateMismatch()
@@ -431,7 +464,7 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
     setTrText(ui->pinErrorLabel, message);
 
     if (ui->pinEntryTimeoutProgressBar->isVisible()) {
-        onRetryImpl(message);
+        onRetryImpl(std::move(message));
     } else {
         ui->pinInput->show();
         ui->pinInput->setFocus();
@@ -451,29 +484,43 @@ void WebEidDialog::reject()
 
 bool WebEidDialog::event(QEvent* event)
 {
-    if (event->type() == QEvent::LanguageChange) {
+    switch (event->type()) {
+    case QEvent::LanguageChange:
         ui->retranslateUi(this);
         emit languageChange();
         resizeHeight();
+        break;
+    case QEvent::MouseButtonRelease:
+        if (auto* w = findChild<QWidget*>(QStringLiteral("langMenu"))) {
+            w->deleteLater();
+        }
+        break;
+    case QEvent::Resize:
+        ui->langButton->move(width() - ui->langButton->width() - 20, 5);
+        break;
+    default:
+        break;
     }
     return WebEidUI::event(event);
 }
 
-void WebEidDialog::onRetryImpl(const std::function<QString()>& text)
+template <typename Text>
+void WebEidDialog::onRetryImpl(Text text)
 {
-    setTrText(ui->connectCardLabel, text);
+    setTrText(ui->connectCardLabel, std::forward<Text>(text));
     setTrText(ui->messagePageTitleLabel, [] { return tr("Operation failed"); });
     ui->cardChipIcon->setPixmap(pixmap("no-id-card"_L1));
     setupOK([this] { emit retry(); }, [] { return tr("Try again"); }, true);
     ui->pageStack->setCurrentIndex(int(Page::ALERT));
 }
 
-void WebEidDialog::setTrText(QWidget* label, const std::function<QString()>& text)
+template <typename Text>
+void WebEidDialog::setTrText(QWidget* label, Text text) const
 {
     disconnect(this, &WebEidDialog::languageChange, label, nullptr);
     label->setProperty("text", text());
     connect(this, &WebEidDialog::languageChange, label,
-            [label, text] { label->setProperty("text", text()); });
+            [label, text = std::forward<Text>(text)] { label->setProperty("text", text()); });
 }
 
 void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
@@ -509,7 +556,7 @@ void WebEidDialog::setupCertificateAndPinInfo(
         if (!ui->selectionGroup->buttons().isEmpty()) {
             previous = ui->selectionGroup->buttons().last();
         }
-        CertificateButton* button = new CertificateButton(certAndPin, ui->selectCertificatePage);
+        auto* button = new CertificateButton(certAndPin, ui->selectCertificatePage);
         ui->selectCertificateInfo->addWidget(button);
         ui->selectionGroup->addButton(button);
         connect(this, &WebEidDialog::languageChange, button,
@@ -587,8 +634,8 @@ void WebEidDialog::setupPinInput(const CardCertificateAndPinInfo& certAndPin)
     connectOkToCachePinAndEmitSelectedCertificate(certAndPin);
 }
 
-void WebEidDialog::setupOK(const std::function<void()>& func, const std::function<QString()>& text,
-                           bool enabled)
+template <typename Func>
+void WebEidDialog::setupOK(Func&& func, const std::function<QString()>& text, bool enabled)
 {
     ui->okButton->disconnect();
     connect(ui->okButton, &QPushButton::clicked, this, func);
@@ -629,10 +676,10 @@ void WebEidDialog::resizeHeight()
     adjustSize();
 }
 
-QPixmap WebEidDialog::pixmap(QLatin1String name) const
+QPixmap WebEidDialog::pixmap(QLatin1String name)
 {
     return {QStringLiteral(":/images/%1%2.svg")
-                .arg(name, qApp->isDarkTheme() ? "_dark"_L1 : QLatin1String())};
+                .arg(name, Application::isDarkTheme() ? "_dark"_L1 : QLatin1String())};
 }
 
 std::tuple<QString, QString, QPixmap>
