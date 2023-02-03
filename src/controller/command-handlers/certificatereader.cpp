@@ -54,7 +54,7 @@ CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& c
     if(serialNumber.size() > 6 && serialNumber.startsWith(QStringLiteral("PNO")) && serialNumber[5] == '-')
         serialNumber.remove(0, 6);
 
-    if (!givenName.isEmpty() || !surName.isEmpty() || !serialNumber.isEmpty()) {
+    if (!givenName.isEmpty() || !surName.isEmpty()) {
         subject = QStringLiteral("%1, %2, %3").arg(surName, givenName, serialNumber);
     }
 
