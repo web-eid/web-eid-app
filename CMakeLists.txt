@@ -1,7 +1,4 @@
-cmake_minimum_required(VERSION 3.8.0)
-if(POLICY CMP0092)
-  cmake_policy(SET CMP0092 NEW)
-endif()
+cmake_minimum_required(VERSION 3.16)
 
 if($ENV{BUILD_NUMBER})
     set(BUILD_NUMBER $ENV{BUILD_NUMBER})
@@ -10,7 +7,7 @@ elseif($ENV{CI_PIPELINE_IID})
 else()
     set(BUILD_NUMBER 0)
 endif()
-project(web-eid VERSION 2.2.0.${BUILD_NUMBER})
+project(web-eid VERSION 2.3.0.${BUILD_NUMBER})
 
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION_TWEAK})
@@ -32,7 +29,7 @@ set(CROSSSIGNCERT "" CACHE STRING "Common name of certificate to used cross sign
 set(SAFARI_PROVISIONPROFILE "" CACHE STRING "Provision profile to include in application (macOS)")
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} 5.9.0 REQUIRED COMPONENTS Core Widgets Network Test LinguistTools Svg)
+find_package(Qt${QT_VERSION_MAJOR} 5.12.0 REQUIRED COMPONENTS Core Widgets Network Test LinguistTools Svg)
 get_target_property(qtCore_install_prefix Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
 get_filename_component(qtCore_install_prefix ${qtCore_install_prefix} DIRECTORY)
 

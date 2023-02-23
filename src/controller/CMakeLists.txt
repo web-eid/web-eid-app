@@ -1,7 +1,6 @@
 add_library(controller STATIC
     application.cpp
     application.hpp
-    $<$<BOOL:${APPLE}>:application.mm>
     certandpininfo.hpp
     command-handlers/authenticate.cpp
     command-handlers/authenticate.hpp

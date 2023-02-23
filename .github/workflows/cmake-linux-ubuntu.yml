@@ -16,52 +16,34 @@ jobs:
     container: ${{matrix.container}}
     strategy:
       matrix:
-        container: ['ubuntu:18.04', 'ubuntu:20.04', 'ubuntu:22.04']
+        container: ['ubuntu:20.04', 'ubuntu:22.04']
         include:
-        - container: 'ubuntu:18.04'
-          name: ubuntu1804
         - container: 'ubuntu:20.04'
           name: ubuntu2004
         - container: 'ubuntu:22.04'
           name: ubuntu2204
 
     steps:
-      - uses: actions/checkout@v1
+      - name: Install dependencies
+        if: matrix.container == 'ubuntu:20.04'
+        run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts cdbs pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libqt5svg5-dev qttools5-dev-tools qttools5-dev
+
+      - name: Install dependencies
+        if: matrix.container != 'ubuntu:20.04'
+        run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts cdbs pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools libqt6core5compat6-dev
+
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
 
-      - name: Install dependencies
-        if: matrix.container != 'ubuntu:22.04'
-        run: apt update -qq && apt install --no-install-recommends -y lsb-release fakeroot build-essential devscripts cdbs pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libqt5svg5-dev qttools5-dev-tools qttools5-dev
-
-      - name: Install dependencies
-        if: matrix.container == 'ubuntu:22.04'
-        run: apt update -qq && apt install --no-install-recommends -y lsb-release fakeroot build-essential devscripts cdbs pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools libqt6core5compat6-dev
-
-      - name: Ubuntu 18.04 workarounds
-        if: matrix.container == 'ubuntu:18.04'
-        run: |
-          mkdir gtest
-          cd gtest
-          cmake /usr/src/gtest
-          cmake --build . --target install
-          apt --no-install-recommends -y install clang-10
-          echo "CC=clang-10" >> $GITHUB_ENV
-          echo "CXX=clang++-10" >> $GITHUB_ENV
-
-      - name: Create build directory
-        run: mkdir build
-
       - name: Configure CMake
-        working-directory: ${{github.workspace}}/build
-        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build -S .
 
       - name: Build
-        working-directory: ${{github.workspace}}/build
         run: |
-          cmake --build . --config $BUILD_TYPE --target installer
+          cmake --build build --config $BUILD_TYPE --target installer
           # Debian creates artifacts outside of project dir, copy them back to make them available in the build artifacts
-          cp -r ../../web-eid*.* src/app
+          cp -r ../web-eid*.* build/src/app
 
       - uses: actions/upload-artifact@v3
         with:
