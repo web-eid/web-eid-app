@@ -5,5 +5,8 @@
     <file alias="fi">fi.qm</file>
     <file alias="hr">hr.qm</file>
     <file alias="ru">ru.qm</file>
+    <file alias="nl">nl.qm</file>
+    <file alias="fr">fr.qm</file>
+    <file alias="de">de.qm</file>
   </qresource>
 </RCC>
