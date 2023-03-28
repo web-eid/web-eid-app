@@ -93,7 +93,10 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         {QStringLiteral("en"), QStringLiteral("English")},
         {QStringLiteral("ru"), QStringLiteral("Русский")},
         {QStringLiteral("fi"), QStringLiteral("Finnish")},
-        {QStringLiteral("hr"), QStringLiteral("Hrvatska")}};
+        {QStringLiteral("hr"), QStringLiteral("Hrvatska")},
+        {QStringLiteral("de"), QStringLiteral("Deutsch")},
+        {QStringLiteral("fr"), QStringLiteral("Française")},
+        {QStringLiteral("nl"), QStringLiteral("Nederlands")}};
     ui->langButton->setText(tr("EN", "Active language"));
     if (auto i = std::find_if(
             LANG_LIST.cbegin(), LANG_LIST.cend(),
@@ -225,7 +228,7 @@ void WebEidDialog::showAboutPage()
     d->setAttribute(Qt::WA_DeleteOnClose);
     d->ui->helpButton->hide();
     d->ui->aboutAlert->hide();
-    auto* app = static_cast<Application*>(QCoreApplication::instance());
+    auto* app = qApp;
     if (app->isSafariExtensionContainingApp()) {
         d->setupOK([app] { app->showSafariSettings(); },
                    [] { return tr("Open Safari settings..."); }, true);

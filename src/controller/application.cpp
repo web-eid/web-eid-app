@@ -46,7 +46,8 @@ inline CommandWithArguments::second_type parseArgumentJson(const QString& argume
     return argumentJson.object().toVariantMap();
 }
 
-Application::Application(int& argc, char** argv, const QString& name) : QApplication(argc, argv)
+Application::Application(int& argc, char** argv, const QString& name) :
+    QApplication(argc, argv), translator(new QTranslator(this))
 {
     setApplicationName(name);
     setApplicationDisplayName(QStringLiteral("Web eID"));
@@ -55,7 +56,6 @@ Application::Application(int& argc, char** argv, const QString& name) : QApplica
     setOrganizationName(QStringLiteral("RIA"));
     setQuitOnLastWindowClosed(false);
 
-    translator = new QTranslator(this);
     installTranslator(translator);
     loadTranslations();
 
@@ -102,9 +102,9 @@ bool Application::isDarkTheme()
 
 void Application::loadTranslations(const QString& lang)
 {
-    static const QStringList SUPPORTED_LANGS {QStringLiteral("en"), QStringLiteral("et"),
-                                              QStringLiteral("fi"), QStringLiteral("hr"),
-                                              QStringLiteral("ru")};
+    static const QStringList SUPPORTED_LANGS {
+        QStringLiteral("en"), QStringLiteral("et"), QStringLiteral("fi"), QStringLiteral("hr"),
+        QStringLiteral("ru"), QStringLiteral("de"), QStringLiteral("fr"), QStringLiteral("nl")};
     QLocale locale;
     QString langSetting = QSettings().value(QStringLiteral("lang"), lang).toString();
     if (SUPPORTED_LANGS.contains(langSetting)) {
