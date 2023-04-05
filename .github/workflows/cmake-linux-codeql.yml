@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Install dependencies
-      run: sudo apt update -qq && sudo apt install --no-install-recommends -y git pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
+      run: sudo apt update -qq && sudo apt install --no-install-recommends -y cmake libpcsclite-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 
     - uses: actions/checkout@v3
       with:
