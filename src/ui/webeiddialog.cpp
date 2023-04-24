@@ -92,7 +92,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         {QStringLiteral("et"), QStringLiteral("Eesti")},
         {QStringLiteral("en"), QStringLiteral("English")},
         {QStringLiteral("ru"), QStringLiteral("Русский")},
-        {QStringLiteral("fi"), QStringLiteral("Finnish")},
+        {QStringLiteral("fi"), QStringLiteral("Suomi")},
         {QStringLiteral("hr"), QStringLiteral("Hrvatska")},
         {QStringLiteral("de"), QStringLiteral("Deutsch")},
         {QStringLiteral("fr"), QStringLiteral("Française")},
@@ -126,9 +126,9 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
             action->setCheckable(true);
             action->setChecked(lang == ui->langButton->text().toLower());
         }
+        menu->show();
         menu->adjustSize();
         menu->move(ui->langButton->geometry().bottomRight() - QPoint(menu->width() - 1, -2));
-        menu->show();
         connect(langGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), menu,
                 [this, menu](QAbstractButton* action) {
                     QSettings().setValue(QStringLiteral("lang"), action->property("lang"));

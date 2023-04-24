@@ -97,7 +97,7 @@
     </message>
     <message>
         <source>&lt;b&gt;ID-card not found.&lt;/b&gt; Please insert the ID-card into the reader.</source>
-        <translation>&lt;b&gt;Carte ID introuvable.&lt;/b&gt; Veuillez insérer la Carte ID dans le lecteur..</translation>
+        <translation>&lt;b&gt;Carte ID introuvable.&lt;/b&gt; Veuillez insérer la Carte ID dans le lecteur.</translation>
     </message>
     <message>
         <source>PinPad timed out waiting for customer interaction.</source>

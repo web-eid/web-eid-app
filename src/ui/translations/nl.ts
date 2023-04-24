@@ -105,7 +105,7 @@
     </message>
     <message>
         <source>PIN entry cancelled.</source>
-        <translation>PIN-invoer geannuleerd..</translation>
+        <translation>PIN-invoer geannuleerd.</translation>
     </message>
     <message>
         <source>Waiting for card</source>
