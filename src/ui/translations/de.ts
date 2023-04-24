@@ -31,7 +31,7 @@
     <name>WebEidDialog</name>
     <message>
         <source>By choosing the certificate, I agree to the transfer of my name and personal identification code to the service provider.</source>
-        <translation>Mit der Auswahl des Zertifikats stimme ich der Übermittlung meines Namens und meines persönlichen Identifikationscodes an den Diensteanbieter zu..</translation>
+        <translation>Mit der Auswahl des Zertifikats stimme ich der Übermittlung meines Namens und meines persönlichen Identifikationscodes an den Diensteanbieter zu.</translation>
     </message>
     <message>
         <source>By authenticating, I agree to the transfer of my name and personal identification code to the service provider.</source>
