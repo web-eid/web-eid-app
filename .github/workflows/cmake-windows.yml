@@ -9,20 +9,6 @@ env:
 jobs:
   build:
     runs-on: windows-2019
-    strategy:
-      matrix:
-        suffix: [qt6]
-        qtver: [6.3.2]
-        toolset: [14.29]
-        arch: [x64]
-        include:
-        - arch: x64
-          qt: win64_msvc2019_64
-        - suffix: qt5
-          qtver: 5.12.12
-          toolset: 14.16
-          arch: x86
-          qt: win32_msvc2017
 
     steps:
       - name: Checkout code
@@ -34,20 +20,19 @@ jobs:
         uses: lukka/run-vcpkg@v7
         with:
           vcpkgArguments: gtest openssl
-          vcpkgTriplet: ${{matrix.arch}}-windows
-          vcpkgGitCommitId: 9b064ff07b987c8f213fdbf4358122fd4fe38ef1
+          vcpkgTriplet: x64-windows
+          vcpkgGitCommitId: 9b9c2758ece1d8ac0de90589730bb5ccf45c0874
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
         with:
-          version: ${{ matrix.qtver }}
-          arch: ${{ matrix.qt }}
+          version: 6.5.0
+          arch: win64_msvc2019_64
 
       - name: Setup MS Visual C++ dev env
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: ${{ matrix.arch }}
-          toolset: ${{ matrix.toolset }}
+          arch: x64
 
       - name: Configure
         run: |
@@ -62,13 +47,12 @@ jobs:
           cmake --build build --config ${env:BUILD_TYPE} --target bundle
 
       - name: Test
-        if: matrix.arch == 'x64'
         run: ctest -V -C ${env:BUILD_TYPE} --test-dir build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: web-eid-app-windows-build-${{github.run_number}}-${{matrix.suffix}}
+          name: web-eid-app-windows-build-${{github.run_number}}
           path: |
             build/src/app/*.msi
             build/src/app/*.exe
