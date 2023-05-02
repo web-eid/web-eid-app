@@ -29,21 +29,17 @@
 
 bool Application::isDarkTheme()
 {
-    if (__builtin_available(macOS 10.14, *))
-    {
-        auto appearance = [NSApp.effectiveAppearance bestMatchFromAppearancesWithNames:
-            @[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
-        return [appearance isEqualToString:NSAppearanceNameDarkAqua];
-    }
-    return false;
+    auto appearance = [NSApp.effectiveAppearance bestMatchFromAppearancesWithNames:
+        @[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+    return [appearance isEqualToString:NSAppearanceNameDarkAqua];
 }
 
 void Application::showAbout()
 {
     NSLog(@"web-eid-app: starting app");
-    NSError *error = nil;
-    NSRunningApplication *app = [NSWorkspace.sharedWorkspace launchApplicationAtURL:QUrl::fromLocalFile(qApp->applicationFilePath()).toNSURL() options:NSWorkspaceLaunchNewInstance configuration:@{} error:&error];
-    if (app == nil) {
-        NSLog(@"web-eid-app: failed to start app: %@", error);
-    }
+    [NSWorkspace.sharedWorkspace openApplicationAtURL:QUrl::fromLocalFile(qApp->applicationFilePath()).toNSURL() configuration:NSWorkspaceOpenConfiguration.configuration completionHandler:^(NSRunningApplication *app, NSError *error) {
+        if (app == nil) {
+            NSLog(@"web-eid-app: failed to start app: %@", error);
+        }
+    }];
 }
