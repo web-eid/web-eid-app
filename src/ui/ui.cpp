@@ -22,9 +22,9 @@
 
 #include "webeiddialog.hpp"
 
-WebEidUI* WebEidUI::createAndShowDialog(const CommandType command)
+observer_ptr<WebEidUI> WebEidUI::createAndShowDialog(const CommandType command)
 {
-    auto dialog = new WebEidDialog {};
+    auto *dialog = new WebEidDialog {};
     // close() deletes the dialog automatically if the Qt::WA_DeleteOnClose flag is set.
     dialog->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -32,6 +32,8 @@ WebEidUI* WebEidUI::createAndShowDialog(const CommandType command)
     dialog->activateWindow();
     dialog->show();
     dialog->raise();
+    dialog->hide();
+    dialog->show();
 
     return dialog;
 }
