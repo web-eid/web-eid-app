@@ -67,6 +67,8 @@ public:
 
 WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 {
+    // close() deletes the dialog automatically if the Qt::WA_DeleteOnClose flag is set.
+    setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
     if (Application::isDarkTheme()) {
         QFile f(QStringLiteral(":dark.qss"));
@@ -228,7 +230,6 @@ WebEidDialog::~WebEidDialog()
 void WebEidDialog::showAboutPage()
 {
     auto* d = new WebEidDialog();
-    d->setAttribute(Qt::WA_DeleteOnClose);
     d->ui->helpButton->hide();
     d->ui->aboutAlert->hide();
     auto* app = qApp;
@@ -252,7 +253,6 @@ void WebEidDialog::showAboutPage()
 void WebEidDialog::showFatalErrorPage()
 {
     auto* d = new WebEidDialog();
-    d->setAttribute(Qt::WA_DeleteOnClose);
     d->setTrText(d->ui->messagePageTitleLabel, [] { return tr("Operation failed"); });
     d->ui->fatalError->show();
     d->ui->fatalHelp->show();
@@ -644,7 +644,7 @@ template <typename Func>
 void WebEidDialog::setupOK(Func&& func, const std::function<QString()>& text, bool enabled)
 {
     ui->okButton->disconnect();
-    connect(ui->okButton, &QPushButton::clicked, this, func);
+    connect(ui->okButton, &QPushButton::clicked, this, std::forward<Func>(func));
     ui->okButton->show();
     ui->okButton->setEnabled(enabled);
     setTrText(
