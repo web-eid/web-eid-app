@@ -76,7 +76,7 @@ CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& c
         pinInfo.pinIsBlocked = true;
     }
 
-    return {card, certificateDer, certificate, certInfo, pinInfo};
+    return {card, certificateDer, certificate, std::move(certInfo), std::move(pinInfo)};
 }
 
 } // namespace
