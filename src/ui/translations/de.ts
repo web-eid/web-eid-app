@@ -91,8 +91,8 @@
     <message numerus="yes">
         <source>Incorrect PIN, %n attempts left.</source>
         <translation>
-            <numerusform>Incorrect PIN, %n versuche übrig.</numerusform>
-            <numerusform>Incorrect PIN, %n versuchen übrig.</numerusform>
+            <numerusform>Unrichtig PIN, %n versuche übrig.</numerusform>
+            <numerusform>Unrichtig PIN, %n versuchen übrig.</numerusform>
         </translation>
     </message>
     <message>
