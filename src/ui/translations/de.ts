@@ -84,20 +84,20 @@
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
-            <numerusform>Die PIN wurde mindestens einmal falsch eingegeben. %n attempt left.</numerusform>
-            <numerusform>Die PIN wurde mindestens einmal falsch eingegeben. %n attempts left.</numerusform>
+            <numerusform>Die PIN wurde mindestens einmal falsch eingegeben. %n Versuch übrig.</numerusform>
+            <numerusform>Die PIN wurde mindestens einmal falsch eingegeben. %n Versuche übrig.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Incorrect PIN, %n attempts left.</source>
         <translation>
-            <numerusform>Unrichtig PIN, %n versuche übrig.</numerusform>
-            <numerusform>Unrichtig PIN, %n versuchen übrig.</numerusform>
+            <numerusform>Falsche PIN, %n Versuch übrig.</numerusform>
+            <numerusform>Falsche PIN, %n Versuche übrig.</numerusform>
         </translation>
     </message>
     <message>
         <source>&lt;b&gt;ID-card not found.&lt;/b&gt; Please insert the ID-card into the reader.</source>
-        <translation>&lt;b&gt;ID-card nicht gefunden.&lt;/b&gt; Bitte stecken Sie den ID-card in das Lesegerät.</translation>
+        <translation>&lt;b&gt;ID-Karte nicht gefunden.&lt;/b&gt; Bitte stecken Sie die ID-Karte in das Lesegerät.</translation>
     </message>
     <message>
         <source>PinPad timed out waiting for customer interaction.</source>
@@ -121,27 +121,27 @@
     </message>
     <message>
         <source>Insert the ID-card</source>
-        <translation>ID-card einstecken</translation>
+        <translation>ID-Karte einstecken</translation>
     </message>
     <message>
         <source>The ID-card was removed from the reader. Please insert the ID-card into the reader.</source>
-        <translation>Der ID-card wurde aus dem Lesegerät entfernt. Bitte stecken Sie den Ausweis in das Lesegerät.</translation>
+        <translation>Die ID-Karte wurde aus dem Lesegerät entfernt. Bitte stecken Sie die ID-Karte in das Lesegerät.</translation>
     </message>
     <message>
         <source>Operation failed. Make sure that the ID-card and the card reader are connected correctly.</source>
-        <translation>Operation fehlgeschlagen. Stellen Sie sicher, dass die ID-Karte und das Kartenlesegerät korrekt angeschlossen sind.</translation>
+        <translation>Operation fehlgeschlagen. Stellen Sie sicher, dass die ID-Karte und das Lesegerät korrekt angeschlossen sind.</translation>
     </message>
     <message>
         <source>Check the ID-card and the reader connection</source>
-        <translation>Überprüfen Sie den Ausweis und den Anschluss des Lesegeräts</translation>
+        <translation>Überprüfen Sie die ID-Karte und den Anschluss des Lesegeräts</translation>
     </message>
     <message>
         <source>Connection to the ID-card or reader failed. Make sure that the ID-card and the card reader are connected correctly.</source>
-        <translation>Verbindung zum Ausweis oder Lesegerät fehlgeschlagen. Stellen Sie sicher, dass die ID-Karte und das Kartenlesegerät korrekt angeschlossen sind.</translation>
+        <translation>Verbindung zur ID-Karte oder zum Lesegerät fehlgeschlagen. Stellen Sie sicher, dass die ID-Karte und das Lesegerät korrekt angeschlossen sind.</translation>
     </message>
     <message>
         <source>The desired operation cannot be performed with the inserted ID-card. Make sure that the ID-card is supported by the Web eID application.</source>
-        <translation>Der gewünschte Vorgang kann mit dem eingelegten Ausweis nicht durchgeführt werden. Stellen Sie sicher, dass der Personalausweis von der Web-eID-Anwendung unterstützt wird.</translation>
+        <translation>Der gewünschte Vorgang kann mit der eingelegten Karte nicht durchgeführt werden. Stellen Sie sicher, dass die ID-Karte von der Web-eID-Anwendung unterstützt wird.</translation>
     </message>
     <message>
         <source>Operation not supported</source>
@@ -165,11 +165,11 @@
     </message>
     <message>
         <source>An error occurred in the Smart Card service required to use the ID-card. Make sure that the ID-card and the card reader are connected correctly or relaunch the Smart Card service.</source>
-        <translation>Im Smartcard-Dienst, der für die Verwendung der ID-Karte erforderlich ist, ist ein Fehler aufgetreten. Stellen Sie sicher, dass die ID-Karte und das Kartenlesegerät korrekt verbunden sind, oder starten Sie den Smart Card-Dienst neu.</translation>
+        <translation>Im Smartcard-Dienst, der für die Verwendung der ID-Karte erforderlich ist, ist ein Fehler aufgetreten. Stellen Sie sicher, dass die ID-Karte und das Lesegerät korrekt verbunden sind, oder starten Sie den Smart Card-Dienst neu.</translation>
     </message>
     <message>
         <source>The card in the reader is not supported. Make sure that the entered ID-card is supported by the Web eID application.</source>
-        <translation>Die Karte im Lesegerät wird nicht unterstützt. Stellen Sie sicher, dass der eingegebene Ausweis von der Web-eID-Anwendung unterstützt wird.</translation>
+        <translation>Die Karte im Lesegerät wird nicht unterstützt. Stellen Sie sicher, dass die eingegebene ID-Karte von der Web-eID-Anwendung unterstützt wird.</translation>
     </message>
     <message>
         <source>Unknown error</source>
@@ -177,7 +177,7 @@
     </message>
     <message>
         <source>Please enter %1 in PinPad reader</source>
-        <translation>Bitte geben Sie %1 in PinPad Reader ein</translation>
+        <translation>Bitte geben Sie %1 in PinPad-Leser ein</translation>
     </message>
     <message>
         <source>PIN1 for authentication</source>
@@ -217,7 +217,7 @@
     </message>
     <message>
         <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
-        <translation>Die Web-eID-Erweiterung ist deaktiviert. Die Erweiterung muss im Webbrowser aktiviert werden, um sich mit einem Ausweis zu authentifizieren und zu signieren.</translation>
+        <translation>Die Web-eID-Erweiterung ist deaktiviert. Die Erweiterung muss im Webbrowser aktiviert werden, um sich mit einer ID-Karte zu authentifizieren und zu signieren.</translation>
     </message>
     <message>
         <source>Open Safari settings...</source>
@@ -257,7 +257,7 @@
     </message>
     <message>
         <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
-        <translation>Der eingelegte Personalausweis enthält kein Zertifikat für den angeforderten Vorgang. Bitte führen Sie einen Ausweis ein, der die angeforderte Operation unterstützt.</translation>
+        <translation>Die eingelegte ID-Karte enthält kein Zertifikat für den angeforderten Vorgang. Bitte stecken Sie eine Karte ein, die den angeforderten Vorgang unterstützt.</translation>
     </message>
     <message>
         <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>

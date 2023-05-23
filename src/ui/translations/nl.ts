@@ -24,7 +24,7 @@
     </message>
     <message>
         <source>Pin locked</source>
-        <translation>Pin geblokkeerd</translation>
+        <translation>PIN geblokkeerd</translation>
     </message>
 </context>
 <context>
@@ -51,7 +51,7 @@
     </message>
     <message>
         <source>Invalid PIN length</source>
-        <translation>Ongeldige PIN-lengte</translation>
+        <translation>Ongeldige PIN lengte</translation>
     </message>
     <message>
         <source>Technical error</source>
@@ -79,20 +79,20 @@
     </message>
     <message>
         <source>PIN is locked. Unblock and try again.</source>
-        <translation>Pincode is vergrendeld. Deblokkeer en probeer het opnieuw.</translation>
+        <translation>PIN is geblokkeerd. Deblokkeer en probeer het opnieuw.</translation>
     </message>
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
-            <numerusform>De pincode is minstens één keer verkeerd ingevoerd. %n attempt left.</numerusform>
-            <numerusform>The PIN has been entered incorrectly at least once. %n attempts left.</numerusform>
+            <numerusform>De pincode is minstens één keer verkeerd ingevoerd. %n poging over.</numerusform>
+            <numerusform>De pincode is minstens één keer verkeerd ingevoerd. %n pogingen over.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Incorrect PIN, %n attempts left.</source>
         <translation>
-            <numerusform>Incorrect PIN, %n poging over.</numerusform>
-            <numerusform>Incorrect PIN, %n pogingen over.</numerusform>
+            <numerusform>Verkeerde PIN, %n poging over.</numerusform>
+            <numerusform>Verkeerde PIN, %n pogingen over.</numerusform>
         </translation>
     </message>
     <message>
@@ -105,7 +105,7 @@
     </message>
     <message>
         <source>PIN entry cancelled.</source>
-        <translation>PIN-invoer geannuleerd.</translation>
+        <translation>PIN invoer geannuleerd.</translation>
     </message>
     <message>
         <source>Waiting for card</source>
@@ -261,11 +261,11 @@
     </message>
     <message>
         <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
-        <translation>Voer een pincode in voor authenticatie in het dialoogvenster Pincode dat wordt geopend.</translation>
+        <translation>Voer een pincode in voor authenticatie in het PIN-dialoogvenster dat wordt geopend.</translation>
     </message>
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
-        <translation>Voer de pincode in voor ondertekening in het dialoogvenster Pincode dat wordt geopend.</translation>
+        <translation>Voer de PIN in voor ondertekening in het PIN-dialoogvenster dat wordt geopend.</translation>
     </message>
     <message>
         <source>EN</source>
