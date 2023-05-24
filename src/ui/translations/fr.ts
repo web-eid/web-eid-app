@@ -89,7 +89,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <source>Incorrect PIN, %n tentatives restantes.</source>
+        <source>Incorrect PIN, %n attempts left.</source>
         <translation>
             <numerusform>Incorrect PIN, %n tentative restante.</numerusform>
             <numerusform>Incorrect PIN, %n tentatives restantes.</numerusform>
