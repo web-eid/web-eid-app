@@ -84,15 +84,15 @@
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
-            <numerusform>Le code PIN a été saisi incorrectement au moins une fois. %n attempt left.</numerusform>
-            <numerusform>Le code PIN a été saisi incorrectement au moins une fois. %n attempts left.</numerusform>
+            <numerusform>Le code PIN a été saisi incorrectement au moins une fois. %n tentative restante.</numerusform>
+            <numerusform>Le code PIN a été saisi incorrectement au moins une fois. %n tentatives restantes.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Incorrect PIN, %n attempts left.</source>
         <translation>
-            <numerusform>Incorrect PIN, %n 1 tentative restante.</numerusform>
-            <numerusform>Incorrect PIN, %n 1 tentatives restantes.</numerusform>
+            <numerusform>Incorrect PIN, %n tentative restante.</numerusform>
+            <numerusform>Incorrect PIN, %n tentatives restantes.</numerusform>
         </translation>
     </message>
     <message>
@@ -125,7 +125,7 @@
     </message>
     <message>
         <source>The ID-card was removed from the reader. Please insert the ID-card into the reader.</source>
-        <translation>La carte ID été retirée du lecteur. Veuillez insérer la carte d'identité dans le lecteur.</translation>
+        <translation>La carte d'identité été retirée du lecteur. Veuillez insérer la carte d'identité dans le lecteur.</translation>
     </message>
     <message>
         <source>Operation failed. Make sure that the ID-card and the card reader are connected correctly.</source>
@@ -165,7 +165,7 @@
     </message>
     <message>
         <source>An error occurred in the Smart Card service required to use the ID-card. Make sure that the ID-card and the card reader are connected correctly or relaunch the Smart Card service.</source>
-        <translation>Une erreur s'est produite dans le service Smart Card requis pour utiliser la carte d'identité. Assurez-vous que la carte ID et le lecteur de carte sont correctement connectés ou relancez le service Smart Card.</translation>
+        <translation>Une erreur s'est produite dans le service Smart Card requis pour utiliser la carte d'identité. Assurez-vous que la carte d'identité et le lecteur de carte sont correctement connectés ou relancez le service Smart Card.</translation>
     </message>
     <message>
         <source>The card in the reader is not supported. Make sure that the entered ID-card is supported by the Web eID application.</source>
@@ -217,7 +217,7 @@
     </message>
     <message>
         <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
-        <translation>Die Web-eID-Erweiterung ist deaktiviert. Die Erweiterung muss im Webbrowser aktiviert werden, um sich mit einem Ausweis zu authentifizieren und zu signieren.</translation>
+        <translation>L'extension Web eID est désactivée. L'extension doit être activée dans le navigateur web pour s'authentifier et signer avec une carte d'identité.</translation>
     </message>
     <message>
         <source>Open Safari settings...</source>
@@ -265,7 +265,7 @@
     </message>
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
-        <translation>Veuillez saisir le code PIN pour vous connecter dans la fenêtre de dialogue PIN qui s'ouvre.</translation>
+        <translation>Veuillez saisir le code PIN pour signer dans la fenêtre de dialogue PIN qui s'ouvre.</translation>
     </message>
     <message>
         <source>EN</source>
