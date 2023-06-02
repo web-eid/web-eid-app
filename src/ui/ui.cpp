@@ -32,8 +32,8 @@ observer_ptr<WebEidUI> WebEidUI::createAndShowDialog(const CommandType command)
     dialog->activateWindow();
     dialog->show();
     dialog->raise();
-    dialog->hide();
-    dialog->show();
+    // dialog->hide();
+    // dialog->show();
 
     return dialog;
 }
