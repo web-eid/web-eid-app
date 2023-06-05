@@ -47,23 +47,24 @@ CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
     icon(new QLabel(self)), info(new QLabel(self)), warnIcon(new QLabel(self)),
     warn(new QLabel(CertificateWidget::tr("Pin locked"), self))
 {
-    icon->setPixmap(QStringLiteral(":/images/id-card.svg"));
-    warnIcon->setPixmap(QStringLiteral(":/images/fatal.svg"));
-    if (qApp->isDarkTheme()) {
+    if (Application::isDarkTheme()) {
         icon->setPixmap(QStringLiteral(":/images/id-card_dark.svg"));
         warnIcon->setPixmap(QStringLiteral(":/images/fatal_dark.svg"));
+    } else {
+        icon->setPixmap(QStringLiteral(":/images/id-card.svg"));
+        warnIcon->setPixmap(QStringLiteral(":/images/fatal.svg"));
     }
     warnIcon->hide();
     warnIcon->installEventFilter(self);
     warn->setObjectName(QStringLiteral("warn"));
     warn->hide();
-    QHBoxLayout* layout = new QHBoxLayout(self);
+    auto* layout = new QHBoxLayout(self);
     layout->setContentsMargins(20, 0, 20, 0);
-    layout->setSpacing(20);
+    layout->setSpacing(10);
     layout->addWidget(icon);
     layout->addWidget(info, 1);
     layout->addWidget(warnIcon);
-    QHBoxLayout* warnLayout = new QHBoxLayout;
+    auto* warnLayout = new QHBoxLayout;
     warnLayout->setSpacing(6);
     warnLayout->addWidget(warnIcon);
     warnLayout->addWidget(warn);
@@ -91,7 +92,7 @@ void CertificateWidgetInfo::setCertificateInfo(const CardCertificateAndPinInfo& 
 {
     warn->setText(CertificateWidget::tr("Pin locked"));
     certAndPinInfo = cardCertPinInfo;
-    const auto certInfo = cardCertPinInfo.certInfo;
+    const auto& certInfo = cardCertPinInfo.certInfo;
     QString warning, effectiveDate = certInfo.effectiveDate, expiryDate = certInfo.expiryDate;
     if (certInfo.notEffective) {
         effectiveDate = displayInRed(effectiveDate);
