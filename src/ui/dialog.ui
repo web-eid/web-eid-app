@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>495</height>
+    <width>550</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>500</width>
+    <width>550</width>
     <height>0</height>
    </size>
   </property>
@@ -527,7 +527,7 @@ height: 24px;
           <enum>Qt::TabFocus</enum>
          </property>
          <property name="text">
-          <string>Authenticate</string>
+          <string notr="true">Authenticate</string>
          </property>
         </widget>
        </item>
@@ -545,7 +545,7 @@ height: 24px;
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
-            <string>By authenticating, I agree to the transfer of my name and personal identification code to the service provider.</string>
+            <string notr="true">By authenticating, I agree to the transfer of my name and personal identification code to the service provider.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -569,49 +569,48 @@ height: 24px;
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="pinInputPageContentLayout">
-         <property name="spacing">
+        <layout class="QGridLayout" name="pinInputPageContentLayout">
+         <property name="horizontalSpacing">
+          <number>0</number>
+         </property>
+         <property name="verticalSpacing">
           <number>8</number>
          </property>
-         <item>
+         <item row="0" column="0" colspan="2">
           <widget class="CertificateWidget" name="pinInputCertificateInfo" native="true"/>
          </item>
-         <item>
-          <layout class="QHBoxLayout" name="selectAnotherCertificateLayout">
-           <item>
-            <widget class="QToolButton" name="selectAnotherCertificate">
-             <property name="text">
-              <string>Select another certificate</string>
-             </property>
-             <property name="icon">
-              <iconset resource="web-eid-resources.qrc">
-               <normaloff>:/images/left.svg</normaloff>:/images/left.svg</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="selectAnotherCertificateSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+         <item row="1" column="0">
+          <widget class="QToolButton" name="selectAnotherCertificate">
+           <property name="text">
+            <string>Select another certificate</string>
+           </property>
+           <property name="icon">
+            <iconset resource="web-eid-resources.qrc">
+             <normaloff>:/images/left.svg</normaloff>:/images/left.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <spacer name="selectAnotherCertificateSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -630,7 +629,7 @@ height: 24px;
             </font>
            </property>
            <property name="text">
-            <string>Enter PIN1 for authentication</string>
+            <string notr="true">Enter PIN1 for authentication</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -652,6 +651,12 @@ height: 24px;
          </item>
          <item>
           <widget class="QLabel" name="pinErrorLabel">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>36</height>
+            </size>
+           </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
@@ -660,6 +665,9 @@ height: 24px;
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -688,7 +696,7 @@ height: 24px;
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>0</height>
+             <height>5</height>
             </size>
            </property>
           </spacer>

@@ -20,7 +20,7 @@
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Émetteur: %2&lt;br /&gt;Valide: %3 jusqu'à %4%5</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Émetteur: %2&lt;br /&gt;Valide: %3 jusqu&apos;à %4%5</translation>
     </message>
     <message>
         <source>Pin locked</source>
@@ -31,23 +31,23 @@
     <name>WebEidDialog</name>
     <message>
         <source>By choosing the certificate, I agree to the transfer of my name and personal identification code to the service provider.</source>
-        <translation>En sélectionnant le certificat, j'accepte le transfert de mon nom et de mon code d'identification personnel au fournisseur de services.</translation>
+        <translation>En sélectionnant le certificat, j&apos;accepte le transfert de mon nom et de mon code d&apos;identification personnel au fournisseur de services.</translation>
     </message>
     <message>
         <source>By authenticating, I agree to the transfer of my name and personal identification code to the service provider.</source>
-        <translation>En m'authentifiant, j'accepte le transfert de mon nom et de mon code d'identification personnel au fournisseur de services.</translation>
+        <translation>En m&apos;authentifiant, j&apos;accepte le transfert de mon nom et de mon code d&apos;identification personnel au fournisseur de services.</translation>
     </message>
     <message>
         <source>By signing, I agree to the transfer of my name and personal identification code to the service provider.</source>
-        <translation>En signant, j'accepte le transfert de mon nom et de mon code d'identification personnel au fournisseur de services.</translation>
+        <translation>En signant, j&apos;accepte le transfert de mon nom et de mon code d&apos;identification personnel au fournisseur de services.</translation>
     </message>
     <message>
         <source>The smart card service required to use the ID-card is not running. Please start the smart card service and try again.</source>
-        <translation>Le service de carte à puce requis pour utiliser la carte d'identité n'est pas en cours d'exécution. Veuillez démarrer le service de carte à puce et réessayer.</translation>
+        <translation>Le service de carte à puce requis pour utiliser la carte d&apos;identité n&apos;est pas en cours d&apos;exécution. Veuillez démarrer le service de carte à puce et réessayer.</translation>
     </message>
     <message>
         <source>&lt;b&gt;Card reader not connected.&lt;/b&gt; Please connect the card reader to the computer.</source>
-        <translation>&lt;b&gt;Lecteur de carte non connecté.&lt;/b&gt; Veuillez connecter le lecteur de carte à l'ordinateur.</translation>
+        <translation>&lt;b&gt;Lecteur de carte non connecté.&lt;/b&gt; Veuillez connecter le lecteur de carte à l&apos;ordinateur.</translation>
     </message>
     <message>
         <source>Invalid PIN length</source>
@@ -59,7 +59,7 @@
     </message>
     <message>
         <source>Enter PIN1 for authentication</source>
-        <translation>Entrez PIN1 pour l'authentification</translation>
+        <translation>Entrez PIN1 pour l&apos;authentification</translation>
     </message>
     <message>
         <source>Authenticate</source>
@@ -101,7 +101,7 @@
     </message>
     <message>
         <source>PinPad timed out waiting for customer interaction.</source>
-        <translation>PinPad a expiré en attendant l'interaction du client.</translation>
+        <translation>PinPad a expiré en attendant l&apos;interaction du client.</translation>
     </message>
     <message>
         <source>PIN entry cancelled.</source>
@@ -125,23 +125,23 @@
     </message>
     <message>
         <source>The ID-card was removed from the reader. Please insert the ID-card into the reader.</source>
-        <translation>La carte d'identité été retirée du lecteur. Veuillez insérer la carte d'identité dans le lecteur.</translation>
+        <translation>La carte d&apos;identité été retirée du lecteur. Veuillez insérer la carte d&apos;identité dans le lecteur.</translation>
     </message>
     <message>
         <source>Operation failed. Make sure that the ID-card and the card reader are connected correctly.</source>
-        <translation>L'opération a échoué. Assurez-vous que la carte d'identité et le lecteur de carte sont correctement connectés.</translation>
+        <translation>L&apos;opération a échoué. Assurez-vous que la carte d&apos;identité et le lecteur de carte sont correctement connectés.</translation>
     </message>
     <message>
         <source>Check the ID-card and the reader connection</source>
-        <translation>Vérifiez la carte d'identité et la connexion du lecteur</translation>
+        <translation>Vérifiez la carte d&apos;identité et la connexion du lecteur</translation>
     </message>
     <message>
         <source>Connection to the ID-card or reader failed. Make sure that the ID-card and the card reader are connected correctly.</source>
-        <translation>La connexion à la carte d'identité ou au lecteur a échoué. Assurez-vous que la carte d'identité et le lecteur de carte sont correctement connectés.</translation>
+        <translation>La connexion à la carte d&apos;identité ou au lecteur a échoué. Assurez-vous que la carte d&apos;identité et le lecteur de carte sont correctement connectés.</translation>
     </message>
     <message>
         <source>The desired operation cannot be performed with the inserted ID-card. Make sure that the ID-card is supported by the Web eID application.</source>
-        <translation>L'opération souhaitée ne peut pas être effectuée avec la carte d'identité insérée. Assurez-vous que la carte d'identité est prise en charge par l'application Web eID.</translation>
+        <translation>L&apos;opération souhaitée ne peut pas être effectuée avec la carte d&apos;identité insérée. Assurez-vous que la carte d&apos;identité est prise en charge par l&apos;application Web eID.</translation>
     </message>
     <message>
         <source>Operation not supported</source>
@@ -153,7 +153,7 @@
     </message>
     <message>
         <source>Operation failed</source>
-        <translation>L'opération a échoué</translation>
+        <translation>L&apos;opération a échoué</translation>
     </message>
     <message>
         <source>Card driver error. Please try again.</source>
@@ -165,11 +165,11 @@
     </message>
     <message>
         <source>An error occurred in the Smart Card service required to use the ID-card. Make sure that the ID-card and the card reader are connected correctly or relaunch the Smart Card service.</source>
-        <translation>Une erreur s'est produite dans le service Smart Card requis pour utiliser la carte d'identité. Assurez-vous que la carte d'identité et le lecteur de carte sont correctement connectés ou relancez le service Smart Card.</translation>
+        <translation>Une erreur s&apos;est produite dans le service Smart Card requis pour utiliser la carte d&apos;identité. Assurez-vous que la carte d&apos;identité et le lecteur de carte sont correctement connectés ou relancez le service Smart Card.</translation>
     </message>
     <message>
         <source>The card in the reader is not supported. Make sure that the entered ID-card is supported by the Web eID application.</source>
-        <translation>La carte dans le lecteur n'est pas prise en charge. Assurez-vous que la carte d'identité saisie est prise en charge par l'application Web eID.</translation>
+        <translation>La carte dans le lecteur n&apos;est pas prise en charge. Assurez-vous que la carte d&apos;identité saisie est prise en charge par l&apos;application Web eID.</translation>
     </message>
     <message>
         <source>Unknown error</source>
@@ -181,7 +181,7 @@
     </message>
     <message>
         <source>PIN1 for authentication</source>
-        <translation>PIN1 pour l'authentification</translation>
+        <translation>PIN1 pour l&apos;authentification</translation>
     </message>
     <message>
         <source>PIN2 for signing</source>
@@ -209,7 +209,7 @@
     </message>
     <message>
         <source>Operation failed. More detailed information can be found in the log files.</source>
-        <translation>L'opération a échoué. Des informations plus détaillées peuvent être trouvées dans les fichiers journaux.</translation>
+        <translation>L&apos;opération a échoué. Des informations plus détaillées peuvent être trouvées dans les fichiers journaux.</translation>
     </message>
     <message>
         <source>Version: %1</source>
@@ -217,7 +217,7 @@
     </message>
     <message>
         <source>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</source>
-        <translation>L'extension Web eID est désactivée. L'extension doit être activée dans le navigateur web pour s'authentifier et signer avec une carte d'identité.</translation>
+        <translation>L&apos;extension Web eID est désactivée. L&apos;extension doit être activée dans le navigateur web pour s&apos;authentifier et signer avec une carte d&apos;identité.</translation>
     </message>
     <message>
         <source>Open Safari settings...</source>
@@ -225,7 +225,7 @@
     </message>
     <message>
         <source>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</source>
-        <translation>&lt;b&gt;Il s'agit d'une application complémentaire à l'extension de navigateur Web eID&lt;/b&gt; et ne peut pas être utilisé indépendamment. Pour désinstaller l'extension, supprimez cette application.</translation>
+        <translation>&lt;b&gt;Il s&apos;agit d&apos;une application complémentaire à l&apos;extension de navigateur Web eID&lt;/b&gt; et ne peut pas être utilisé indépendamment. Pour désinstaller l&apos;extension, supprimez cette application.</translation>
     </message>
     <message>
         <source>About Web eID</source>
@@ -237,7 +237,7 @@
     </message>
     <message>
         <source>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</source>
-        <translation>Recevez de l'aide ici: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
+        <translation>Recevez de l&apos;aide ici: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Incorrect PIN.</source>
@@ -249,23 +249,23 @@
     </message>
     <message>
         <source>Operation failed. Make sure that the driver of the corresponding card reader is used. Read more &lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</source>
-        <translation>L'opération a échoué. Assurez-vous que le pilote du lecteur de carte correspondant est utilisé. En savoir plus&lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</translation>
+        <translation>L&apos;opération a échoué. Assurez-vous que le pilote du lecteur de carte correspondant est utilisé. En savoir plus&lt;a href=&quot;https://www.id.ee/en/article/using-pinpad-card-reader-drivers/&quot;&gt;here&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>The certificate of the ID card in the reader does not match the originally submitted certificate. Please insert the original ID card.</source>
-        <translation>Le certificat de la carte d'identité dans le lecteur ne correspond pas au certificat soumis à l'origine. Veuillez insérer la carte d'identité originale.</translation>
+        <translation>Le certificat de la carte d&apos;identité dans le lecteur ne correspond pas au certificat soumis à l&apos;origine. Veuillez insérer la carte d&apos;identité originale.</translation>
     </message>
     <message>
         <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
-        <translation>La carte d'identité insérée ne contient pas de certificat pour l'opération demandée. Veuillez insérer une carte d'identité qui prend en charge l'opération demandée.</translation>
+        <translation>La carte d&apos;identité insérée ne contient pas de certificat pour l&apos;opération demandée. Veuillez insérer une carte d&apos;identité qui prend en charge l&apos;opération demandée.</translation>
     </message>
     <message>
         <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
-        <translation>Veuillez entrer le code PIN pour l'authentification dans la fenêtre de dialogue PIN qui s'ouvre.</translation>
+        <translation>Veuillez entrer le code PIN pour l&apos;authentification dans la fenêtre de dialogue PIN qui s&apos;ouvre.</translation>
     </message>
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
-        <translation>Veuillez saisir le code PIN pour signer dans la fenêtre de dialogue PIN qui s'ouvre.</translation>
+        <translation>Veuillez saisir le code PIN pour signer dans la fenêtre de dialogue PIN qui s&apos;ouvre.</translation>
     </message>
     <message>
         <source>EN</source>
