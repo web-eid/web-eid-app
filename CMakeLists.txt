@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/lib/libelectronic-id/README.md")
+    message(FATAL_ERROR "libelectronic-id submodule directory empty, did you 'git clone --recursive'?")
+endif()
+
 if($ENV{BUILD_NUMBER})
     set(BUILD_NUMBER $ENV{BUILD_NUMBER})
 elseif($ENV{CI_PIPELINE_IID})
