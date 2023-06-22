@@ -8,5 +8,7 @@
     <file alias="nl">nl.qm</file>
     <file alias="fr">fr.qm</file>
     <file alias="de">de.qm</file>
+    <file alias="cs">cs.qm</file>
+    <file alias="sk">sk.qm</file>
   </qresource>
 </RCC>

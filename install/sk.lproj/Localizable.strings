@@ -1,0 +1,7 @@
+"SU_TITLE" = "Web eID Software";
+"SU_ERROR" = "Chyba";
+"SU_1013" = "verzia macOS musí byť 10.13 alebo novšia.";
+"SU_BASE" = "Základné komponenty";
+"SU_FIREFOX" = "Podpora overovania a podpisovania Firefoxu";
+"SU_CHROME" = "Podpora overovania a podpisovania Chrome";
+"SU_CHROME_POLICY" = "Rozšírenie pre Chrome bude aktivované automaticky";

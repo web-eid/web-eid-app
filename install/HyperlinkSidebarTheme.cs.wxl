@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="cs-CZ" Language="1029" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="Caption">Instalace [WixBundleName]</String>
+  <String Id="Title">[WixBundleName]</String>
+  <String Id="InstallHeader">Vítejte!</String>
+  <String Id="InstallMessage">Instalační program nainstaluje [WixBundleName] do vašeho počítače. [WixBundleName] vám umožňuje používat vaši ID kartu pro bezpečné ověřování a podepisování na webu. Klikněte na Přizpůsobit, chcete-li upravit možnosti instalace, Instalovat pro provedení standardní instalace nebo Zavřít pro ukončení.</String>
+  <String Id="InstallVersion">Verze [WixBundleVersion]</String>
+  <String Id="ConfirmCancelMessage">Opravdu chcete operaci zrušit?</String>
+  <String Id="ExecuteUpgradeRelatedBundleMessage">Předchozí verze</String>
+  <String Id="HelpHeader">Nápověda k instalaci</String>
+  <String Id="HelpText">/install | /repair | /uninstall | /layout [directory] - nainstaluje, opraví, odinstaluje nebo
+   vytvoří úplnou místní kopii svazku v adresáři. Akce Instalovat je výchozí.
+
+/passive | /quiet - zobrazí minimální uživatelské rozhraní bez výzev nebo zobrazí žádné uživatelské rozhraní a
+   žádné výzvy. Ve výchozím nastavení se zobrazí uživatelské rozhraní a všechny výzvy.
+
+/norestart   - potlačí všechny pokusy o restart. Ve výchozím nastavení se uživatelské rozhraní zobrazí před restartem.
+/log log.txt - loguje do konkrétního souboru. Ve výchozím nastavení je log soubor vytvořen v %TEMP%.</String>
+  <String Id="HelpCloseButton">&amp;Zavřít</String>
+  <String Id="InstallLicenseLinkText">[WixBundleName] &lt;a href="#"&gt;licenční podmínky&lt;/a&gt;.</String>
+  <String Id="InstallAcceptCheckbox">&amp;Souhlasím s licenčními podmínkami</String>
+  <String Id="InstallOptionsButton">&amp;Přizpůsobit</String>
+  <String Id="InstallInstallButton">&amp;Instalovat</String>
+  <String Id="InstallCloseButton">&amp;Zavřít</String>
+  <String Id="OptionsHeader">Možnosti instalace</String>
+  <String Id="OptionsLocationLabel">Umístění instalace:</String>
+  <String Id="OptionsBrowseButton">P&amp;rocházet</String>
+  <String Id="OptionsOkButton">&amp;OK</String>
+  <String Id="OptionsCancelButton">&amp;Zrušit</String>
+  <String Id="ProgressHeader">Postup instalace</String>
+  <String Id="ProgressLabel">Zpracování:</String>
+  <String Id="OverallProgressPackageText">Inicializace...</String>
+  <String Id="ProgressCancelButton">&amp;Zrušit</String>
+  <String Id="ModifyHeader">Upravit instalaci</String>
+  <String Id="ModifyRepairButton">Op&amp;ravit</String>
+  <String Id="ModifyUninstallButton">&amp;Odinstalovat vše</String>
+  <String Id="ModifyCloseButton">&amp;Zavřít</String>
+  <String Id="SuccessRepairHeader">Oprava byla úspěšně dokončena.</String>
+  <String Id="SuccessUninstallHeader">Odinstalace byla dokončena</String>
+  <String Id="SuccessInstallHeader">Instalace byla úspěšně dokončena!</String>
+  <String Id="SuccessInstallMessage">
+
+Povolte rozšíření ve webovém prohlížeči pro použití ID karty.
+
+1. Otevřete prohlížeč
+2. Přejděte na Rozšíření
+3. Povolte Web eID
+Příručku naleznete &lt;a href="https://www.id.ee/en/article/configuring-browsers-for-using-id-card/"&gt;zde&lt;/a&gt;.</String>
+  <String Id="SuccessHeader">Instalace byla úspěšná</String>
+  <String Id="SuccessLaunchButton">&amp;Spustit nástroj ID karty</String>
+  <String Id="SuccessRestartText">Před použitím softwaru musíte restartovat počítač.</String>
+  <String Id="SuccessRestartButton">&amp;Restartovat</String>
+  <String Id="SuccessCloseButton">&amp;Zavřít</String>
+  <String Id="FailureHeader">Instalace se nezdařila</String>
+  <String Id="FailureInstallHeader">Instalace se nezdařila</String>
+  <String Id="FailureUninstallHeader">Odinstalace se nezdařila</String>
+  <String Id="FailureRepairHeader">Oprava se nezdařila</String>
+  <String Id="FailureHyperlinkLogText">Operace se nezdařila. Nápovědu k instalaci softwaru naleznete na webu id.ee.</String>
+  <String Id="FailureHyperlinkLogLink">&lt;a href="#"&gt;Další informace naleznete v log souboru&lt;/a&gt;.</String>
+  <String Id="FailureRestartText">Abyste dokončili rollback softwaru, musíte restartovat počítač.</String>
+  <String Id="FailureRestartButton">&amp;Restartovat</String>
+  <String Id="FailureCloseButton">&amp;Zavřít</String>
+  <String Id="FilesInUseHeader">Používané soubory</String>
+  <String Id="FilesInUseLabel">Následující aplikace používají soubory, které je třeba aktualizovat:</String>
+  <String Id="FilesInUseCloseRadioButton">Zavřete &amp;aplikace a pokuste se je restartovat.</String>
+  <String Id="FilesInUseDontCloseRadioButton">&amp;Nezavírejte aplikace. Bude vyžadován restart.</String>
+  <String Id="FilesInUseOkButton">&amp;OK</String>
+  <String Id="FilesInUseCancelButton">&amp;Zrušit</String>
+  <String Id="ChangeLogLink"></String>
+  <String Id="OptionsCustomizeInstall">Přizpůsobit instalaci</String>
+  <String Id="chromeplugin">Podpora podepisování Chrome</String>
+  <String Id="chromepluginpolicy">Podepisovací plugin Chrome bude aktivován automaticky</String>
+  <String Id="firefoxplugin">Podpora podepisování a ověřování Firefoxu</String>
+  <String Id="edgeplugin">Podpora podepisování Edge Chromium</String>
+  <String Id="edgepluginpolicy">Podepisovací plugin Edge Chromium bude aktivován automaticky</String>
+  <String Id="SupportedWindows">Používáte nepodporovaný operační systém. K úspěšné instalaci ID-Software budete potřebovat Windows 8.1 nebo novější.</String>
+</WixLocalization>
