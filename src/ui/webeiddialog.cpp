@@ -98,7 +98,9 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         {QStringLiteral("hr"), QStringLiteral("Hrvatska")},
         {QStringLiteral("de"), QStringLiteral("Deutsch")},
         {QStringLiteral("fr"), QStringLiteral("Française")},
-        {QStringLiteral("nl"), QStringLiteral("Nederlands")}};
+        {QStringLiteral("nl"), QStringLiteral("Nederlands")},
+        {QStringLiteral("cs"), QStringLiteral("Čeština")},
+        {QStringLiteral("sk"), QStringLiteral("Slovenština")}};
     ui->langButton->setText(tr("EN", "Active language"));
     if (auto i = std::find_if(
             LANG_LIST.cbegin(), LANG_LIST.cend(),

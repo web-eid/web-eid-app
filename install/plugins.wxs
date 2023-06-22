@@ -13,6 +13,8 @@
           ThemeFile="$(var.path)\HyperlinkSidebarTheme.xml"/>
         <Payload Name="1033\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.en.wxl"/>
         <Payload Name="1061\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.et.wxl"/>
+        <Payload Name="1029\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.cs.wxl"/>
+        <Payload Name="1051\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.sk.wxl"/>
     </BootstrapperApplicationRef>
 
     <Variable Name="ChromeSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1"/>

@@ -17,6 +17,8 @@ qt_add_translation(SOURCES
     translations/de.ts
     translations/fr.ts
     translations/nl.ts
+    translations/cs.ts
+    translations/sk.ts
 )
 add_library(ui STATIC
     ${SOURCES}
