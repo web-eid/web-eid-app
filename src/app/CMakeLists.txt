@@ -162,8 +162,11 @@ elseif(APPLE)
         )
     endif()
 else()
+    option(BUNDLE_XPI "Download and bundle the Firefox extension" OFF)
     include(GNUInstallDirs)
-    file(DOWNLOAD ${FIREFOX_URL} ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi)
+    if (BUNDLE_XPI)
+      file(DOWNLOAD ${FIREFOX_URL} ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi)
+    endif()
     set(WEBEID_PATH ${CMAKE_INSTALL_FULL_BINDIR}/web-eid)
     install(TARGETS web-eid DESTINATION ${CMAKE_INSTALL_BINDIR})
     if(EXISTS "/etc/debian_version")
@@ -179,8 +182,10 @@ else()
         DESTINATION ${CMAKE_INSTALL_DATADIR}/google-chrome/extensions)
     install(FILES ${CMAKE_SOURCE_DIR}/install/web-eid.desktop
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384})
+    if (BUNDLE_XPI)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi
+              DESTINATION ${CMAKE_INSTALL_DATADIR}/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384})
+    endif()
     foreach(RES 16 32 128 256 512)
         install(
             FILES ${CMAKE_SOURCE_DIR}/install/appicon_${RES}.png
