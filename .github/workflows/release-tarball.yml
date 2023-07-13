@@ -1,0 +1,35 @@
+name: Release Tarball
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  upload-release-tarball:
+    name: upload complete source code for release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout tagged release recursively incl. submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: set environment variables
+      run: |
+        RELEASE_TARBALL_NAME="${{ github.repository }}"
+        RELEASE_TARBALL_NAME="${RELEASE_TARBALL_NAME#*/}-full-${{ github.ref_name }}"
+        RELEASE_TARBALL_PATH="./${RELEASE_TARBALL_NAME}.tar.gz"
+        echo "RELEASE_TARBALL_NAME=${RELEASE_TARBALL_NAME}" >> "${GITHUB_ENV}"
+        echo "RELEASE_TARBALL_PATH=${RELEASE_TARBALL_PATH}" >> "${GITHUB_ENV}"
+
+    - name: create compressed tarball with git-archive(1)
+      uses: qmonnet/git-archive-all-action@v1
+      with:
+        prefix: ${{ format('{0}/', env.RELEASE_TARBALL_NAME) }}
+        output-files: ${{ env.RELEASE_TARBALL_PATH }}
+
+    - name: upload static release asset
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ${{ env.RELEASE_TARBALL_PATH }}
