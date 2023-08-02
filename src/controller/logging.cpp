@@ -45,7 +45,7 @@ bool openLogFile(QFile& logFile)
     }
     QDir logFileDir {logFilePath};
     if (!logFileDir.mkpath(logFileDir.absolutePath())) {
-        std::cerr << "Unable to create logifile directory '"
+        std::cerr << "Unable to create logfile directory '"
                   << logFileDir.absolutePath().toStdString() << '\'' << std::endl;
         return false;
     }
