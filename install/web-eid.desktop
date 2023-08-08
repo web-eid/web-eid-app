@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 
-Exec=web-eid %F
+Exec=web-eid --about
 Icon=web-eid
 
 Name=Web eID
