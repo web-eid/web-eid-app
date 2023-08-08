@@ -104,7 +104,7 @@ void Application::loadTranslations(const QString& lang)
 {
     static const QStringList SUPPORTED_LANGS {
         QStringLiteral("en"), QStringLiteral("et"), QStringLiteral("fi"), QStringLiteral("hr"),
-        QStringLiteral("ru"), QStringLiteral("de"), QStringLiteral("fr"), QStringLiteral("nl"), 
+        QStringLiteral("ru"), QStringLiteral("de"), QStringLiteral("fr"), QStringLiteral("nl"),
         QStringLiteral("cs"), QStringLiteral("sk")};
     QLocale locale;
     QString langSetting = QSettings().value(QStringLiteral("lang"), lang).toString();
@@ -116,9 +116,14 @@ void Application::loadTranslations(const QString& lang)
 
 CommandWithArgumentsPtr Application::parseArgs()
 {
-    QCommandLineOption parentWindow(QStringLiteral("parent-window"),
-                                    QStringLiteral("Parent window handle (unused)"),
-                                    QStringLiteral("parent-window"));
+    QCommandLineOption argumentFromExtension(
+        QStringLiteral("argument-from-extension"),
+        QStringLiteral("The first argument from the extension. "
+                       "This could be the path to the app manifest (Firefox) or "
+                       "the origin of the extension that started it (Chrome)."),
+        QStringLiteral("argument-from-extension"));
+    QCommandLineOption aboutArgument(QStringLiteral("about"),
+                                     QStringLiteral("Show Web-eID about window"));
     QCommandLineParser parser;
     parser.setApplicationDescription(QStringLiteral(
         "Application that communicates with the Web eID browser extension via standard input and "
@@ -129,7 +134,8 @@ CommandWithArgumentsPtr Application::parseArgs()
     parser.addOptions({{{"c", "command-line-mode"},
                         "Command-line mode, read commands from command line arguments instead of "
                         "standard input."},
-                       parentWindow});
+                       aboutArgument,
+                       argumentFromExtension});
 
     static const auto COMMANDS = "'" + CMDLINE_GET_SIGNING_CERTIFICATE + "', '"
         + CMDLINE_AUTHENTICATE + "', '" + CMDLINE_SIGN + "'.";
@@ -158,13 +164,22 @@ CommandWithArgumentsPtr Application::parseArgs()
         }
         throw ArgumentError("The command has to be one of " + COMMANDS.toStdString());
     }
-    if (parser.isSet(parentWindow)) {
+    if (parser.isSet(argumentFromExtension)) {
         // https://bugs.chromium.org/p/chromium/issues/detail?id=354597#c2
-        qDebug() << "Parent window handle is unused" << parser.value(parentWindow);
+        qDebug() << "Argument from extension is unused" << parser.value(argumentFromExtension);
     }
+    if (parser.isSet(aboutArgument)) {
+        return std::make_unique<CommandWithArguments>(CommandType::ABOUT, QVariantMap());
+    }
+    // In Linux, when the application is launched via xdg-desktop-portal from a browser that runs
+    // inside a Snap/Flatpack/other container, it doesn't receive the extension origin command-line
+    // argument. Hence, a special case is required to run the application in input-output mode
+    // instead of opening the about window in Linux.
+#ifndef Q_OS_LINUX
     if (arguments().size() == 1) {
         return std::make_unique<CommandWithArguments>(CommandType::ABOUT, QVariantMap());
     }
+#endif
     return nullptr;
 }
 
