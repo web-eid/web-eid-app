@@ -6,7 +6,7 @@ env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_DIR: build
   BUILD_NUMBER: ${{github.run_number}}
-  OPENSSL_ROOT_DIR: /usr/local/opt/openssl@3.0
+  OPENSSL_ROOT_DIR: ${{ github.workspace }}/openssl-binary
   QT_QPA_PLATFORM: offscreen
   MAKEFLAGS: -j3
   MACOSX_DEPLOYMENT_TARGET: 10.15
@@ -21,8 +21,29 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install libraries
-        run: brew install web-eid/gtest/gtest
+      - name: Build GTest
+        run: |
+          git clone --depth=1 https://github.com/google/googletest.git
+          cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_CXX_STANDARD=17 -S googletest -B gtest-build
+          cmake --build gtest-build --target install
+
+      - name: Build OpenSSL
+        run: |
+          git clone --depth=1 https://github.com/openssl/openssl.git -b openssl-3.0
+          cd openssl
+          for ARCH in x86_64 arm64; do
+            ./Configure darwin64-${ARCH} --prefix=${OPENSSL_ROOT_DIR} no-shared no-module no-tests enable-ec_nistp_64_gcc_128
+            MAKEFLAGS=-j1 make -s install_sw
+            mv ${OPENSSL_ROOT_DIR}{,.${ARCH}}
+            make distclean
+          done
+          cd -
+          cp -a ${OPENSSL_ROOT_DIR}{.x86_64,}
+          cd ${OPENSSL_ROOT_DIR}.arm64
+          for i in lib/lib*.*; do
+            lipo -create ${OPENSSL_ROOT_DIR}.x86_64/${i} ${i} -output ${OPENSSL_ROOT_DIR}/${i}
+          done
+          cd -
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
@@ -31,7 +52,7 @@ jobs:
           arch: clang_64
 
       - name: Configure
-        run: cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -B ${BUILD_DIR} -S .
+        run: cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -B ${BUILD_DIR} -S .
 
       - name: Build
         run: |
