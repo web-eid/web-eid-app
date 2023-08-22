@@ -29,7 +29,6 @@ if(WIN32)
     set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.${PLATFORM})
     list(APPEND CANDLE_CMD "$ENV{WIX}bin\\candle.exe" -nologo -arch ${PLATFORM}
         -dMSI_VERSION=${PROJECT_VERSION}
-        -dPlatform=${PLATFORM}
         -dssl_path="${SSL_PATH}"
         -dqt_suffix="$<$<CONFIG:Debug>:d>"
         -djson=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
@@ -49,7 +48,7 @@ if(WIN32)
         COMMAND ${CANDLE_CMD}
         COMMAND ${LIGHT_CMD} -o "${BASE_FILE}.msi"
         #Build MSI with QT
-        COMMAND ${CANDLE_CMD} -dqt_path=${qtCore_install_prefix} -dqt_version_major=${QT_VERSION_MAJOR}
+        COMMAND ${CANDLE_CMD} -dqt_path=${qtCore_install_prefix}
         COMMAND ${LIGHT_CMD} -o "${BASE_FILE}.qt.msi"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
