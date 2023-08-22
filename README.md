@@ -326,6 +326,8 @@ Use _Powershell_ to run the following commands to build the project.
 
 - Run _CMake_:
 
+Optionally, WIX Toolset v3 is required for the installer, and the WIX environment variable should be set for the installed target.
+
       cmake "-DCMAKE_PREFIX_PATH=${QT_ROOT}" `
           "-DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
           "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" -A x64 -B build -S .

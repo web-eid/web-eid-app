@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<?ifndef Platform ?>
-<?define Platform="x64" ?>
-<?endif ?>
-
 <?ifndef qt_suffix ?>
 <?define qt_suffix="" ?>
 <?endif ?>
@@ -16,7 +12,7 @@
 <?define VCVER = "141" ?>
 <?endif?>
 
-<?if $(var.Platform) = x64 ?>
+<?if $(sys.BUILDARCH) = x64 ?>
   <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
   <?define ssl_suffix = "-x64" ?>
 <?else ?>
@@ -25,15 +21,15 @@
 <?endif ?>
 
 <?if $(var.qt_suffix) = "d" ?>
-<?define VCPATH = "$(env.VCTOOLSREDISTDIR)\Debug_NonRedist\$(var.Platform)\Microsoft.VC$(var.VCVER).DebugCRT" ?>
+<?define VCPATH = "$(env.VCTOOLSREDISTDIR)\Debug_NonRedist\$(sys.BUILDARCH)\Microsoft.VC$(var.VCVER).DebugCRT" ?>
 <?else ?>
-<?define VCPATH = "$(env.VCTOOLSREDISTDIR)\$(var.Platform)\Microsoft.VC$(var.VCVER).CRT" ?>
+<?define VCPATH = "$(env.VCTOOLSREDISTDIR)\$(sys.BUILDARCH)\Microsoft.VC$(var.VCVER).CRT" ?>
 <?endif ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Name="Web eID software" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
       Id="*" Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="RIA">
-    <Package Platform="$(var.Platform)" Keywords="Installer" InstallerVersion="405" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated"/>
+    <Package Keywords="Installer" InstallerVersion="405" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated"/>
     <MediaTemplate EmbedCab="yes" CompressionLevel="high"/>
     <Icon Id="web_eid.exe" SourceFile="$(var.app_path)"/>
     <Property Id="ARPPRODUCTICON" Value="web_eid.exe"/>
@@ -85,26 +81,21 @@
 <?ifdef var.qt_path ?>
             <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll"/>
             <File Source="$(var.VCPATH)\vcruntime140$(var.qt_suffix).dll"/>
-<?if $(var.Platform) = x64 AND $(env.VisualStudioVersion) = "16.0" ?>
+<?if $(sys.BUILDARCH) = x64 AND $(env.VisualStudioVersion) != "15.0" ?>
             <File Source="$(var.VCPATH)\vcruntime140_1$(var.qt_suffix).dll"/>
             <File Source="$(var.VCPATH)\msvcp140_1$(var.qt_suffix).dll"/>
             <File Source="$(var.VCPATH)\msvcp140_2$(var.qt_suffix).dll"/>
 <?endif?>
             <File Source="$(var.ssl_path)\libcrypto-3$(var.ssl_suffix).dll"/>
             <File Source="$(var.ssl_path)\libssl-3$(var.ssl_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Core$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Gui$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Network$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Svg$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt$(var.qt_version_major)Widgets$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\Qt6Core$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\Qt6Gui$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\Qt6Network$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\Qt6Svg$(var.qt_suffix).dll"/>
+            <File Source="$(var.qt_path)\Qt6Widgets$(var.qt_suffix).dll"/>
             <File Source="$(var.qt_path)\D3DCompiler_47.dll"/>
             <File Source="$(var.qt_path)\opengl32sw.dll" />
-<?if $(var.qt_version_major) = "5" ?>
-            <File Source="$(var.qt_path)\libEGL$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\libGLESv2$(var.qt_suffix).dll"/>
-<?else ?>
             <File Source="$(var.qt_path)\Qt6SvgWidgets$(var.qt_suffix).dll"/>
-<?endif?>
 <?endif?>
           </Component>
           <Component Id="ChromeEdge" Transitive="yes">
@@ -135,13 +126,11 @@
               <File Name="qsvg$(var.qt_suffix).dll"/>
             </Component>
           </Directory>
-<?if $(var.qt_version_major) = "6" ?>
           <Directory Id="tls" Name="tls" FileSource="$(var.qt_path)\..\plugins\tls">
             <Component Id="qopensslbackend.dll">
               <File Name="qopensslbackend$(var.qt_suffix).dll"/>
             </Component>
           </Directory>
-<?endif?>
 <?endif?>
         </Directory>
       </Directory>
@@ -191,9 +180,7 @@
       <ComponentRef Id="qwindows.dll" />
       <ComponentRef Id="qwindowsvistastyle.dll" />
       <ComponentRef Id="imageformats.dll" />
-<?if $(var.qt_version_major) = "6" ?>
       <ComponentRef Id="qopensslbackend.dll" />
-<?endif?>
 <?endif?>
     </Feature>
   </Product>
