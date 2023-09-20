@@ -86,12 +86,14 @@
         <translation>
             <numerusform>PIN byl minimálně jednou zadán nesprávně. Zbývá %n pokus.</numerusform>
             <numerusform>PIN byl minimálně jednou zadán nesprávně. Zbývá %n pokusů.</numerusform>
+            <numerusform>PIN byl minimálně jednou zadán nesprávně. Zbývá %n pokusů.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Incorrect PIN, %n attempts left.</source>
         <translation>
             <numerusform>Nesprávný PIN, zbývá %n pokus.</numerusform>
+            <numerusform>Nesprávný PIN, zbývá %n pokusů.</numerusform>
             <numerusform>Nesprávný PIN, zbývá %n pokusů.</numerusform>
         </translation>
     </message>
