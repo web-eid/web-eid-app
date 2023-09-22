@@ -116,14 +116,16 @@ void Application::loadTranslations(const QString& lang)
 
 CommandWithArgumentsPtr Application::parseArgs()
 {
-    QCommandLineOption argumentFromExtension(
-        QStringLiteral("argument-from-extension"),
-        QStringLiteral("The first argument from the extension. "
-                       "This could be the path to the app manifest (Firefox) or "
-                       "the origin of the extension that started it (Chrome)."),
-        QStringLiteral("argument-from-extension"));
+    // On Windows Chrome, the native messaging host is also passed a command line argument with a
+    // handle to the calling Chrome native window: --parent-window=<decimal handle value>.
+    // We don't use it, but need to support it to avoid unknown option errors.
+    QCommandLineOption parentWindow(QStringLiteral("parent-window"),
+                                    QStringLiteral("Parent window handle (unused)"),
+                                    QStringLiteral("parent-window"));
+
     QCommandLineOption aboutArgument(QStringLiteral("about"),
                                      QStringLiteral("Show Web-eID about window"));
+
     QCommandLineParser parser;
     parser.setApplicationDescription(QStringLiteral(
         "Application that communicates with the Web eID browser extension via standard input and "
@@ -135,7 +137,7 @@ CommandWithArgumentsPtr Application::parseArgs()
                         "Command-line mode, read commands from command line arguments instead of "
                         "standard input."},
                        aboutArgument,
-                       argumentFromExtension});
+                       parentWindow});
 
     static const auto COMMANDS = "'" + CMDLINE_GET_SIGNING_CERTIFICATE + "', '"
         + CMDLINE_AUTHENTICATE + "', '" + CMDLINE_SIGN + "'.";
@@ -164,9 +166,9 @@ CommandWithArgumentsPtr Application::parseArgs()
         }
         throw ArgumentError("The command has to be one of " + COMMANDS.toStdString());
     }
-    if (parser.isSet(argumentFromExtension)) {
+    if (parser.isSet(parentWindow)) {
         // https://bugs.chromium.org/p/chromium/issues/detail?id=354597#c2
-        qDebug() << "Argument from extension is unused" << parser.value(argumentFromExtension);
+        qDebug() << "Parent window handle is unused" << parser.value(parentWindow);
     }
     if (parser.isSet(aboutArgument)) {
         return std::make_unique<CommandWithArguments>(CommandType::ABOUT, QVariantMap());
