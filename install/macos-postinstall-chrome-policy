@@ -1,3 +1,0 @@
-#!/bin/sh
-
-sudo profiles -IF $PWD/chrome-policy.plist
