@@ -8,7 +8,7 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
     <allowed-os-versions>
         <os-version min="10.10"/>
     </allowed-os-versions>
-    <options customize="allow" require-scripts="false" rootVolumeOnly="true" hostArchitectures="x86_64"/>
+    <options customize="allow" require-scripts="false" rootVolumeOnly="true" hostArchitectures="arm64,x86_64"/>
     <!--domains enable_anywhere="false" enable_currentUserHome="false" enable_localSystem="true"/-->
     <background file="background.png" alignment="center" mime-type="image/png" scaling="tofit" />
     <welcome file="Welcome.html" mime-type="text/html"/>
@@ -17,9 +17,9 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
     <script>
 <![CDATA[
 function pm_install_check() {
-  if(system.compareVersions(system.version.ProductVersion, '10.13.0') < 0) {
+  if(system.compareVersions(system.version.ProductVersion, '10.16.0') < 0) {
     my.result.title = system.localizedString('SU_ERROR');
-    my.result.message = system.localizedString('SU_1013');
+    my.result.message = system.localizedString('SU_11');
     my.result.type = 'Fatal';
     return false;
   }
@@ -35,22 +35,12 @@ function pm_chrome_selected() {
   return my.target.receiptForIdentifier("eu.web-eid.web-eid") == null ||
      my.target.receiptForIdentifier("eu.web-eid.web-eid-chrome") != null;
 }
-
-function pm_chrome_policy_visible() {
-  return system.compareVersions(system.version.ProductVersion, '10.16') < 0;
-}
-
-function pm_chrome_policy_selected() {
-  return pm_chrome_policy_visible() && pm_chrome_selected() &&
-    my.target.receiptForIdentifier("eu.web-eid.web-eid-chrome-policy") != null;
-}
 ]]>
     </script>
     <choices-outline>
         <line choice="default"/>
         <line choice="firefox"/>
         <line choice="chrome"/>
-        <line choice="chrome_policy"/>
     </choices-outline>
     <choice id="default" title="SU_BASE" start_enabled="false" visible="false">
         <pkg-ref id="eu.web-eid.web-eid">web-eid-native.pkg</pkg-ref>
@@ -60,13 +50,5 @@ function pm_chrome_policy_selected() {
     </choice>
     <choice id="chrome" title="SU_CHROME" description="SU_CHROME" start_selected="pm_chrome_selected()">
         <pkg-ref id="eu.web-eid.web-eid-chrome">web-eid-chrome.pkg</pkg-ref>
-    </choice>
-    <choice id="chrome_policy" title="SU_CHROME_POLICY" description="SU_CHROME_POLICY"
-            start_selected="pm_chrome_policy_selected()"
-            start_enabled="pm_chrome_selected()"
-            start_visible="pm_chrome_policy_visible()"
-            enabled="choices.chrome.selected"
-            selected="choices.chrome.selected ? choices.chrome_policy.selected : false">
-        <pkg-ref id="eu.web-eid.web-eid-chrome-policy">web-eid-chrome-policy.pkg</pkg-ref>
     </choice>
 </installer-gui-script>
