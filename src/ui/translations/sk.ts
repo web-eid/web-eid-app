@@ -85,7 +85,7 @@
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
             <numerusform>PIN bol minimálne raz zadaný nesprávne. Zostáva %n pokus.</numerusform>
-            <numerusform>PIN bol minimálne raz zadaný nesprávne. Zostáva %n pokusov.</numerusform>
+            <numerusform>PIN bol minimálne raz zadaný nesprávne. Zostávajú %n pokusy.</numerusform>
             <numerusform>PIN bol minimálne raz zadaný nesprávne. Zostáva %n pokusov.</numerusform>
         </translation>
     </message>
@@ -93,7 +93,7 @@
         <source>Incorrect PIN, %n attempts left.</source>
         <translation>
             <numerusform>Nesprávny PIN, zostáva %n pokus.</numerusform>
-            <numerusform>Nesprávny PIN, zostáva %n pokusov.</numerusform>
+            <numerusform>Nesprávny PIN, Zostávajú %n pokusy.</numerusform>
             <numerusform>Nesprávny PIN, zostáva %n pokusov.</numerusform>
         </translation>
     </message>
