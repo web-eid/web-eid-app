@@ -82,10 +82,11 @@ bool Application::isDarkTheme()
         "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
         QSettings::NativeFormat);
     return settings.value("AppsUseLightTheme", 1).toInt() == 0;
-#elif 0 // Disabled as there is currently no straightforward way to detect dark mode in Linux.
+#else
+    // There is currently no straightforward way to detect dark mode in Linux, but this works for supported OS-s.
     static const bool isDarkTheme = [] {
         QProcess p;
-        p.start(QStringLiteral("gsettings"), {"get", "org.gnome.desktop.interface", "gtk-theme"});
+        p.start(QStringLiteral("gsettings"), {"get", "org.gnome.desktop.interface", "color-scheme"});
         if (p.waitForFinished()) {
             return p.readAllStandardOutput().contains("dark");
         }
@@ -94,8 +95,6 @@ bool Application::isDarkTheme()
         return text_hsv_value > bg_hsv_value;
     }();
     return isDarkTheme;
-#else
-    return false;
 #endif
 }
 #endif
