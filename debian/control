@@ -27,6 +27,7 @@ Description: Web eID application suite (metapackage)
 
 Package: web-eid-native
 Architecture: any
+Multi-Arch: foreign
 Depends: pcscd, ${shlibs:Depends}, ${misc:Depends}
 Replaces: token-signing-native
 Breaks: token-signing-native
