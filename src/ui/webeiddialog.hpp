@@ -106,7 +106,6 @@ private:
     void displayPinBlockedError();
 
     void showPinInputWarning(bool show);
-    void resizeHeight();
 
     static QPixmap pixmap(QLatin1String name);
     constexpr static std::tuple<const char*, const char*, QLatin1String>
