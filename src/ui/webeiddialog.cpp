@@ -102,9 +102,10 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         {QStringLiteral("cs"), QStringLiteral("Čeština")},
         {QStringLiteral("sk"), QStringLiteral("Slovenština")}};
     ui->langButton->setText(tr("EN", "Active language"));
-    if (auto i = std::find_if(
-            LANG_LIST.cbegin(), LANG_LIST.cend(),
-            [&](const auto& elem) { return elem.first == ui->langButton->text().toLower(); });
+    if (auto i = std::find_if(LANG_LIST.cbegin(), LANG_LIST.cend(),
+                              [lang = ui->langButton->text().toLower()](const auto& elem) {
+                                  return elem.first == lang;
+                              });
         i != LANG_LIST.cend()) {
         ui->langButton->setAccessibleName(i->second);
     }
@@ -115,20 +116,23 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         }
         auto* menu = new QWidget(this);
         menu->setObjectName("langMenu");
-        auto* layout = new QVBoxLayout(menu);
+        auto* layout = new QGridLayout(menu);
         layout->setContentsMargins(1, 1, 1, 1);
         layout->setSpacing(1);
         auto* langGroup = new QButtonGroup(menu);
         langGroup->setExclusive(true);
+        int i {};
         for (const auto& [lang, title] : LANG_LIST) {
             auto* action = new QPushButton(menu);
             action->setText(title);
             action->setProperty("lang", lang);
             action->setAutoDefault(false);
-            layout->addWidget(action);
+            layout->addWidget(action, i / 2, i % 2);
             langGroup->addButton(action);
             action->setCheckable(true);
             action->setChecked(lang == ui->langButton->text().toLower());
+            action->setMinimumSize(action->sizeHint() + QSize(1, 0));
+            ++i;
         }
         menu->show();
         menu->adjustSize();
