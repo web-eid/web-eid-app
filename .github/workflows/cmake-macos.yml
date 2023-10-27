@@ -9,8 +9,8 @@ env:
   OPENSSL_ROOT_DIR: ${{ github.workspace }}/openssl-binary
   GTest_ROOT: ${{ github.workspace }}/gtest-binary
   QT_QPA_PLATFORM: offscreen
-  MAKEFLAGS: -j3
-  MACOSX_DEPLOYMENT_TARGET: 10.16
+  CMAKE_BUILD_PARALLEL_LEVEL: 3
+  MACOSX_DEPLOYMENT_TARGET: 11.0
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
           submodules: recursive
 
       - name: Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cache
         with:
           path: |
@@ -60,7 +60,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
         with:
-          version: 6.5.3
+          version: 6.6.1
           arch: clang_64
 
       - name: Configure
@@ -76,7 +76,7 @@ jobs:
       #  run: ctest -V -C ${BUILD_TYPE} --test-dir ${BUILD_DIR}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: web-eid-app-macos-build-${{github.run_number}}
           path: |
