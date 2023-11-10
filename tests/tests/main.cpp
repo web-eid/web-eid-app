@@ -76,7 +76,7 @@ private slots:
     void quit_exits();
 
 private:
-    void runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool waitForQuit = true);
+    void runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy);
     void initGetCert();
     void initAuthenticate();
     void initCard(bool withSigningScript = true);
@@ -102,7 +102,7 @@ void WebEidTests::statusUpdate_withUnsupportedCard_hasExpectedStatus()
     QSignalSpy statusUpdateSpy(controller.get(), &Controller::statusUpdate);
 
     // act
-    runEventLoopVerifySignalsEmitted(statusUpdateSpy, false);
+    runEventLoopVerifySignalsEmitted(statusUpdateSpy);
 
     // assert
     const auto statusArgument = qvariant_cast<RetriableError>(statusUpdateSpy.first().at(0));
@@ -221,7 +221,7 @@ void WebEidTests::quit_exits()
     }
 }
 
-void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool waitForQuit)
+void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy)
 {
     // Waits until Controller emits quit.
     QSignalSpy quitSpy(controller.get(), &Controller::quit);
@@ -231,7 +231,7 @@ void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool w
 
     // Run the event loop, verify that signals were emitted.
     QVERIFY(actionSpy.wait());
-    if (waitForQuit && quitSpy.count() < 1) {
+    if (quitSpy.count() < 1) {
         QVERIFY(quitSpy.wait());
     }
 }

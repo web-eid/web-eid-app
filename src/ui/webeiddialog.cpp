@@ -28,6 +28,7 @@
 
 #include <QActionGroup>
 #include <QButtonGroup>
+#include <QCloseEvent>
 #include <QDesktopServices>
 #include <QFile>
 #include <QMenu>
@@ -487,6 +488,15 @@ void WebEidDialog::reject()
 {
     if (!ui->pinEntryTimeoutProgressBar->isVisible()) {
         WebEidUI::reject();
+    }
+}
+
+void WebEidDialog::closeEvent(QCloseEvent* event)
+{
+    if (closeUnconditionally) {
+        event->accept();
+    } else {
+        WebEidUI::closeEvent(event);
     }
 }
 
