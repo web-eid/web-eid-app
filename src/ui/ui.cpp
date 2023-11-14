@@ -26,8 +26,8 @@ observer_ptr<WebEidUI> WebEidUI::createAndShowDialog(const CommandType command)
 {
     auto* dialog = new WebEidDialog {};
     dialog->showWaitingForCardPage(command);
-    dialog->activateWindow();
     dialog->show();
+    dialog->activateWindow();
     dialog->raise();
 
     return dialog;
