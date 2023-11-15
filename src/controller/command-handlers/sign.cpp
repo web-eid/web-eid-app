@@ -30,11 +30,13 @@ using namespace electronic_id;
 namespace
 {
 
-QPair<QString, QVariantMap> signHash(const ElectronicID& eid, const pcsc_cpp::byte_vector& pin,
-                                     const QByteArray& docHash, const HashAlgorithm hashAlgo)
+QPair<QString, QVariantMap> signHash(const ElectronicID& eid, const QByteArray& cert,
+                                     const pcsc_cpp::byte_vector& pin, const QByteArray& docHash,
+                                     const HashAlgorithm hashAlgo)
 {
     const auto hashBytes = pcsc_cpp::byte_vector {docHash.begin(), docHash.end()};
-    const auto signature = eid.signWithSigningKey(pin, hashBytes, hashAlgo);
+    const auto signature =
+        eid.signWithSigningKey({cert.cbegin(), cert.cend()}, pin, hashBytes, hashAlgo);
 
     const auto signatureBase64 =
         QByteArray::fromRawData(reinterpret_cast<const char*>(signature.first.data()),
@@ -98,7 +100,9 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
     auto pin = getPin(cardCertAndPin.cardInfo->eid().smartcard(), window);
 
     try {
-        const auto signature = signHash(cardCertAndPin.cardInfo->eid(), pin, docHash, hashAlgo);
+        const auto signature =
+            signHash(cardCertAndPin.cardInfo->eid(), cardCertAndPin.certificateBytesInDer, pin,
+                     docHash, hashAlgo);
 
         // Erase PIN memory.
         // TODO: Use a scope guard. Verify that the buffers are actually zeroed
