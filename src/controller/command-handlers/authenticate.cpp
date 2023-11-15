@@ -55,8 +55,9 @@ QVariantMap createAuthenticationToken(const QString& signatureAlgorithm,
     };
 }
 
-QByteArray createSignature(const QString& origin, const QString& challengeNonce,
-                           const ElectronicID& eid, const pcsc_cpp::byte_vector& pin)
+QByteArray createSignature(const QString& origin, const QByteArray& cert,
+                           const QString& challengeNonce, const ElectronicID& eid,
+                           const pcsc_cpp::byte_vector& pin)
 {
     static const std::map<JsonWebSignatureAlgorithm, QCryptographicHash::Algorithm>
         SIGNATURE_ALGO_TO_HASH {
@@ -85,7 +86,7 @@ QByteArray createSignature(const QString& origin, const QString& challengeNonce,
     const pcsc_cpp::byte_vector hashToBeSigned {hashToBeSignedQBytearray.cbegin(),
                                                 hashToBeSignedQBytearray.cend()};
 
-    const auto signature = eid.signWithAuthKey(pin, hashToBeSigned);
+    const auto signature = eid.signWithAuthKey({cert.cbegin(), cert.cend()}, pin, hashToBeSigned);
 
     return QByteArray::fromRawData(reinterpret_cast<const char*>(signature.data()),
                                    int(signature.size()))
@@ -125,8 +126,8 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window,
     auto pin = getPin(cardCertAndPin.cardInfo->eid().smartcard(), window);
 
     try {
-        const auto signature =
-            createSignature(origin.url(), challengeNonce, cardCertAndPin.cardInfo->eid(), pin);
+        const auto signature = createSignature(origin.url(), cardCertAndPin.certificateBytesInDer,
+                                               challengeNonce, cardCertAndPin.cardInfo->eid(), pin);
 
         // Erase the PIN memory.
         // TODO: Use a scope guard. Verify that the buffers are actually zeroed and no copies
