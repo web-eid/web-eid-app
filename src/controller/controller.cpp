@@ -39,8 +39,9 @@ using namespace electronic_id;
 namespace
 {
 
+// TODO: Should we use more detailed error codes? E.g. report input data error back to the website
+// etc.
 const QString RESP_TECH_ERROR = QStringLiteral("ERR_WEBEID_NATIVE_FATAL");
-const QString RESP_INVALID_INVOCATION = QStringLiteral("ERR_WEBEID_INVALID_INVOCATION");
 const QString RESP_USER_CANCEL = QStringLiteral("ERR_WEBEID_USER_CANCELLED");
 
 QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessage)
@@ -102,8 +103,16 @@ void Controller::run()
 
         startCommandExecution();
 
-    } catch (const std::invalid_argument& error) {
-        onInvalidInvocation(error.what());
+    } catch (const std::invalid_argument& exc) {
+        if (isInStdinMode) {
+            // Pass invalid argument message to the caller just in case it may be interested
+            // The result will be {"invalid-argument" : message}
+            // Command parameter is only used if exception will be raised during json creation
+            writeResponseToStdOut(isInStdinMode,
+                                  {{QStringLiteral("invalid-argument"), exc.what()}},
+                                  "invalid-argument");
+        }
+        onCriticalFailure(exc.what());
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
@@ -356,17 +365,6 @@ void Controller::onCriticalFailure(const QString& error)
     qCritical() << "Exiting due to command" << std::string(commandType())
                 << "fatal error:" << error;
     _result = makeErrorObject(RESP_TECH_ERROR, error);
-    writeResponseToStdOut(isInStdinMode, _result, commandType());
-    disposeUI();
-    WebEidUI::showFatalError();
-    exit();
-}
-
-void Controller::onInvalidInvocation(const QString& error)
-{
-    qCritical() << "Invalid arguments to command" << std::string(commandType())
-                << "reason:" << error;
-    _result = makeErrorObject(RESP_INVALID_INVOCATION, error);
     writeResponseToStdOut(isInStdinMode, _result, commandType());
     disposeUI();
     WebEidUI::showFatalError();

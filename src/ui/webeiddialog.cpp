@@ -553,12 +553,10 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
         // QString uses QAtomicPointer internally and is thread-safe.
         pin = ui->pinInput->text();
 
-        // We use setText instead of clear, so undo/redo will be cleared as well
-        ui->pinInput->setText("");
-        // TODO: To be sure that no copy of PIN text remains in memory, a custom
-        // widget should be implemented, that:
-        // - Stores PIN in locked byte vector
-        // - DOes not leak content through accessibility interface
+        // TODO: We need to erase the PIN in the widget buffer, this needs further work.
+        // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
+        // custom Qt widget.
+        ui->pinInput->clear();
 
         emit accepted(certAndPin);
     });
@@ -752,11 +750,13 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error)
                 tr("Operation not supported"), pixmap("no-id-card"_L1)};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
-        return {tr("Error communicating with the card. Please try again."), tr("Operation failed"),
+        return {tr("Error communicating with the card."), tr("Operation failed"),
                 pixmap("no-id-card"_L1)};
+        // TODO: what action should the user take? Should this be fatal?
     case RetriableError::PKCS11_ERROR:
         return {tr("Card driver error. Please try again."), tr("Card driver error"),
                 pixmap("no-id-card"_L1)};
+        // TODO: what action should the user take? Should this be fatal?
     case RetriableError::SCARD_ERROR:
         return {tr("An error occurred in the Smart Card service required to use the ID-card. Make "
                    "sure that the ID-card and the card reader are connected correctly or relaunch "
