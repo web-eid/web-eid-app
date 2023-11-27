@@ -97,7 +97,7 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
 {
     pcsc_cpp::byte_vector pin;
     getPin(pin, cardCertAndPin.cardInfo->eid().smartcard(), window);
-    scope_exit([&pin] {
+    auto pin_cleanup = qScopeGuard([&pin] {
         // Erase PIN memory.
         std::fill(pin.begin(), pin.end(), '\0');
     });
