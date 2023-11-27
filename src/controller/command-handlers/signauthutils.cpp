@@ -91,7 +91,7 @@ int getPin(pcsc_cpp::byte_vector& pin, const pcsc_cpp::SmartCard& card, WebEidUI
     if (pinqs.isEmpty()) {
         THROW(ProgrammingError, "Empty PIN");
     }
-    int len = (int) pinqs.length();
+    int len = (int)pinqs.length();
 
     pin.resize(len);
     for (int i = 0; i < len; i++) {

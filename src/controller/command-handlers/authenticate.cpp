@@ -121,20 +121,19 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window,
 
     pcsc_cpp::byte_vector pin;
     getPin(pin, cardCertAndPin.cardInfo->eid().smartcard(), window);
+    scope_exit([&pin] {
+        // Erase PIN memory.
+        std::fill(pin.begin(), pin.end(), '\0');
+    });
 
     try {
         const auto signature =
             createSignature(origin.url(), challengeNonce, cardCertAndPin.cardInfo->eid(), pin);
 
-        // Erase the PIN memory.
-        std::fill(pin.begin(), pin.end(), '\0');
-
         return createAuthenticationToken(signatureAlgorithm, cardCertAndPin.certificateBytesInDer,
                                          signature);
 
     } catch (const VerifyPinFailed& failure) {
-        // Erase the PIN memory.
-        std::fill(pin.begin(), pin.end(), '\0');
         switch (failure.status()) {
         case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL:
         case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:

@@ -284,7 +284,7 @@ QString WebEidDialog::getPin()
     // QString uses QAtomicPointer internally and is thread-safe.
     // There should be only single reference and this is transferred to the caller for safety
     QString ret = pin;
-    pin = "";
+    pin.clear();
     return ret;
 }
 
@@ -334,7 +334,8 @@ void WebEidDialog::onMultipleCertificatesReady(
         ui->selectAnotherCertificate->setVisible(certificateAndPinInfos.size() > 1);
         connect(ui->selectAnotherCertificate, &QPushButton::clicked, this,
                 [this, origin, certificateAndPinInfos] {
-                    ui->pinInput->setText("");
+                    // We set pinInput to empty text instead of clear() to also reset undo buffer
+                    ui->pinInput->setText({});
                     onMultipleCertificatesReady(origin, certificateAndPinInfos);
                 });
         setupOK([this, origin, certificateAndPinInfos] {
@@ -690,7 +691,7 @@ void WebEidDialog::displayFatalError(std::function<QString()> message)
     ui->okButton->hide();
     ui->cancelButton->setEnabled(true);
     ui->cancelButton->show();
-    //ui->helpButton->show();
+    // ui->helpButton->show();
 }
 
 void WebEidDialog::showPinInputWarning(bool show)

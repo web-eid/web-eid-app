@@ -97,20 +97,18 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
 {
     pcsc_cpp::byte_vector pin;
     getPin(pin, cardCertAndPin.cardInfo->eid().smartcard(), window);
+    scope_exit([&pin] {
+        // Erase PIN memory.
+        std::fill(pin.begin(), pin.end(), '\0');
+    });
 
     try {
         const auto signature = signHash(cardCertAndPin.cardInfo->eid(), pin, docHash, hashAlgo);
-
-        // Erase PIN memory.
-        std::fill(pin.begin(), pin.end(), '\0');
 
         return {{QStringLiteral("signature"), signature.first},
                 {QStringLiteral("signatureAlgorithm"), signature.second}};
 
     } catch (const VerifyPinFailed& failure) {
-
-        // Erase PIN memory.
-        std::fill(pin.begin(), pin.end(), '\0');
 
         switch (failure.status()) {
         case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL:
