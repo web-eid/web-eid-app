@@ -691,7 +691,6 @@ void WebEidDialog::displayFatalError(std::function<QString()> message)
     ui->okButton->hide();
     ui->cancelButton->setEnabled(true);
     ui->cancelButton->show();
-    // ui->helpButton->show();
 }
 
 void WebEidDialog::showPinInputWarning(bool show)

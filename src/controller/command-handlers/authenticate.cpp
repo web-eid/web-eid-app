@@ -30,6 +30,7 @@
 #include <QJsonDocument>
 #include <QCryptographicHash>
 #include <QDir>
+#include <QScopeGuard>
 
 #include <map>
 

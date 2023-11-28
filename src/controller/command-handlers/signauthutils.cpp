@@ -24,9 +24,6 @@
 
 #include "ui.hpp"
 #include "commandhandler.hpp"
-#include "utils/utils.hpp"
-
-#include <QScopeGuard>
 
 using namespace electronic_id;
 
