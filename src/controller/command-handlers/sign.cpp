@@ -23,7 +23,8 @@
 #include "sign.hpp"
 
 #include "signauthutils.hpp"
-#include "utils/utils.hpp"
+
+#include <QScopeGuard>
 
 using namespace electronic_id;
 

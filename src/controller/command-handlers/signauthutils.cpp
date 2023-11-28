@@ -26,6 +26,8 @@
 #include "commandhandler.hpp"
 #include "utils/utils.hpp"
 
+#include <QScopeGuard>
+
 using namespace electronic_id;
 
 // Take argument names by copy/move as they will be modified.
