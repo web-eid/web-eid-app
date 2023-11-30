@@ -21,7 +21,7 @@ jobs:
         with:
           vcpkgArguments: gtest openssl
           vcpkgTriplet: x64-windows
-          vcpkgGitCommitId: 9b9c2758ece1d8ac0de90589730bb5ccf45c0874
+          vcpkgGitCommitId: 98a562a04cd03728f399e79e1b37bcccb5a69b37
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3

@@ -70,6 +70,8 @@ public: // slots
 
     // Failure handler, reports the error and quits the application.
     void onCriticalFailure(const QString& error);
+    // Invalid arguments, we keep it spearate to distinguish it from technical errors
+    void onInvalidInvocation(const QString& error);
 
 private:
     void startCommandExecution();
