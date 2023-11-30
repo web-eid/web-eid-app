@@ -547,7 +547,7 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
         pin = ui->pinInput->text();
 
         // We use setText instead of clear, so undo/redo will be cleared as well
-        ui->pinInput->setText("");
+        ui->pinInput->setText({});
         // TODO: To be sure that no copy of PIN text remains in memory, a custom
         // widget should be implemented, that:
         // - Stores PIN in locked byte vector
