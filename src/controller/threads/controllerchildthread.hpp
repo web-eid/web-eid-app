@@ -71,11 +71,13 @@ public:
                 break;
             default:
                 qCritical() << "Command" << commandType() << "fatal error:" << error;
-                emit failure(error.what());
+                // Hide error message as it may contain APDU code
+                emit failure("Technical error in verifying PIN");
             }
-        }
-        catch (const std::exception& error)
-        {
+        } catch (const pcsc_cpp::Error&) {
+            // Hide error message as it may contain APDU code
+            emit failure("Technical error communicating with ID card");
+        } catch (const std::exception& error) {
             qCritical() << "Command" << commandType() << "fatal error:" << error;
             emit failure(error.what());
         }

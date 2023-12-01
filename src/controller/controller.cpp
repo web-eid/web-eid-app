@@ -103,6 +103,13 @@ void Controller::run()
 
         startCommandExecution();
 
+    // We catch all exceptions that expose APDU code separately to ensure that it is not leaked
+    } catch (const electronic_id::VerifyPinFailed&) {
+        onCriticalFailure("Technical error in verifying PIN");
+    } catch (const electronic_id::SmartCardError&) {
+        onCriticalFailure("Technical error communicating with Smart card");
+    } catch (const pcsc_cpp::Error&) {
+        onCriticalFailure("Technical error communicating with ID card");
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
@@ -161,6 +168,7 @@ void Controller::connectOkCancelWaitingForPinPad()
 
     connect(window, &WebEidUI::accepted, this, &Controller::onDialogOK);
     connect(window, &WebEidUI::rejected, this, &Controller::onDialogCancel);
+    /* Only safe error messages are emitted here */
     connect(window, &WebEidUI::failure, this, &Controller::onCriticalFailure);
     connect(window, &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
 }
@@ -185,6 +193,13 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
 
         runCommandHandler(availableCards);
 
+    // We catch all exceptions that expose APDU code separately to ensure that it is not leaked
+    } catch (const electronic_id::VerifyPinFailed&) {
+        onCriticalFailure("Technical error in verifying PIN");
+    } catch (const electronic_id::SmartCardError&) {
+        onCriticalFailure("Technical error communicating with Smart card");
+    } catch (const pcsc_cpp::Error&) {
+        onCriticalFailure("Technical error communicating with ID card");
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
@@ -207,6 +222,13 @@ void Controller::runCommandHandler(const std::vector<electronic_id::CardInfo::pt
 
         commandHandlerRunThread->start();
 
+    // We catch all exceptions that expose APDU code separately to ensure that it is not leaked
+    } catch (const electronic_id::VerifyPinFailed&) {
+        onCriticalFailure("Technical error in verifying PIN");
+    } catch (const electronic_id::SmartCardError&) {
+        onCriticalFailure("Technical error communicating with Smart card");
+    } catch (const pcsc_cpp::Error&) {
+        onCriticalFailure("Technical error communicating with ID card");
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
@@ -263,6 +285,13 @@ void Controller::onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCe
 
         commandHandlerConfirmThread->start();
 
+    // We catch all exceptions that expose APDU code separately to ensure that it is not leaked
+    } catch (const electronic_id::VerifyPinFailed&) {
+        onCriticalFailure("Technical error in verifying PIN");
+    } catch (const electronic_id::SmartCardError&) {
+        onCriticalFailure("Technical error communicating with Smart card");
+    } catch (const pcsc_cpp::Error&) {
+        onCriticalFailure("Technical error communicating with ID card");
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
@@ -301,6 +330,13 @@ void Controller::onRetry()
 
         startCommandExecution();
 
+    // We catch all exceptions that expose APDU code separately to ensure that it is not leaked
+    } catch (const electronic_id::VerifyPinFailed&) {
+        onCriticalFailure("Technical error in verifying PIN");
+    } catch (const electronic_id::SmartCardError&) {
+        onCriticalFailure("Technical error communicating with Smart card");
+    } catch (const pcsc_cpp::Error&) {
+        onCriticalFailure("Technical error communicating with ID card");
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
@@ -350,11 +386,11 @@ void Controller::onPinPadCancel()
     window->quit();
 }
 
-void Controller::onCriticalFailure(const QString& error)
+void Controller::onCriticalFailure(const QString& msg)
 {
     qCritical() << "Exiting due to command" << std::string(commandType())
-                << "fatal error:" << error;
-    _result = makeErrorObject(RESP_TECH_ERROR, error);
+                << "fatal error:" << msg;
+    _result = makeErrorObject(RESP_TECH_ERROR, msg);
     writeResponseToStdOut(isInStdinMode, _result, commandType());
     disposeUI();
     WebEidUI::showFatalError();
