@@ -11,7 +11,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: 'fedora:39'
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['fedora:38', 'fedora:39']
 
     steps:
       - name: Install Deps
