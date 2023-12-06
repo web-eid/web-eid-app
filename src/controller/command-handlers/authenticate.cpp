@@ -145,7 +145,8 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window,
             emit verifyPinFailed(failure.status(), failure.retries());
         }
         if (failure.retries() > 0) {
-            throw CommandHandlerVerifyPinFailed(failure.what());
+            // Hide error message as it may contain APDU code
+            throw CommandHandlerVerifyPinFailed("Verifying PIN failed");
         }
         throw;
     }

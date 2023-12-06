@@ -122,7 +122,8 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
         // Retries > 0 means that there are retries remaining,
         // < 0 means that retry count is unknown, == 0 means that the PIN is blocked.
         if (failure.retries() != 0) {
-            throw CommandHandlerVerifyPinFailed(failure.what());
+            // Hide error message as it may contain APDU code
+            throw CommandHandlerVerifyPinFailed("Verifying PIN failed");
         }
         throw;
     }
