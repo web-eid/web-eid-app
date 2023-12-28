@@ -164,9 +164,13 @@ else()
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/mozilla/native-messaging-hosts RENAME eu.webeid.json)
     endif()
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/web-eid)
+        DESTINATION /etc/opt/chrome/native-messaging-hosts)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
+        DESTINATION /etc/chromium/native-messaging-hosts)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
         DESTINATION ${CMAKE_INSTALL_DATADIR}/google-chrome/extensions)
+    install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/chromium/extensions)
     install(FILES ${CMAKE_SOURCE_DIR}/install/web-eid.desktop
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
     if (BUNDLE_XPI)
