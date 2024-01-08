@@ -35,7 +35,7 @@ public:
 
     QString getPin() override
     {
-        static QString pin {"0090"};
+        static QString pin {"1234"};
         return pin;
     }
 
