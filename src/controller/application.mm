@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 The Web eID Project
+ * Copyright (c) 2022-2024 The Web eID Project
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
