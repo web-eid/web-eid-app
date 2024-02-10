@@ -85,8 +85,9 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     setWindowFlag(Qt::CustomizeWindowHint);
     setWindowFlag(Qt::WindowTitleHint);
     setWindowTitle(QApplication::applicationDisplayName());
-    setTrText(ui->aboutVersion,
-              [] { return tr("Version: %1").arg(QApplication::applicationVersion()); });
+    setTrText(ui->aboutVersion, []() -> QString {
+        return tr("Version: %1").arg(QApplication::applicationVersion());
+    });
 
     ui->langButton = new QToolButton(this);
     ui->langButton->setObjectName("langButton");
@@ -259,7 +260,7 @@ void WebEidDialog::showAboutPage()
 void WebEidDialog::showFatalErrorPage()
 {
     auto* d = new WebEidDialog();
-    d->setTrText(d->ui->messagePageTitleLabel, [] { return tr("Operation failed"); });
+    d->setTrText(d->ui->messagePageTitleLabel, []() -> QString { return tr("Operation failed"); });
     d->ui->fatalError->show();
     d->ui->fatalHelp->show();
     d->ui->connectCardLabel->hide();
@@ -293,10 +294,12 @@ void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
 {
     currentCommand = CommandType::INSERT_CARD;
 
-    setTrText(ui->connectCardLabel,
-              [status] { return std::get<0>(retriableErrorToTextTitleAndIcon(status)); });
-    setTrText(ui->messagePageTitleLabel,
-              [status] { return std::get<1>(retriableErrorToTextTitleAndIcon(status)); });
+    setTrText(ui->connectCardLabel, [status]() -> QString {
+        return std::get<0>(retriableErrorToTextTitleAndIcon(status));
+    });
+    setTrText(ui->messagePageTitleLabel, [status]() -> QString {
+        return std::get<1>(retriableErrorToTextTitleAndIcon(status));
+    });
     ui->cardChipIcon->setPixmap(std::get<2>(retriableErrorToTextTitleAndIcon(status)));
 
     // In case the insert card page is not shown, switch back to it.
@@ -338,7 +341,7 @@ void WebEidDialog::onMultipleCertificatesReady(
                     ui->pinInput->clear();
                     onMultipleCertificatesReady(origin, certificateAndPinInfos);
                 });
-        setupOK([this, origin, certificateAndPinInfos] {
+        setupOK([this, origin] {
             // Authenticate continues with the selected certificate to onSingleCertificateReady().
             if (auto* button =
                     qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
@@ -379,12 +382,12 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         return;
     case CommandType::AUTHENTICATE:
         ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
-        setTrText(ui->pinInputPageTitleLabel, [] { return tr("Authenticate"); });
-        setTrText(ui->pinInputDescriptionLabel, [] {
+        setTrText(ui->pinInputPageTitleLabel, []() -> QString { return tr("Authenticate"); });
+        setTrText(ui->pinInputDescriptionLabel, []() -> QString {
             return tr("By authenticating, I agree to the transfer of my name and personal "
                       "identification code to the service provider.");
         });
-        setTrText(ui->pinTitleLabel, [useExternalPinDialog] {
+        setTrText(ui->pinTitleLabel, [useExternalPinDialog]() -> QString {
             return useExternalPinDialog
                 ? tr("Please enter PIN for authentication in the PIN dialog window that opens.")
                 : tr("Enter PIN1 for authentication");
@@ -392,12 +395,12 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         break;
     case CommandType::SIGN:
         ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
-        setTrText(ui->pinInputPageTitleLabel, [] { return tr("Signing"); });
-        setTrText(ui->pinInputDescriptionLabel, [] {
+        setTrText(ui->pinInputPageTitleLabel, []() -> QString { return tr("Signing"); });
+        setTrText(ui->pinInputDescriptionLabel, []() -> QString {
             return tr("By signing, I agree to the transfer of my name and personal identification "
                       "code to the service provider.");
         });
-        setTrText(ui->pinTitleLabel, [useExternalPinDialog] {
+        setTrText(ui->pinTitleLabel, [useExternalPinDialog]() -> QString {
             return useExternalPinDialog
                 ? tr("Please enter PIN for signing in the PIN dialog window that opens.")
                 : tr("Enter PIN2 for signing");
@@ -447,7 +450,7 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
     // FIXME: don't allow retry in case of UNKNOWN_ERROR
     switch (status) {
     case Status::RETRY_ALLOWED:
-        message = [retriesLeft] {
+        message = [retriesLeft]() -> QString {
             return retriesLeft == -1 ? tr("Incorrect PIN.")
                                      : tr("Incorrect PIN, %n attempts left.", nullptr, retriesLeft);
         };
@@ -520,9 +523,9 @@ template <typename Text>
 void WebEidDialog::onRetryImpl(Text text)
 {
     setTrText(ui->connectCardLabel, std::forward<Text>(text));
-    setTrText(ui->messagePageTitleLabel, [] { return tr("Operation failed"); });
+    setTrText(ui->messagePageTitleLabel, []() -> QString { return tr("Operation failed"); });
     ui->cardChipIcon->setPixmap(pixmap("no-id-card"_L1));
-    setupOK([this] { emit retry(); }, [] { return tr("Try again"); }, true);
+    setupOK([this] { emit retry(); }, []() -> QString { return tr("Try again"); }, true);
     ui->pageStack->setCurrentIndex(int(Page::ALERT));
 }
 
@@ -589,7 +592,7 @@ void WebEidDialog::setupPinPrompt(const PinInfo& pinInfo)
     ui->pinErrorLabel->setVisible(showPinError);
     showPinInputWarning(showPinError);
     if (showPinError) {
-        setTrText(ui->pinErrorLabel, [pinInfo] {
+        setTrText(ui->pinErrorLabel, [pinInfo]() -> QString {
             return tr("The PIN has been entered incorrectly at least once. %n attempts left.",
                       nullptr, int(pinInfo.pinRetriesCount.first));
         });
@@ -606,7 +609,7 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPin
     ui->selectAnotherCertificate->hide();
     ui->pinTimeRemaining->setText(
         tr("Time remaining: <b>%1</b>").arg(ui->pinEntryTimeoutProgressBar->maximum()));
-    setTrText(ui->pinTitleLabel, [this] {
+    setTrText(ui->pinTitleLabel, [this]() -> QString {
         return tr("Please enter %1 in PinPad reader")
             .arg(currentCommand == CommandType::AUTHENTICATE ? tr("PIN1 for authentication")
                                                              : tr("PIN2 for signing"));
@@ -633,7 +636,7 @@ void WebEidDialog::setupPinInput(const CardCertificateAndPinInfo& certAndPin)
     // 4. Special characters
     //    (ASCII 0x20...0x2F, space../ + 0x3A...0x40, :..@ + 0x5B...0x60, [..` + 0x7B...0x7F, {..~).
     // 5. We additionally allow uppercase and lowercase Unicode letters.
-    const auto regexpWithOrWithoutLetters =
+    const auto& regexpWithOrWithoutLetters =
         certAndPin.cardInfo->eid().allowsUsingLettersAndSpecialCharactersInPin()
         ? QStringLiteral("[0-9 -/:-@[-`{-~\\p{L}]{%1,%2}")
         : QStringLiteral("[0-9]{%1,%2}");
@@ -653,7 +656,7 @@ void WebEidDialog::setupOK(Func&& func, const std::function<QString()>& text, bo
     connect(ui->okButton, &QPushButton::clicked, this, std::forward<Func>(func));
     ui->okButton->show();
     ui->okButton->setEnabled(enabled);
-    setTrText(ui->okButton, text ? text : [] { return tr("Confirm"); });
+    setTrText(ui->okButton, text ? text : []() -> QString { return tr("Confirm"); });
     ui->cancelButton->show();
     ui->cancelButton->setEnabled(true);
     ui->helpButton->hide();
@@ -666,7 +669,8 @@ void WebEidDialog::displayPinBlockedError()
     ui->pinTimeoutTimer->stop();
     ui->pinTimeRemaining->hide();
     ui->pinEntryTimeoutProgressBar->hide();
-    setTrText(ui->pinErrorLabel, [] { return tr("PIN is locked. Unblock and try again."); });
+    setTrText(ui->pinErrorLabel,
+              []() -> QString { return tr("PIN is locked. Unblock and try again."); });
     ui->pinErrorLabel->show();
     ui->okButton->hide();
     ui->cancelButton->setEnabled(true);

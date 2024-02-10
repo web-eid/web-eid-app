@@ -42,6 +42,7 @@ protected:
     Q_DISABLE_COPY_MOVE(CertificateWidgetInfo)
 
     void drawWarnIcon();
+    std::tuple<QString, QString, QString> certData() const;
 
     QLabel* icon;
     QLabel* info;
