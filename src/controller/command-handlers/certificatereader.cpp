@@ -25,7 +25,6 @@
 #include "application.hpp"
 #include "signauthutils.hpp"
 #include "utils/utils.hpp"
-#include "magic_enum/magic_enum.hpp"
 
 using namespace electronic_id;
 
@@ -37,9 +36,9 @@ CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& c
 {
     const auto certificateBytes = card->eid().getCertificate(certificateType);
 
-    auto certificateDer = QByteArray(reinterpret_cast<const char*>(certificateBytes.data()),
-                                     int(certificateBytes.size()));
-    auto certificate = QSslCertificate(certificateDer, QSsl::Der);
+    QByteArray certificateDer(reinterpret_cast<const char*>(certificateBytes.data()),
+                              int(certificateBytes.size()));
+    QSslCertificate certificate(certificateDer, QSsl::Der);
     if (certificate.isNull()) {
         THROW(SmartCardChangeRequiredError,
               "Invalid certificate returned by electronic ID " + card->eid().name());
@@ -59,24 +58,19 @@ CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& c
         subject = QStringLiteral("%1, %2, %3").arg(surName, givenName, serialNumber);
     }
 
-    auto certInfo = CertificateInfo {certificateType,
-                                     certificate.expiryDate() < QDateTime::currentDateTimeUtc(),
-                                     certificate.effectiveDate() > QDateTime::currentDateTimeUtc(),
-                                     subject,
-                                     certificate.issuerInfo(QSslCertificate::CommonName).join(' '),
-                                     certificate.effectiveDate().date().toString(Qt::ISODate),
-                                     certificate.expiryDate().date().toString(Qt::ISODate)};
-    auto pinInfo =
-        PinInfo {certificateType.isAuthentication() ? card->eid().authPinMinMaxLength()
-                                                    : card->eid().signingPinMinMaxLength(),
-                 certificateType.isAuthentication() ? card->eid().authPinRetriesLeft()
-                                                    : card->eid().signingPinRetriesLeft(),
-                 card->eid().smartcard().readerHasPinPad()};
+    CertificateInfo certInfo {
+        certificateType, certificate.expiryDate() < QDateTime::currentDateTimeUtc(),
+        certificate.effectiveDate() > QDateTime::currentDateTimeUtc(), std::move(subject)};
+    PinInfo pinInfo {certificateType.isAuthentication() ? card->eid().authPinMinMaxLength()
+                                                        : card->eid().signingPinMinMaxLength(),
+                     certificateType.isAuthentication() ? card->eid().authPinRetriesLeft()
+                                                        : card->eid().signingPinRetriesLeft(),
+                     card->eid().smartcard().readerHasPinPad()};
     if (pinInfo.pinRetriesCount.first == 0) {
         pinInfo.pinIsBlocked = true;
     }
 
-    return {card, certificateDer, certificate, std::move(certInfo), std::move(pinInfo)};
+    return {card, std::move(certificateDer), certificate, std::move(certInfo), std::move(pinInfo)};
 }
 
 } // namespace

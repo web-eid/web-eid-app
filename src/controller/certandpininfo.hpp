@@ -33,14 +33,11 @@ struct CertificateInfo
     bool isExpired = false;
     bool notEffective = false;
     QString subject;
-    QString issuer;
-    QString effectiveDate;
-    QString expiryDate;
 };
 
 struct PinInfo
 {
-    using PinMinMaxLength = std::pair<size_t, size_t>;
+    using PinMinMaxLength = std::pair<uint8_t, uint8_t>;
     using PinRetriesCount = std::pair<int8_t, int8_t>;
 
     PinMinMaxLength pinMinMaxLength = {0, 0};
