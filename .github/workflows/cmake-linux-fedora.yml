@@ -15,6 +15,11 @@ jobs:
     strategy:
       matrix:
         container: ['fedora:38', 'fedora:39']
+        include:
+        - container: 'fedora:38'
+          name: fedora38
+        - container: 'fedora:39'
+          name: fedora39
 
     steps:
       - name: Install Deps
@@ -32,5 +37,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: web-eid-app-fedora-build-${{github.run_number}}
+          name: web-eid-app-fedora-build-${{matrix.name}}-${{github.run_number}}
           path: build/*rpm
