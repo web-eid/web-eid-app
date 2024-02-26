@@ -653,8 +653,7 @@ void WebEidDialog::setupOK(Func&& func, const std::function<QString()>& text, bo
     connect(ui->okButton, &QPushButton::clicked, this, std::forward<Func>(func));
     ui->okButton->show();
     ui->okButton->setEnabled(enabled);
-    setTrText(
-        ui->okButton, text ? text : [] { return tr("Confirm"); });
+    setTrText(ui->okButton, text ? text : [] { return tr("Confirm"); });
     ui->cancelButton->show();
     ui->cancelButton->setEnabled(true);
     ui->helpButton->hide();

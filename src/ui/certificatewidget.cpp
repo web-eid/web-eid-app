@@ -142,8 +142,7 @@ void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
 
 CertificateButton::CertificateButton(const CardCertificateAndPinInfo& cardCertPinInfo,
                                      QWidget* parent) :
-    QAbstractButton(parent),
-    CertificateWidgetInfo(this)
+    QAbstractButton(parent), CertificateWidgetInfo(this)
 {
     setCheckable(true);
     setAutoExclusive(true);
