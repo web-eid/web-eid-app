@@ -31,9 +31,8 @@ class CommandHandlerConfirmThread : public ControllerChildThread
 public:
     CommandHandlerConfirmThread(QObject* parent, CommandHandler& handler, WebEidUI* w,
                                 const CardCertificateAndPinInfo& cardCertAndPin) :
-        ControllerChildThread(parent),
-        commandHandler(handler), cmdType(commandHandler.commandType()), window(w),
-        cardCertAndPinInfo(cardCertAndPin)
+        ControllerChildThread(parent), commandHandler(handler),
+        cmdType(commandHandler.commandType()), window(w), cardCertAndPinInfo(cardCertAndPin)
     {
     }
 

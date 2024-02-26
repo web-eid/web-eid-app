@@ -27,13 +27,6 @@
 #import <AppKit/AppKit.h>
 #import <Cocoa/Cocoa.h>
 
-bool Application::isDarkTheme()
-{
-    auto appearance = [NSApp.effectiveAppearance bestMatchFromAppearancesWithNames:
-        @[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
-    return [appearance isEqualToString:NSAppearanceNameDarkAqua];
-}
-
 void Application::showAbout()
 {
     NSLog(@"web-eid-app: starting app");
