@@ -684,6 +684,8 @@ void WebEidDialog::showPinInputWarning(bool show)
 
 void WebEidDialog::resizeHeight()
 {
+    ui->pageStack->currentWidget()->setFixedWidth(ui->pageStack->currentWidget()->width());
+    ui->pageStack->currentWidget()->adjustSize();
     ui->pageStack->setFixedHeight(ui->pageStack->currentWidget()->sizeHint().height());
     adjustSize();
 }
