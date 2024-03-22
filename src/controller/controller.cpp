@@ -354,7 +354,7 @@ void Controller::onCriticalFailure(const QString& error)
 {
     qCritical() << "Exiting due to command" << std::string(commandType())
                 << "fatal error:" << error;
-    _result = makeErrorObject(RESP_TECH_ERROR, error);
+    _result = makeErrorObject(RESP_TECH_ERROR, QStringLiteral("Technical error, see application logs"));
     writeResponseToStdOut(isInStdinMode, _result, commandType());
     disposeUI();
     WebEidUI::showFatalError();
