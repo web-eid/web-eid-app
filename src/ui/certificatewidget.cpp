@@ -163,7 +163,7 @@ bool CertificateButton::eventFilter(QObject* object, QEvent* event)
 void CertificateButton::setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo)
 {
     CertificateWidgetInfo::setCertificateInfo(cardCertPinInfo);
-    const auto certInfo = cardCertPinInfo.certInfo;
+    const auto& certInfo = cardCertPinInfo.certInfo;
     setText(
         tr("%1 Issuer: %2 Valid: %3 to %4")
             .arg(certInfo.subject, certInfo.issuer, certInfo.effectiveDate, certInfo.expiryDate));
