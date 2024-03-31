@@ -1,46 +1,47 @@
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
-    xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
-    xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
   <Bundle Name="Web eID software" Version="$(var.MSI_VERSION)" Manufacturer="RIA"
       UpgradeCode="a9bdddb0-cdb3-11eb-b8bc-0242ac130003"
       Copyright="RIA" IconSourceFile="$(var.path)\appicon.ico" AboutUrl="http://www.id.ee"
-      Condition="(VersionNT >= v6.1)">
-    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkSidebarLicense">
+      Condition="VersionNT &gt;= v6.1">
+    <BootstrapperApplication>
       <bal:WixStandardBootstrapperApplication
           LicenseUrl=""
           LogoFile="$(var.path)\banner.bmp"
           LogoSideFile="$(var.path)\dlgbmp.bmp"
-          ThemeFile="$(var.path)\HyperlinkSidebarTheme.xml"/>
-        <Payload Name="1033\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.en.wxl"/>
-        <Payload Name="1061\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.et.wxl"/>
-        <Payload Name="1029\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.cs.wxl"/>
-        <Payload Name="1051\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.sk.wxl"/>
-    </BootstrapperApplicationRef>
+          ThemeFile="$(var.path)\HyperlinkSidebarTheme.xml"
+          Theme="hyperlinkSidebarLicense" />
+        <Payload Name="1033\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.en.wxl" />
+        <Payload Name="1061\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.et.wxl" />
+        <Payload Name="1029\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.cs.wxl" />
+        <Payload Name="1051\thm.wxl" SourceFile="$(var.path)\HyperlinkSidebarTheme.sk.wxl" />
+    </BootstrapperApplication>
 
-    <Variable Name="ChromeSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1"/>
-    <Variable Name="EdgeSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1"/>
-    <Variable Name="FirefoxSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1"/>
-    <Variable Name="ForceChromeExtensionActivation" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="0"/>
-    <Variable Name="ForceEdgeExtensionActivation" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="0"/>
+    <Variable Name="ChromeSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1" />
+    <Variable Name="EdgeSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1" />
+    <Variable Name="FirefoxSupport" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="1" />
+    <Variable Name="ForceChromeExtensionActivation" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="0" />
+    <Variable Name="ForceEdgeExtensionActivation" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="0" />
 
     <util:ProductSearch Id="WebEIDInstalled" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
-      Result="version" Variable="Installed"/>
-    <util:RegistrySearch Variable="ChromeSupport" Condition="Installed" Result="exists" Root="HKLM"
-      Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic" Value="update_url"/>
-    <util:RegistrySearch Variable="EdgeSupport" Condition="Installed" Result="exists" Root="HKLM"
-      Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido" Value="update_url"/>
-    <util:RegistrySearch Variable="FirefoxSupport" Condition="Installed" Result="exists" Root="HKLM"
-      Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" Win64="yes"/>
+      Result="version" Variable="Installed" />
+    <util:RegistrySearch Variable="ChromeSupport" Condition="Installed &gt; v0.0.0.0" Result="exists" Root="HKLM"
+      Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic" Value="update_url" After="WebEIDInstalled" />
+    <util:RegistrySearch Variable="EdgeSupport" Condition="Installed &gt; v0.0.0.0" Result="exists" Root="HKLM"
+      Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido" Value="update_url" After="WebEIDInstalled" />
+    <util:RegistrySearch Variable="FirefoxSupport" Condition="Installed &gt; v0.0.0.0" Result="exists" Root="HKLM"
+      Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" Bitness="always64" After="WebEIDInstalled" />
 
     <Chain>
       <MsiPackage Id="WebEID" InstallCondition="VersionNT64" ForcePerMachine="yes"
           SourceFile="$(var.webeid).qt.msi" Compressed="yes">
-        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFiles64Folder]Web eID"/>
-        <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]"/>
-        <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]"/>
-        <MsiProperty Name="EDGEINSTALL" Value="[EdgeSupport]"/>
-        <MsiProperty Name="EDGEPOLICY" Value="[ForceEdgeExtensionActivation]"/>
-        <MsiProperty Name="FIREFOXINSTALL" Value="[FirefoxSupport]"/>
+        <MsiProperty Name="INSTALLFOLDER" Value="[ProgramFiles64Folder]Web eID" />
+        <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]" />
+        <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]" />
+        <MsiProperty Name="EDGEINSTALL" Value="[EdgeSupport]" />
+        <MsiProperty Name="EDGEPOLICY" Value="[ForceEdgeExtensionActivation]" />
+        <MsiProperty Name="FIREFOXINSTALL" Value="[FirefoxSupport]" />
       </MsiPackage>
     </Chain>
   </Bundle>
