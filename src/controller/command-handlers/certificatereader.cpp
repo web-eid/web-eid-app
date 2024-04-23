@@ -78,7 +78,7 @@ CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& c
 CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandHandler(cmd)
 {
     validateAndStoreOrigin(cmd.second);
-    if (Application* app = qobject_cast<Application*>(qApp)) {
+    if (auto* app = qobject_cast<Application*>(qApp)) {
         app->loadTranslations(cmd.second.value(QStringLiteral("lang")).toString());
     }
 }
@@ -142,7 +142,7 @@ void CertificateReader::validateAndStoreOrigin(const QVariantMap& arguments)
         || origin.hasFragment()) {
         THROW(CommandHandlerInputDataError, "origin is not in <scheme>://<host>[:<port>] format");
     }
-    if (origin.scheme() != QStringLiteral("https") && origin.scheme() != QStringLiteral("wss")) {
+    if (origin.scheme() != QLatin1String("https") && origin.scheme() != QLatin1String("wss")) {
         THROW(CommandHandlerInputDataError, "origin scheme has to be https or wss");
     }
 }
