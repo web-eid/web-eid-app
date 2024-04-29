@@ -1,2 +1,4 @@
 usr/share/web-eid/eu.webeid.json
 usr/share/google-chrome/extensions/ncibgoaomkmdpilpocfeponihegamlic.json
+usr/share/chromium/extensions/ncibgoaomkmdpilpocfeponihegamlic.json
+etc/chromium/native-messaging-hosts/eu.webeid.json
