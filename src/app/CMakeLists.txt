@@ -158,7 +158,7 @@ else()
     endif()
     set(WEBEID_PATH ${CMAKE_INSTALL_FULL_BINDIR}/web-eid)
     install(TARGETS web-eid DESTINATION ${CMAKE_INSTALL_BINDIR})
-    if(EXISTS "/etc/debian_version")
+    if(EXISTS /etc/debian_version)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
             DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/mozilla/native-messaging-hosts RENAME eu.webeid.json)
     else()
@@ -167,8 +167,14 @@ else()
     endif()
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
         DESTINATION ${CMAKE_INSTALL_DATADIR}/web-eid)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
+        DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/chromium/native-messaging-hosts)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
+        DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/opt/chrome/native-messaging-hosts)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
         DESTINATION ${CMAKE_INSTALL_DATADIR}/google-chrome/extensions)
+    install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/chromium/extensions)
     install(FILES ${CMAKE_SOURCE_DIR}/install/web-eid.desktop
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
     if (BUNDLE_XPI)
