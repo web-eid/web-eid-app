@@ -98,19 +98,19 @@ private:
     void setTrText(QWidget* label, Text text) const;
     void
     setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
-    void setupPinPrompt(const PinInfo& pinInfo);
+    void setupPinPrompt(PinInfo pinInfo);
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
     void setupPinInput(const CardCertificateAndPinInfo& certAndPin);
     template <typename Func>
-    void setupOK(Func&& func, const char* text = {}, bool enabled = false);
+    void setupOK(Func func, const char* text = {}, bool enabled = false);
     void displayPinBlockedError();
 
     void showPinInputWarning(bool show);
     void resizeHeight();
 
     static QPixmap pixmap(QLatin1String name);
-    static std::tuple<const char*, const char*, QPixmap>
-    retriableErrorToTextTitleAndIcon(RetriableError error);
+    constexpr static std::tuple<const char*, const char*, QLatin1String>
+    retriableErrorToTextTitleAndIcon(RetriableError error) noexcept;
 
     class Private;
     Private* ui;

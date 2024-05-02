@@ -78,10 +78,10 @@ inline void eraseData(T& data)
     }
 }
 
-pcsc_cpp::byte_vector getPin(const pcsc_cpp::SmartCard& card, WebEidUI* window)
+pcsc_cpp::byte_vector getPin(const ElectronicID& card, WebEidUI* window)
 {
     // Doesn't apply to PIN pads.
-    if (card.readerHasPinPad()) {
+    if (card.smartcard().readerHasPinPad() || card.providesExternalPinDialog()) {
         return {};
     }
 
@@ -94,7 +94,7 @@ pcsc_cpp::byte_vector getPin(const pcsc_cpp::SmartCard& card, WebEidUI* window)
 
     // TODO: Avoid making copies of the PIN in memory.
     auto pinQByteArray = pin.toUtf8();
-    auto pinBytes = pcsc_cpp::byte_vector {pinQByteArray.begin(), pinQByteArray.end()};
+    pcsc_cpp::byte_vector pinBytes {pinQByteArray.begin(), pinQByteArray.end()};
 
     // TODO: Verify that the buffers are actually zeroed and no copies remain.
     eraseData<QString, QChar>(pin);
