@@ -1,187 +1,145 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<?ifndef qt_suffix ?>
+﻿<?ifndef qt_suffix ?>
 <?define qt_suffix="" ?>
-<?endif ?>
+<?endif?>
 
 <?if $(env.VisualStudioVersion) = "17.0" ?>
 <?define VCVER = "143" ?>
 <?elseif $(env.VisualStudioVersion) = "16.0" ?>
 <?define VCVER = "142" ?>
-<?elseif $(env.VisualStudioVersion) = "15.0" ?>
-<?define VCVER = "141" ?>
 <?endif?>
 
 <?if $(sys.BUILDARCH) = x64 ?>
-  <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
   <?define ssl_suffix = "-x64" ?>
-<?else ?>
-  <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+<?else?>
   <?define ssl_suffix = "" ?>
-<?endif ?>
+<?endif?>
 
 <?if $(var.qt_suffix) = "d" ?>
 <?define VCPATH = "$(env.VCTOOLSREDISTDIR)\Debug_NonRedist\$(sys.BUILDARCH)\Microsoft.VC$(var.VCVER).DebugCRT" ?>
-<?else ?>
+<?else?>
 <?define VCPATH = "$(env.VCTOOLSREDISTDIR)\$(sys.BUILDARCH)\Microsoft.VC$(var.VCVER).CRT" ?>
-<?endif ?>
+<?endif?>
 
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Name="Web eID software" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
-      Id="*" Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="RIA">
-    <Package Keywords="Installer" InstallerVersion="405" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated"/>
-    <MediaTemplate EmbedCab="yes" CompressionLevel="high"/>
-    <Icon Id="web_eid.exe" SourceFile="$(var.app_path)"/>
-    <Property Id="ARPPRODUCTICON" Value="web_eid.exe"/>
-    <Property Id="APPLICATIONNAME" Value="web-eid"/>
-    <Property Id="CHROMEINSTALL" Value="1"/>
-    <Property Id="CHROMEPOLICY" Value="0"/>
-    <Property Id="EDGEINSTALL" Value="1"/>
-    <Property Id="EDGEPOLICY" Value="0"/>
-    <Property Id="FIREFOXINSTALL" Value="1"/>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Web eID software" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
+      Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="RIA" InstallerVersion="500">
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+    <Icon Id="web_eid.exe" SourceFile="$(var.app_path)" />
+    <Property Id="ARPPRODUCTICON" Value="web_eid.exe" />
+    <Property Id="CHROMEINSTALL" Value="1" />
+    <Property Id="CHROMEPOLICY" Value="0" />
+    <Property Id="EDGEINSTALL" Value="1" />
+    <Property Id="EDGEPOLICY" Value="0" />
+    <Property Id="FIREFOXINSTALL" Value="1" />
     <MajorUpgrade AllowSameVersionUpgrades="yes" Schedule="afterInstallInitialize" DowngradeErrorMessage=
-      "A newer version of [ProductName] is already installed. If you are trying to downgrade, please uninstall the newer version first."/>
-    <Condition Message="[ProductName] requires Windows 8.1 or higher.">
-      <![CDATA[Installed OR (VersionNT >= 603)]]>
-    </Condition>
-    <UIRef Id="WixUI_Minimal2" />
+      "A newer version of [ProductName] is already installed. If you are trying to downgrade, please uninstall the newer version first." />
+    <Launch Condition="Installed OR (VersionNT &gt;= 603)" Message="[ProductName] requires Windows 8.1 or higher." />
+    <ui:WixUI Id="WixUI_Minimal2" />
 
     <!-- See https://github.com/web-eid/wix-custom-action-firefox-extension-install/blob/main/README.md and
          https://github.com/web-eid/wix-custom-action-firefox-extension-install/blob/main/src/FirefoxAction.cs
     -->
     <Binary Id="FirefoxAction.CA.dll" SourceFile="$(sys.SOURCEFILEDIR)FirefoxAction.CA.dll" />
     <CustomAction Id="ExtensionSettingsInstall" Return="check" Execute="deferred" Impersonate="no"
-      BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsInstall" />
+      BinaryRef="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsInstall" />
     <CustomAction Id="ExtensionSettingsNoInstall" Return="check" Execute="deferred" Impersonate="no"
-      BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsRemove" />
+      BinaryRef="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsRemove" />
     <CustomAction Id="ExtensionSettingsRemove" Return="check" Execute="deferred" Impersonate="no"
-      BinaryKey="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsRemove" />
+      BinaryRef="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsRemove" />
 
     <CustomAction Id="SetExtensionSettingsForInstall" Property="ExtensionSettingsInstall"
-      Value="EXTENSIONSETTINGS_UUID=$(var.FIREFOX_UUID);EXTENSIONSETTINGS_URL=$(var.FIREFOX_URL)"/>
+      Value="EXTENSIONSETTINGS_UUID=$(var.FIREFOX_UUID);EXTENSIONSETTINGS_URL=$(var.FIREFOX_URL)" />
     <CustomAction Id="SetExtensionSettingsForNoInstall" Property="ExtensionSettingsNoInstall"
-      Value="EXTENSIONSETTINGS_UUID=$(var.FIREFOX_UUID);EXTENSIONSETTINGS_URL=$(var.FIREFOX_URL)"/>
+      Value="EXTENSIONSETTINGS_UUID=$(var.FIREFOX_UUID);EXTENSIONSETTINGS_URL=$(var.FIREFOX_URL)" />
     <CustomAction Id="SetExtensionSettingsForRemove" Property="ExtensionSettingsRemove"
-      Value="EXTENSIONSETTINGS_UUID=$(var.FIREFOX_UUID);EXTENSIONSETTINGS_URL=$(var.FIREFOX_URL)"/>
+      Value="EXTENSIONSETTINGS_UUID=$(var.FIREFOX_UUID);EXTENSIONSETTINGS_URL=$(var.FIREFOX_URL)" />
 
     <InstallExecuteSequence>
       <Custom Action="SetExtensionSettingsForInstall" Before="InstallInitialize" />
       <Custom Action="SetExtensionSettingsForNoInstall" Before="InstallInitialize" />
       <Custom Action="SetExtensionSettingsForRemove" Before="InstallInitialize" />
-      <Custom Action="ExtensionSettingsInstall" Before="InstallFinalize">FIREFOXINSTALL=1 AND NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
-      <Custom Action="ExtensionSettingsNoInstall" Before="InstallFinalize">NOT (FIREFOXINSTALL=1) AND NOT ((REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE))</Custom>
-      <Custom Action="ExtensionSettingsRemove" Before="InstallFinalize">(REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE)</Custom>
+      <Custom Action="ExtensionSettingsInstall" Before="InstallFinalize"
+        Condition="FIREFOXINSTALL=1 AND NOT ((REMOVE=&quot;ALL&quot;) AND (NOT UPGRADINGPRODUCTCODE))" />
+      <Custom Action="ExtensionSettingsNoInstall" Before="InstallFinalize"
+        Condition="NOT (FIREFOXINSTALL=1) AND NOT ((REMOVE=&quot;ALL&quot;) AND (NOT UPGRADINGPRODUCTCODE))" />
+      <Custom Action="ExtensionSettingsRemove" Before="InstallFinalize"
+        Condition="(REMOVE=&quot;ALL&quot;) AND (NOT UPGRADINGPRODUCTCODE)" />
     </InstallExecuteSequence>
 
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="$(var.PlatformProgramFilesFolder)">
-        <Directory Id="APPLICATIONFOLDER" Name="Web eID">
-          <Component Id="Application" Guid="9b61583c-308f-435d-b221-c2f250271c7c">
-            <File Source="$(var.app_path)" KeyPath="yes"/>
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="INSTALLFOLDER" Name="Web eID">
+        <File Source="$(var.app_path)" />
 <?ifdef var.qt_path ?>
-            <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll"/>
-            <File Source="$(var.VCPATH)\vcruntime140$(var.qt_suffix).dll"/>
-<?if $(sys.BUILDARCH) = x64 AND $(env.VisualStudioVersion) != "15.0" ?>
-            <File Source="$(var.VCPATH)\vcruntime140_1$(var.qt_suffix).dll"/>
-            <File Source="$(var.VCPATH)\msvcp140_1$(var.qt_suffix).dll"/>
-            <File Source="$(var.VCPATH)\msvcp140_2$(var.qt_suffix).dll"/>
+        <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll" />
+        <File Source="$(var.VCPATH)\msvcp140_1$(var.qt_suffix).dll" />
+        <File Source="$(var.VCPATH)\msvcp140_2$(var.qt_suffix).dll" />
+        <File Source="$(var.VCPATH)\vcruntime140$(var.qt_suffix).dll" />
+<?if $(sys.BUILDARCH) != x86 ?>
+        <File Source="$(var.VCPATH)\vcruntime140_1$(var.qt_suffix).dll" />
 <?endif?>
-            <File Source="$(var.ssl_path)\libcrypto-3$(var.ssl_suffix).dll"/>
-            <File Source="$(var.ssl_path)\libssl-3$(var.ssl_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt6Core$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt6Gui$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt6Network$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt6Svg$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\Qt6Widgets$(var.qt_suffix).dll"/>
-            <File Source="$(var.qt_path)\D3DCompiler_47.dll"/>
-            <File Source="$(var.qt_path)\opengl32sw.dll" />
-            <File Source="$(var.qt_path)\Qt6SvgWidgets$(var.qt_suffix).dll"/>
-<?endif?>
-          </Component>
-          <Component Id="ChromeEdge" Transitive="yes">
-            <Condition><![CDATA[(CHROMEINSTALL = 1 OR EDGEINSTALL = 1)]]></Condition>
-            <File Source="$(var.json)"/>
-            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.json"
-              Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\eu.webeid"/>
-          </Component>
-          <Component Id="Firefox" Transitive="yes">
-            <Condition><![CDATA[(FIREFOXINSTALL = 1)]]></Condition>
-            <File Source="$(var.jsonfirefox)"/>
-            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.firefox.json"
-              Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" />
-          </Component>
-<?ifdef var.qt_path ?>
-          <Directory Id="platforms" Name="platforms" FileSource="$(var.qt_path)\..\plugins\platforms">
-            <Component Id="qwindows.dll">
-              <File Name="qwindows$(var.qt_suffix).dll"/>
-            </Component>
-          </Directory>
-          <Directory Id="styles" Name="styles" FileSource="$(var.qt_path)\..\plugins\styles">
-            <Component Id="qwindowsvistastyle.dll">
-              <File Name="qwindowsvistastyle$(var.qt_suffix).dll"/>
-            </Component>
-          </Directory>
-          <Directory Id="imageformats" Name="imageformats" FileSource="$(var.qt_path)\..\plugins\imageformats">
-            <Component Id="imageformats.dll">
-              <File Name="qsvg$(var.qt_suffix).dll"/>
-            </Component>
-          </Directory>
-          <Directory Id="tls" Name="tls" FileSource="$(var.qt_path)\..\plugins\tls">
-            <Component Id="qopensslbackend.dll">
-              <File Name="qopensslbackend$(var.qt_suffix).dll"/>
-            </Component>
-          </Directory>
-<?endif?>
+        <File Source="$(var.ssl_path)\libcrypto-3$(var.ssl_suffix).dll" />
+        <File Source="$(var.ssl_path)\libssl-3$(var.ssl_suffix).dll" />
+        <File Source="$(var.qt_path)\Qt6Core$(var.qt_suffix).dll" />
+        <File Source="$(var.qt_path)\Qt6Gui$(var.qt_suffix).dll" />
+        <File Source="$(var.qt_path)\Qt6Network$(var.qt_suffix).dll" />
+        <File Source="$(var.qt_path)\Qt6Svg$(var.qt_suffix).dll" />
+        <File Source="$(var.qt_path)\Qt6Widgets$(var.qt_suffix).dll" />
+        <File Source="$(var.qt_path)\D3DCompiler_47.dll" />
+        <File Source="$(var.qt_path)\opengl32sw.dll" />
+        <File Source="$(var.qt_path)\Qt6SvgWidgets$(var.qt_suffix).dll" />
+        <Directory Id="platforms" Name="platforms">
+          <File Source="$(var.qt_path)\..\plugins\platforms\qwindows$(var.qt_suffix).dll" />
         </Directory>
+        <Directory Id="styles" Name="styles">
+          <File Source="$(var.qt_path)\..\plugins\styles\qwindowsvistastyle$(var.qt_suffix).dll" />
+        </Directory>
+        <Directory Id="imageformats" Name="imageformats">
+          <File Source="$(var.qt_path)\..\plugins\imageformats\qsvg$(var.qt_suffix).dll" />
+        </Directory>
+        <Directory Id="tls" Name="tls">
+          <File Source="$(var.qt_path)\..\plugins\tls\qopensslbackend$(var.qt_suffix).dll" />
+        </Directory>
+<?endif?>
+        <Component Id="ChromeEdge" Transitive="yes" Condition="(CHROMEINSTALL = 1 OR EDGEINSTALL = 1)">
+          <File Source="$(var.json)" />
+          <RegistryValue Root="HKLM" Type="string" Value="[INSTALLFOLDER]eu.webeid.json"
+            Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\eu.webeid" />
+        </Component>
+        <Component Id="Firefox" Transitive="yes" Condition="(FIREFOXINSTALL = 1)">
+          <File Source="$(var.jsonfirefox)" />
+          <RegistryValue Root="HKLM" Type="string" Value="[INSTALLFOLDER]eu.webeid.firefox.json"
+            Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" />
+        </Component>
       </Directory>
-      <Component Id="Chrome" Win64="no" Transitive="yes">
-        <Condition><![CDATA[(CHROMEINSTALL = 1)]]></Condition>
+      <Component Id="Chrome" Transitive="yes" Condition="(CHROMEINSTALL = 1)" Bitness="always32">
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic"
-          Value="https://clients2.google.com/service/update2/crx"/>
+          Value="https://clients2.google.com/service/update2/crx" />
         <!-- Block chrome-token-signing extension to avoid conflicts -->
-        <RegistryValue Root='HKLM' Type='string' Name="56791"
-            Key='SOFTWARE\Policies\Google\Chrome\ExtensionInstallBlocklist'
-            Value='ckjefchnfjhjfedoccjbhjpbncimppeg'/>
+        <RegistryValue Root="HKLM" Type="string" Name="56791"
+          Key="SOFTWARE\Policies\Google\Chrome\ExtensionInstallBlocklist"
+          Value="ckjefchnfjhjfedoccjbhjpbncimppeg" />
       </Component>
-      <Component Id="ChromePolicy" Win64="no" Transitive="yes">
-        <Condition><![CDATA[(CHROMEINSTALL = 1 AND CHROMEPOLICY = 1)]]></Condition>
-        <RegistryValue Root='HKLM' Type='string' Name="56790"
-            Key='SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist'
-            Value='ncibgoaomkmdpilpocfeponihegamlic'/>
+      <Component Id="ChromePolicy" Transitive="yes" Condition="(CHROMEINSTALL = 1 AND CHROMEPOLICY = 1)" Bitness="always32">
+        <RegistryValue Root="HKLM" Type="string" Name="56790"
+          Key="SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist"
+          Value="ncibgoaomkmdpilpocfeponihegamlic" />
       </Component>
-      <Component Id="Edge" Win64="no" Transitive="yes">
-        <Condition><![CDATA[(EDGEINSTALL = 1)]]></Condition>
+      <Component Id="Edge" Transitive="yes" Condition="(EDGEINSTALL = 1)" Bitness="always32">
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido"
-          Value="https://edge.microsoft.com/extensionwebstorebase/v1/crx"/>
+          Value="https://edge.microsoft.com/extensionwebstorebase/v1/crx" />
         <!-- Block chrome-token-signing extension to avoid conflicts -->
-        <RegistryValue Root='HKLM' Type='string' Name="56791"
-            Key='SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallBlocklist'
-            Value='fofaekogmodbjplbmlbmjiglndceaajh'/>
+        <RegistryValue Root="HKLM" Type="string" Name="56791"
+          Key="SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallBlocklist"
+          Value="fofaekogmodbjplbmlbmjiglndceaajh" />
       </Component>
-      <Component Id="EdgePolicy" Win64="no" Transitive="yes">
-        <Condition><![CDATA[(EDGEINSTALL = 1 AND EDGEPOLICY = 1)]]></Condition>
-        <RegistryValue Root='HKLM' Type='string' Name="56790"
-            Key='SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist'
-            Value='gnmckgbandlkacikdndelhfghdejfido'/>
+      <Component Id="EdgePolicy" Transitive="yes" Condition="(EDGEINSTALL = 1 AND EDGEPOLICY = 1)" Bitness="always32">
+        <RegistryValue Root="HKLM" Type="string" Name="56790"
+          Key="SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist"
+          Value="gnmckgbandlkacikdndelhfghdejfido" />
       </Component>
-    </Directory>
-
-    <Feature Id="Install" Level="1" Title="Web eID" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER">
-      <ComponentRef Id="Application"/>
-      <ComponentRef Id="ChromeEdge"/>
-      <ComponentRef Id="Chrome"/>
-      <ComponentRef Id="ChromePolicy"/>
-      <ComponentRef Id="Edge"/>
-      <ComponentRef Id="EdgePolicy"/>
-      <ComponentRef Id="Firefox"/>
-<?ifdef var.qt_path ?>
-      <ComponentRef Id="qwindows.dll" />
-      <ComponentRef Id="qwindowsvistastyle.dll" />
-      <ComponentRef Id="imageformats.dll" />
-      <ComponentRef Id="qopensslbackend.dll" />
-<?endif?>
-    </Feature>
-  </Product>
+    </StandardDirectory>
+  </Package>
 </Wix>

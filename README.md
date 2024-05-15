@@ -267,7 +267,13 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 ### Windows
 
 - Download Visual Studio 2019 community installer from https://visualstudio.microsoft.com/ and install _Desktop C++ Development_
-- Download WIX toolset from https://wixtoolset.org/ and install version 3.11.2
+- Install WIX toolset
+
+      dotnet tool install --global wix --version 5.0.0
+      wix extension -g add WixToolset.UI.wixext/5.0.0
+      wix extension -g add WixToolset.Util.wixext/5.0.0
+      wix extension -g add WixToolset.Bal.wixext/5.0.0
+
 - Download and install Git for Windows from https://git-scm.com/download/win
 - Download and install CMake from https://cmake.org/download/
 - Install _vcpkg_ by running the following commands in Powershell:
@@ -282,7 +288,7 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
       .\vcpkg install --recurse --triplet x64-windows --clean-after-build gtest openssl
 
 - Install _Qt_ with the official [_Qt Online Installer_](https://www.qt.io/download-qt-installer),
-  choose _Custom installation > Qt 6.2.4 > MSVC 2019 64-bit_.
+  choose _Custom installation > Qt 6.6.3 > MSVC 2019 64-bit_.
 
 ### macOS
 

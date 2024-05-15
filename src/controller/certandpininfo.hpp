@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,11 @@ struct CertificateInfo
     bool isExpired = false;
     bool notEffective = false;
     QString subject;
-    QString issuer;
-    QString effectiveDate;
-    QString expiryDate;
 };
 
 struct PinInfo
 {
-    using PinMinMaxLength = std::pair<size_t, size_t>;
+    using PinMinMaxLength = std::pair<uint8_t, uint8_t>;
     using PinRetriesCount = std::pair<int8_t, int8_t>;
 
     PinMinMaxLength pinMinMaxLength = {0, 0};

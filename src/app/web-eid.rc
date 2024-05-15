@@ -24,7 +24,7 @@ BEGIN
 			VALUE "FileDescription", "Web eID app"
 			VALUE "FileVersion", VER_STR(PROJECT_VERSION_MAJOR.PROJECT_VERSION_MINOR.PROJECT_VERSION_PATCH+PROJECT_VERSION_TWEAK)
 			VALUE "InternalName", "web-eid"
-			VALUE "LegalCopyright", "Copyright (C) 2020-2023 Estonian Information System Authority"
+			VALUE "LegalCopyright", "Copyright (C) 2020-2024 Estonian Information System Authority"
 			VALUE "OriginalFilename", "web-eid.exe"
 			VALUE "ProductName", "Web eID app"
 			VALUE "ProductVersion", VER_STR(PROJECT_VERSION_MAJOR.PROJECT_VERSION_MINOR.PROJECT_VERSION_PATCH+PROJECT_VERSION_TWEAK)

@@ -6,17 +6,26 @@ env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
   QT_QPA_PLATFORM: offscreen
+  CMAKE_BUILD_PARALLEL_LEVEL: 3
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: 'fedora:36'
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['fedora:38', 'fedora:39']
+        include:
+        - container: 'fedora:38'
+          name: fedora38
+        - container: 'fedora:39'
+          name: fedora39
 
     steps:
       - name: Install Deps
-        run: dnf install -y git gcc-c++ cmake rpm-build openssl-devel pcsc-lite-devel qt5-qtsvg-devel qt5-linguist gtest-devel
+        run: dnf install -y --setopt=install_weak_deps=False git gcc-c++ cmake rpm-build openssl-devel pcsc-lite-devel qt6-qtsvg-devel qt6-qttools-devel gtest-devel
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -26,7 +35,7 @@ jobs:
       - name: Build
         run: cmake --build build --config $BUILD_TYPE --target package
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: web-eid-app-fedora-build-${{github.run_number}}
+          name: web-eid-app-fedora-build-${{matrix.name}}-${{github.run_number}}
           path: build/*rpm

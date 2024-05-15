@@ -5,6 +5,7 @@ on: [push, pull_request]
 env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
+  CMAKE_BUILD_PARALLEL_LEVEL: 3
 
 jobs:
   build:
@@ -12,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -21,12 +22,12 @@ jobs:
         with:
           vcpkgArguments: gtest openssl
           vcpkgTriplet: x64-windows
-          vcpkgGitCommitId: 98a562a04cd03728f399e79e1b37bcccb5a69b37
+          vcpkgGitCommitId: 1f619be01b436b796dab797dd1e1721c5676f8ac
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
         with:
-          version: 6.5.2
+          version: 6.6.3
           arch: win64_msvc2019_64
 
       - name: Setup MS Visual C++ dev env
@@ -34,11 +35,18 @@ jobs:
         with:
           arch: x64
 
+      - name: Install WiX
+        run: |
+          dotnet tool install --global wix --version 5.0.0
+          wix extension -g add WixToolset.UI.wixext/5.0.0
+          wix extension -g add WixToolset.Util.wixext/5.0.0
+          wix extension -g add WixToolset.BootstrapperApplications.wixext/5.0.0
+
       - name: Configure
         run: |
-          cmake "-GNinja" `
+          cmake "-GNinja" -S . -B build `
             "-DCMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
-            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" -S . -B build
+            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}"
 
       - name: Build
         run: |
@@ -50,7 +58,7 @@ jobs:
         run: ctest -V -C ${env:BUILD_TYPE} --test-dir build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: web-eid-app-windows-build-${{github.run_number}}
           path: |

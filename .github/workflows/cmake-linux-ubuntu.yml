@@ -9,6 +9,7 @@ env:
   DEBIAN_FRONTEND: noninteractive
   DEBFULLNAME: GitHub build
   DEBEMAIL: github-action@github
+  CMAKE_BUILD_PARALLEL_LEVEL: 3
 
 jobs:
   build:
@@ -32,7 +33,7 @@ jobs:
         if: matrix.container != 'ubuntu:20.04'
         run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools libqt6core5compat6-dev
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -45,7 +46,7 @@ jobs:
           # Debian creates artifacts outside of project dir, copy them back to make them available in the build artifacts
           cp -r ../web-eid*.* build/src/app
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: web-eid-app-ubuntu-build-${{matrix.name}}-${{github.run_number}}
           path: build/src/app/*.*deb

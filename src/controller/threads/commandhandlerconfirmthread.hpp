@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,9 +31,8 @@ class CommandHandlerConfirmThread : public ControllerChildThread
 public:
     CommandHandlerConfirmThread(QObject* parent, CommandHandler& handler, WebEidUI* w,
                                 const CardCertificateAndPinInfo& cardCertAndPin) :
-        ControllerChildThread(parent),
-        commandHandler(handler), cmdType(commandHandler.commandType()), window(w),
-        cardCertAndPinInfo(cardCertAndPin)
+        ControllerChildThread(parent), commandHandler(handler),
+        cmdType(commandHandler.commandType()), window(w), cardCertAndPinInfo(cardCertAndPin)
     {
     }
 

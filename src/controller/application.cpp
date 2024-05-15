@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Estonian Information System Authority
+ * Copyright (c) 2021-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@
 #include <QPalette>
 #include <QProcess>
 #include <QSettings>
+#include <QStyleHints>
 #include <QTranslator>
 
 inline CommandWithArguments::second_type parseArgumentJson(const QString& argumentStr)
@@ -74,19 +75,17 @@ Application::Application(int& argc, char** argv, const QString& name) :
 #endif
 }
 
-#ifndef Q_OS_MAC
 bool Application::isDarkTheme()
 {
-#ifdef Q_OS_WIN
-    QSettings settings(
-        "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-        QSettings::NativeFormat);
-    return settings.value("AppsUseLightTheme", 1).toInt() == 0;
-#else
-    // There is currently no straightforward way to detect dark mode in Linux, but this works for supported OS-s.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    return styleHints()->colorScheme() == Qt::ColorScheme::Dark;
+#elif defined(Q_OS_UNIX)
+    // There is currently no straightforward way to detect dark mode in Linux, but this works for
+    // supported OS-s.
     static const bool isDarkTheme = [] {
         QProcess p;
-        p.start(QStringLiteral("gsettings"), {"get", "org.gnome.desktop.interface", "color-scheme"});
+        p.start(QStringLiteral("gsettings"),
+                {"get", "org.gnome.desktop.interface", "color-scheme"});
         if (p.waitForFinished()) {
             return p.readAllStandardOutput().contains("dark");
         }
@@ -97,7 +96,6 @@ bool Application::isDarkTheme()
     return isDarkTheme;
 #endif
 }
-#endif
 
 void Application::loadTranslations(const QString& lang)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -102,14 +102,14 @@ private:
     void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
     void setupPinInput(const CardCertificateAndPinInfo& certAndPin);
     template <typename Func>
-    void setupOK(Func&& func, const std::function<QString()>& text = {}, bool enabled = false);
+    void setupOK(Func&& func, const char* text = {}, bool enabled = false);
     void displayPinBlockedError();
 
     void showPinInputWarning(bool show);
     void resizeHeight();
 
     static QPixmap pixmap(QLatin1String name);
-    static std::tuple<QString, QString, QPixmap>
+    static std::tuple<const char*, const char*, QPixmap>
     retriableErrorToTextTitleAndIcon(RetriableError error);
 
     class Private;

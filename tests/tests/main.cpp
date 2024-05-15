@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@
 #include "mock-ui.hpp"
 #include "getcommandhandler-mock.hpp"
 
+#define NO_SIGNATURE
 #include "select-certificate-script.hpp"
 #include "atrs.hpp"
 #include "changecertificatevaliduntil.hpp"
@@ -123,22 +124,22 @@ void WebEidTests::getCertificate_validCertificateHasExpectedCertificateSubject()
 
     // assert
     const auto certInfo = getCertAndPinInfoFromSignalSpy(certificateReadySpy);
-    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK, MARI-LIIS, 61709210125"));
+    QCOMPARE(certInfo.subject, QStringLiteral("J\u00D5EORG, JAAK-KRISTJAN, 38001085718"));
 
-    const auto certBytes =
-        QByteArray::fromBase64(controller->result()["certificate"].toString().toUtf8());
+    const auto certBytes = QByteArray::fromBase64(
+        controller->result()[QStringLiteral("certificate")].toString().toUtf8());
     const auto cert = QSslCertificate(certBytes, QSsl::EncodingFormat::Der);
     QVERIFY(!cert.isNull());
-    QCOMPARE(cert.subjectInfo(QSslCertificate::CommonName)[0],
-             QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
+    QCOMPARE(cert.subjectInfo(QSslCertificate::CommonName).constFirst(),
+             QStringLiteral("J\u00D5EORG,JAAK-KRISTJAN,38001085718"));
 }
 
 void WebEidTests::getCertificate_expiredCertificateHasExpectedCertificateSubject()
 {
     // arrange
-    PcscMock::setAtr(ESTEID_GEMALTO_V3_5_8_COLD_ATR);
+    PcscMock::setAtr(ESTEID_IDEMIA_V1_ATR);
     PcscMock::setApduScript(
-        replaceCertValidUntilTo2010(ESTEID_GEMALTO_V3_5_8_GET_SIGN_CERTIFICATE_AND_SIGNING));
+        replaceCertValidUntilTo2010(ESTEID_IDEMIA_V1_SELECT_SIGN_CERTIFICATE_AND_SIGNING));
 
     initGetCert();
 
@@ -150,14 +151,14 @@ void WebEidTests::getCertificate_expiredCertificateHasExpectedCertificateSubject
 
     // assert
     const auto certInfo = getCertAndPinInfoFromSignalSpy(certificateReadySpy);
-    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK, MARI-LIIS, 61709210125"));
+    QCOMPARE(certInfo.subject, QStringLiteral("J\u00D5EORG, JAAK-KRISTJAN, 38001085718"));
 
-    const auto certBytes =
-        QByteArray::fromBase64(controller->result()["certificate"].toString().toUtf8());
+    const auto certBytes = QByteArray::fromBase64(
+        controller->result()[QStringLiteral("certificate")].toString().toUtf8());
     const auto cert = QSslCertificate(certBytes, QSsl::EncodingFormat::Der);
     QVERIFY(!cert.isNull());
-    QCOMPARE(cert.subjectInfo(QSslCertificate::CommonName)[0],
-             QStringLiteral("M\u00C4NNIK,MARI-LIIS,61709210125"));
+    QCOMPARE(cert.subjectInfo(QSslCertificate::CommonName).constFirst(),
+             QStringLiteral("J\u00D5EORG,JAAK-KRISTJAN,38001085718"));
 }
 
 void WebEidTests::getCertificate_outputsSupportedAlgos()
@@ -175,7 +176,9 @@ void WebEidTests::getCertificate_outputsSupportedAlgos()
     runEventLoopVerifySignalsEmitted(certificateReadySpy);
 
     // assert
-    QCOMPARE(controller->result()["supportedSignatureAlgorithms"].toList()[0].toMap(), ES224_ALGO);
+    QCOMPARE(
+        controller->result()[QStringLiteral("supportedSignatureAlgorithms")].toList()[0].toMap(),
+        ES224_ALGO);
 }
 
 void WebEidTests::authenticate_validArgumentsResultInValidToken()
@@ -192,15 +195,15 @@ void WebEidTests::authenticate_validArgumentsResultInValidToken()
 
     // assert
     const auto certInfo = getCertAndPinInfoFromSignalSpy(authenticateSpy);
-    QCOMPARE(certInfo.subject, QStringLiteral("M\u00C4NNIK, MARI-LIIS, 61709210125"));
+    QCOMPARE(certInfo.subject, QStringLiteral("J\u00D5EORG, JAAK-KRISTJAN, 38001085718"));
 
-    QCOMPARE(controller->result()["unverifiedCertificate"].toString().left(25),
-             QStringLiteral("MIIGRzCCBC+gAwIBAgIQRA7X0"));
+    QCOMPARE(controller->result()[QStringLiteral("unverifiedCertificate")].toString().left(25),
+             QStringLiteral("MIIEAzCCA2WgAwIBAgIQOWkBW"));
 }
 
 void WebEidTests::fromPunycode_decodesEeDomain()
 {
-    QCOMPARE(fromPunycode(QUrl("https://xn--igusnunik-p7af.ee")),
+    QCOMPARE(fromPunycode(QUrl(QStringLiteral("https://xn--igusnunik-p7af.ee"))),
              QStringLiteral("\u00F5igusn\u00F5unik.ee"));
 }
 
@@ -216,7 +219,7 @@ void WebEidTests::quit_exits()
 
     } catch (const std::exception& e) {
         QFAIL(QStringLiteral("WebEidTests::quit_exits() failed with exception: %s")
-                  .arg(e.what())
+                  .arg(QLatin1String(e.what()))
                   .toUtf8());
     }
 }
@@ -248,7 +251,7 @@ void WebEidTests::initGetCert()
 
     } catch (const std::exception& e) {
         QFAIL(QStringLiteral("WebEidTests::initGetCert() failed with exception: %s")
-                  .arg(e.what())
+                  .arg(QLatin1String(e.what()))
                   .toUtf8());
     }
 }
@@ -264,7 +267,7 @@ void WebEidTests::initAuthenticate()
 
     } catch (const std::exception& e) {
         QFAIL(QStringLiteral("WebEidTests::initAuthenticate() failed with exception: %s")
-                  .arg(e.what())
+                  .arg(QLatin1String(e.what()))
                   .toUtf8());
     }
 }
@@ -272,15 +275,15 @@ void WebEidTests::initAuthenticate()
 void WebEidTests::initCard(bool withSigningScript)
 {
     try {
-        PcscMock::setAtr(ESTEID_GEMALTO_V3_5_8_COLD_ATR);
+        PcscMock::setAtr(ESTEID_IDEMIA_V1_ATR);
         const auto notExpiredCertScript = replaceCertValidUntilToNextYear(
-            withSigningScript ? ESTEID_GEMALTO_V3_5_8_GET_SIGN_CERTIFICATE_AND_SIGNING
-                              : ESTEID_GEMALTO_V3_5_8_GET_AUTH_CERTIFICATE_AND_AUTHENTICATE);
+            withSigningScript ? ESTEID_IDEMIA_V1_SELECT_SIGN_CERTIFICATE_AND_SIGNING
+                              : ESTEID_IDEMIA_V1_SELECT_AUTH_CERTIFICATE_AND_AUTHENTICATE);
         PcscMock::setApduScript(notExpiredCertScript);
 
     } catch (const std::exception& e) {
         QFAIL(QStringLiteral("WebEidTests::initCard() failed with exception: %s")
-                  .arg(e.what())
+                  .arg(QLatin1String(e.what()))
                   .toUtf8());
     }
 }

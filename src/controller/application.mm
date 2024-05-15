@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 The Web eID Project
+ * Copyright (c) 2022-2024 The Web eID Project
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,6 @@
 
 #import <AppKit/AppKit.h>
 #import <Cocoa/Cocoa.h>
-
-bool Application::isDarkTheme()
-{
-    auto appearance = [NSApp.effectiveAppearance bestMatchFromAppearancesWithNames:
-        @[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
-    return [appearance isEqualToString:NSAppearanceNameDarkAqua];
-}
 
 void Application::showAbout()
 {

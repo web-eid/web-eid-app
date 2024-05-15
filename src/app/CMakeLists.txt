@@ -27,35 +27,37 @@ if(WIN32)
     endif()
     set(WEBEID_PATH web-eid.exe)
     set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.${PLATFORM})
-    list(APPEND CANDLE_CMD "$ENV{WIX}bin\\candle.exe" -nologo -arch ${PLATFORM}
-        -dMSI_VERSION=${PROJECT_VERSION}
-        -dssl_path="${SSL_PATH}"
-        -dqt_suffix="$<$<CONFIG:Debug>:d>"
-        -djson=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
-        -djsonfirefox=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
-        -dFIREFOX_URL="${FIREFOX_URL}"
-        -dFIREFOX_UUID="${FIREFOX_UUID}"
-        -dapp_path=$<TARGET_FILE:web-eid>
+    set(WIX_CMD wix.exe build -nologo
+        -arch ${PLATFORM}
+        -ext WixToolset.UI.wixext
+        -bv WixUIDialogBmp=${CMAKE_SOURCE_DIR}/install/dlgbmp.bmp
+        -d MSI_VERSION=${PROJECT_VERSION}
+        -d ssl_path="${SSL_PATH}"
+        -d qt_suffix="$<$<CONFIG:Debug>:d>"
+        -d json=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
+        -d jsonfirefox=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
+        -d FIREFOX_URL="${FIREFOX_URL}"
+        -d FIREFOX_UUID="${FIREFOX_UUID}"
+        -d app_path=$<TARGET_FILE:web-eid>
         ${CMAKE_SOURCE_DIR}/install/web-eid.wxs
-        ${CMAKE_SOURCE_DIR}/install/WelcomeDlg2.wxs
-        ${CMAKE_SOURCE_DIR}/install/WixUI_Minimal2.wxs
-    )
-    list(APPEND LIGHT_CMD "$ENV{WIX}bin\\light.exe" -nologo -ext WixUIExtension
-        web-eid.wixobj WelcomeDlg2.wixobj WixUI_Minimal2.wixobj
-        -dWixUIDialogBmp=${CMAKE_SOURCE_DIR}/install/dlgbmp.bmp
+        ${CMAKE_SOURCE_DIR}/install/WelcomeDlg.wxs
+        ${CMAKE_SOURCE_DIR}/install/WixUI_Minimal.wxs
     )
     add_custom_target(installer DEPENDS web-eid
-        COMMAND ${CANDLE_CMD}
-        COMMAND ${LIGHT_CMD} -o "${BASE_FILE}.msi"
+        COMMAND ${WIX_CMD} -o "${BASE_FILE}.msi"
         #Build MSI with QT
-        COMMAND ${CANDLE_CMD} -dqt_path=${qtCore_install_prefix}
-        COMMAND ${LIGHT_CMD} -o "${BASE_FILE}.qt.msi"
+        COMMAND ${WIX_CMD} -d qt_path=${qtCore_install_prefix} -o "${BASE_FILE}.qt.msi"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
-    add_custom_target(bundle
-        COMMAND "$ENV{WIX}bin\\candle.exe" -nologo -ext WixBalExtension -ext WixUtilExtension -dwebeid="${BASE_FILE}"
-            -dMSI_VERSION=${PROJECT_VERSION} -dpath="${CMAKE_SOURCE_DIR}/install" "${CMAKE_SOURCE_DIR}/install/plugins.wxs"
-        COMMAND "$ENV{WIX}bin\\light.exe" "plugins.wixobj" -nologo -ext WixBalExtension -out "${BASE_FILE}.exe"
+    add_custom_target(bundle DEPENDS installer
+        COMMAND wix.exe build -nologo
+            -ext WixToolset.BootstrapperApplications.wixext
+            -ext WixToolset.Util.wixext
+            -d webeid="${BASE_FILE}"
+            -d MSI_VERSION=${PROJECT_VERSION}
+            -d path="${CMAKE_SOURCE_DIR}/install"
+            "${CMAKE_SOURCE_DIR}/install/plugins.wxs"
+            -o "${BASE_FILE}.exe"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
     if(SIGNCERT)
@@ -70,9 +72,9 @@ if(WIN32)
             WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
         )
         add_custom_command(TARGET bundle POST_BUILD
-            COMMAND "$ENV{WIX}bin\\insignia.exe" -nologo -ib "${BASE_FILE}.exe" -o "${BASE_FILE}.engine.exe"
+            COMMAND wix.exe burn detach -nologo "${BASE_FILE}.exe" -engine "${BASE_FILE}.engine.exe"
             COMMAND ${SIGNCMD} "${BASE_FILE}.engine.exe"
-            COMMAND "$ENV{WIX}bin\\insignia.exe" -nologo -ab "${BASE_FILE}.engine.exe" "${BASE_FILE}.exe" -o "${BASE_FILE}.exe"
+            COMMAND wix.exe burn reattach -nologo "${BASE_FILE}.exe" -engine "${BASE_FILE}.engine.exe" -o "${BASE_FILE}.exe"
             COMMAND ${SIGNCMD} "${BASE_FILE}.exe"
             COMMAND del "${BASE_FILE}.engine.exe"
             WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
