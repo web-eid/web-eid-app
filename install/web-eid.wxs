@@ -60,11 +60,11 @@
       <Custom Action="SetExtensionSettingsForNoInstall" Before="InstallInitialize" />
       <Custom Action="SetExtensionSettingsForRemove" Before="InstallInitialize" />
       <Custom Action="ExtensionSettingsInstall" Before="InstallFinalize"
-        Condition="FIREFOXINSTALL=1 AND NOT ((REMOVE=&quot;ALL&quot;) AND (NOT UPGRADINGPRODUCTCODE))" />
+        Condition="FIREFOXINSTALL=1 AND NOT REMOVE=&quot;ALL&quot;" />
       <Custom Action="ExtensionSettingsNoInstall" Before="InstallFinalize"
-        Condition="NOT (FIREFOXINSTALL=1) AND NOT ((REMOVE=&quot;ALL&quot;) AND (NOT UPGRADINGPRODUCTCODE))" />
+        Condition="FIREFOXINSTALL=0 AND NOT REMOVE=&quot;ALL&quot;" />
       <Custom Action="ExtensionSettingsRemove" Before="InstallFinalize"
-        Condition="(REMOVE=&quot;ALL&quot;) AND (NOT UPGRADINGPRODUCTCODE)" />
+        Condition="REMOVE=&quot;ALL&quot; AND NOT UPGRADINGPRODUCTCODE" />
     </InstallExecuteSequence>
 
     <StandardDirectory Id="ProgramFiles6432Folder">
