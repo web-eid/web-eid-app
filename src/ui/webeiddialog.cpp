@@ -554,7 +554,7 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
         // QString uses QAtomicPointer internally and is thread-safe.
         pin = ui->pinInput->text();
 
-        // We use setText instead of clear, so undo/redo will be cleared as well
+        // Use setText() instead of clear() to clear undo/redo history as well.
         ui->pinInput->setText({});
         // TODO: To be sure that no copy of PIN text remains in memory, a custom
         // widget should be implemented, that:
