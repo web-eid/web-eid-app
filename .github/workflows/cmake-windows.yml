@@ -5,11 +5,19 @@ on: [push, pull_request]
 env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
-  CMAKE_BUILD_PARALLEL_LEVEL: 3
+  CMAKE_BUILD_PARALLEL_LEVEL: 4
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: ${{ matrix.image }}
+    strategy:
+      matrix:
+        vcver: [142, 143]
+        include:
+        - vcver: 142
+          image: windows-2019
+        - vcver: 143
+          image: windows-2022
 
     steps:
       - name: Checkout code
@@ -27,7 +35,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
         with:
-          version: 6.6.3
+          version: 6.7.1
           arch: win64_msvc2019_64
 
       - name: Setup MS Visual C++ dev env
@@ -45,7 +53,7 @@ jobs:
       - name: Configure
         run: |
           cmake "-GNinja" -S . -B build `
-            "-DCMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
+            "-DCMAKE_TOOLCHAIN_FILE=${env:RUNVCPKG_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
             "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}"
 
       - name: Build
@@ -60,7 +68,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: web-eid-app-windows-build-${{github.run_number}}
+          name: web-eid-app-windows-build-VC${{matrix.vcver}}-${{github.run_number}}
           path: |
             build/src/app/*.msi
             build/src/app/*.exe
