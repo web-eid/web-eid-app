@@ -24,14 +24,14 @@
 
 #include "pcsc-mock/pcsc-mock.hpp"
 
-#include <ctime>
 #include <string>
+#include <QDate>
 
-PcscMock::byte_vector::iterator findUTCDateTime(PcscMock::byte_vector::iterator first,
-                                                PcscMock::byte_vector::iterator last)
+inline PcscMock::byte_vector::iterator findUTCDateTime(PcscMock::byte_vector::iterator first,
+                                                          PcscMock::byte_vector::iterator last)
 {
-    static const unsigned char UTC_DATETIME_TAG = 0x17;
-    static const unsigned char LENGTH_TAG = 0x0d;
+    constexpr unsigned char UTC_DATETIME_TAG = 0x17;
+    constexpr unsigned char LENGTH_TAG = 0x0d;
 
     for (; first != last; ++first) {
         if (*first == UTC_DATETIME_TAG && first + 1 != last && *(first + 1) == LENGTH_TAG) {
@@ -41,9 +41,9 @@ PcscMock::byte_vector::iterator findUTCDateTime(PcscMock::byte_vector::iterator 
     return last;
 }
 
-PcscMock::ApduScript replaceCertValidUntilYear(const PcscMock::ApduScript& script,
-                                               const size_t certBytesStartOffset,
-                                               const std::string& twoDigitYear)
+inline PcscMock::ApduScript replaceCertValidUntilYear(const PcscMock::ApduScript& script,
+                                                      const size_t certBytesStartOffset,
+                                                      std::string_view twoDigitYear)
 {
     if (twoDigitYear.size() != 2) {
         throw std::invalid_argument("replaceCertValidUntilYear: twoDigitYear size must be 2, "
@@ -85,17 +85,13 @@ PcscMock::ApduScript replaceCertValidUntilYear(const PcscMock::ApduScript& scrip
     return scriptCopy;
 }
 
-PcscMock::ApduScript replaceCertValidUntilTo2010(const PcscMock::ApduScript& script)
+inline PcscMock::ApduScript replaceCertValidUntilTo2010(const PcscMock::ApduScript& script)
 {
     return replaceCertValidUntilYear(script, 4, "10");
 }
 
-PcscMock::ApduScript replaceCertValidUntilToNextYear(const PcscMock::ApduScript& script)
+inline PcscMock::ApduScript replaceCertValidUntilToNextYear(const PcscMock::ApduScript& script)
 {
-    const auto t = std::time(nullptr);
-    const auto now = std::localtime(&t);
-    // UTCDateTime needs 2-digit year since 2000, tm_year is years since 1900, add +1 for next year
-    const auto yearInt = now->tm_year + 1900 - 2000 + 1;
-    const auto yearStr = std::to_string(yearInt);
-    return replaceCertValidUntilYear(script, 4, yearStr);
+    // UTCDateTime needs 2-digit year since 2000, add +1 for next year
+    return replaceCertValidUntilYear(script, 4, std::to_string(QDate::currentDate().year() - 2000 + 1));
 }
