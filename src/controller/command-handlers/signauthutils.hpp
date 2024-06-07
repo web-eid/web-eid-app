@@ -32,7 +32,7 @@ namespace electronic_id
 {
 class ElectronicID;
 class SignatureAlgorithm;
-}
+} // namespace electronic_id
 
 void requireArgumentsAndOptionalLang(QStringList argNames, const QVariantMap& args,
                                      const std::string& argDescriptions);
