@@ -122,7 +122,7 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window,
     const auto signatureAlgorithm =
         QString::fromStdString(cardCertAndPin.cardInfo->eid().authSignatureAlgorithm());
 
-    auto pin = getPin(cardCertAndPin.cardInfo->eid().smartcard(), window);
+    auto pin = getPin(cardCertAndPin.cardInfo->eid(), window);
 
     try {
         const auto signature =

@@ -22,13 +22,17 @@
 
 #pragma once
 
-#include "electronic-id/enums.hpp"
-#include "pcsc-cpp/pcsc-cpp-utils.hpp"
+#include "pcsc-cpp/pcsc-cpp.hpp"
 
 #include <QVariantMap>
 
 class WebEidUI;
-class QSslCertificate;
+
+namespace electronic_id
+{
+class ElectronicID;
+class SignatureAlgorithm;
+} // namespace electronic_id
 
 void requireArgumentsAndOptionalLang(QStringList argNames, const QVariantMap& args,
                                      const std::string& argDescriptions);
@@ -41,6 +45,6 @@ extern template QString validateAndGetArgument<QString>(const QString& argName,
 extern template QByteArray
 validateAndGetArgument<QByteArray>(const QString& argName, const QVariantMap& args, bool allowNull);
 
-pcsc_cpp::byte_vector getPin(const pcsc_cpp::SmartCard& card, WebEidUI* window);
+pcsc_cpp::byte_vector getPin(const electronic_id::ElectronicID& card, WebEidUI* window);
 
 QVariantMap signatureAlgoToVariantMap(const electronic_id::SignatureAlgorithm signatureAlgo);

@@ -20,14 +20,14 @@ jobs:
       with:
         submodules: recursive
 
-    - uses: github/codeql-action/init@v2
+    - uses: github/codeql-action/init@v3
       with:
         languages: cpp
         queries: +security-and-quality
 
-    - uses: github/codeql-action/autobuild@v2
+    - uses: github/codeql-action/autobuild@v3
 
-    - uses: github/codeql-action/analyze@v2
+    - uses: github/codeql-action/analyze@v3
       with:
         upload: False
         output: sarif-results
@@ -39,6 +39,6 @@ jobs:
         input: sarif-results/cpp.sarif
         output: sarif-results/cpp.sarif
 
-    - uses: github/codeql-action/upload-sarif@v2
+    - uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: sarif-results/cpp.sarif

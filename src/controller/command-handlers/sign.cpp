@@ -95,7 +95,7 @@ void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& c
 
 QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& cardCertAndPin)
 {
-    auto pin = getPin(cardCertAndPin.cardInfo->eid().smartcard(), window);
+    auto pin = getPin(cardCertAndPin.cardInfo->eid(), window);
 
     try {
         const auto signature = signHash(cardCertAndPin.cardInfo->eid(), pin, docHash, hashAlgo);
