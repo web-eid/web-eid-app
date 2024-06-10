@@ -749,11 +749,17 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error) noexc
             QT_TR_NOOP("Operation not supported"), "no-id-card"_L1};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
-        return {QT_TR_NOOP("Error communicating with the card."), QT_TR_NOOP("Operation failed"),
-                pixmap("no-id-card"_L1)};
+        return {
+            QT_TR_NOOP(
+                "Error communicating with the card."),
+            QT_TR_NOOP("Operation failed"), "no-id-card"_L1};
+
     case RetriableError::PKCS11_ERROR:
-        return {QT_TR_NOOP("Card driver error. Please try again."), QT_TR_NOOP("Card driver error"),
-                pixmap("no-id-card"_L1)};
+        return {
+            QT_TR_NOOP(
+                "Card driver error. Please try again."),
+            QT_TR_NOOP("Card driver error"), "no-id-card"_L1};
+            
     case RetriableError::SCARD_ERROR:
         return {QT_TR_NOOP(
                     "An error occurred in the Smart Card service required to use the ID-card. Make "
