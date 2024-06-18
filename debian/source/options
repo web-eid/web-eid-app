@@ -1,1 +1,2 @@
-tar-ignore = "build/*"
+tar-ignore
+tar-ignore = build

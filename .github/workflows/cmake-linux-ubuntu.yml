@@ -8,30 +8,25 @@ env:
   QT_QPA_PLATFORM: offscreen
   DEBIAN_FRONTEND: noninteractive
   DEBFULLNAME: GitHub build
-  DEBEMAIL: github-action@github
+  DEBEMAIL: github-action@github.com
   CMAKE_BUILD_PARALLEL_LEVEL: 3
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ${{matrix.container}}
+    container: ubuntu:${{matrix.container}}
     strategy:
       matrix:
-        container: ['ubuntu:20.04', 'ubuntu:22.04']
-        include:
-        - container: 'ubuntu:20.04'
-          name: ubuntu2004
-        - container: 'ubuntu:22.04'
-          name: ubuntu2204
+        container: ['20.04', '22.04', '24.04']
 
     steps:
       - name: Install dependencies
-        if: matrix.container == 'ubuntu:20.04'
-        run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libqt5svg5-dev qttools5-dev-tools qttools5-dev
+        if: matrix.container == '20.04'
+        run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper lintian pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libqt5svg5-dev qttools5-dev-tools qttools5-dev
 
       - name: Install dependencies
-        if: matrix.container != 'ubuntu:20.04'
-        run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools libqt6core5compat6-dev
+        if: matrix.container != '20.04'
+        run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper lintian pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools libqt6core5compat6-dev
 
       - uses: actions/checkout@v4
         with:
@@ -44,9 +39,12 @@ jobs:
         run: |
           cmake --build build --config $BUILD_TYPE --target installer
           # Debian creates artifacts outside of project dir, copy them back to make them available in the build artifacts
-          cp -r ../web-eid*.* build/src/app
+          mv ../web-eid*.* build/
+
+      - name: Test package
+        run: lintian build/*.deb
 
       - uses: actions/upload-artifact@v4
         with:
-          name: web-eid-app-ubuntu-build-${{matrix.name}}-${{github.run_number}}
-          path: build/src/app/*.*deb
+          name: web-eid-app-ubuntu-build-ubuntu${{matrix.container}}-${{github.run_number}}
+          path: build/*.*deb
