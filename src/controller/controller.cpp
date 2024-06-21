@@ -39,8 +39,6 @@ using namespace electronic_id;
 namespace
 {
 
-// TODO: Should we use more detailed error codes? E.g. report input data error back to the website
-// etc.
 const QString RESP_TECH_ERROR = QStringLiteral("ERR_WEBEID_NATIVE_FATAL");
 const QString RESP_USER_CANCEL = QStringLiteral("ERR_WEBEID_USER_CANCELLED");
 

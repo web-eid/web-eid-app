@@ -159,7 +159,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->fatalHelp->hide();
     ui->selectAnotherCertificate->hide();
 
-    connect(ui->pageStack, &QStackedWidget::currentChanged, this, [this]{
+    connect(ui->pageStack, &QStackedWidget::currentChanged, this, [this] {
         ui->pageStack->setFixedHeight(ui->pageStack->currentWidget()->sizeHint().height());
     });
     connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
@@ -552,10 +552,12 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
         // QString uses QAtomicPointer internally and is thread-safe.
         pin = ui->pinInput->text();
 
-        // TODO: We need to erase the PIN in the widget buffer, this needs further work.
-        // Investigate if it is possible to keep the PIN in secure memory, e.g. with a
-        // custom Qt widget.
-        ui->pinInput->clear();
+        // Use setText() instead of clear() to clear undo/redo history as well.
+        ui->pinInput->setText({});
+        // TODO: Implement a custom widget to ensure no copy of the PIN text remains in memory.
+        // The widget should:
+        // - store the PIN in a locked byte vector,
+        // - prevent content leaks via the accessibility interface.
 
         emit accepted(certAndPin);
     });
@@ -698,6 +700,7 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error) noexc
             QT_TR_NOOP("The smart card service required to use the ID-card is not running. Please "
                        "start the smart card service and try again."),
             QT_TR_NOOP("Launch the Smart Card service"), "cardreader"_L1};
+
     case RetriableError::NO_SMART_CARD_READERS_FOUND:
         return {QT_TR_NOOP("<b>Card reader not connected.</b> Please connect the card reader to "
                            "the computer."),
@@ -707,6 +710,7 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error) noexc
     case RetriableError::PKCS11_TOKEN_NOT_PRESENT:
         return {QT_TR_NOOP("<b>ID-card not found.</b> Please insert the ID-card into the reader."),
                 QT_TR_NOOP("Insert the ID-card"), "no-id-card"_L1};
+
     case RetriableError::SMART_CARD_WAS_REMOVED:
     case RetriableError::PKCS11_TOKEN_REMOVED:
         return {QT_TR_NOOP(
@@ -720,6 +724,7 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error) noexc
                 "Operation failed. Make sure that the ID-card and the card reader are connected "
                 "correctly."),
             QT_TR_NOOP("Check the ID-card and the reader connection"), "no-id-card"_L1};
+
     case RetriableError::FAILED_TO_COMMUNICATE_WITH_CARD_OR_READER:
         return {
             QT_TR_NOOP(
@@ -737,11 +742,11 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error) noexc
     case RetriableError::SMART_CARD_COMMAND_ERROR:
         return {QT_TR_NOOP("Error communicating with the card."), QT_TR_NOOP("Operation failed"),
                 "no-id-card"_L1};
-        // TODO: what action should the user take? Should this be fatal?
+
     case RetriableError::PKCS11_ERROR:
         return {QT_TR_NOOP("Card driver error. Please try again."), QT_TR_NOOP("Card driver error"),
                 "no-id-card"_L1};
-        // TODO: what action should the user take? Should this be fatal?
+
     case RetriableError::SCARD_ERROR:
         return {QT_TR_NOOP(
                     "An error occurred in the Smart Card service required to use the ID-card. Make "
@@ -774,5 +779,6 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error) noexc
     case RetriableError::UNKNOWN_ERROR:
         return {QT_TR_NOOP("Unknown error"), QT_TR_NOOP("Unknown error"), "no-id-card"_L1};
     }
+
     return {QT_TR_NOOP("Unknown error"), QT_TR_NOOP("Unknown error"), "no-id-card"_L1};
 }
