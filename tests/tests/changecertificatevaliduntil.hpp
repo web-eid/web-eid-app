@@ -28,7 +28,7 @@
 #include <QDate>
 
 inline PcscMock::byte_vector::iterator findUTCDateTime(PcscMock::byte_vector::iterator first,
-                                                          PcscMock::byte_vector::iterator last)
+                                                       PcscMock::byte_vector::iterator last)
 {
     constexpr unsigned char UTC_DATETIME_TAG = 0x17;
     constexpr unsigned char LENGTH_TAG = 0x0d;
@@ -93,5 +93,6 @@ inline PcscMock::ApduScript replaceCertValidUntilTo2010(const PcscMock::ApduScri
 inline PcscMock::ApduScript replaceCertValidUntilToNextYear(const PcscMock::ApduScript& script)
 {
     // UTCDateTime needs 2-digit year since 2000, add +1 for next year
-    return replaceCertValidUntilYear(script, 4, std::to_string(QDate::currentDate().year() - 2000 + 1));
+    return replaceCertValidUntilYear(script, 4,
+                                     std::to_string(QDate::currentDate().year() - 2000 + 1));
 }
