@@ -27,9 +27,11 @@ Description: Web eID application suite (metapackage)
 
 Package: web-eid-native
 Architecture: any
+Multi-Arch: foreign
 Depends: pcscd, ${shlibs:Depends}, ${misc:Depends}
 Replaces: token-signing-native
 Breaks: token-signing-native
+Suggests: web-eid-firefox, web-eid-chrome
 Description: Web eID browser extension helper application
  Native messaging host for Web eID Chrome and Firefox extensions that performs
  cryptographic digital signing and authentication operations with electronic ID
@@ -37,9 +39,11 @@ Description: Web eID browser extension helper application
 
 Package: web-eid-firefox
 Architecture: all
-Depends: jq, web-eid-native (= ${binary:Version})
+Depends: jq, web-eid-native
 Replaces: token-signing-firefox
 Breaks: token-signing-firefox
+Suggests: firefox
+Enhances: firefox
 Description: Web eID browser extension for Firefox
  The Web eID extension for Firefox communicates with the Web eID native
  application using Native messaging to enable usage of electronic ID smart
@@ -47,9 +51,11 @@ Description: Web eID browser extension for Firefox
 
 Package: web-eid-chrome
 Architecture: all
-Depends: web-eid-native (= ${binary:Version})
+Depends: web-eid-native
 Replaces: token-signing-chrome
 Breaks: token-signing-chrome
+Suggests: chromium, chromium-browser, chrome
+Enhances: chromium, chromium-browser, chrome
 Description: Web eID browser extension for Chrome
  The Web eID extension for Chrome communicates with the Web eID native
  application using Native messaging to enable usage of electronic ID smart
