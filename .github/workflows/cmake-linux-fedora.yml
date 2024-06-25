@@ -11,15 +11,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ${{ matrix.container }}
+    container: fedora:${{ matrix.container }}
     strategy:
       matrix:
-        container: ['fedora:38', 'fedora:39']
-        include:
-        - container: 'fedora:38'
-          name: fedora38
-        - container: 'fedora:39'
-          name: fedora39
+        container: [38, 39, 40]
 
     steps:
       - name: Install Deps
@@ -30,12 +25,12 @@ jobs:
           submodules: recursive
 
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=/usr -B build -S .
+        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -B build -S .
 
       - name: Build
         run: cmake --build build --config $BUILD_TYPE --target package
 
       - uses: actions/upload-artifact@v4
         with:
-          name: web-eid-app-fedora-build-${{matrix.name}}-${{github.run_number}}
+          name: web-eid-app-fedora-build-fedora${{matrix.container}}-${{github.run_number}}
           path: build/*rpm
