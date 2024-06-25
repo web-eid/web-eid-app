@@ -120,6 +120,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         auto* layout = new QGridLayout(menu);
         layout->setContentsMargins(1, 1, 1, 1);
         layout->setSpacing(1);
+        layout->setSizeConstraint(QLayout::SetFixedSize);
         auto* langGroup = new QButtonGroup(menu);
         langGroup->setExclusive(true);
         int i {};
@@ -136,8 +137,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
             ++i;
         }
         menu->show();
-        menu->adjustSize();
-        menu->move(ui->langButton->geometry().bottomRight() - QPoint(menu->width() - 1, -2));
+        menu->move(ui->langButton->geometry().bottomRight() - menu->geometry().topRight() + QPoint(0, 2));
         connect(langGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), menu,
                 [this, menu](QAbstractButton* action) {
                     QSettings().setValue(QStringLiteral("lang"), action->property("lang"));
