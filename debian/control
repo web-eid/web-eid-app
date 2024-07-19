@@ -28,7 +28,11 @@ Description: Web eID application suite (metapackage)
 Package: web-eid-native
 Architecture: any
 Multi-Arch: foreign
-Depends: pcscd, ${shlibs:Depends}, ${misc:Depends}
+Depends:
+ pcscd,
+ qt6-qpa-plugins | libqt5gui5,
+ ${shlibs:Depends},
+ ${misc:Depends}
 Replaces: token-signing-native
 Breaks: token-signing-native
 Suggests: web-eid-firefox, web-eid-chrome
