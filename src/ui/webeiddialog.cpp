@@ -478,7 +478,7 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
         break;
     case Status::UNKNOWN_ERROR:
         message = [] { return tr("Technical error"); };
-        displayFatalError(message);
+        displayFatalError(std::move(message));
         return;
     }
 
@@ -682,14 +682,15 @@ void WebEidDialog::displayPinBlockedError()
     displayFatalError([] { return tr("PIN is locked. Unblock and try again."); });
 }
 
-void WebEidDialog::displayFatalError(std::function<QString()> message)
+template <typename Text>
+void WebEidDialog::displayFatalError(Text message)
 {
     ui->pinTitleLabel->hide();
     ui->pinInput->hide();
     ui->pinTimeoutTimer->stop();
     ui->pinTimeRemaining->hide();
     ui->pinEntryTimeoutProgressBar->hide();
-    setTrText(ui->pinErrorLabel, message);
+    setTrText(ui->pinErrorLabel, std::forward<Text>(message));
     ui->pinErrorLabel->show();
     ui->okButton->hide();
     ui->cancelButton->setEnabled(true);
