@@ -1,6 +1,6 @@
 "SU_TITLE" = "Web eID Software";
 "SU_ERROR" = "Error";
-"SU_11" = "macOS version needs to be 11.0 or newer.";
+"SU_12" = "macOS version needs to be 12.0 or newer.";
 "SU_BASE" = "Base components";
 "SU_FIREFOX" = "Поддержка аутентиф. и подпис. в Firefox";
 "SU_CHROME" = "Поддержка аутентиф. и подпис. в Chrome";
