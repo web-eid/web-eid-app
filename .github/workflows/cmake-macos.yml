@@ -10,7 +10,7 @@ env:
   GTest_ROOT: ${{ github.workspace }}/gtest-binary
   QT_QPA_PLATFORM: offscreen
   CMAKE_BUILD_PARALLEL_LEVEL: 3
-  MACOSX_DEPLOYMENT_TARGET: 11.0
+  MACOSX_DEPLOYMENT_TARGET: 12.0
 
 jobs:
   build:
@@ -35,7 +35,11 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           git clone --depth=1 https://github.com/google/googletest.git
-          cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_INSTALL_PREFIX=${GTest_ROOT} -DCMAKE_CXX_STANDARD=17 -S googletest -B gtest-build
+          cmake -S googletest -B gtest-build \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+            -DCMAKE_INSTALL_PREFIX=${GTest_ROOT} \
+            -DCMAKE_CXX_STANDARD=17
           cmake --build gtest-build --target install
 
       - name: Build OpenSSL
@@ -58,9 +62,9 @@ jobs:
           cd -
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
-          version: 6.6.1
+          version: 6.7.2
           arch: clang_64
 
       - name: Configure

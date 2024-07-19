@@ -1,6 +1,6 @@
 "SU_TITLE" = "Web eID tarkvara";
 "SU_ERROR" = "Viga";
-"SU_11" = "macOS'i versioon peab olema 11.0 või uuem.";
+"SU_12" = "macOS'i versioon peab olema 12.0 või uuem.";
 "SU_BASE" = "Baaskomponendid";
 "SU_FIREFOX" = "Firefoxi autentimise ja allkirjastamise tugi";
 "SU_CHROME" = "Chrome'i autentimise ja allkirjastamise tugi";

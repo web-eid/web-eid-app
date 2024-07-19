@@ -17,9 +17,9 @@ https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/I
     <script>
 <![CDATA[
 function pm_install_check() {
-  if(system.compareVersions(system.version.ProductVersion, '10.16.0') < 0) {
+  if(system.compareVersions(system.version.ProductVersion, '12.0') < 0) {
     my.result.title = system.localizedString('SU_ERROR');
-    my.result.message = system.localizedString('SU_11');
+    my.result.message = system.localizedString('SU_12');
     my.result.type = 'Fatal';
     return false;
   }

@@ -33,9 +33,9 @@ jobs:
           vcpkgGitCommitId: 1f619be01b436b796dab797dd1e1721c5676f8ac
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
-          version: 6.7.1
+          version: 6.7.2
           arch: win64_msvc2019_64
 
       - name: Setup MS Visual C++ dev env
