@@ -339,13 +339,12 @@ void WebEidDialog::onMultipleCertificatesReady(
     case CommandType::AUTHENTICATE:
         ui->selectAnotherCertificate->disconnect();
         ui->selectAnotherCertificate->setVisible(certificateAndPinInfos.size() > 1);
-        connect(ui->selectAnotherCertificate, &QPushButton::clicked, this,
-                [this, origin, certificateAndPinInfos] {
-                    // We set pinInput to empty text instead of clear() to also reset undo buffer
-                    ui->pinInput->setText({});
-                    onMultipleCertificatesReady(origin, certificateAndPinInfos);
-                });
-        setupOK([this, origin] {
+        connect(ui->selectAnotherCertificate, &QPushButton::clicked, this, [=] {
+            // We set pinInput to empty text instead of clear() to also reset undo buffer
+            ui->pinInput->setText({});
+            onMultipleCertificatesReady(origin, certificateAndPinInfos);
+        });
+        setupOK([=] {
             ui->okButton->setDisabled(true);
             // Authenticate continues with the selected certificate to onSingleCertificateReady().
             if (auto* button =
@@ -381,7 +380,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
     switch (currentCommand) {
     case CommandType::GET_SIGNING_CERTIFICATE:
         setupCertificateAndPinInfo({certAndPin});
-        setupOK([this, certAndPin] {
+        setupOK([=] {
             ui->okButton->setDisabled(true);
             emit accepted(certAndPin);
         });
@@ -554,7 +553,7 @@ void WebEidDialog::setTrText(QWidget* label, Text text) const
 void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
     const CardCertificateAndPinInfo& certAndPin)
 {
-    setupOK([this, certAndPin] {
+    setupOK([=] {
         ui->pinInput->hide();
         ui->pinTitleLabel->hide();
         ui->pinErrorLabel->hide();
@@ -682,14 +681,15 @@ void WebEidDialog::displayPinBlockedError()
     displayFatalError([] { return tr("PIN is locked. Unblock and try again."); });
 }
 
-void WebEidDialog::displayFatalError(std::function<QString()> message)
+template <typename Text>
+void WebEidDialog::displayFatalError(Text message)
 {
     ui->pinTitleLabel->hide();
     ui->pinInput->hide();
     ui->pinTimeoutTimer->stop();
     ui->pinTimeRemaining->hide();
     ui->pinEntryTimeoutProgressBar->hide();
-    setTrText(ui->pinErrorLabel, message);
+    setTrText(ui->pinErrorLabel, std::forward<Text>(message));
     ui->pinErrorLabel->show();
     ui->okButton->hide();
     ui->cancelButton->setEnabled(true);
