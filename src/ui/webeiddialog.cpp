@@ -159,9 +159,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->fatalHelp->hide();
     ui->selectAnotherCertificate->hide();
 
-    connect(ui->pageStack, &QStackedWidget::currentChanged, this, [this] {
-        ui->pageStack->setFixedHeight(ui->pageStack->currentWidget()->sizeHint().height());
-    });
+    connect(ui->pageStack, &QStackedWidget::currentChanged, this, &WebEidDialog::resizeHeight);
     connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
             [this] {
                 ui->okButton->setEnabled(true);
@@ -245,12 +243,16 @@ void WebEidDialog::showAboutPage()
     if (app->isSafariExtensionContainingApp()) {
         d->setupOK([app] { app->showSafariSettings(); }, QT_TR_NOOP("Open Safari settings..."),
                    true);
-        connect(app, &Application::safariExtensionEnabled, d->ui->aboutAlert, &QWidget::setHidden);
+        connect(app, &Application::safariExtensionEnabled, d, [d](bool value) {
+            d->ui->aboutAlert->setHidden(value);
+            d->resizeHeight();
+        });
         app->requestSafariExtensionState();
     } else {
         d->ui->okButton->hide();
     }
     d->ui->pageStack->setCurrentIndex(int(Page::ABOUT));
+    d->resizeHeight();
     d->open();
     connect(d, &WebEidDialog::finished, qApp, &QApplication::quit);
 }
@@ -267,6 +269,7 @@ void WebEidDialog::showFatalErrorPage()
     d->ui->cancelButton->show();
     d->ui->okButton->hide();
     d->ui->pageStack->setCurrentIndex(int(Page::ALERT));
+    d->resizeHeight();
     d->exec();
 }
 
@@ -454,6 +457,7 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
         break;
     case Status::PIN_BLOCKED:
         displayPinBlockedError();
+        resizeHeight();
         return;
     case Status::INVALID_PIN_LENGTH:
         message = [] { return tr("Invalid PIN length"); };
@@ -481,6 +485,7 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
         ui->pinTitleLabel->show();
         ui->okButton->setDisabled(true);
         ui->cancelButton->setEnabled(true);
+        resizeHeight();
     }
 }
 
@@ -497,6 +502,7 @@ bool WebEidDialog::event(QEvent* event)
     case QEvent::LanguageChange:
         ui->retranslateUi(this);
         emit languageChange();
+        resizeHeight();
         break;
     case QEvent::MouseButtonRelease:
         if (auto* w = findChild<QWidget*>(QStringLiteral("langMenu"))) {
@@ -683,6 +689,12 @@ void WebEidDialog::showPinInputWarning(bool show)
     style()->unpolish(ui->pinInput);
     ui->pinInput->setProperty("warning", show);
     style()->polish(ui->pinInput);
+}
+
+void WebEidDialog::resizeHeight()
+{
+    ui->pageStack->setFixedHeight(ui->pageStack->currentWidget()->sizeHint().height());
+    adjustSize();
 }
 
 QPixmap WebEidDialog::pixmap(QLatin1String name)

@@ -10,6 +10,12 @@
     <height>510</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>550</width>
+    <height>0</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string notr="true">Web eID</string>
   </property>
@@ -193,9 +199,6 @@ height: 24px;
    <property name="spacing">
     <number>30</number>
    </property>
-   <property name="sizeConstraint">
-    <enum>QLayout::SetFixedSize</enum>
-   </property>
    <property name="leftMargin">
     <number>20</number>
    </property>
@@ -232,12 +235,6 @@ height: 24px;
        </property>
        <item>
         <widget class="QLabel" name="waitingPageTitleLabel">
-         <property name="minimumSize">
-          <size>
-           <width>510</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -309,12 +306,6 @@ height: 24px;
        </property>
        <item>
         <widget class="QLabel" name="messagePageTitleLabel">
-         <property name="minimumSize">
-          <size>
-           <width>510</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -450,12 +441,6 @@ height: 24px;
        </property>
        <item>
         <widget class="QLabel" name="selectCertificatePageTitleLabel">
-         <property name="minimumSize">
-          <size>
-           <width>510</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -538,12 +523,6 @@ height: 24px;
        </property>
        <item>
         <widget class="QLabel" name="pinInputPageTitleLabel">
-         <property name="minimumSize">
-          <size>
-           <width>510</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="focusPolicy">
           <enum>Qt::TabFocus</enum>
          </property>
@@ -794,12 +773,6 @@ height: 24px;
        </item>
        <item>
         <widget class="QWidget" name="aboutContent" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>510</width>
-           <height>0</height>
-          </size>
-         </property>
          <layout class="QGridLayout" name="aboutContentLayout">
           <property name="horizontalSpacing">
            <number>10</number>
