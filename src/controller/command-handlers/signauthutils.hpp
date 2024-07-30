@@ -45,6 +45,6 @@ extern template QString validateAndGetArgument<QString>(const QString& argName,
 extern template QByteArray
 validateAndGetArgument<QByteArray>(const QString& argName, const QVariantMap& args, bool allowNull);
 
-pcsc_cpp::byte_vector getPin(const electronic_id::ElectronicID& card, WebEidUI* window);
+int getPin(pcsc_cpp::byte_vector& pin, const pcsc_cpp::SmartCard& card, WebEidUI* window);
 
 QVariantMap signatureAlgoToVariantMap(const electronic_id::SignatureAlgorithm signatureAlgo);

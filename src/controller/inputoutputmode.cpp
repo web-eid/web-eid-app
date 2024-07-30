@@ -71,7 +71,6 @@ CommandWithArgumentsPtr readCommandFromStdin()
     const auto messageLength = readMessageLength(std::cin);
 
     if (messageLength < 5) {
-        // FIXME: Pass errors back up to caller in stdin mode.
         throw std::invalid_argument("readCommandFromStdin: Message length is "
                                     + std::to_string(messageLength) + ", at least 5 required");
     }
@@ -88,7 +87,6 @@ CommandWithArgumentsPtr readCommandFromStdin()
     const auto json = QJsonDocument::fromJson(message);
 
     if (!json.isObject()) {
-        // FIXME: Pass errors back up to caller in stdin mode.
         throw std::invalid_argument("readCommandFromStdin: Invalid JSON, not an object");
     }
 
@@ -97,7 +95,6 @@ CommandWithArgumentsPtr readCommandFromStdin()
     const auto arguments = jsonObject["arguments"];
 
     if (!command.isString() || !arguments.isObject()) {
-        // FIXME: Pass errors back up to caller in stdin mode.
         throw std::invalid_argument("readCommandFromStdin: Invalid JSON, the main object does not "
                                     "contain a 'command' string and 'arguments' object");
     }

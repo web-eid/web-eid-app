@@ -101,6 +101,15 @@ void Controller::run()
 
         startCommandExecution();
 
+    } catch (const std::invalid_argument& exc) {
+        if (isInStdinMode) {
+            // Pass invalid argument message to the caller just in case it may be interested
+            // The result will be {"invalid-argument" : message}
+            // Command parameter is only used if exception will be raised during json creation
+            writeResponseToStdOut(isInStdinMode, {{QStringLiteral("invalid-argument"), exc.what()}},
+                                  "invalid-argument");
+        }
+        onCriticalFailure(exc.what());
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
