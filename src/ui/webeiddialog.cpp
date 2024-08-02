@@ -20,6 +20,8 @@
  * SOFTWARE.
  */
 
+#include "utils/erasedata.hpp"
+
 #include "webeiddialog.hpp"
 #include "application.hpp"
 #include "punycode.hpp"
@@ -137,7 +139,8 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
             ++i;
         }
         menu->show();
-        menu->move(ui->langButton->geometry().bottomRight() - menu->geometry().topRight() + QPoint(0, 2));
+        menu->move(ui->langButton->geometry().bottomRight() - menu->geometry().topRight()
+                   + QPoint(0, 2));
         connect(langGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), menu,
                 [this, menu](QAbstractButton* action) {
                     QSettings().setValue(QStringLiteral("lang"), action->property("lang"));
@@ -289,6 +292,7 @@ QString WebEidDialog::getPin()
     // QString uses QAtomicPointer internally and is thread-safe.
     // There should be only single reference and this is transferred to the caller for safety
     QString ret = pin;
+    eraseData(pin);
     pin.clear();
     return ret;
 }

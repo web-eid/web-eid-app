@@ -31,6 +31,7 @@ add_library(controller STATIC
     threads/controllerchildthread.hpp
     threads/waitforcardthread.hpp
     ui.hpp
+    utils/erasedata.hpp
     utils/observer_ptr.hpp
     utils/qdisablecopymove.hpp
     utils/utils.hpp

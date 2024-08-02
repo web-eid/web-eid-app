@@ -98,7 +98,7 @@ void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& c
 QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& cardCertAndPin)
 {
     pcsc_cpp::byte_vector pin;
-    getPin(pin, cardCertAndPin.cardInfo->eid().smartcard(), window);
+    getPin(pin, cardCertAndPin.cardInfo->eid(), window);
     auto pin_cleanup = qScopeGuard([&pin] {
         // Erase PIN memory.
         std::fill(pin.begin(), pin.end(), '\0');

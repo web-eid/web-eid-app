@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+#include "utils/erasedata.hpp"
 #include "signauthutils.hpp"
 
 #include "ui.hpp"
@@ -66,39 +67,28 @@ template QString validateAndGetArgument<QString>(const QString& argName, const Q
 template QByteArray validateAndGetArgument<QByteArray>(const QString& argName,
                                                        const QVariantMap& args, bool allowNull);
 
-template <typename T, typename C>
-inline void eraseData(T& data)
+void getPin(pcsc_cpp::byte_vector& pin, const ElectronicID& eid, WebEidUI* window)
 {
-    // According to docs, constData() never causes a deep copy to occur, so we can abuse it
-    // to overwrite the underlying buffer since the underlying data is not really const.
-    C* chars = const_cast<C*>(data.constData());
-    for (int i = 0; i < data.length(); ++i) {
-        chars[i] = '\0';
-    }
-}
-
-int getPin(pcsc_cpp::byte_vector& pin, const pcsc_cpp::SmartCard& card, WebEidUI* window)
-{
-    // Doesn't apply to PIN pads.
-    if (card.readerHasPinPad()) {
-        return 0;
+    // If the reader has a PIN pad or when enternal PIN dialog is used, do nothing.
+    if (eid.smartcard().readerHasPinPad() || eid.providesExternalPinDialog()) {
+        return;
     }
 
     REQUIRE_NON_NULL(window)
 
-    QString pinqs = window->getPin();
-    if (pinqs.isEmpty()) {
+    QString pinQStr = window->getPin();
+    if (pinQStr.isEmpty()) {
         THROW(ProgrammingError, "Empty PIN");
     }
-    int len = (int)pinqs.length();
 
+    uint len = pinQStr.length();
     pin.resize(len);
-    for (int i = 0; i < len; i++) {
-        pin[i] = pinqs[i].cell();
-    }
-    eraseData<QString, QChar>(pinqs);
 
-    return len;
+    for (uint i = 0; i < len; i++) {
+        pin[i] = pinQStr[i].unicode() & 0xff;
+    }
+
+    eraseData(pinQStr);
 }
 
 QVariantMap signatureAlgoToVariantMap(const SignatureAlgorithm signatureAlgo)
