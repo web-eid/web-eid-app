@@ -32,11 +32,11 @@ using namespace electronic_id;
 namespace
 {
 
-QPair<QString, QVariantMap> signHash(const ElectronicID& eid, const pcsc_cpp::byte_vector& pin,
+QPair<QString, QVariantMap> signHash(const ElectronicID& eid, pcsc_cpp::byte_vector&& pin,
                                      const QByteArray& docHash, const HashAlgorithm hashAlgo)
 {
     const auto hashBytes = pcsc_cpp::byte_vector {docHash.begin(), docHash.end()};
-    const auto signature = eid.signWithSigningKey(pin, hashBytes, hashAlgo);
+    const auto signature = eid.signWithSigningKey(std::move(pin), hashBytes, hashAlgo);
 
     const auto signatureBase64 =
         QByteArray::fromRawData(reinterpret_cast<const char*>(signature.first.data()),
@@ -97,16 +97,11 @@ void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& c
 
 QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& cardCertAndPin)
 {
-    pcsc_cpp::byte_vector pin;
-    getPin(pin, cardCertAndPin.cardInfo->eid(), window);
-    auto pin_cleanup = qScopeGuard([&pin] {
-        // Erase PIN memory.
-        std::fill(pin.begin(), pin.end(), '\0');
-    });
-
     try {
-        const auto signature = signHash(cardCertAndPin.cardInfo->eid(), pin, docHash, hashAlgo);
-
+        pcsc_cpp::byte_vector pin;
+        pin.reserve(5 + 16); // Avoid realloc: apdu + pin padding
+        getPin(pin, cardCertAndPin.cardInfo->eid(), window);
+        const auto signature = signHash(cardCertAndPin.cardInfo->eid(), std::move(pin), docHash, hashAlgo);
         return {{QStringLiteral("signature"), signature.first},
                 {QStringLiteral("signatureAlgorithm"), signature.second}};
 
@@ -144,7 +139,7 @@ void Sign::validateAndStoreDocHashAndHashAlgo(const QVariantMap& args)
     docHash =
         QByteArray::fromBase64(validateAndGetArgument<QByteArray>(QStringLiteral("hash"), args));
 
-    QString hashAlgoInput = validateAndGetArgument<QString>(QStringLiteral("hashFunction"), args);
+    auto hashAlgoInput = validateAndGetArgument<QString>(QStringLiteral("hashFunction"), args);
     if (hashAlgoInput.size() > 8) {
         THROW(CommandHandlerInputDataError, "hashFunction value is invalid");
     }
