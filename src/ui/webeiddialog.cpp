@@ -20,6 +20,8 @@
  * SOFTWARE.
  */
 
+#include "utils/erasedata.hpp"
+
 #include "webeiddialog.hpp"
 #include "application.hpp"
 #include "punycode.hpp"
@@ -137,7 +139,8 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
             ++i;
         }
         menu->show();
-        menu->move(ui->langButton->geometry().bottomRight() - menu->geometry().topRight() + QPoint(0, 2));
+        menu->move(ui->langButton->geometry().bottomRight() - menu->geometry().topRight()
+                   + QPoint(0, 2));
         connect(langGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), menu,
                 [this, menu](QAbstractButton* action) {
                     QSettings().setValue(QStringLiteral("lang"), action->property("lang"));
@@ -287,7 +290,11 @@ QString WebEidDialog::getPin()
 {
     // getPin() is called from background threads and must be thread-safe.
     // QString uses QAtomicPointer internally and is thread-safe.
-    return pin;
+    // There should be only single reference and this is transferred to the caller for safety
+    QString ret = pin;
+    eraseData(pin);
+    pin.clear();
+    return ret;
 }
 
 void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
@@ -335,7 +342,8 @@ void WebEidDialog::onMultipleCertificatesReady(
         ui->selectAnotherCertificate->setVisible(certificateAndPinInfos.size() > 1);
         connect(ui->selectAnotherCertificate, &QPushButton::clicked, this,
                 [this, origin, certificateAndPinInfos] {
-                    ui->pinInput->clear();
+                    // We set pinInput to empty text instead of clear() to also reset undo buffer
+                    ui->pinInput->setText({});
                     onMultipleCertificatesReady(origin, certificateAndPinInfos);
                 });
         setupOK([this, origin] {
@@ -446,7 +454,6 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
 
     std::function<QString()> message;
 
-    // FIXME: don't allow retry in case of UNKNOWN_ERROR
     switch (status) {
     case Status::RETRY_ALLOWED:
         message = [retriesLeft]() -> QString {
@@ -469,8 +476,11 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
         message = [] { return tr("PIN entry cancelled."); };
         break;
     case Status::PIN_ENTRY_DISABLED:
+        message = [] { return tr("PIN entry disabled"); };
+        break;
     case Status::UNKNOWN_ERROR:
         message = [] { return tr("Technical error"); };
+        displayFatalError(message);
         break;
     }
 
@@ -682,6 +692,20 @@ void WebEidDialog::displayPinBlockedError()
     ui->cancelButton->setEnabled(true);
     ui->cancelButton->show();
     ui->helpButton->show();
+}
+
+void WebEidDialog::displayFatalError(std::function<QString()> message)
+{
+    ui->pinTitleLabel->hide();
+    ui->pinInput->hide();
+    ui->pinTimeoutTimer->stop();
+    ui->pinTimeRemaining->hide();
+    ui->pinEntryTimeoutProgressBar->hide();
+    setTrText(ui->pinErrorLabel, message);
+    ui->pinErrorLabel->show();
+    ui->okButton->hide();
+    ui->cancelButton->setEnabled(true);
+    ui->cancelButton->show();
 }
 
 void WebEidDialog::showPinInputWarning(bool show)
