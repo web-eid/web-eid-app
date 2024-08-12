@@ -108,6 +108,9 @@ void Controller::run()
             // Command parameter is only used if exception will be raised during json creation
             writeResponseToStdOut(isInStdinMode, {{QStringLiteral("invalid-argument"), exc.what()}},
                                   "invalid-argument");
+            // Exit directly here
+            disposeUI();
+            exit();
         }
         onCriticalFailure(exc.what());
     } catch (const std::exception& error) {
