@@ -111,6 +111,7 @@ void Controller::run()
             // Exit directly here
             disposeUI();
             exit();
+            return;
         }
         onCriticalFailure(exc.what());
     } catch (const std::exception& error) {
