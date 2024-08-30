@@ -292,9 +292,9 @@ QString WebEidDialog::getPin()
     // QString uses QAtomicPointer internally and is thread-safe.
     // There should be only single reference and this is transferred to the caller for safety
     QString ret = pin;
-	// Cannot use eraseData because we have to force Qt copy-on-write
-	pin.fill('\0');
-	pin.clear();
+    // Cannot use eraseData because we have to force Qt copy-on-write
+    pin.fill('\0');
+    pin.clear();
     return ret;
 }
 
