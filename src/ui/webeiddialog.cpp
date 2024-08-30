@@ -20,8 +20,6 @@
  * SOFTWARE.
  */
 
-#include "utils/erasedata.hpp"
-
 #include "webeiddialog.hpp"
 #include "application.hpp"
 #include "punycode.hpp"
@@ -465,7 +463,6 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
         break;
     case Status::PIN_BLOCKED:
         displayPinBlockedError();
-        resizeHeight();
         return;
     case Status::INVALID_PIN_LENGTH:
         message = [] { return tr("Invalid PIN length"); };
@@ -482,7 +479,7 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
     case Status::UNKNOWN_ERROR:
         message = [] { return tr("Technical error"); };
         displayFatalError(message);
-        break;
+        return;
     }
 
     ui->pinErrorLabel->setVisible(bool(message));
@@ -682,17 +679,7 @@ void WebEidDialog::setupOK(Func func, const char* text, bool enabled)
 
 void WebEidDialog::displayPinBlockedError()
 {
-    ui->pinTitleLabel->hide();
-    ui->pinInput->hide();
-    ui->pinTimeoutTimer->stop();
-    ui->pinTimeRemaining->hide();
-    ui->pinEntryTimeoutProgressBar->hide();
-    setTrText(ui->pinErrorLabel, QT_TR_NOOP("PIN is locked. Unblock and try again."));
-    ui->pinErrorLabel->show();
-    ui->okButton->hide();
-    ui->cancelButton->setEnabled(true);
-    ui->cancelButton->show();
-    ui->helpButton->show();
+    displayFatalError([] { return tr("PIN is locked. Unblock and try again."); });
 }
 
 void WebEidDialog::displayFatalError(std::function<QString()> message)
@@ -707,6 +694,8 @@ void WebEidDialog::displayFatalError(std::function<QString()> message)
     ui->okButton->hide();
     ui->cancelButton->setEnabled(true);
     ui->cancelButton->show();
+    ui->helpButton->show();
+    resizeHeight();
 }
 
 void WebEidDialog::showPinInputWarning(bool show)
