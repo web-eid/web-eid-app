@@ -45,10 +45,10 @@ jobs:
 
       - name: Install WiX
         run: |
-          dotnet tool install --global wix --version 5.0.0
-          wix extension -g add WixToolset.UI.wixext/5.0.0
-          wix extension -g add WixToolset.Util.wixext/5.0.0
-          wix extension -g add WixToolset.BootstrapperApplications.wixext/5.0.0
+          dotnet tool install --global wix --version 5.0.1
+          wix extension -g add WixToolset.UI.wixext/5.0.1
+          wix extension -g add WixToolset.Util.wixext/5.0.1
+          wix extension -g add WixToolset.BootstrapperApplications.wixext/5.0.1
 
       - name: Configure
         run: |
