@@ -57,7 +57,7 @@ QVariantMap createAuthenticationToken(const QString& signatureAlgorithm,
 }
 
 QByteArray createSignature(const QString& origin, const QString& challengeNonce,
-                           const ElectronicID& eid, const pcsc_cpp::byte_vector& pin)
+                           const ElectronicID& eid, pcsc_cpp::byte_vector&& pin)
 {
     static const std::map<JsonWebSignatureAlgorithm, QCryptographicHash::Algorithm>
         SIGNATURE_ALGO_TO_HASH {
@@ -86,7 +86,7 @@ QByteArray createSignature(const QString& origin, const QString& challengeNonce,
     const pcsc_cpp::byte_vector hashToBeSigned {hashToBeSignedQBytearray.cbegin(),
                                                 hashToBeSignedQBytearray.cend()};
 
-    const auto signature = eid.signWithAuthKey(pin, hashToBeSigned);
+    const auto signature = eid.signWithAuthKey(std::move(pin), hashToBeSigned);
 
     return QByteArray::fromRawData(reinterpret_cast<const char*>(signature.data()),
                                    int(signature.size()))
@@ -120,20 +120,14 @@ Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(
 QVariantMap Authenticate::onConfirm(WebEidUI* window,
                                     const CardCertificateAndPinInfo& cardCertAndPin)
 {
-    const auto signatureAlgorithm =
-        QString::fromStdString(cardCertAndPin.cardInfo->eid().authSignatureAlgorithm());
-
-    pcsc_cpp::byte_vector pin;
-    getPin(pin, cardCertAndPin.cardInfo->eid(), window);
-    auto pin_cleanup = qScopeGuard([&pin] {
-        // Erase PIN memory.
-        std::fill(pin.begin(), pin.end(), '\0');
-    });
-
     try {
+        const auto signatureAlgorithm =
+            QString::fromStdString(cardCertAndPin.cardInfo->eid().authSignatureAlgorithm());
+        pcsc_cpp::byte_vector pin;
+        pin.reserve(5 + 16); // Avoid realloc: apdu + pin padding
+        getPin(pin, cardCertAndPin.cardInfo->eid(), window);
         const auto signature =
-            createSignature(origin.url(), challengeNonce, cardCertAndPin.cardInfo->eid(), pin);
-
+            createSignature(origin.url(), challengeNonce, cardCertAndPin.cardInfo->eid(), std::move(pin));
         return createAuthenticationToken(signatureAlgorithm, cardCertAndPin.certificateBytesInDer,
                                          signature);
 
