@@ -31,7 +31,6 @@ if(WIN32)
         -arch ${PLATFORM}
         -ext WixToolset.UI.wixext
         -bv WixUIDialogBmp=${CMAKE_SOURCE_DIR}/install/dlgbmp.bmp
-        -d MSI_VERSION=${PROJECT_VERSION}
         -d ssl_path="${SSL_PATH}"
         -d qt_suffix="$<$<CONFIG:Debug>:d>"
         -d json=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json

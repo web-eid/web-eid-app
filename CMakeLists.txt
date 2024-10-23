@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/lib/libelectronic-id/README.md")
     message(FATAL_ERROR "libelectronic-id submodule directory empty, did you 'git clone --recursive'?")
@@ -11,7 +11,7 @@ elseif($ENV{CI_PIPELINE_IID})
 else()
     set(BUILD_NUMBER 0)
 endif()
-project(web-eid VERSION 2.6.0.${BUILD_NUMBER})
+project(web-eid VERSION 2.7.0.${BUILD_NUMBER})
 
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION_TWEAK})
@@ -32,9 +32,8 @@ set(SIGNCERT "" CACHE STRING "Common name of certificate to used sign binaries, 
 set(CROSSSIGNCERT "" CACHE STRING "Common name of certificate to used cross sign binaries, empty skips signing (Windows)")
 set(SAFARI_PROVISIONPROFILE "" CACHE STRING "Provision profile to include in application (macOS)")
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} 5.12.0 REQUIRED COMPONENTS Core Widgets Network Test LinguistTools Svg)
-get_target_property(qtCore_install_prefix Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
+find_package(Qt6 6.2.0 REQUIRED COMPONENTS Core Widgets Network Test LinguistTools SvgWidgets)
+get_target_property(qtCore_install_prefix Qt6::qmake IMPORTED_LOCATION)
 get_filename_component(qtCore_install_prefix ${qtCore_install_prefix} DIRECTORY)
 
 add_subdirectory(lib/libelectronic-id)

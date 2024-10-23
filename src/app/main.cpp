@@ -29,7 +29,6 @@
 int main(int argc, char* argv[])
 {
     Q_INIT_RESOURCE(web_eid_resources);
-    Q_INIT_RESOURCE(translations);
 
     Application app(argc, argv, QStringLiteral("web-eid"));
 
