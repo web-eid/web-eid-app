@@ -120,7 +120,7 @@
     NSDictionary *resp;
     if ([@"status" isEqualToString:req[@"command"]]) {
         resp = [NSApplication
-            toNSDictionary: {{QStringLiteral("version"), qApp->applicationVersion()}}];
+            toNSDictionary: {{QStringLiteral("version"), QCoreApplication::applicationVersion()}}];
     } else {
         try {
             const auto argumentJson =
@@ -142,7 +142,7 @@
     NSLog(@"web-eid-safari: msg to extension nonce (%@) request: %@", nonce, resp);
     setValue(nonce, resp);
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:WebEidExtension object:nonce userInfo:nil deliverImmediately:YES];
-    qApp->quit();
+    QCoreApplication::quit();
 }
 
 @end
@@ -170,7 +170,6 @@ public:
 int main(int argc, char* argv[])
 {
     Q_INIT_RESOURCE(web_eid_resources);
-    Q_INIT_RESOURCE(translations);
 
     SafariApplication app(argc, argv, QStringLiteral("web-eid-safari"));
     auto appPtr = &app;

@@ -91,11 +91,7 @@ void CertificateWidgetInfo::drawWarnIcon()
     QPainter p(warnIcon);
     QRect cr = warnIcon->contentsRect();
     cr.adjust(warnIcon->margin(), warnIcon->margin(), -warnIcon->margin(), -warnIcon->margin());
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    warnIcon->style()->drawItemPixmap(&p, cr, Qt::AlignCenter, *warnIcon->pixmap());
-#else
-    warnIcon->style()->drawItemPixmap(&p, cr, Qt::AlignCenter, warnIcon->pixmap(Qt::ReturnByValue));
-#endif
+    warnIcon->style()->drawItemPixmap(&p, cr, Qt::AlignCenter, warnIcon->pixmap());
 }
 
 void CertificateWidgetInfo::setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo)

@@ -35,7 +35,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.7.2
+          version: 6.7.3
           arch: win64_msvc2019_64
 
       - name: Setup MS Visual C++ dev env
@@ -45,10 +45,10 @@ jobs:
 
       - name: Install WiX
         run: |
-          dotnet tool install --global wix --version 5.0.1
-          wix extension -g add WixToolset.UI.wixext/5.0.1
-          wix extension -g add WixToolset.Util.wixext/5.0.1
-          wix extension -g add WixToolset.BootstrapperApplications.wixext/5.0.1
+          dotnet tool install --global wix --version 5.0.2
+          wix extension -g add WixToolset.UI.wixext/5.0.2
+          wix extension -g add WixToolset.Util.wixext/5.0.2
+          wix extension -g add WixToolset.BootstrapperApplications.wixext/5.0.2
 
       - name: Configure
         run: |

@@ -23,7 +23,7 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <Package Name="Web eID software" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
-      Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="RIA" InstallerVersion="500">
+      Language="1033" Version="!(bind.FileVersion.App)" Manufacturer="RIA">
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
     <Icon Id="web_eid.exe" SourceFile="$(var.app_path)" />
     <Property Id="ARPPRODUCTICON" Value="web_eid.exe" />
@@ -69,7 +69,7 @@
 
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="INSTALLFOLDER" Name="Web eID">
-        <File Source="$(var.app_path)" />
+        <File Id="App" Source="$(var.app_path)" />
 <?ifdef var.qt_path ?>
         <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll" />
         <File Source="$(var.VCPATH)\msvcp140_1$(var.qt_suffix).dll" />

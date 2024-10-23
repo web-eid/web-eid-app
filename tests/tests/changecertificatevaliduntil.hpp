@@ -87,12 +87,12 @@ inline PcscMock::ApduScript replaceCertValidUntilYear(const PcscMock::ApduScript
 
 inline PcscMock::ApduScript replaceCertValidUntilTo2010(const PcscMock::ApduScript& script)
 {
-    return replaceCertValidUntilYear(script, 4, "10");
+    return replaceCertValidUntilYear(script, 3, "10");
 }
 
 inline PcscMock::ApduScript replaceCertValidUntilToNextYear(const PcscMock::ApduScript& script)
 {
     // UTCDateTime needs 2-digit year since 2000, add +1 for next year
-    return replaceCertValidUntilYear(script, 4,
+    return replaceCertValidUntilYear(script, 3,
                                      std::to_string(QDate::currentDate().year() - 2000 + 1));
 }
