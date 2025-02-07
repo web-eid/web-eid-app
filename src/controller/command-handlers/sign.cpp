@@ -86,9 +86,9 @@ void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& c
         return;
     }
 
-    if (!cardWithCertificateFromArgs->cardInfo->eid().isSupportedSigningHashAlgorithm(hashAlgo)) {
+    if (!cardWithCertificateFromArgs->eid->isSupportedSigningHashAlgorithm(hashAlgo)) {
         THROW(ArgumentFatalError,
-              "Electronic ID " + cardWithCertificateFromArgs->cardInfo->eid().name()
+              "Electronic ID " + cardWithCertificateFromArgs->eid->name()
                   + " does not support hash algorithm " + std::string(hashAlgo));
     }
 
@@ -103,11 +103,10 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
         // reallocation. The 16-byte limit comes from the max PIN length of 12 bytes across all card
         // implementations in lib/libelectronic-id/src/electronic-ids/pcsc/.
         pin.reserve(5 + 16);
-        getPin(pin, cardCertAndPin.cardInfo->eid(), window);
-        const auto signature =
-            signHash(cardCertAndPin.cardInfo->eid(), std::move(pin), docHash, hashAlgo);
-        return {{QStringLiteral("signature"), signature.first},
-                {QStringLiteral("signatureAlgorithm"), signature.second}};
+        getPin(pin, *cardCertAndPin.eid, window);
+        auto signature = signHash(*cardCertAndPin.eid, std::move(pin), docHash, hashAlgo);
+        return {{QStringLiteral("signature"), std::move(signature.first)},
+                {QStringLiteral("signatureAlgorithm"), std::move(signature.second)}};
 
     } catch (const VerifyPinFailed& failure) {
         switch (failure.status()) {

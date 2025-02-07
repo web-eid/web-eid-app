@@ -163,7 +163,8 @@ void Controller::connectOkCancelWaitingForPinPad()
     connect(window, &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
 }
 
-void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& availableCards)
+void Controller::onCardsAvailable(
+    const std::vector<electronic_id::ElectronicID::ptr>& availableCards)
 {
     try {
         REQUIRE_NON_NULL(commandHandler)
@@ -172,8 +173,8 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
 
         for (const auto& card : availableCards) {
             const auto protocol =
-                card->eid().smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
-            qInfo() << "Card" << card->eid().name() << "in reader" << card->reader().name
+                card->smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
+            qInfo() << "Card" << card->name() << "in reader" << card->smartcard().readerName()
                     << "using protocol" << protocol;
         }
 
@@ -188,7 +189,7 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
     }
 }
 
-void Controller::runCommandHandler(const std::vector<electronic_id::CardInfo::ptr>& availableCards)
+void Controller::runCommandHandler(const std::vector<ElectronicID::ptr>& availableCards)
 {
     try {
         CommandHandlerRunThread* commandHandlerRunThread =

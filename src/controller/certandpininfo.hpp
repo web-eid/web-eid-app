@@ -50,7 +50,7 @@ struct PinInfo
 
 struct CardCertificateAndPinInfo
 {
-    electronic_id::CardInfo::ptr cardInfo;
+    electronic_id::ElectronicID::ptr eid;
     QByteArray certificateBytesInDer;
     QSslCertificate certificate {};
     CertificateInfo certInfo;

@@ -33,7 +33,7 @@ class CommandHandler : public QObject
 public:
     using ptr = std::unique_ptr<CommandHandler>;
 
-    virtual void run(const std::vector<electronic_id::CardInfo::ptr>& cards) = 0;
+    virtual void run(const std::vector<electronic_id::ElectronicID::ptr>& cards) = 0;
     virtual void connectSignals(const WebEidUI* window) = 0;
     virtual QVariantMap onConfirm(WebEidUI* window,
                                   const CardCertificateAndPinInfo& cardCertAndPin) = 0;

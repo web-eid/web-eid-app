@@ -30,7 +30,7 @@ class CommandHandlerRunThread : public ControllerChildThread
 
 public:
     CommandHandlerRunThread(QObject* parent, CommandHandler& handler,
-                            const std::vector<electronic_id::CardInfo::ptr>& cs) :
+                            const std::vector<electronic_id::ElectronicID::ptr>& cs) :
         ControllerChildThread(parent), commandHandler(handler),
         cmdType(commandHandler.commandType()), cards(cs)
     {
@@ -45,5 +45,5 @@ private:
 
     CommandHandler& commandHandler;
     const std::string cmdType;
-    std::vector<electronic_id::CardInfo::ptr> cards;
+    std::vector<electronic_id::ElectronicID::ptr> cards;
 };

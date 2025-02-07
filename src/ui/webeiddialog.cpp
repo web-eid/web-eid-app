@@ -376,7 +376,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
 {
     ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
     ui->pinInputOriginLabel->setText(ui->selectCertificateOriginLabel->text());
-    const bool useExternalPinDialog = certAndPin.cardInfo->eid().providesExternalPinDialog();
+    const bool useExternalPinDialog = certAndPin.eid->providesExternalPinDialog();
 
     switch (currentCommand) {
     case CommandType::GET_SIGNING_CERTIFICATE:
@@ -652,7 +652,7 @@ void WebEidDialog::setupPinInput(const CardCertificateAndPinInfo& certAndPin)
     //    (ASCII 0x20...0x2F, space../ + 0x3A...0x40, :..@ + 0x5B...0x60, [..` + 0x7B...0x7F, {..~).
     // 5. We additionally allow uppercase and lowercase Unicode letters.
     const auto& regexpWithOrWithoutLetters =
-        certAndPin.cardInfo->eid().allowsUsingLettersAndSpecialCharactersInPin()
+        certAndPin.eid->allowsUsingLettersAndSpecialCharactersInPin()
         ? QStringLiteral("[0-9 -/:-@[-`{-~\\p{L}]{%1,%2}")
         : QStringLiteral("[0-9]{%1,%2}");
     const QRegularExpression numericMinMaxRegexp(
