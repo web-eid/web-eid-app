@@ -29,8 +29,8 @@ class CardEventMonitorThread : public ControllerChildThread
     Q_OBJECT
 
 public:
-    using card_ptr = electronic_id::CardInfo::ptr;
-    using card_ptr_vector = std::vector<electronic_id::CardInfo::ptr>;
+    using card_ptr = electronic_id::ElectronicID::ptr;
+    using card_ptr_vector = std::vector<electronic_id::ElectronicID::ptr>;
 
     CardEventMonitorThread(QObject* parent, const std::string& commandType) :
         ControllerChildThread(parent), cmdType(commandType)
@@ -101,21 +101,20 @@ private:
     void sortByReaderNameAndAtr(card_ptr_vector& a)
     {
         std::sort(a.begin(), a.end(), [](const card_ptr& c1, const card_ptr& c2) {
-            if (c1->reader().name != c2->reader().name) {
-                return c1->reader().name < c2->reader().name;
+            if (c1->smartcard().name() != c2->smartcard().name()) {
+                return c1->smartcard().name() < c2->smartcard().name();
             }
-            return c1->reader().cardAtr < c2->reader().cardAtr;
+            return c1->smartcard().atr() < c2->smartcard().atr();
         });
     }
 
     bool areEqualByReaderNameAndAtr(const card_ptr_vector& a, const card_ptr_vector& b)
     {
         // std::equal requires that second range is not shorter than first, so compare size first.
-        return a.size() == b.size()
-            && std::equal(a.cbegin(), a.cend(), b.cbegin(),
+        return std::equal(a.cbegin(), a.cend(), b.cbegin(), b.end(),
                           [](const card_ptr& c1, const card_ptr& c2) {
-                              return c1->reader().name == c2->reader().name
-                                  && c1->reader().cardAtr == c2->reader().cardAtr;
+                              return c1->smartcard().name() == c2->smartcard().name()
+                                  && c1->smartcard().atr() == c2->smartcard().atr();
                           });
     }
 
