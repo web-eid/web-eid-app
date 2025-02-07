@@ -53,6 +53,6 @@ QVariantMap GetCertificate::onConfirm(WebEidUI* /* window */,
     // Each string in the array is a Base64-encoded (Section 4 of [RFC4648] -- not
     // Base64url-encoded) DER [ITU.X690.2008] PKIX certificate value.
     auto certPem = cardCertAndPin.certificateBytesInDer.toBase64();
-    auto algos = supportedSigningAlgos(cardCertAndPin.cardInfo->eid());
+    auto algos = supportedSigningAlgos(*cardCertAndPin.eid);
     return {{"certificate", QString(certPem)}, {"supportedSignatureAlgorithms", algos}};
 }

@@ -47,7 +47,7 @@ public: // slots
     void run();
 
     // Called either directly from run() or from the monitor thread when cards are available.
-    void onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
+    void onCardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& availableCards);
 
     // Called when CommandHandlerRunThread finishes execution.
     void onCertificatesLoaded();
@@ -73,7 +73,7 @@ public: // slots
 
 private:
     void startCommandExecution();
-    void runCommandHandler(const std::vector<electronic_id::CardInfo::ptr>& availableCards);
+    void runCommandHandler(const std::vector<electronic_id::ElectronicID::ptr>& availableCards);
     void connectOkCancelWaitingForPinPad();
     void connectRetry(const ControllerChildThread* childThread);
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);

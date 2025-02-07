@@ -43,7 +43,7 @@ private:
     void doRun() override
     {
         const auto result = commandHandler.onConfirm(window, cardCertAndPinInfo);
-        cardCertAndPinInfo.cardInfo->eid().release();
+        cardCertAndPinInfo.eid->release();
         emit completed(result);
     }
 
