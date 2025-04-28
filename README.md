@@ -259,10 +259,24 @@ You can examine the files in the `.github/workflows/` directory to see how conti
 
 ### Ubuntu Linux
 
-Run all commands starting from `RUN apt-get update` from the following
-`Dockerfile`:
+Install the dependencies required for building the project.
 
-https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Dockerfile
+```sh
+sudo apt update
+sudo apt install \
+  cmake \
+  build-essential \
+  qt6-base-dev \
+  qt6-tools-dev \
+  qt6-l10n-tools \
+  qt6-tools-dev-tools \
+  libqt6svg6-dev \
+  libglu1-mesa-dev \
+  libssl-dev \
+  pkg-config \
+  libpcsclite-dev \
+  libgtest-dev
+```
 
 ### Windows
 
