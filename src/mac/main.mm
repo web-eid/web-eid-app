@@ -34,6 +34,8 @@
 
 #include "shared.hpp"
 
+#include <iostream>
+
 @implementation NSApplication (MacController)
 
 + (QVariant)toQVariant:(id)data
