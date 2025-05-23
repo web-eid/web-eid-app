@@ -27,43 +27,32 @@ font-family: &quot;Roboto&quot;;
 color: black;
 }
 QPushButton {
-font-size: 17px;
-border: 3px solid #EFEFEF;
-border-radius: 3px;
-height: 39px;
-padding-left: 17px;
-padding-right: 17px;
-min-width: 30px;
-background-color: #EFEFEF;
+color: #AD2A45;
+border: 1px solid #AD2A45;
+border-radius: 4px;
+padding: 11px 12px;
+font-family: Roboto, Helvetica;
+font-size: 14px;
+font-weight: 700;
 }
-QPushButton::disabled {
-background-color: #FAFAFA;
-border-color: #FAFAFA;
+QPushButton:hover {
+background-color: #F5EBED;
 }
-QPushButton::hover {
-background-color: #DEDEDE;
-border-color: #DEDEDE;
+QPushButton:pressed {
+background-color: #E1C1C6;
 }
-QPushButton::focus {
-background-color: #DEDEDE;
-border-color: #76767B;
-}
-QPushButton:default {
+QPushButton::default, #helpButton {
 color: white;
-background-color: #113F8E;
-border-color: #113F8E;
+border-color: #2F70B6;
+background-color: #2F70B6;
 }
-QPushButton:default::disabled {
-background-color: #B7C5DD;
-border-color: #B7C5DD;
+QPushButton::default:hover, #helpButton:hover {
+border-color: #2B66A6;
+background-color: #2B66A6;
 }
-QPushButton:default::hover {
-background-color: #003168;
-border-color: #003168
-}
-QPushButton:default::focus {
-background-color: #003168;
-border-color: #008EEA;
+QPushButton::default:pressed, #helpButton:pressed {
+border-color: #215081;
+background-color: #215081;
 }
 #langButton {
 color: #003168;
@@ -166,9 +155,6 @@ border-radius: 3px;
 #fatalErrorLabel, #aboutAlert {
 color: #CD2541;
 } 
-#helpButton {
-color: #003168;
-}
 #aboutVersion {
 color: #76767B;
 }
@@ -896,21 +882,24 @@ border-radius: 4px;</string>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
+       <property name="layoutDirection">
+        <enum>Qt::RightToLeft</enum>
+       </property>
        <property name="text">
         <string>Help</string>
        </property>
        <property name="icon">
         <iconset resource="web-eid-resources.qrc">
-         <normaloff>:/images/help.svg</normaloff>:/images/help.svg</iconset>
+         <normaloff>:/images/link.svg</normaloff>:/images/link.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>30</width>
-         <height>26</height>
+         <width>16</width>
+         <height>16</height>
         </size>
        </property>
-       <property name="autoDefault">
-        <bool>false</bool>
+       <property name="default">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -921,16 +910,6 @@ border-radius: 4px;</string>
        </property>
        <property name="text">
         <string>Confirm</string>
-       </property>
-       <property name="icon">
-        <iconset resource="web-eid-resources.qrc">
-         <normaloff>:/images/arrow.svg</normaloff>:/images/arrow.svg</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>16</height>
-        </size>
        </property>
        <property name="default">
         <bool>true</bool>
