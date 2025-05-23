@@ -8,10 +8,17 @@ add_library(ui STATIC
     ui.cpp
     webeiddialog.cpp
     webeiddialog.hpp
-    web-eid-resources.qrc
     dialog.ui
 )
-qt_add_resources(ui qss PREFIX / FILES dark.qss languageselect.qss)
+file(GLOB IMAGES images/*)
+file(GLOB FONTS fonts/*)
+qt_add_resources(ui resources BASE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX / FILES
+    ../../install/appicon_128.png
+    dark.qss
+    languageselect.qss
+    ${IMAGES}
+    ${FONTS}
+)
 file(GLOB TRANSLATIONS translations/*.ts)
 qt_add_translations(ui TS_FILES ${TRANSLATIONS} RESOURCE_PREFIX /translations)
 set_target_properties(ui PROPERTIES
