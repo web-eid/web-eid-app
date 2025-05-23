@@ -1,0 +1,21 @@
+
+#LanguageSelect {
+background-color: #232325;
+}
+#label {
+color: white;
+}
+QPushButton {
+color: #FF5C79;
+border-color: #FF5C79;
+}
+QPushButton:hover, QPushButton:pressed {
+background-color: #232325;
+}
+QToolButton {
+color: white;
+border-color: #92A0B7;
+}
+QToolButton:checked {
+background-color: #415982;
+}
