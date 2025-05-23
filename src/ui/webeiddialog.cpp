@@ -78,7 +78,6 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
             ui->cardChipIcon->setPixmap(pixmap("no-id-card"_L1));
             ui->fatalErrorIcon->setPixmap(pixmap("fatal"_L1));
             ui->aboutIcon->setPixmap(pixmap("fatal"_L1));
-            ui->helpButton->setIcon(QIcon(QStringLiteral(":/images/help_dark.svg")));
         }
     }
     setWindowFlag(Qt::CustomizeWindowHint);
