@@ -41,13 +41,6 @@ background-image: url(:images/down_dark.svg);
 #langButton::hover {
 background-color: #4E4E53;
 }
-#langMenu {
-border-color: #4E4E53;
-background-color: #4E4E53;
-}
-#langMenu > QPushButton {
-color: #FFFFFF;
-}
 CertificateButton, CertificateWidget {
 border-color: #4E4E53;
 }

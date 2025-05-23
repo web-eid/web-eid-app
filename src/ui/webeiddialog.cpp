@@ -22,6 +22,7 @@
 
 #include "webeiddialog.hpp"
 #include "application.hpp"
+#include "languageselect.hpp"
 #include "punycode.hpp"
 
 #include "ui_dialog.h"
@@ -42,8 +43,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #endif
-
-#include <unordered_map>
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 4, 0)
 constexpr inline QLatin1String operator"" _L1(const char* str, size_t size) noexcept
@@ -92,65 +91,9 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 
     ui->langButton = new QToolButton(this);
     ui->langButton->setObjectName("langButton");
-    static const std::vector<std::pair<QString, QString>> LANG_LIST {
-        {QStringLiteral("et"), QStringLiteral("Eesti")},
-        {QStringLiteral("en"), QStringLiteral("English")},
-        {QStringLiteral("ru"), QStringLiteral("Русский")},
-        {QStringLiteral("fi"), QStringLiteral("Suomi")},
-        {QStringLiteral("hr"), QStringLiteral("Hrvatska")},
-        {QStringLiteral("de"), QStringLiteral("Deutsch")},
-        {QStringLiteral("fr"), QStringLiteral("Française")},
-        {QStringLiteral("nl"), QStringLiteral("Nederlands")},
-        {QStringLiteral("cs"), QStringLiteral("Čeština")},
-        {QStringLiteral("sk"), QStringLiteral("Slovenština")}};
     ui->langButton->setText(tr("EN", "Active language"));
-    if (auto i = std::find_if(LANG_LIST.cbegin(), LANG_LIST.cend(),
-                              [lang = ui->langButton->text().toLower()](const auto& elem) {
-                                  return elem.first == lang;
-                              });
-        i != LANG_LIST.cend()) {
-        ui->langButton->setAccessibleName(i->second);
-    }
-    connect(ui->langButton, &QToolButton::clicked, this, [this] {
-        if (auto* menu = findChild<QWidget*>(QStringLiteral("langMenu"))) {
-            menu->deleteLater();
-            return;
-        }
-        auto* menu = new QWidget(this);
-        menu->setObjectName("langMenu");
-        auto* layout = new QGridLayout(menu);
-        layout->setContentsMargins(1, 1, 1, 1);
-        layout->setHorizontalSpacing(1);
-#ifndef Q_OS_DARWIN
-        layout->setVerticalSpacing(1);
-#endif
-        layout->setSizeConstraint(QLayout::SetFixedSize);
-        auto* langGroup = new QButtonGroup(menu);
-        langGroup->setExclusive(true);
-        int i {};
-        for (const auto& [lang, title] : LANG_LIST) {
-            auto* action = new QPushButton(menu);
-            action->setText(title);
-            action->setProperty("lang", lang);
-            action->setAutoDefault(false);
-            layout->addWidget(action, i / 2, i % 2);
-            langGroup->addButton(action);
-            action->setCheckable(true);
-            action->setChecked(lang == ui->langButton->text().toLower());
-            action->setMinimumSize(action->sizeHint() + QSize(1, 0));
-            ++i;
-        }
-        menu->show();
-        menu->move(ui->langButton->geometry().bottomRight() - menu->geometry().topRight()
-                   + QPoint(0, 2));
-        connect(langGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), menu,
-                [this, menu](QAbstractButton* action) {
-                    QSettings().setValue(QStringLiteral("lang"), action->property("lang"));
-                    ui->langButton->setText(action->property("lang").toString().toUpper());
-                    qApp->loadTranslations();
-                    menu->deleteLater();
-                });
-    });
+    ui->langButton->setAccessibleName(tr("English", "Active language accessible"));
+    connect(ui->langButton, &QToolButton::clicked, this, [this] { LanguageSelect(this).exec(); });
 
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
     auto pinInputFont = ui->pinInput->font();
@@ -526,13 +469,10 @@ bool WebEidDialog::event(QEvent* event)
     switch (event->type()) {
     case QEvent::LanguageChange:
         ui->retranslateUi(this);
+        ui->langButton->setText(tr("EN", "Active language"));
+        ui->langButton->setAccessibleName(tr("English", "Active language accessible"));
         emit languageChange();
         resizeHeight();
-        break;
-    case QEvent::MouseButtonRelease:
-        if (auto* w = findChild<QWidget*>(QStringLiteral("langMenu"))) {
-            w->deleteLater();
-        }
         break;
     case QEvent::Resize:
         ui->langButton->move(width() - ui->langButton->width() - 20, ui->pageStack->pos().y() - 20);
