@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
-    <height>456</height>
+    <width>616</width>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,6 +88,12 @@ background-color: #215081;
    </property>
    <item row="0" column="0" colspan="3">
     <widget class="QLabel" name="label">
+     <property name="minimumSize">
+      <size>
+       <width>536</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="text">
       <string>Select language</string>
      </property>
@@ -113,7 +119,7 @@ background-color: #215081;
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string notr="true">Eesti keel</string>
+        <string notr="true">Eesti</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -204,7 +210,7 @@ background-color: #215081;
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string notr="true">Hrvatska</string>
+        <string notr="true">Hrvatski</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -248,7 +254,7 @@ background-color: #215081;
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string notr="true">Française</string>
+        <string notr="true">Français</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -314,7 +320,7 @@ background-color: #215081;
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string notr="true">Slovenština</string>
+        <string notr="true">Slovenčina</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -346,7 +352,7 @@ background-color: #215081;
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>317</width>
+       <width>0</width>
        <height>20</height>
       </size>
      </property>
