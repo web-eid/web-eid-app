@@ -22,6 +22,7 @@
 
 #include "webeiddialog.hpp"
 #include "application.hpp"
+#include "languageselect.hpp"
 #include "punycode.hpp"
 
 #include "ui_dialog.h"
@@ -79,7 +80,6 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
             ui->cardChipIcon->setPixmap(pixmap("no-id-card"_L1));
             ui->fatalErrorIcon->setPixmap(pixmap("fatal"_L1));
             ui->aboutIcon->setPixmap(pixmap("fatal"_L1));
-            ui->helpButton->setIcon(QIcon(QStringLiteral(":/images/help_dark.svg")));
         }
     }
     setWindowFlag(Qt::CustomizeWindowHint);
@@ -110,43 +110,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         i != LANG_LIST.cend()) {
         ui->langButton->setAccessibleName(i->second);
     }
-    connect(ui->langButton, &QToolButton::clicked, this, [this] {
-        if (auto* menu = findChild<QWidget*>(QStringLiteral("langMenu"))) {
-            menu->deleteLater();
-            return;
-        }
-        auto* menu = new QWidget(this);
-        menu->setObjectName("langMenu");
-        auto* layout = new QGridLayout(menu);
-        layout->setContentsMargins(1, 1, 1, 1);
-        layout->setSpacing(1);
-        layout->setSizeConstraint(QLayout::SetFixedSize);
-        auto* langGroup = new QButtonGroup(menu);
-        langGroup->setExclusive(true);
-        int i {};
-        for (const auto& [lang, title] : LANG_LIST) {
-            auto* action = new QPushButton(menu);
-            action->setText(title);
-            action->setProperty("lang", lang);
-            action->setAutoDefault(false);
-            layout->addWidget(action, i / 2, i % 2);
-            langGroup->addButton(action);
-            action->setCheckable(true);
-            action->setChecked(lang == ui->langButton->text().toLower());
-            action->setMinimumSize(action->sizeHint() + QSize(1, 0));
-            ++i;
-        }
-        menu->show();
-        menu->move(ui->langButton->geometry().bottomRight() - menu->geometry().topRight()
-                   + QPoint(0, 2));
-        connect(langGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), menu,
-                [this, menu](QAbstractButton* action) {
-                    QSettings().setValue(QStringLiteral("lang"), action->property("lang"));
-                    ui->langButton->setText(action->property("lang").toString().toUpper());
-                    qApp->loadTranslations();
-                    menu->deleteLater();
-                });
-    });
+    connect(ui->langButton, &QToolButton::clicked, this, [] { LanguageSelect().exec(); });
 
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
     auto pinInputFont = ui->pinInput->font();
@@ -509,13 +473,10 @@ bool WebEidDialog::event(QEvent* event)
     switch (event->type()) {
     case QEvent::LanguageChange:
         ui->retranslateUi(this);
+        ui->langButton->setText(
+            QSettings().value(QStringLiteral("lang"), QStringLiteral("ET")).toString().toUpper());
         emit languageChange();
         resizeHeight();
-        break;
-    case QEvent::MouseButtonRelease:
-        if (auto* w = findChild<QWidget*>(QStringLiteral("langMenu"))) {
-            w->deleteLater();
-        }
         break;
     case QEvent::Resize:
         ui->langButton->move(width() - ui->langButton->width() - 20, 5);
