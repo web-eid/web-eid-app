@@ -39,6 +39,21 @@
     </message>
 </context>
 <context>
+    <name>LanguageSelect</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Prekid</translation>
+    </message>
+    <message>
+        <source>Select language</source>
+        <translation>Odabir jezika</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>Odabir</translation>
+    </message>
+</context>
+<context>
     <name>WebEidDialog</name>
     <message>
         <source>Technical error</source>
@@ -286,12 +301,21 @@
     </message>
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
-        <translation>Unesite PIN za prijavu u dijaloški prozor PIN-a koji se otvara.</translation>
+        <translation>Unesite PIN za potpisivanje u dijaloški prozor PIN-a koji se otvara.</translation>
     </message>
     <message>
         <source>EN</source>
         <comment>Active language</comment>
         <translation>HR</translation>
+    </message>
+    <message>
+        <source>PIN entry disabled</source>
+        <translation>Unos PIN-a onemogućen.</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <comment>Active language accessible</comment>
+        <translation>Hrvatska</translation>
     </message>
 </context>
 </TS>

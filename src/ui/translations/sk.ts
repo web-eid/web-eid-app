@@ -39,6 +39,21 @@
     </message>
 </context>
 <context>
+    <name>LanguageSelect</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Zrušiť</translation>
+    </message>
+    <message>
+        <source>Select language</source>
+        <translation>Vyberte jazyk</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>Vybrať</translation>
+    </message>
+</context>
+<context>
     <name>WebEidDialog</name>
     <message>
         <source>By choosing the certificate, I agree to the transfer of my name and personal identification code to the service provider.</source>
@@ -292,6 +307,15 @@
         <source>EN</source>
         <comment>Active language</comment>
         <translation>SK</translation>
+    </message>
+    <message>
+        <source>PIN entry disabled</source>
+        <translation>Zadávanie PIN je zakázané.</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <comment>Active language accessible</comment>
+        <translation>Slovenština</translation>
     </message>
 </context>
 </TS>
