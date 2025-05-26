@@ -33,6 +33,7 @@ LanguageSelect::LanguageSelect(QWidget* parent) :
     QDialog(parent), ui(std::make_unique<Ui::LanguageSelect>())
 {
     ui->setupUi(this);
+    setAttribute(Qt::WA_DeleteOnClose);
     if (Application::isDarkTheme()) {
         if (QFile f(QStringLiteral(":dark-languageselect.qss"));
             f.open(QFile::ReadOnly | QFile::Text)) {
