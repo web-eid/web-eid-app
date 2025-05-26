@@ -44,18 +44,14 @@ inline QString displayInRed(const QString& text)
 // support screen readers.
 
 CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
-    icon(new QLabel(self)), info(new QLabel(self)), warnIcon(new QLabel(self)),
+    icon(new QLabel(self)), info(new QLabel(self)),
     warn(new QLabel(CertificateWidget::tr("Pin locked"), self))
 {
     if (Application::isDarkTheme()) {
         icon->setPixmap(QStringLiteral(":/images/id-card_dark.svg"));
-        warnIcon->setPixmap(QStringLiteral(":/images/fatal_dark.svg"));
     } else {
         icon->setPixmap(QStringLiteral(":/images/id-card.svg"));
-        warnIcon->setPixmap(QStringLiteral(":/images/fatal.svg"));
     }
-    warnIcon->hide();
-    warnIcon->installEventFilter(self);
     warn->setObjectName(QStringLiteral("warn"));
     warn->hide();
     auto* layout = new QHBoxLayout(self);
@@ -63,10 +59,8 @@ CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
     layout->setSpacing(10);
     layout->addWidget(icon);
     layout->addWidget(info, 1);
-    layout->addWidget(warnIcon);
     auto* warnLayout = new QHBoxLayout;
     warnLayout->setSpacing(6);
-    warnLayout->addWidget(warnIcon);
     warnLayout->addWidget(warn);
     layout->addItem(warnLayout);
 }
@@ -84,14 +78,6 @@ std::tuple<QString, QString, QString, QString> CertificateWidgetInfo::certData()
                 .toHtmlEscaped(),
             certAndPinInfo.certificate.effectiveDate().date().toString(Qt::ISODate),
             certAndPinInfo.certificate.expiryDate().date().toString(Qt::ISODate)};
-}
-
-void CertificateWidgetInfo::drawWarnIcon()
-{
-    QPainter p(warnIcon);
-    QRect cr = warnIcon->contentsRect();
-    cr.adjust(warnIcon->margin(), warnIcon->margin(), -warnIcon->margin(), -warnIcon->margin());
-    warnIcon->style()->drawItemPixmap(&p, cr, Qt::AlignCenter, warnIcon->pixmap());
 }
 
 void CertificateWidgetInfo::setCertificateInfo(const EidCertificateAndPinInfo& cardCertPinInfo)
@@ -113,7 +99,6 @@ void CertificateWidgetInfo::setCertificateInfo(const EidCertificateAndPinInfo& c
                       .arg(subject, issuer, effectiveDate, expiryDate, warning));
     info->parentWidget()->setDisabled(certInfo.notEffective || certInfo.isExpired
                                       || cardCertPinInfo.pinInfo.pinIsBlocked());
-    warnIcon->setVisible(warning.isEmpty() && cardCertPinInfo.pinInfo.pinIsBlocked());
     warn->setVisible(warning.isEmpty() && cardCertPinInfo.pinInfo.pinIsBlocked());
 }
 
@@ -125,15 +110,6 @@ void CertificateWidgetInfo::languageChange()
 CertificateWidget::CertificateWidget(QWidget* parent) : QWidget(parent), CertificateWidgetInfo(this)
 {
     info->setFocusPolicy(Qt::TabFocus);
-}
-
-bool CertificateWidget::eventFilter(QObject* object, QEvent* event)
-{
-    if (qobject_cast<QLabel*>(object) && event->type() == QEvent::Paint) {
-        drawWarnIcon();
-        return true;
-    }
-    return QWidget::eventFilter(object, event);
 }
 
 void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
@@ -154,15 +130,6 @@ CertificateButton::CertificateButton(const EidCertificateAndPinInfo& cardCertPin
     CertificateWidgetInfo::icon->setAttribute(Qt::WA_TransparentForMouseEvents);
     info->setAttribute(Qt::WA_TransparentForMouseEvents);
     setCertificateInfo(cardCertPinInfo);
-}
-
-bool CertificateButton::eventFilter(QObject* object, QEvent* event)
-{
-    if (qobject_cast<QLabel*>(object) && event->type() == QEvent::Paint) {
-        drawWarnIcon();
-        return true;
-    }
-    return QAbstractButton::eventFilter(object, event);
 }
 
 void CertificateButton::setCertificateInfo(const EidCertificateAndPinInfo& cardCertPinInfo)
