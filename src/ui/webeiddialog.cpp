@@ -48,6 +48,11 @@ constexpr inline QLatin1String operator"" _L1(const char* str, size_t size) noex
 {
     return QLatin1String(str, int(size));
 }
+
+inline QString operator""_s(const char16_t* str, size_t size) noexcept
+{
+    return QString(QStringPrivate(nullptr, const_cast<char16_t*>(str), qsizetype(size)));
+}
 #else
 using namespace Qt::Literals::StringLiterals;
 #endif
@@ -70,14 +75,9 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->setupUi(this);
     ui->lockedWarning->hide();
     if (Application::isDarkTheme()) {
-        QFile f(QStringLiteral(":dark.qss"));
-        if (f.open(QFile::ReadOnly | QFile::Text)) {
+        if (QFile f(u":dark.qss"_s); f.open(QFile::ReadOnly | QFile::Text)) {
             setStyleSheet(styleSheet() + QTextStream(&f).readAll());
-            ui->selectCertificateOriginLabelIcon->setPixmap(pixmap("origin"_L1));
-            ui->pinInputOriginLabelIcon->setPixmap(pixmap("origin"_L1));
-            ui->cardChipIcon->setPixmap(pixmap("no-id-card"_L1));
-            ui->fatalErrorIcon->setPixmap(pixmap("fatal"_L1));
-            ui->aboutIcon->setPixmap(pixmap("fatal"_L1));
+            ui->cardChipIcon->setPixmap(pixmap("id-card-err"_L1));
         }
     }
     setWindowFlag(Qt::CustomizeWindowHint);
@@ -91,14 +91,21 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     ui->langButton->setObjectName("langButton");
     ui->langButton->setText(tr("EN", "Active language"));
     ui->langButton->setAccessibleName(tr("English", "Active language accessible"));
-    connect(ui->langButton, &QToolButton::clicked, this, [this] { LanguageSelect(this).exec(); });
+    ui->langButton->setIcon(pixmap("lang"_L1));
+    ui->langButton->setIconSize(QSize(20, 20));
+    ui->langButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui->langButton->setCursor(QCursor(Qt::PointingHandCursor));
+    ui->langButton->setLayoutDirection(Qt::RightToLeft);
+    connect(ui->langButton, &QToolButton::clicked, this,
+            [this] { (new LanguageSelect(this))->open(); });
 
     ui->pinInput->setAttribute(Qt::WA_MacShowFocusRect, false);
     auto pinInputFont = ui->pinInput->font();
     pinInputFont.setLetterSpacing(QFont::AbsoluteSpacing, 2);
     ui->pinInput->setFont(pinInputFont);
 
-    ui->waitingSpinner->load(QStringLiteral(":/images/wait.svg"));
+    ui->waitingSpinner->load(Application::isDarkTheme() ? u":/images/wait_dark.svg"_s
+                                                        : u":/images/wait.svg"_s);
 
     ui->selectionGroup = new QButtonGroup(this);
     ui->fatalError->hide();
@@ -289,7 +296,7 @@ void WebEidDialog::onMultipleCertificatesReady(
                     qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
                 emit accepted(button->certificateInfo());
             } else {
-                emit failure(QStringLiteral("CertificateButton not found"));
+                emit failure(u"CertificateButton not found"_s);
             }
         });
         ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
@@ -310,14 +317,13 @@ void WebEidDialog::onMultipleCertificatesReady(
                     qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
                 onSingleCertificateReady(origin, button->certificateInfo());
             } else {
-                emit failure(QStringLiteral("CertificateButton not found"));
+                emit failure(u"CertificateButton not found"_s);
             }
         });
         ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
         break;
     default:
-        emit failure(QStringLiteral("Command %1 not allowed here")
-                         .arg(QString::fromStdString(currentCommand)));
+        emit failure("Command %1 not allowed here"_L1.arg(QString::fromStdString(currentCommand)));
     }
 }
 
@@ -373,7 +379,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
                 : QT_TR_NOOP("Enter PIN2 for signing"));
         break;
     default:
-        emit failure(QStringLiteral("Only SELECT_CERTIFICATE, AUTHENTICATE or SIGN allowed"));
+        emit failure(u"Only SELECT_CERTIFICATE, AUTHENTICATE or SIGN allowed"_s);
         return;
     }
 
@@ -486,7 +492,7 @@ void WebEidDialog::onRetryImpl(Text text)
 {
     setTrText(ui->connectCardLabel, std::forward<Text>(text));
     setTrText(ui->messagePageTitleLabel, QT_TR_NOOP("Operation failed"));
-    ui->cardChipIcon->setPixmap(pixmap("no-id-card"_L1));
+    ui->cardChipIcon->setPixmap(pixmap("id-card-err"_L1));
     setupOK(&WebEidDialog::retry, QT_TR_NOOP("Try again"), true);
     ui->pageStack->setCurrentIndex(int(Page::ALERT));
 }
@@ -684,8 +690,8 @@ void WebEidDialog::resizeHeight()
 
 QPixmap WebEidDialog::pixmap(QLatin1String name)
 {
-    return {QStringLiteral(":/images/%1%2.svg")
-                .arg(name, Application::isDarkTheme() ? "_dark"_L1 : QLatin1String())};
+    return {":/images/%1%2.svg"_L1.arg(name,
+                                       Application::isDarkTheme() ? "_dark"_L1 : QLatin1String())};
 }
 
 constexpr std::tuple<const char*, const char*, QLatin1String>
@@ -696,73 +702,73 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error) noexc
         return {
             QT_TR_NOOP("The smart card service required to use the ID-card is not running. Please "
                        "start the smart card service and try again."),
-            QT_TR_NOOP("Launch the Smart Card service"), "cardreader"_L1};
+            QT_TR_NOOP("Launch the Smart Card service"), "id-card-err"_L1};
 
     case RetriableError::NO_SMART_CARD_READERS_FOUND:
         return {QT_TR_NOOP("<b>Card reader not connected.</b> Please connect the card reader to "
                            "the computer."),
-                QT_TR_NOOP("Connect the card reader"), "cardreader"_L1};
+                QT_TR_NOOP("Connect the card reader"), "id-card-err"_L1};
 
     case RetriableError::NO_SMART_CARDS_FOUND:
     case RetriableError::PKCS11_TOKEN_NOT_PRESENT:
         return {QT_TR_NOOP("<b>ID-card not found.</b> Please insert the ID-card into the reader."),
-                QT_TR_NOOP("Insert the ID-card"), "no-id-card"_L1};
+                QT_TR_NOOP("Insert the ID-card"), "id-card-err"_L1};
 
     case RetriableError::SMART_CARD_WAS_REMOVED:
     case RetriableError::PKCS11_TOKEN_REMOVED:
         return {QT_TR_NOOP(
                     "The ID-card was removed from the reader. Please insert the ID-card into the "
                     "reader."),
-                QT_TR_NOOP("Insert the ID-card"), "no-id-card"_L1};
+                QT_TR_NOOP("Insert the ID-card"), "id-card-err"_L1};
 
     case RetriableError::SMART_CARD_TRANSACTION_FAILED:
         return {
             QT_TR_NOOP(
                 "Operation failed. Make sure that the ID-card and the card reader are connected "
                 "correctly."),
-            QT_TR_NOOP("Check the ID-card and the reader connection"), "no-id-card"_L1};
+            QT_TR_NOOP("Check the ID-card and the reader connection"), "id-card-err"_L1};
 
     case RetriableError::FAILED_TO_COMMUNICATE_WITH_CARD_OR_READER:
         return {
             QT_TR_NOOP(
                 "Connection to the ID-card or reader failed. Make sure that the ID-card and the "
                 "card reader are connected correctly."),
-            QT_TR_NOOP("Check the ID-card and the reader connection"), "no-id-card"_L1};
+            QT_TR_NOOP("Check the ID-card and the reader connection"), "id-card-err"_L1};
 
     case RetriableError::SMART_CARD_CHANGE_REQUIRED:
         return {
             QT_TR_NOOP(
                 "The desired operation cannot be performed with the inserted ID-card. Make sure "
                 "that the ID-card is supported by the Web eID application."),
-            QT_TR_NOOP("Operation not supported"), "no-id-card"_L1};
+            QT_TR_NOOP("Operation not supported"), "id-card-err"_L1};
 
     case RetriableError::SMART_CARD_COMMAND_ERROR:
         return {QT_TR_NOOP("Error communicating with the card."), QT_TR_NOOP("Operation failed"),
-                "no-id-card"_L1};
+                "id-card-err"_L1};
 
     case RetriableError::PKCS11_ERROR:
         return {QT_TR_NOOP("Card driver error. Please try again."), QT_TR_NOOP("Card driver error"),
-                "no-id-card"_L1};
+                "id-card-err"_L1};
 
     case RetriableError::SCARD_ERROR:
         return {QT_TR_NOOP(
                     "An error occurred in the Smart Card service required to use the ID-card. Make "
                     "sure that the ID-card and the card reader are connected correctly or relaunch "
                     "the Smart Card service."),
-                QT_TR_NOOP("Operation failed"), "no-id-card"_L1};
+                QT_TR_NOOP("Operation failed"), "id-card-err"_L1};
 
     case RetriableError::UNSUPPORTED_CARD:
         return {
             QT_TR_NOOP(
                 "The card in the reader is not supported. Make sure that the entered ID-card is "
                 "supported by the Web eID application."),
-            QT_TR_NOOP("Operation not supported"), "no-id-card"_L1};
+            QT_TR_NOOP("Operation not supported"), "id-card-err"_L1};
 
     case RetriableError::NO_VALID_CERTIFICATE_AVAILABLE:
         return {QT_TR_NOOP(
                     "The inserted ID-card does not contain a certificate for the requested "
                     "operation. Please insert an ID-card that supports the requested operation."),
-                QT_TR_NOOP("Operation not supported"), "no-id-card"_L1};
+                QT_TR_NOOP("Operation not supported"), "id-card-err"_L1};
 
     case RetriableError::PIN_VERIFY_DISABLED:
         return {
@@ -771,11 +777,11 @@ WebEidDialog::retriableErrorToTextTitleAndIcon(const RetriableError error) noexc
                 "used. Read more <a "
                 "href=\"https://www.id.ee/en/article/using-pinpad-card-reader-drivers/\">here</"
                 "a>."),
-            QT_TR_NOOP("Card driver error"), "cardreader"_L1};
+            QT_TR_NOOP("Card driver error"), "id-card-err"_L1};
 
     case RetriableError::UNKNOWN_ERROR:
-        return {QT_TR_NOOP("Unknown error"), QT_TR_NOOP("Unknown error"), "no-id-card"_L1};
+        return {QT_TR_NOOP("Unknown error"), QT_TR_NOOP("Unknown error"), "id-card-err"_L1};
     }
 
-    return {QT_TR_NOOP("Unknown error"), QT_TR_NOOP("Unknown error"), "no-id-card"_L1};
+    return {QT_TR_NOOP("Unknown error"), QT_TR_NOOP("Unknown error"), "id-card-err"_L1};
 }
