@@ -31,17 +31,17 @@ using namespace electronic_id;
 namespace
 {
 
-CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& card,
+CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const ElectronicID::ptr& card,
                                                           const CertificateType certificateType)
 {
-    const auto certificateBytes = card->eid().getCertificate(certificateType);
+    const auto certificateBytes = card->getCertificate(certificateType);
 
     QByteArray certificateDer(reinterpret_cast<const char*>(certificateBytes.data()),
                               int(certificateBytes.size()));
     QSslCertificate certificate(certificateDer, QSsl::Der);
     if (certificate.isNull()) {
         THROW(SmartCardChangeRequiredError,
-              "Invalid certificate returned by electronic ID " + card->eid().name());
+              "Invalid certificate returned by electronic ID " + card->name());
     }
 
     auto subject = certificate.subjectInfo(QSslCertificate::CommonName).join(' ');
@@ -61,11 +61,11 @@ CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& c
     CertificateInfo certInfo {
         certificateType, certificate.expiryDate() < QDateTime::currentDateTimeUtc(),
         certificate.effectiveDate() > QDateTime::currentDateTimeUtc(), std::move(subject)};
-    PinInfo pinInfo {certificateType.isAuthentication() ? card->eid().authPinMinMaxLength()
-                                                        : card->eid().signingPinMinMaxLength(),
-                     certificateType.isAuthentication() ? card->eid().authPinRetriesLeft()
-                                                        : card->eid().signingPinRetriesLeft(),
-                     card->eid().smartcard().readerHasPinPad()};
+    PinInfo pinInfo {certificateType.isAuthentication() ? card->authPinMinMaxLength()
+                                                        : card->signingPinMinMaxLength(),
+                     certificateType.isAuthentication() ? card->authPinRetriesLeft()
+                                                        : card->signingPinRetriesLeft(),
+                     card->smartcard().readerHasPinPad()};
     if (pinInfo.pinRetriesCount.first == 0) {
         pinInfo.pinIsBlocked = true;
     }
@@ -83,7 +83,7 @@ CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandH
     }
 }
 
-void CertificateReader::run(const std::vector<CardInfo::ptr>& cards)
+void CertificateReader::run(const std::vector<ElectronicID::ptr>& cards)
 {
     REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(cards)
 
