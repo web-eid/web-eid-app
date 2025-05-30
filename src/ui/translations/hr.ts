@@ -28,6 +28,21 @@
     </message>
 </context>
 <context>
+    <name>LanguageSelect</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Prekid</translation>
+    </message>
+    <message>
+        <source>Select language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>WebEidDialog</name>
     <message>
         <source>Technical error</source>
@@ -273,6 +288,15 @@
         <source>EN</source>
         <comment>Active language</comment>
         <translation>HR</translation>
+    </message>
+    <message>
+        <source>PIN entry disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>English</source>
+        <comment>Active language accessible</comment>
+        <translation>Hrvatska</translation>
     </message>
 </context>
 </TS>
