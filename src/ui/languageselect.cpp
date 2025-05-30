@@ -20,33 +20,33 @@
  * SOFTWARE.
  */
 
+#include "languageselect.hpp"
+#include "ui_languageselect.h"
+
 #include "application.hpp"
-#include "controller.hpp"
-#include "logging.hpp"
 
-#include <QTimer>
+#include <QFile>
+#include <QSettings>
+#include <QStyle>
 
-#include <iostream>
-
-int main(int argc, char* argv[])
+LanguageSelect::LanguageSelect(QWidget* parent) : QDialog(parent)
 {
-    Application app(argc, argv, QStringLiteral("web-eid"));
-
-    try {
-        Controller controller(app.parseArgs());
-
-        QObject::connect(&controller, &Controller::quit, &app, &QApplication::quit);
-        // Pass control to Controller::run() when the event loop starts.
-        QTimer::singleShot(0, &controller, &Controller::run);
-
-        return QApplication::exec();
-
-    } catch (const ArgumentError& error) {
-        // This error must go directly to cerr to avoid extra info from the logging system.
-        std::cerr << error.what() << std::endl;
-    } catch (const std::exception& error) {
-        qCritical() << error;
+    Ui::LanguageSelect ui;
+    ui.setupUi(this);
+    if (Application::isDarkTheme()) {
+        if (QFile f(QStringLiteral(":languageselect.qss")); f.open(QFile::ReadOnly | QFile::Text)) {
+            style()->unpolish(this);
+            setStyleSheet(styleSheet() + QTextStream(&f).readAll());
+            style()->polish(this);
+        }
     }
-
-    return -1;
+    if(auto *btn = findChild<QToolButton*>(QSettings().value(QStringLiteral("lang")).toString()))
+        btn->setChecked(true);
+    connect(ui.select, &QPushButton::clicked, this, &LanguageSelect::accept);
+    connect(ui.cancel, &QPushButton::clicked, this, &LanguageSelect::reject);
+    connect(ui.langGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
+            [](QAbstractButton* action) {
+                QSettings().setValue(QStringLiteral("lang"), action->objectName());
+                qApp->loadTranslations();
+            });
 }
