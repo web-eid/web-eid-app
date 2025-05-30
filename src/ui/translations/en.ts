@@ -28,6 +28,21 @@
     </message>
 </context>
 <context>
+    <name>LanguageSelect</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <source>Select language</source>
+        <translation>Select language</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>Select</translation>
+    </message>
+</context>
+<context>
     <name>WebEidDialog</name>
     <message>
         <source>By choosing the certificate, I agree to the transfer of my name and personal identification code to the service provider.</source>
@@ -271,6 +286,15 @@
         <source>EN</source>
         <comment>Active language</comment>
         <translation>EN</translation>
+    </message>
+    <message>
+        <source>PIN entry disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>English</source>
+        <comment>Active language accessible</comment>
+        <translation>English</translation>
     </message>
 </context>
 </TS>
