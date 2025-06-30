@@ -9,15 +9,10 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ matrix.image }}
+    runs-on: windows-2022
     strategy:
       matrix:
-        vcver: [142, 143]
-        include:
-        - vcver: 142
-          image: windows-2019
-        - vcver: 143
-          image: windows-2022
+        arch: [x64, arm64]
 
     steps:
       - name: Checkout code
@@ -29,26 +24,26 @@ jobs:
         uses: lukka/run-vcpkg@v7
         with:
           vcpkgArguments: gtest openssl
-          vcpkgTriplet: x64-windows
-          vcpkgGitCommitId: 1f619be01b436b796dab797dd1e1721c5676f8ac
+          vcpkgTriplet: ${{matrix.arch}}-windows
+          vcpkgGitCommitId: 031ad89ce6c575df35a8e58707ad2c898446c63e
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.7.3
-          arch: win64_msvc2019_64
+          version: 6.9.1
+          arch: ${{ matrix.arch == 'arm64' && 'win64_msvc2022_arm64_cross_compiled' || 'win64_msvc2022_64' }}
 
       - name: Setup MS Visual C++ dev env
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: x64
+          arch: ${{ matrix.arch == 'arm64' && 'amd64_arm64' || 'amd64' }}
 
       - name: Install WiX
         run: |
-          dotnet tool install --global wix --version 5.0.2
-          wix extension -g add WixToolset.UI.wixext/5.0.2
-          wix extension -g add WixToolset.Util.wixext/5.0.2
-          wix extension -g add WixToolset.BootstrapperApplications.wixext/5.0.2
+          dotnet tool install --global wix --version 6.0.1
+          wix extension -g add WixToolset.UI.wixext/6.0.1
+          wix extension -g add WixToolset.Util.wixext/6.0.1
+          wix extension -g add WixToolset.BootstrapperApplications.wixext/6.0.1
 
       - name: Configure
         run: |
@@ -63,12 +58,13 @@ jobs:
           cmake --build build --config ${env:BUILD_TYPE} --target bundle
 
       - name: Test
+        if: ${{ matrix.arch == 'x64' }}
         run: ctest -V -C ${env:BUILD_TYPE} --test-dir build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: web-eid-app-windows-build-VC${{matrix.vcver}}-${{github.run_number}}
+          name: web-eid-app-windows-build-${{matrix.arch}}-${{github.run_number}}
           path: |
             build/src/app/*.msi
             build/src/app/*.exe

@@ -30,8 +30,6 @@
 
 int main(int argc, char* argv[])
 {
-    Q_INIT_RESOURCE(web_eid_resources);
-
     Application app(argc, argv, QStringLiteral("web-eid"));
 
     try {

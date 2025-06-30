@@ -11,7 +11,7 @@ elseif($ENV{CI_PIPELINE_IID})
 else()
     set(BUILD_NUMBER 0)
 endif()
-project(web-eid VERSION 2.7.0.${BUILD_NUMBER})
+project(web-eid VERSION 2.8.0.${BUILD_NUMBER})
 
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION_TWEAK})
@@ -33,8 +33,6 @@ set(CROSSSIGNCERT "" CACHE STRING "Common name of certificate to used cross sign
 set(SAFARI_PROVISIONPROFILE "" CACHE STRING "Provision profile to include in application (macOS)")
 
 find_package(Qt6 6.2.0 REQUIRED COMPONENTS Core Widgets Network Test LinguistTools SvgWidgets)
-get_target_property(qtCore_install_prefix Qt6::qmake IMPORTED_LOCATION)
-get_filename_component(qtCore_install_prefix ${qtCore_install_prefix} DIRECTORY)
 
 add_subdirectory(lib/libelectronic-id)
 
