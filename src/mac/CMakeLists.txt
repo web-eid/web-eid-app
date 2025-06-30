@@ -56,7 +56,7 @@ add_custom_command(TARGET web-eid-safari POST_BUILD
 )
 
 add_custom_target(macdeployqt-safari DEPENDS web-eid-safari
-    COMMAND ${qtCore_install_prefix}/macdeployqt $<TARGET_BUNDLE_DIR:web-eid-safari>
+    COMMAND Qt6::macdeployqt $<TARGET_BUNDLE_DIR:web-eid-safari> -appstore-compliant
 )
 
 # Installer

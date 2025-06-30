@@ -10,7 +10,7 @@ env:
   GTest_ROOT: ${{ github.workspace }}/gtest-binary
   QT_QPA_PLATFORM: offscreen
   CMAKE_BUILD_PARALLEL_LEVEL: 3
-  MACOSX_DEPLOYMENT_TARGET: 12.0
+  MACOSX_DEPLOYMENT_TARGET: 13.0
 
 jobs:
   build:
@@ -39,16 +39,16 @@ jobs:
             -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
             -DCMAKE_INSTALL_PREFIX=${GTest_ROOT} \
-            -DCMAKE_CXX_STANDARD=17
+            -DCMAKE_CXX_STANDARD=20
           cmake --build gtest-build --target install
 
       - name: Build OpenSSL
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          git clone --depth=1 https://github.com/openssl/openssl.git -b openssl-3.0
+          git clone --depth=1 https://github.com/openssl/openssl.git -b openssl-3.5
           cd openssl
           for ARCH in x86_64 arm64; do
-            ./Configure darwin64-${ARCH} --prefix=${OPENSSL_ROOT_DIR} no-shared no-module no-tests enable-ec_nistp_64_gcc_128
+            ./Configure darwin64-${ARCH} --prefix=${OPENSSL_ROOT_DIR} no-apps no-shared no-module no-tests enable-ec_nistp_64_gcc_128
             MAKEFLAGS=-j1 make -s install_sw
             mv ${OPENSSL_ROOT_DIR}{,.${ARCH}}
             make distclean
@@ -64,7 +64,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.7.3
+          version: 6.9.1
           arch: clang_64
 
       - name: Configure
