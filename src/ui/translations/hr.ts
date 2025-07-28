@@ -28,6 +28,21 @@
     </message>
 </context>
 <context>
+    <name>LanguageSelect</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Prekid</translation>
+    </message>
+    <message>
+        <source>Select language</source>
+        <translation>Odabir jezika</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>Odabir</translation>
+    </message>
+</context>
+<context>
     <name>WebEidDialog</name>
     <message>
         <source>Technical error</source>
@@ -99,7 +114,7 @@
     </message>
     <message>
         <source>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</source>
-        <translation type="unfinished">https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
+        <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
     </message>
     <message>
         <source>Time remaining: &lt;b&gt;%1&lt;/b&gt;</source>
@@ -259,20 +274,29 @@
     </message>
     <message>
         <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
-        <translation type="unfinished">Umetnuta iskaznica ne sadrži potvrdu za traženu operaciju. Molimo umetnite osobnu iskaznicu koja podržava traženu operaciju.</translation>
+        <translation>Umetnuta iskaznica ne sadrži potvrdu za traženu operaciju. Molimo umetnite osobnu iskaznicu koja podržava traženu operaciju.</translation>
     </message>
     <message>
         <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
-        <translation type="unfinished">Unesite PIN za autentifikaciju u dijaloški prozor PIN-a koji se otvara.</translation>
+        <translation>Unesite PIN za autentifikaciju u dijaloški prozor PIN-a koji se otvara.</translation>
     </message>
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
-        <translation type="unfinished">Unesite PIN za prijavu u dijaloški prozor PIN-a koji se otvara.</translation>
+        <translation>Unesite PIN za potpisivanje u dijaloški prozor PIN-a koji se otvara.</translation>
     </message>
     <message>
         <source>EN</source>
         <comment>Active language</comment>
         <translation>HR</translation>
+    </message>
+    <message>
+        <source>PIN entry disabled</source>
+        <translation>Unos PIN-a onemogućen.</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <comment>Active language accessible</comment>
+        <translation>Hrvatska</translation>
     </message>
 </context>
 </TS>

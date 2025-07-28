@@ -1,6 +1,9 @@
 add_library(ui STATIC
     certificatewidget.cpp
     certificatewidget.hpp
+    languageselect.cpp
+    languageselect.hpp
+    languageselect.ui
     punycode.hpp
     ui.cpp
     webeiddialog.cpp
@@ -12,6 +15,7 @@ file(GLOB FONTS fonts/*.ttf)
 qt_add_resources(ui resources BASE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX / FILES
     ../../install/appicon_128.png
     dark.qss
+    languageselect.qss
     ${IMAGES}
     ${FONTS}
 )
