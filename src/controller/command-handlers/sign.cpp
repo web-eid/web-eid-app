@@ -69,14 +69,14 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
     validateAndStoreOrigin(arguments);
 }
 
-void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos)
+void Sign::emitCertificatesReady(const std::vector<EidCertificateAndPinInfo>& certAndPinInfos)
 {
-    const CardCertificateAndPinInfo* cardWithCertificateFromArgs = nullptr;
+    const EidCertificateAndPinInfo* cardWithCertificateFromArgs = nullptr;
 
-    for (const auto& cardCertAndPin : cardCertAndPinInfos) {
+    for (const auto& certAndPinInfo : certAndPinInfos) {
         // Check if the certificate read from the eID matches the certificate provided as argument.
-        if (cardCertAndPin.certificate.toDer() == userEidCertificateFromArgs) {
-            cardWithCertificateFromArgs = &cardCertAndPin;
+        if (certAndPinInfo.certificate.toDer() == userEidCertificateFromArgs) {
+            cardWithCertificateFromArgs = &certAndPinInfo;
         }
     }
 
@@ -95,7 +95,7 @@ void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& c
     emit singleCertificateReady(origin, *cardWithCertificateFromArgs);
 }
 
-QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& cardCertAndPin)
+QVariantMap Sign::onConfirm(WebEidUI* window, const EidCertificateAndPinInfo& certAndPinInfo)
 {
     try {
         pcsc_cpp::byte_vector pin;
@@ -103,8 +103,8 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
         // reallocation. The 16-byte limit comes from the max PIN length of 12 bytes across all card
         // implementations in lib/libelectronic-id/src/electronic-ids/pcsc/.
         pin.reserve(5 + 16);
-        getPin(pin, *cardCertAndPin.eid, window);
-        auto signature = signHash(*cardCertAndPin.eid, std::move(pin), docHash, hashAlgo);
+        getPin(pin, *certAndPinInfo.eid, window);
+        auto signature = signHash(*certAndPinInfo.eid, std::move(pin), docHash, hashAlgo);
         return {{QStringLiteral("signature"), std::move(signature.first)},
                 {QStringLiteral("signatureAlgorithm"), std::move(signature.second)}};
 

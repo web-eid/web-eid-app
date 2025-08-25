@@ -32,7 +32,7 @@ public:
     explicit WaitForCardThread(QObject* parent) : ControllerChildThread(parent) {}
 
 signals:
-    void cardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& cardInfo);
+    void cardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& eids);
     void statusUpdate(const RetriableError status);
 
 private:

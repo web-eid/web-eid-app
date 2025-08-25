@@ -47,13 +47,13 @@ public: // slots
     void run();
 
     // Called either directly from run() or from the monitor thread when cards are available.
-    void onCardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& availableCards);
+    void onCardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& availableEids);
 
     // Called when CommandHandlerRunThread finishes execution.
     void onCertificatesLoaded();
 
     // Called either directly from onDialogOK().
-    void onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCertAndPinInfo);
+    void onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo);
 
     // Called from CommandHandlerConfirm thread.
     void onCommandHandlerConfirmCompleted(const QVariantMap& result);
@@ -62,7 +62,7 @@ public: // slots
     void onRetry();
 
     // User events from the dialog.
-    void onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo);
+    void onDialogOK(const EidCertificateAndPinInfo& certAndPinInfo);
     void onDialogCancel();
 
     // Called when user presses cancel on PIN pad.
@@ -73,7 +73,7 @@ public: // slots
 
 private:
     void startCommandExecution();
-    void runCommandHandler(const std::vector<electronic_id::ElectronicID::ptr>& availableCards);
+    void runCommandHandler(const std::vector<electronic_id::ElectronicID::ptr>& availableEids);
     void connectOkCancelWaitingForPinPad();
     void connectRetry(const ControllerChildThread* childThread);
     void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
