@@ -56,11 +56,11 @@ public:
 
     // slots
     void onSmartCardStatusUpdate(const RetriableError status) final;
-    void onMultipleCertificatesReady(
-        const QUrl& origin,
-        const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) final;
+    void
+    onMultipleCertificatesReady(const QUrl& origin,
+                                const std::vector<EidCertificateAndPinInfo>& certAndPinInfos) final;
     void onSingleCertificateReady(const QUrl& origin,
-                                  const CardCertificateAndPinInfo& cardCertAndPinInfo) final;
+                                  const EidCertificateAndPinInfo& certAndPinInfo) final;
 
     void onRetry(const RetriableError error) final;
 
@@ -90,17 +90,18 @@ private:
         }
     }
 
-    void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
+    void
+    connectOkToCachePinAndEmitSelectedCertificate(const EidCertificateAndPinInfo& certAndPinInfo);
 
     template <typename Text>
     void onRetryImpl(Text text);
     template <typename Text>
     void setTrText(QWidget* label, Text text) const;
     void
-    setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
+    setupCertificateAndPinInfo(const std::vector<EidCertificateAndPinInfo>& cardCertAndPinInfos);
     void setupPinPrompt(PinInfo pinInfo);
-    void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
-    void setupPinInput(const CardCertificateAndPinInfo& certAndPin);
+    void setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinInfo& certAndPinInfo);
+    void setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo);
     template <typename Func>
     void setupOK(Func func, const char* text = {}, bool enabled = false);
     void displayPinBlockedError();

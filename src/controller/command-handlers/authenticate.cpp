@@ -118,20 +118,20 @@ Authenticate::Authenticate(const CommandWithArguments& cmd) : CertificateReader(
 }
 
 QVariantMap Authenticate::onConfirm(WebEidUI* window,
-                                    const CardCertificateAndPinInfo& cardCertAndPin)
+                                    const EidCertificateAndPinInfo& certAndPinInfo)
 {
     try {
         const auto signatureAlgorithm =
-            QString::fromStdString(cardCertAndPin.eid->authSignatureAlgorithm());
+            QString::fromStdString(certAndPinInfo.eid->authSignatureAlgorithm());
         pcsc_cpp::byte_vector pin;
         // Reserve space for APDU overhead (5 bytes) + PIN padding (16 bytes) to prevent PIN memory
         // reallocation. The 16-byte limit comes from the max PIN length of 12 bytes across all card
         // implementations in lib/libelectronic-id/src/electronic-ids/pcsc/.
         pin.reserve(5 + 16);
-        getPin(pin, *cardCertAndPin.eid, window);
+        getPin(pin, *certAndPinInfo.eid, window);
         const auto signature =
-            createSignature(origin.url(), challengeNonce, *cardCertAndPin.eid, std::move(pin));
-        return createAuthenticationToken(signatureAlgorithm, cardCertAndPin.certificateBytesInDer,
+            createSignature(origin.url(), challengeNonce, *certAndPinInfo.eid, std::move(pin));
+        return createAuthenticationToken(signatureAlgorithm, certAndPinInfo.certificateBytesInDer,
                                          signature);
 
     } catch (const VerifyPinFailed& failure) {

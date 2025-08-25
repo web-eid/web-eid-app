@@ -189,8 +189,8 @@ void Application::registerMetatypes()
     qRegisterMetaType<std::vector<electronic_id::ElectronicID::ptr>>();
     qRegisterMetaType<electronic_id::VerifyPinFailed::Status>();
 
-    qRegisterMetaType<CardCertificateAndPinInfo>();
-    qRegisterMetaType<std::vector<CardCertificateAndPinInfo>>();
+    qRegisterMetaType<EidCertificateAndPinInfo>();
+    qRegisterMetaType<std::vector<EidCertificateAndPinInfo>>();
 
     qRegisterMetaType<RetriableError>();
 }

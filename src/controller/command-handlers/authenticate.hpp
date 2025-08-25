@@ -33,7 +33,7 @@ public:
 
     void connectSignals(const WebEidUI* window) override;
     QVariantMap onConfirm(WebEidUI* window,
-                          const CardCertificateAndPinInfo& cardCertAndPin) override;
+                          const EidCertificateAndPinInfo& certAndPinInfo) override;
 
 signals:
     void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,

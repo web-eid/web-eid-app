@@ -71,7 +71,7 @@ CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
     layout->addItem(warnLayout);
 }
 
-CardCertificateAndPinInfo CertificateWidgetInfo::certificateInfo() const
+EidCertificateAndPinInfo CertificateWidgetInfo::certificateInfo() const
 {
     return certAndPinInfo;
 }
@@ -94,7 +94,7 @@ void CertificateWidgetInfo::drawWarnIcon()
     warnIcon->style()->drawItemPixmap(&p, cr, Qt::AlignCenter, warnIcon->pixmap());
 }
 
-void CertificateWidgetInfo::setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo)
+void CertificateWidgetInfo::setCertificateInfo(const EidCertificateAndPinInfo& cardCertPinInfo)
 {
     warn->setText(CertificateWidget::tr("Pin locked"));
     certAndPinInfo = cardCertPinInfo;
@@ -147,7 +147,7 @@ void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
 
-CertificateButton::CertificateButton(const CardCertificateAndPinInfo& cardCertPinInfo,
+CertificateButton::CertificateButton(const EidCertificateAndPinInfo& cardCertPinInfo,
                                      QWidget* parent) :
     QAbstractButton(parent), CertificateWidgetInfo(this)
 {
@@ -167,7 +167,7 @@ bool CertificateButton::eventFilter(QObject* object, QEvent* event)
     return QAbstractButton::eventFilter(object, event);
 }
 
-void CertificateButton::setCertificateInfo(const CardCertificateAndPinInfo& cardCertPinInfo)
+void CertificateButton::setCertificateInfo(const EidCertificateAndPinInfo& cardCertPinInfo)
 {
     CertificateWidgetInfo::setCertificateInfo(cardCertPinInfo);
     auto [subject, issuer, effectiveDate, expiryDate] = certData();

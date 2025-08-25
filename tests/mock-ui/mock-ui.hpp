@@ -41,12 +41,12 @@ public:
 
 public: // slots
     void onMultipleCertificatesReady(
-        const QUrl&, const std::vector<CardCertificateAndPinInfo>& cardCertAndPin) override
+        const QUrl&, const std::vector<EidCertificateAndPinInfo>& cardCertAndPin) override
     {
         emit accepted(cardCertAndPin[0]);
     }
     void onSingleCertificateReady(const QUrl&,
-                                  const CardCertificateAndPinInfo& cardCertAndPin) override
+                                  const EidCertificateAndPinInfo& cardCertAndPin) override
     {
         emit accepted(cardCertAndPin);
     }

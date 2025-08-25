@@ -29,8 +29,8 @@ class CardEventMonitorThread : public ControllerChildThread
     Q_OBJECT
 
 public:
-    using card_ptr = electronic_id::ElectronicID::ptr;
-    using card_ptr_vector = std::vector<electronic_id::ElectronicID::ptr>;
+    using eid_ptr = electronic_id::ElectronicID::ptr;
+    using eid_ptr_vector = std::vector<electronic_id::ElectronicID::ptr>;
 
     CardEventMonitorThread(QObject* parent, std::string commandType) :
         ControllerChildThread(parent), cmdType(std::move(commandType))
@@ -50,7 +50,7 @@ public:
 
             waitForControllerNotify.wait(&controllerChildThreadMutex, ONE_SECOND);
 
-            card_ptr_vector updatedCards {};
+            eid_ptr_vector updatedCards {};
 
             try {
                 updatedCards = electronic_id::availableSupportedCards();
@@ -83,7 +83,7 @@ private:
         // Unused as run() has been overriden.
     }
 
-    card_ptr_vector getSupportedCardsIgnoringExceptions()
+    eid_ptr_vector getSupportedCardsIgnoringExceptions()
     {
         while (!isInterruptionRequested()) {
             try {
@@ -98,9 +98,9 @@ private:
         return {};
     }
 
-    static void sortByReaderNameAndAtr(card_ptr_vector& a)
+    static void sortByReaderNameAndAtr(eid_ptr_vector& a)
     {
-        std::sort(a.begin(), a.end(), [](const card_ptr& c1, const card_ptr& c2) {
+        std::sort(a.begin(), a.end(), [](const eid_ptr& c1, const eid_ptr& c2) {
             if (c1->smartcard().readerName() != c2->smartcard().readerName()) {
                 return c1->smartcard().readerName() < c2->smartcard().readerName();
             }
@@ -108,12 +108,12 @@ private:
         });
     }
 
-    static bool areEqualByReaderNameAndAtr(const card_ptr_vector& a, const card_ptr_vector& b)
+    static bool areEqualByReaderNameAndAtr(const eid_ptr_vector& a, const eid_ptr_vector& b)
     {
         // std::equal requires that second range is not shorter than first, so compare size first.
         return a.size() == b.size()
             && std::equal(a.cbegin(), a.cend(), b.cbegin(),
-                          [](const card_ptr& c1, const card_ptr& c2) {
+                          [](const eid_ptr& c1, const eid_ptr& c2) {
                               return c1->smartcard().readerName() == c2->smartcard().readerName()
                                   && c1->smartcard().atr() == c2->smartcard().atr();
                           });

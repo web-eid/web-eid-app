@@ -164,14 +164,14 @@ void Controller::connectOkCancelWaitingForPinPad()
 }
 
 void Controller::onCardsAvailable(
-    const std::vector<electronic_id::ElectronicID::ptr>& availableCards)
+    const std::vector<electronic_id::ElectronicID::ptr>& availableEids)
 {
     try {
         REQUIRE_NON_NULL(commandHandler)
         REQUIRE_NON_NULL(window)
-        REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableCards)
+        REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableEids)
 
-        for (const auto& card : availableCards) {
+        for (const auto& card : availableEids) {
             const auto protocol =
                 card->smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
             qInfo() << "Card" << card->name() << "in reader" << card->smartcard().readerName()
@@ -182,18 +182,18 @@ void Controller::onCardsAvailable(
 
         commandHandler->connectSignals(window);
 
-        runCommandHandler(availableCards);
+        runCommandHandler(availableEids);
 
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
 }
 
-void Controller::runCommandHandler(const std::vector<ElectronicID::ptr>& availableCards)
+void Controller::runCommandHandler(const std::vector<ElectronicID::ptr>& availableEids)
 {
     try {
         CommandHandlerRunThread* commandHandlerRunThread =
-            new CommandHandlerRunThread(this, *commandHandler, availableCards);
+            new CommandHandlerRunThread(this, *commandHandler, availableEids);
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerRunThread);
         connectRetry(commandHandlerRunThread);
 
@@ -248,13 +248,13 @@ void Controller::disposeUI()
     }
 }
 
-void Controller::onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCertAndPinInfo)
+void Controller::onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo)
 {
     stopCardEventMonitorThread();
 
     try {
         CommandHandlerConfirmThread* commandHandlerConfirmThread =
-            new CommandHandlerConfirmThread(this, *commandHandler, window, cardCertAndPinInfo);
+            new CommandHandlerConfirmThread(this, *commandHandler, window, certAndPinInfo);
         connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
                 &Controller::onCommandHandlerConfirmCompleted);
         saveChildThreadPtrAndConnectFailureFinish(commandHandlerConfirmThread);
@@ -318,10 +318,10 @@ void Controller::connectRetry(const ControllerChildThread* childThread)
     connect(window, &WebEidUI::retry, this, &Controller::onRetry);
 }
 
-void Controller::onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo)
+void Controller::onDialogOK(const EidCertificateAndPinInfo& certAndPinInfo)
 {
     if (commandHandler) {
-        onConfirmCommandHandler(cardCertAndPinInfo);
+        onConfirmCommandHandler(certAndPinInfo);
     } else {
         // This should not happen, and when it does, OK should be equivalent to cancel.
         onPinPadCancel();

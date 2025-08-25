@@ -33,20 +33,18 @@ class CommandHandler : public QObject
 public:
     using ptr = std::unique_ptr<CommandHandler>;
 
-    virtual void run(const std::vector<electronic_id::ElectronicID::ptr>& cards) = 0;
+    virtual void run(const std::vector<electronic_id::ElectronicID::ptr>& eids) = 0;
     virtual void connectSignals(const WebEidUI* window) = 0;
     virtual QVariantMap onConfirm(WebEidUI* window,
-                                  const CardCertificateAndPinInfo& cardCertAndPin) = 0;
+                                  const EidCertificateAndPinInfo& certAndPinInfo) = 0;
 
     CommandType commandType() const { return command.first; }
 
 signals:
     void retry(const RetriableError error);
-    void
-    multipleCertificatesReady(const QUrl& origin,
-                              const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
-    void singleCertificateReady(const QUrl& origin,
-                                const CardCertificateAndPinInfo& cardCertAndPinInfo);
+    void multipleCertificatesReady(const QUrl& origin,
+                                   const std::vector<EidCertificateAndPinInfo>& certAndPinInfos);
+    void singleCertificateReady(const QUrl& origin, const EidCertificateAndPinInfo& certAndPinInfo);
 
 protected:
     CommandHandler(const CommandWithArguments& cmd) : command(cmd) {}
