@@ -71,4 +71,6 @@ public: // slots
     virtual void onSigningCertificateMismatch() = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                    const qint8 retriesLeft) = 0;
+
+    virtual void forceClose() { close(); }
 };

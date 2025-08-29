@@ -27,8 +27,9 @@
 #include "qeid.hpp"
 #include "logging.hpp"
 
-#include <QThread>
+#include <QCoreApplication>
 #include <QMutexLocker>
+#include <QThread>
 #include <QWaitCondition>
 
 class ControllerChildThread : public QThread
@@ -40,12 +41,13 @@ public:
     {
         QMutexLocker lock {&controllerChildThreadMutex};
 
-        beforeRun();
+        qDebug() << "Starting" << metaObject()->className() << uintptr_t(this) << "for command"
+                 << commandType();
 
         try {
             doRun();
-            qInfo() << className << uintptr_t(this) << "for command" << commandType()
-                    << "completed successfully";
+            qInfo() << metaObject()->className() << uintptr_t(this) << "for command"
+                    << commandType() << "completed successfully";
 
         } catch (const CommandHandlerVerifyPinFailed& error) {
             qWarning() << "Command" << commandType() << "PIN verification failed:" << error;
@@ -55,18 +57,19 @@ public:
         catch (const electronic_id::VerifyPinFailed& error)
         {
             switch (error.status()) {
-            case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_CANCEL:
+                using enum electronic_id::VerifyPinFailed::Status;
+            case PIN_ENTRY_CANCEL:
                 qInfo() << "Command" << commandType() << "canceled";
                 emit cancel();
                 break;
-            case electronic_id::VerifyPinFailed::Status::INVALID_PIN_LENGTH:
+            case INVALID_PIN_LENGTH:
                 qInfo() << "Command" << commandType() << "invalid PIN length";
                 break;
-            case electronic_id::VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:
+            case PIN_ENTRY_TIMEOUT:
                 qInfo() << "Command" << commandType() << "PIN entry timeout";
                 emit cancel();
                 break;
-            case electronic_id::VerifyPinFailed::Status::PIN_BLOCKED:
+            case PIN_BLOCKED:
                 qInfo() << "Command" << commandType() << "PIN blocked";
                 break;
             default:
@@ -89,31 +92,25 @@ signals:
     void failure(const QString& error);
 
 protected:
-    explicit ControllerChildThread(QObject* parent) : QThread(parent) {}
-    ~ControllerChildThread() override
+    explicit ControllerChildThread(std::string _cmdType, QObject* parent) noexcept :
+        QThread(parent), cmdType(std::move(_cmdType))
     {
-        // Avoid throwing in destructor.
-        try {
-            qDebug() << className << uintptr_t(this) << "destroyed";
-        } catch (...) {
-        }
+        // When the thread is finished call deleteLater() on it to free the thread object. Although
+        // the thread objects are freed through the Qt object tree ownership system anyway, it is
+        // better to delete them immediately when they finish.
+        connect(this, &ControllerChildThread::finished, this, [this] {
+            qDebug() << metaObject()->className() << uintptr_t(this) << "finished";
+            deleteLater();
+        });
     }
 
-    void beforeRun()
-    {
-        // Cannot use virtual calls in constructor, have to initialize the class name here.
-        className = metaObject()->className();
-        qDebug() << "Starting" << className << uintptr_t(this) << "for command" << commandType();
-    }
-
-    static const unsigned long ONE_SECOND = 1000;
+    const std::string& commandType() const { return cmdType; }
 
     static QMutex controllerChildThreadMutex;
-    QString className;
 
 private:
     virtual void doRun() = 0;
-    virtual const std::string& commandType() const = 0;
+    const std::string cmdType;
 
     void warnAndEmitRetry(const RetriableError errorCode, const std::exception& error)
     {
