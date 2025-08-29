@@ -235,6 +235,13 @@ WebEidDialog::~WebEidDialog()
     delete ui;
 }
 
+void WebEidDialog::forceClose()
+{
+    ui->pinTimeoutTimer->stop();
+    ui->pinEntryTimeoutProgressBar->hide();
+    close();
+}
+
 void WebEidDialog::showAboutPage()
 {
     auto* d = new WebEidDialog();

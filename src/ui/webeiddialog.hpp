@@ -48,6 +48,8 @@ public:
     explicit WebEidDialog(QWidget* parent = nullptr);
     ~WebEidDialog() final;
 
+    void forceClose() final;
+
     void showWaitingForCardPage(const CommandType commandType) final;
     QString getPin() final;
 
