@@ -24,10 +24,7 @@
 
 #include "commandhandler.hpp"
 
-#include <unordered_map>
-
 class ControllerChildThread;
-class CardEventMonitorThread;
 
 /** Controller coordinates the execution flow and interaction between all other components. */
 class Controller : public QObject
@@ -41,7 +38,8 @@ public:
 
 signals:
     void quit();
-    void statusUpdate(const RetriableError status);
+    void statusUpdate(RetriableError status);
+    void stopCardEventMonitorThread();
 
 public: // slots
     void run();
@@ -76,8 +74,6 @@ private:
     void runCommandHandler(const std::vector<electronic_id::ElectronicID::ptr>& availableEids);
     void connectOkCancelWaitingForPinPad();
     void connectRetry(const ControllerChildThread* childThread);
-    void saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread);
-    void stopCardEventMonitorThread();
     void disposeUI();
     void exit();
     void waitForChildThreads();
@@ -85,9 +81,6 @@ private:
 
     CommandWithArgumentsPtr command;
     CommandHandler::ptr commandHandler = nullptr;
-    std::unordered_map<uintptr_t, observer_ptr<ControllerChildThread>> childThreads;
-    // Key of card event monitor thread in childThreads map.
-    uintptr_t cardEventMonitorThreadKey = 0;
     // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
     observer_ptr<WebEidUI> window = nullptr;
     QVariantMap _result;

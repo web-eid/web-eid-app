@@ -31,8 +31,8 @@ class CommandHandlerConfirmThread : public ControllerChildThread
 public:
     CommandHandlerConfirmThread(QObject* parent, CommandHandler& handler, WebEidUI* w,
                                 const EidCertificateAndPinInfo& certAndPin) :
-        ControllerChildThread(parent), commandHandler(handler),
-        cmdType(commandHandler.commandType()), window(w), certAndPinInfo(certAndPin)
+        ControllerChildThread(handler.commandType(), parent), commandHandler(handler), window(w),
+        certAndPinInfo(certAndPin)
     {
     }
 
@@ -47,10 +47,7 @@ private:
         emit completed(result);
     }
 
-    const std::string& commandType() const override { return cmdType; }
-
     CommandHandler& commandHandler;
-    const std::string cmdType;
     WebEidUI* window;
     EidCertificateAndPinInfo certAndPinInfo;
 };

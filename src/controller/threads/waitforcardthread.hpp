@@ -29,7 +29,10 @@ class WaitForCardThread : public ControllerChildThread
     Q_OBJECT
 
 public:
-    explicit WaitForCardThread(QObject* parent) : ControllerChildThread(parent) {}
+    explicit WaitForCardThread(QObject* parent) :
+        ControllerChildThread(CommandType(CommandType::INSERT_CARD), parent)
+    {
+    }
 
 signals:
     void cardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& eids);
@@ -39,7 +42,8 @@ private:
     void doRun() override
     {
         while (!attemptCardSelection() && !isInterruptionRequested()) {
-            waitForControllerNotify.wait(&controllerChildThreadMutex, ONE_SECOND);
+            using namespace std::chrono_literals;
+            waitForControllerNotify.wait(&controllerChildThreadMutex, 1s);
         }
     }
 
@@ -72,11 +76,5 @@ private:
         WARN_RETRIABLE_ERROR(commandType(), errorCode, error);
         emit statusUpdate(errorCode);
         return false;
-    }
-
-    const std::string& commandType() const override
-    {
-        static const std::string cmdType = CommandType(CommandType::INSERT_CARD);
-        return cmdType;
     }
 };
