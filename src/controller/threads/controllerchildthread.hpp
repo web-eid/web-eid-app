@@ -27,9 +27,14 @@
 #include "qeid.hpp"
 #include "logging.hpp"
 
+#include <QCoreApplication>
 #include <QThread>
 #include <QMutexLocker>
 #include <QWaitCondition>
+
+#include <chrono>
+
+using namespace std::chrono;
 
 class ControllerChildThread : public QThread
 {
@@ -40,12 +45,13 @@ public:
     {
         QMutexLocker lock {&controllerChildThreadMutex};
 
-        beforeRun();
+        qDebug() << "Starting" << metaObject()->className() << uintptr_t(this) << "for command"
+                 << commandType();
 
         try {
             doRun();
-            qInfo() << className << uintptr_t(this) << "for command" << commandType()
-                    << "completed successfully";
+            qInfo() << metaObject()->className() << uintptr_t(this) << "for command"
+                    << commandType() << "completed successfully";
 
         } catch (const CommandHandlerVerifyPinFailed& error) {
             qWarning() << "Command" << commandType() << "PIN verification failed:" << error;
@@ -89,31 +95,27 @@ signals:
     void failure(const QString& error);
 
 protected:
-    explicit ControllerChildThread(QObject* parent) : QThread(parent) {}
-    ~ControllerChildThread() override
+    explicit ControllerChildThread(std::string _cmdType, QObject* parent) :
+        QThread(parent), cmdType(std::move(_cmdType))
     {
-        // Avoid throwing in destructor.
-        try {
-            qDebug() << className << uintptr_t(this) << "destroyed";
-        } catch (...) {
-        }
+        // When the thread is finished call deleteLater() on it to free the thread object. Although
+        // the thread objects are freed through the Qt object tree ownership system anyway, it is
+        // better to delete them immediately when they finish.
+        connect(this, &ControllerChildThread::finished, this, [this] {
+            qDebug() << metaObject()->className() << uintptr_t(this) << "finished";
+            deleteLater();
+        });
     }
 
-    void beforeRun()
-    {
-        // Cannot use virtual calls in constructor, have to initialize the class name here.
-        className = metaObject()->className();
-        qDebug() << "Starting" << className << uintptr_t(this) << "for command" << commandType();
-    }
+    const std::string& commandType() const { return cmdType; }
 
     static const unsigned long ONE_SECOND = 1000;
 
     static QMutex controllerChildThreadMutex;
-    QString className;
 
 private:
     virtual void doRun() = 0;
-    virtual const std::string& commandType() const = 0;
+    const std::string cmdType;
 
     void warnAndEmitRetry(const RetriableError errorCode, const std::exception& error)
     {

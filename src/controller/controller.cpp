@@ -28,6 +28,7 @@
 #include "threads/waitforcardthread.hpp"
 
 #include "utils/utils.hpp"
+
 #include "inputoutputmode.hpp"
 #include "writeresponse.hpp"
 
@@ -44,19 +45,11 @@ const QString RESP_USER_CANCEL = QStringLiteral("ERR_WEBEID_USER_CANCELLED");
 
 QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessage)
 {
-    const auto errorBody = QVariantMap {
-        {QStringLiteral("code"), errorCode},
-        {QStringLiteral("message"), errorMessage},
-    };
-    return {{QStringLiteral("error"), errorBody}};
-}
-
-void interruptThread(QThread* thread)
-{
-    qDebug() << "Interrupting thread" << uintptr_t(thread);
-    thread->disconnect();
-    thread->requestInterruption();
-    ControllerChildThread::waitForControllerNotify.wakeAll();
+    return {{QStringLiteral("error"),
+             QVariantMap {
+                 {QStringLiteral("code"), errorCode},
+                 {QStringLiteral("message"), errorMessage},
+             }}};
 }
 
 } // namespace
@@ -111,11 +104,14 @@ void Controller::startCommandExecution()
     REQUIRE_NON_NULL(commandHandler)
 
     // Reader monitor thread setup.
-    WaitForCardThread* waitForCardThread = new WaitForCardThread(this);
+    auto* waitForCardThread = new WaitForCardThread(this);
+    connect(this, &Controller::stopCardEventMonitorThread, waitForCardThread,
+            &WaitForCardThread::requestInterruption);
     connect(waitForCardThread, &WaitForCardThread::statusUpdate, this, &Controller::statusUpdate);
     connect(waitForCardThread, &WaitForCardThread::cardsAvailable, this,
             &Controller::onCardsAvailable);
-    saveChildThreadPtrAndConnectFailureFinish(waitForCardThread);
+    connect(waitForCardThread, &ControllerChildThread::failure, this,
+            &Controller::onCriticalFailure);
 
     // UI setup.
     window = WebEidUI::createAndShowDialog(commandHandler->commandType());
@@ -124,33 +120,6 @@ void Controller::startCommandExecution()
 
     // Finally, start the thread to wait for card insertion after everything is wired up.
     waitForCardThread->start();
-}
-
-void Controller::saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread)
-{
-    REQUIRE_NON_NULL(childThread)
-    // Save the thread pointer in child thread tracking map to request interruption and wait for
-    // it to quit in waitForChildThreads().
-    childThreads[uintptr_t(childThread)] = childThread;
-
-    connect(childThread, &ControllerChildThread::failure, this, &Controller::onCriticalFailure);
-
-    // When the thread is finished, remove the pointer from the tracking map and call deleteLater()
-    // on it to free the thread object. Although the thread objects are freed through the Qt object
-    // tree ownership system anyway, it is better to delete them immediately when they finish.
-    connect(childThread, &ControllerChildThread::finished, this, [this, childThread]() {
-        QScopedPointer<ControllerChildThread, QScopedPointerDeleteLater> deleteLater {childThread};
-
-        const auto threadPtrAddress = uintptr_t(childThread);
-        if (childThreads.count(threadPtrAddress) && childThreads[threadPtrAddress]) {
-            childThreads[threadPtrAddress] = nullptr;
-            childThread->wait();
-            qDebug() << "Thread" << threadPtrAddress << "finished";
-        } else {
-            qWarning() << "Controller child thread" << childThread
-                       << "is missing or null in finish slot";
-        }
-    });
 }
 
 void Controller::connectOkCancelWaitingForPinPad()
@@ -192,9 +161,10 @@ void Controller::onCardsAvailable(
 void Controller::runCommandHandler(const std::vector<ElectronicID::ptr>& availableEids)
 {
     try {
-        CommandHandlerRunThread* commandHandlerRunThread =
+        auto* commandHandlerRunThread =
             new CommandHandlerRunThread(this, *commandHandler, availableEids);
-        saveChildThreadPtrAndConnectFailureFinish(commandHandlerRunThread);
+        connect(commandHandlerRunThread, &ControllerChildThread::failure, this,
+                &Controller::onCriticalFailure);
         connectRetry(commandHandlerRunThread);
 
         // When the command handler run thread retrieves certificates successfully, call
@@ -213,51 +183,32 @@ void Controller::runCommandHandler(const std::vector<ElectronicID::ptr>& availab
 
 void Controller::onCertificatesLoaded()
 {
-    CardEventMonitorThread* cardEventMonitorThread =
-        new CardEventMonitorThread(this, std::string(commandType()));
-    saveChildThreadPtrAndConnectFailureFinish(cardEventMonitorThread);
-    cardEventMonitorThreadKey = uintptr_t(cardEventMonitorThread);
+    auto* cardEventMonitorThread = new CardEventMonitorThread(this, commandType());
+    connect(cardEventMonitorThread, &ControllerChildThread::failure, this,
+            &Controller::onCriticalFailure);
+    connect(this, &Controller::stopCardEventMonitorThread, cardEventMonitorThread,
+            &WaitForCardThread::requestInterruption);
     connect(cardEventMonitorThread, &CardEventMonitorThread::cardEvent, this, &Controller::onRetry);
     cardEventMonitorThread->start();
 }
 
-void Controller::stopCardEventMonitorThread()
-{
-    if (cardEventMonitorThreadKey) {
-        try {
-            auto cardEventMonitorThread = childThreads.at(cardEventMonitorThreadKey);
-            cardEventMonitorThreadKey = 0;
-            if (cardEventMonitorThread) {
-                interruptThread(cardEventMonitorThread);
-            }
-        } catch (const std::out_of_range&) {
-            qWarning() << "Card event monitor thread" << cardEventMonitorThreadKey
-                       << "is missing from childThreads map in stopCardEventMonitorThread()";
-            cardEventMonitorThreadKey = 0;
-        }
-    }
-}
-
 void Controller::disposeUI()
 {
-    if (window) {
-        window->disconnect();
-        // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
-        window->close();
-        window = nullptr;
-    }
+    delete window;
+    window = nullptr;
 }
 
 void Controller::onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo)
 {
-    stopCardEventMonitorThread();
+    emit stopCardEventMonitorThread();
 
     try {
-        CommandHandlerConfirmThread* commandHandlerConfirmThread =
+        auto* commandHandlerConfirmThread =
             new CommandHandlerConfirmThread(this, *commandHandler, window, certAndPinInfo);
         connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
                 &Controller::onCommandHandlerConfirmCompleted);
-        saveChildThreadPtrAndConnectFailureFinish(commandHandlerConfirmThread);
+        connect(commandHandlerConfirmThread, &ControllerChildThread::failure, this,
+                &Controller::onCriticalFailure);
         connectRetry(commandHandlerConfirmThread);
 
         commandHandlerConfirmThread->start();
@@ -351,6 +302,7 @@ void Controller::onPinPadCancel()
 
 void Controller::onCriticalFailure(const QString& error)
 {
+    emit stopCardEventMonitorThread();
     qCritical() << "Exiting due to command" << std::string(commandType())
                 << "fatal error:" << error;
     _result =
@@ -373,18 +325,15 @@ void Controller::exit()
 
 void Controller::waitForChildThreads()
 {
-    // Waiting for child threads must not happen in destructor.
-    // See https://tombarta.wordpress.com/2008/07/10/gcc-pure-virtual-method-called/ for details.
-    for (const auto& childThread : childThreads) {
-        auto thread = childThread.second;
-        if (thread) {
-            interruptThread(thread);
-            // Waiting for PIN input on PIN pad may take a long time, call processEvents() so that
-            // the UI doesn't freeze.
-            while (thread->isRunning()) {
-                thread->wait(100); // in milliseconds
-                QCoreApplication::processEvents();
-            }
+    for (auto* thread : findChildren<QThread*>()) {
+        qDebug() << "Interrupting thread" << uintptr_t(thread);
+        thread->disconnect();
+        thread->requestInterruption();
+        ControllerChildThread::waitForControllerNotify.wakeAll();
+        // Call processEvents() so that the UI doesn't freeze.
+        while (thread->isRunning()) {
+            thread->wait(100ms);
+            QCoreApplication::processEvents();
         }
     }
 }
