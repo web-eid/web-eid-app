@@ -18,13 +18,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
 
       - name: Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: cache
         with:
           path: |
@@ -65,7 +65,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.10.1
+          version: 6.10.2
           arch: clang_64
           cache: true
 
@@ -82,7 +82,7 @@ jobs:
       #  run: ctest -V -C ${BUILD_TYPE} --test-dir ${BUILD_DIR}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: web-eid-app-macos-build-${{github.run_number}}
           path: |

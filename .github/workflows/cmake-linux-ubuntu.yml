@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper lintian pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
@@ -41,7 +41,7 @@ jobs:
       - name: Test package
         run: lintian build/*.deb
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: web-eid-app-ubuntu-build-ubuntu${{matrix.container}}-${{ matrix.arch }}-${{github.run_number}}
           path: build/*.*deb

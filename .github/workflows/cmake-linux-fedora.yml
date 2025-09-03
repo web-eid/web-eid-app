@@ -20,7 +20,7 @@ jobs:
       - name: Install Deps
         run: dnf install -y --setopt=install_weak_deps=False git gcc-c++ cmake rpm-build openssl-devel pcsc-lite-devel qt6-qtsvg-devel qt6-qttools-devel gtest-devel
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
@@ -31,7 +31,7 @@ jobs:
       - name: Build
         run: cmake --build build --config $BUILD_TYPE --target package
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: web-eid-app-fedora-build-fedora${{matrix.container}}-${{github.run_number}}
           path: build/*rpm
