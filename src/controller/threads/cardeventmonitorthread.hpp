@@ -33,7 +33,7 @@ public:
     using eid_ptr_vector = std::vector<electronic_id::ElectronicID::ptr>;
 
     CardEventMonitorThread(QObject* parent, std::string commandType) :
-        ControllerChildThread(parent), cmdType(std::move(commandType))
+        ControllerChildThread(std::move(commandType), parent)
     {
     }
 
@@ -41,14 +41,15 @@ public:
     {
         QMutexLocker lock {&controllerChildThreadMutex};
 
-        beforeRun();
+        qDebug() << "Starting" << metaObject()->className() << uintptr_t(this) << "for command"
+                 << commandType();
 
         auto initialCards = getSupportedCardsIgnoringExceptions();
         sortByReaderNameAndAtr(initialCards);
 
         while (!isInterruptionRequested()) {
-
-            waitForControllerNotify.wait(&controllerChildThreadMutex, ONE_SECOND);
+            using namespace std::chrono_literals;
+            waitForControllerNotify.wait(&controllerChildThreadMutex, 1s);
 
             eid_ptr_vector updatedCards {};
 
@@ -57,7 +58,8 @@ public:
                 sortByReaderNameAndAtr(updatedCards);
             } catch (const std::exception& error) {
                 // Ignore smart card layer errors, they will be handled during next card operation.
-                qWarning() << className << "ignoring" << commandType() << "error:" << error;
+                qWarning() << metaObject()->className() << "ignoring" << commandType()
+                           << "error:" << error;
             }
 
             // If interruption was requested during wait, exit without emitting.
@@ -67,7 +69,7 @@ public:
 
             // If there was a change in connected supported cards, exit after emitting a card event.
             if (!areEqualByReaderNameAndAtr(initialCards, updatedCards)) {
-                qDebug() << className << "card change detected";
+                qDebug() << metaObject()->className() << "card change detected";
                 emit cardEvent();
                 return;
             }
@@ -90,9 +92,11 @@ private:
                 return electronic_id::availableSupportedCards();
             } catch (const std::exception& error) {
                 // Ignore smart card layer errors, they will be handled during next card operation.
-                qWarning() << className << "ignoring" << commandType() << "error:" << error;
+                qWarning() << metaObject()->className() << "ignoring" << commandType()
+                           << "error:" << error;
             }
-            waitForControllerNotify.wait(&controllerChildThreadMutex, ONE_SECOND);
+            using namespace std::chrono_literals;
+            waitForControllerNotify.wait(&controllerChildThreadMutex, 1s);
         }
         // Interruption was requested, return empty list.
         return {};
@@ -110,16 +114,10 @@ private:
 
     static bool areEqualByReaderNameAndAtr(const eid_ptr_vector& a, const eid_ptr_vector& b)
     {
-        // std::equal requires that second range is not shorter than first, so compare size first.
-        return a.size() == b.size()
-            && std::equal(a.cbegin(), a.cend(), b.cbegin(),
+        return std::equal(a.cbegin(), a.cend(), b.cbegin(), b.cend(),
                           [](const eid_ptr& c1, const eid_ptr& c2) {
                               return c1->smartcard().readerName() == c2->smartcard().readerName()
                                   && c1->smartcard().atr() == c2->smartcard().atr();
                           });
     }
-
-    const std::string& commandType() const override { return cmdType; }
-
-    const std::string cmdType;
 };

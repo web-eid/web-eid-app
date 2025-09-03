@@ -31,8 +31,7 @@ class CommandHandlerRunThread : public ControllerChildThread
 public:
     CommandHandlerRunThread(QObject* parent, CommandHandler& handler,
                             const std::vector<electronic_id::ElectronicID::ptr>& eids) :
-        ControllerChildThread(parent), commandHandler(handler),
-        cmdType(commandHandler.commandType()), eids(eids)
+        ControllerChildThread(handler.commandType(), parent), commandHandler(handler), eids(eids)
     {
         // Connect retry signal to retry signal to pass it up from the command handler.
         connect(&commandHandler, &CommandHandler::retry, this, &ControllerChildThread::retry);
@@ -41,9 +40,6 @@ public:
 private:
     void doRun() override { commandHandler.run(eids); }
 
-    const std::string& commandType() const override { return cmdType; }
-
     CommandHandler& commandHandler;
-    const std::string cmdType;
     std::vector<electronic_id::ElectronicID::ptr> eids;
 };
