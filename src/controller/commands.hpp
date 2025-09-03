@@ -40,8 +40,8 @@ public:
         NONE = -1
     };
 
-    CommandType() = default;
-    constexpr CommandType(const CommandTypeEnum _value) : value(_value) {}
+    CommandType() noexcept = default;
+    constexpr CommandType(const CommandTypeEnum _value) noexcept : value(_value) {}
 
     constexpr bool operator==(CommandTypeEnum other) const { return value == other; }
     constexpr bool operator!=(CommandTypeEnum other) const { return value != other; }
