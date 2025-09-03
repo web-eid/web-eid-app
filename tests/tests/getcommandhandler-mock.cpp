@@ -49,7 +49,8 @@ CommandHandler::ptr getCommandHandler(const CommandWithArguments& cmd)
     // The cached global unique_ptr will be nullptr after return.
     if (cmd.first == CommandType::GET_SIGNING_CERTIFICATE) {
         return std::move(g_cached_GetCertificate);
-    } else if (cmd.first == CommandType::AUTHENTICATE) {
+    }
+    if (cmd.first == CommandType::AUTHENTICATE) {
         return std::move(g_cached_Authenticate);
     }
     throw std::logic_error("Programming error in "s + __FILE__ + ":"s + __FUNCTION__
