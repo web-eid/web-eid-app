@@ -31,18 +31,15 @@
 
 CommandHandler::ptr getCommandHandler(const CommandWithArguments& cmd)
 {
-    auto cmdType = cmd.first;
-    auto cmdCopy = CommandWithArguments {cmdType, cmd.second};
-
-    switch (cmdType) {
+    switch (cmd.first) {
     case CommandType::GET_SIGNING_CERTIFICATE:
-        return std::make_unique<GetCertificate>(cmdCopy);
+        return std::make_unique<GetCertificate>(cmd);
     case CommandType::AUTHENTICATE:
-        return std::make_unique<Authenticate>(cmdCopy);
+        return std::make_unique<Authenticate>(cmd);
     case CommandType::SIGN:
-        return std::make_unique<Sign>(cmdCopy);
+        return std::make_unique<Sign>(cmd);
     default:
-        throw std::invalid_argument("Unknown command '" + std::string(cmdType)
+        throw std::invalid_argument("Unknown command '" + std::string(cmd.first)
                                     + "' in getCommandHandler()");
     }
 }

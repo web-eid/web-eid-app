@@ -127,9 +127,9 @@
         try {
             const auto argumentJson =
                 QJsonDocument::fromJson(QByteArray::fromNSData(req[@"arguments"]));
-            Controller controller(std::make_unique<CommandWithArguments>(
+            Controller controller({
                 CommandType(QString::fromNSString(req[@"command"])),
-                argumentJson.object().toVariantMap()));
+                argumentJson.object().toVariantMap()});
             controller.run();
             QEventLoop e;
             QObject::connect(&controller, &Controller::quit, &e, &QEventLoop::quit);
@@ -187,17 +187,20 @@ int main(int argc, char* argv[])
     }
 
     try {
-        if (auto args = app.parseArgs()) {
-            NSLog(@"web-eid-safari: running with arguments");
-
-            Controller controller(std::move(args));
-
-            QObject::connect(&controller, &Controller::quit, &app, &QApplication::quit);
-            // Pass control to Controller::run() when the event loop starts.
-            QTimer::singleShot(0, &controller, &Controller::run);
-
-            return QApplication::exec();
+        auto args = app.parseArgs();
+        if (args.first == CommandType::NONE) {
+            return -1;
         }
+
+        NSLog(@"web-eid-safari: running with arguments");
+
+        Controller controller(std::move(args));
+
+        QObject::connect(&controller, &Controller::quit, &app, &QApplication::quit);
+        // Pass control to Controller::run() when the event loop starts.
+        QTimer::singleShot(0, &controller, &Controller::run);
+
+        return QApplication::exec();
 
     } catch (const ArgumentError& error) {
         // This error must go directly to cerr to avoid extra info from the logging system.

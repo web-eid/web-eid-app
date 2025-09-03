@@ -48,7 +48,7 @@ signals:
     void verifyPinFailed(electronic_id::VerifyPinFailed::Status status, qint8 retriesLeft);
 
 protected:
-    CommandHandler(const CommandWithArguments& cmd) : command(cmd) {}
+    CommandHandler(const CommandWithArguments& cmd) : command(cmd) { }
     CommandWithArguments command;
 };
 
