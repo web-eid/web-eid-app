@@ -18,14 +18,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
 
       - name: Cache vcpkg
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ${{ github.workspace }}/vcpkg_cache
@@ -36,7 +36,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.10.1
+          version: 6.10.2
           arch: ${{ matrix.arch == 'arm64' && 'win64_msvc2022_arm64' || 'win64_msvc2022_64' }}
           cache: true
 
@@ -73,7 +73,7 @@ jobs:
         run: ctest -V -C ${env:BUILD_TYPE} --test-dir build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: web-eid-app-windows-build-${{matrix.arch}}-${{github.run_number}}
           path: |
@@ -81,7 +81,7 @@ jobs:
             build/src/app/*.exe
 
       - name: Upload debug artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: web-eid-app-windows-debug-${{matrix.arch}}-${{github.run_number}}
           path: build/**/*.pdb
