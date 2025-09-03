@@ -22,8 +22,6 @@
 
 #pragma once
 
-#include <memory>
-
 #include <QMetaType>
 #include <QVariantMap>
 
@@ -59,4 +57,3 @@ extern const QString CMDLINE_AUTHENTICATE;
 extern const QString CMDLINE_SIGN;
 
 using CommandWithArguments = std::pair<CommandType, QVariantMap>;
-using CommandWithArgumentsPtr = std::unique_ptr<CommandWithArguments>;

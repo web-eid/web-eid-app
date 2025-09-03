@@ -63,7 +63,7 @@ void writeResponseLength(std::ostream& stream, const uint32_t responseLength)
     stream.write(reinterpret_cast<const char*>(&responseLength), sizeof(responseLength));
 }
 
-CommandWithArgumentsPtr readCommandFromStdin()
+CommandWithArguments readCommandFromStdin()
 {
 
 #ifdef Q_OS_WIN
@@ -93,14 +93,13 @@ CommandWithArgumentsPtr readCommandFromStdin()
     }
 
     const auto jsonObject = json.object();
-    const auto command = jsonObject["command"];
-    const auto arguments = jsonObject["arguments"];
+    const auto& command = jsonObject[QStringLiteral("command")];
+    const auto& arguments = jsonObject[QStringLiteral("arguments")];
 
     if (!command.isString() || !arguments.isObject()) {
         throw std::invalid_argument("readCommandFromStdin: Invalid JSON, the main object does not "
                                     "contain a 'command' string and 'arguments' object");
     }
 
-    return std::make_unique<CommandWithArguments>(CommandType(command.toString()),
-                                                  arguments.toObject().toVariantMap());
+    return {CommandType(command.toString()), arguments.toObject().toVariantMap()};
 }
