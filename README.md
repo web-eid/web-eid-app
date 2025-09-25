@@ -303,8 +303,9 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 - Create symlink to _OpenSSL_ location and setup environment variables required
   by _CMake_:
 
-      export OPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1
+      export OPENSSL_ROOT_DIR=/usr/local/opt/openssl
       export QT_DIR=/usr/local/opt/qt6/lib/cmake/Qt6
+      export MACOSX_DEPLOYMENT_TARGET=10.15
 
 ## Building and testing
 
