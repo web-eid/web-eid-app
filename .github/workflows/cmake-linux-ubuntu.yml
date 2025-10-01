@@ -17,7 +17,7 @@ jobs:
     container: ubuntu:${{matrix.container}}
     strategy:
       matrix:
-        container: ['22.04', '24.04', '25.04']
+        container: ['22.04', '24.04', '25.04', '25.10']
         arch: ['amd64', 'arm64']
 
     steps:

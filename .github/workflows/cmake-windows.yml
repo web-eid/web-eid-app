@@ -6,31 +6,42 @@ env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
   CMAKE_BUILD_PARALLEL_LEVEL: 4
+  VCPKG_INSTALLED_DIR: ${{ github.workspace }}/build/vcpkg_installed
+  # Use libelectronic-id vcpkg manifest for dependencies
+  VCPKG_MANIFEST_DIR: ./lib/libelectronic-id/.github
 
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: windows-2025
     strategy:
       matrix:
         arch: [x64, arm64]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
 
-      - name: Prepare vcpkg and libraries
-        uses: lukka/run-vcpkg@v7
+      - name: Cache vcpkg
+        uses: actions/cache@v4
         with:
-          vcpkgArguments: gtest openssl
-          vcpkgTriplet: ${{matrix.arch}}-windows
-          vcpkgGitCommitId: 031ad89ce6c575df35a8e58707ad2c898446c63e
+          path: ${{ github.workspace }}/vcpkg_cache
+          key: vcpkg-${{ matrix.arch }}-${{ hashFiles(format('{0}/vcpkg.json', env.VCPKG_MANIFEST_DIR)) }}
+
+      - name: Prepare vcpkg and libraries
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: ${{ env.VCPKG_MANIFEST_DIR }}/vcpkg.json
+          runVcpkgInstall: true
+        env:
+          VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
+          VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.9.1
+          version: 6.9.3
           arch: ${{ matrix.arch == 'arm64' && 'win64_msvc2022_arm64_cross_compiled' || 'win64_msvc2022_64' }}
 
       - name: Setup MS Visual C++ dev env
@@ -40,16 +51,17 @@ jobs:
 
       - name: Install WiX
         run: |
-          dotnet tool install --global wix --version 6.0.1
-          wix extension -g add WixToolset.UI.wixext/6.0.1
-          wix extension -g add WixToolset.Util.wixext/6.0.1
-          wix extension -g add WixToolset.BootstrapperApplications.wixext/6.0.1
+          dotnet tool install --global wix --version 6.0.2
+          wix extension -g add WixToolset.UI.wixext/6.0.2
+          wix extension -g add WixToolset.Util.wixext/6.0.2
+          wix extension -g add WixToolset.BootstrapperApplications.wixext/6.0.2
 
       - name: Configure
         run: |
           cmake "-GNinja" -S . -B build `
             "-DCMAKE_TOOLCHAIN_FILE=${env:RUNVCPKG_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
-            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}"
+            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" `
+            "-DVCPKG_MANIFEST_DIR=${{ env.VCPKG_MANIFEST_DIR }}"
 
       - name: Build
         run: |
