@@ -156,12 +156,16 @@
         <translation>Der Vorgang ist fehlgeschlagen</translation>
     </message>
     <message>
+        <source>PIN entry disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Card driver error. Please try again.</source>
         <translation>Kartentreiberfehler. Bitte versuche es erneut.</translation>
     </message>
     <message>
         <source>Card driver error</source>
-        <translation>Kartentreiberfehler.</translation>
+        <translation>Kartentreiberfehler</translation>
     </message>
     <message>
         <source>An error occurred in the Smart Card service required to use the ID-card. Make sure that the ID-card and the card reader are connected correctly or relaunch the Smart Card service.</source>
@@ -190,6 +194,10 @@
     <message>
         <source>Try again</source>
         <translation>Versuch es noch einmal</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>

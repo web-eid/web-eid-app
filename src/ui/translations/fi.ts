@@ -136,6 +136,10 @@
         <translation>Toiminto epäonnistui</translation>
     </message>
     <message>
+        <source>PIN entry disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Card driver error. Please try again.</source>
         <translation>Kortinlukijan virhe. Yritä uudelleen.</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Yritä uudelleen</translation>
     </message>
     <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cancel</source>
         <translation>Peruuta</translation>
     </message>
@@ -177,7 +185,7 @@
     </message>
     <message>
         <source>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</source>
-        <translation type="unfinished">https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
+        <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
     </message>
     <message>
         <source>By signing, I agree to the transfer of my name and personal identification code to the service provider.</source>
@@ -257,15 +265,15 @@
     </message>
     <message>
         <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
-        <translation type="unfinished">Asennettu henkilökortti ei sisällä varmennetta pyydettyä toimintoa varten. Aseta sisään henkilökortti, joka tukee pyydettyä toimintoa.</translation>
+        <translation>Asennettu henkilökortti ei sisällä varmennetta pyydettyä toimintoa varten. Aseta sisään henkilökortti, joka tukee pyydettyä toimintoa.</translation>
     </message>
     <message>
         <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
-        <translation type="unfinished">Syötä PIN todennusta varten avautuvaan PIN-valintaikkunaan.</translation>
+        <translation>Syötä PIN todennusta varten avautuvaan PIN-valintaikkunaan.</translation>
     </message>
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
-        <translation type="unfinished">Syötä PIN kirjautumista varten avautuvaan PIN-valintaikkunaan.</translation>
+        <translation>Syötä PIN kirjautumista varten avautuvaan PIN-valintaikkunaan.</translation>
     </message>
     <message>
         <source>EN</source>

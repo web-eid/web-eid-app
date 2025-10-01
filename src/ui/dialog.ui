@@ -212,6 +212,28 @@ height: 24px;
     <number>20</number>
    </property>
    <item>
+    <widget class="QLabel" name="lockedWarning">
+     <property name="styleSheet">
+      <string notr="true">background-color: #FAE7C9;
+color: #003168;
+font-family: Roboto, Helvetica;
+font-size: 14px;
+padding: 10px;
+border: none;
+border-radius: 4px;</string>
+     </property>
+     <property name="text">
+      <string>Signing with an ID-card isn't possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QStackedWidget" name="pageStack">
      <property name="currentIndex">
       <number>0</number>

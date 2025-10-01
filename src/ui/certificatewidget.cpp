@@ -112,11 +112,9 @@ void CertificateWidgetInfo::setCertificateInfo(const EidCertificateAndPinInfo& c
     info->setText(CertificateWidget::tr("<b>%1</b><br />Issuer: %2<br />Valid: %3 to %4%5")
                       .arg(subject, issuer, effectiveDate, expiryDate, warning));
     info->parentWidget()->setDisabled(certInfo.notEffective || certInfo.isExpired
-                                      || cardCertPinInfo.pinInfo.pinIsBlocked);
-    if (warning.isEmpty() && cardCertPinInfo.pinInfo.pinIsBlocked) {
-        warnIcon->show();
-        warn->show();
-    }
+                                      || cardCertPinInfo.pinInfo.pinIsBlocked());
+    warnIcon->setVisible(warning.isEmpty() && cardCertPinInfo.pinInfo.pinIsBlocked());
+    warn->setVisible(warning.isEmpty() && cardCertPinInfo.pinInfo.pinIsBlocked());
 }
 
 void CertificateWidgetInfo::languageChange()

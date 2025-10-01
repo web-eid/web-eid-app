@@ -158,6 +158,10 @@
         <translation>Operácia zlyhala</translation>
     </message>
     <message>
+        <source>PIN entry disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Card driver error. Please try again.</source>
         <translation>Chyba ovládača karty. Skúste to prosím znova.</translation>
     </message>
@@ -192,6 +196,10 @@
     <message>
         <source>Try again</source>
         <translation>Skúste to znova</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
