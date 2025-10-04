@@ -257,56 +257,14 @@ The extension's native app in `main.mm` is a thin adapter layer on top of the Qt
 
 You can examine the files in the `.github/workflows/` directory to see how continuous integration build environment has been set up for different operating systems.
 
-### Ubuntu Linux
+### Ubuntu Linux setup
 
-Run all commands starting from `RUN apt-get update` from the following
-`Dockerfile`:
+Install dependecies
 
-https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Dockerfile
+    apt update
+    apt install --no-install-recommends -y lsb-release build-essential devscripts debhelper pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 
-### Windows
-
-- Download Visual Studio 2019 community installer from https://visualstudio.microsoft.com/ and install _Desktop C++ Development_
-- Install WIX toolset
-
-      dotnet tool install --global wix --version 5.0.0
-      wix extension -g add WixToolset.UI.wixext/5.0.0
-      wix extension -g add WixToolset.Util.wixext/5.0.0
-      wix extension -g add WixToolset.Bal.wixext/5.0.0
-
-- Download and install Git for Windows from https://git-scm.com/download/win
-- Download and install CMake from https://cmake.org/download/
-- Install _vcpkg_ by running the following commands in Powershell:
-
-      git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
-      cd C:\vcpkg
-      .\bootstrap-vcpkg.bat
-      .\vcpkg integrate install
-
-- Install _Google Test_ and _OpenSSL_ with _vcpkg_:
-
-      .\vcpkg install --recurse --triplet x64-windows --clean-after-build gtest openssl
-
-- Install _Qt_ with the official [_Qt Online Installer_](https://www.qt.io/download-qt-installer),
-  choose _Custom installation > Qt 6.6.3 > MSVC 2019 64-bit_.
-
-### macOS
-
-- Install _Homebrew_ if not already installed:
-
-      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-- Install _CMake_, _Google Test_, _OpenSSL_ and _Qt_ with _Homebrew_:
-
-      brew install cmake web-eid/gtest/gtest openssl qt@6 node
-
-- Create symlink to _OpenSSL_ location and setup environment variables required
-  by _CMake_:
-
-      export OPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1
-      export QT_DIR=/usr/local/opt/qt6/lib/cmake/Qt6
-
-## Building and testing
+### Linux Building and testing 
 
     git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
     cd web-eid-app
@@ -314,13 +272,68 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
     ./test.sh
     ./build/src/app/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
 
-### Building and testing in Windows
+### Windows setup
+
+- Download Visual Studio 2022 community installer from https://visualstudio.microsoft.com/ install _Visual Studio_ 
+with description "The most comprehensive IDE for .NET and C++ developers on Windows...". During installation choose components:
+
+      - NET desktop development
+      - Desktop development with C++
+
+- After install has finished, open Developer Command Prompt for VS 2022 and run commands given below
+- If Nuget does not contain api.nuget.org as source, please add (https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-add-source#examples)
+
+      dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
+
+- Install WIX toolset
+
+      dotnet tool install --global wix --version 6.0.1
+      wix extension -g add WixToolset.UI.wixext/6.0.1
+      wix extension -g add WixToolset.Util.wixext/6.0.1
+      wix extension -g add WixToolset.BootstrapperApplications.wixext/6.0.1
+
+- Download and install Git for Windows from https://git-scm.com/download/win
+- Install _vcpkg_ by running the following commands in Powershell:
+
+      git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
+      cd C:\vcpkg
+      .\bootstrap-vcpkg.bat
+      .\vcpkg integrate install
+
+- Install _Google Test_ and _OpenSSL_ with _vcpkg_. In order to install openssl version 1.* create a file C:\vcpkg\vpkg.json with content
+
+      {
+        "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+        "builtin-baseline": "a62ce77d56ee07513b4b67de1ec2daeaebfae51a",
+        "dependencies": [
+          "gtest",
+          "openssl"
+        ],
+        "overrides": [
+         {
+           "name": "openssl",
+           "version": "1.1.1n"
+         }
+       ]
+      }
+
+- Install packages:
+      
+      .\vcpkg install --recurse --triplet x64-windows --clean-after-build --vcpkg-root C:\vcpkg
+
+- Install _Qt_ with the official [_Qt Online Installer_](https://www.qt.io/download-qt-installer).
+  Installer requires you to create an account or log in with existing one.
+  
+  Choose _Custom installation > Qt 6.9.3 > MSVC 2022 64-bit_.
+  Do not add cmake or ninja or any other component as they are already installed with Visual Studio 2022.
+
+### Windows building and testing
 
 Use _Powershell_ to run the following commands to build the project.
 
 - Set the _Qt_ installation directory variable:
 
-      $QT_ROOT = "C:\Qt\6.2.4\msvc2019_64"
+      $QT_ROOT = "C:\Qt\6.9.3\msvc2022_64"
 
 - Set the _vcpkg_ installation directory variable:
 
@@ -350,6 +363,25 @@ Optionally, WIX Toolset v3 is required for the installer, and the WIX environmen
 - Run tests:
 
       ctest -V -C ${BUILD_TYPE} --test-dir build
+
+### macOS setup
+
+- Install _Homebrew_ if not already installed:
+
+      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+- Install _CMake_, _Google Test_, _OpenSSL_ and _Qt_ with _Homebrew_:
+
+      brew install cmake gtest openssl@1.1 qt@6 node
+
+### macOS building and testing
+
+    git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
+    cd web-eid-app
+    ./build.zsh
+    ./test.sh
+    ./build/src/app/web-eid.app/Contents/MacOS/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
+
 
 ## Adding and updating translations
 
