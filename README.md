@@ -257,28 +257,54 @@ The extension's native app in `main.mm` is a thin adapter layer on top of the Qt
 
 You can examine the files in the `.github/workflows/` directory to see how continuous integration build environment has been set up for different operating systems.
 
-### Ubuntu Linux
+### Ubuntu Linux setup
 
 Install the dependencies required for building the project.
 
 ```sh
 sudo apt update
 sudo apt install \
-  cmake \
   build-essential \
-  qt6-base-dev \
-  qt6-tools-dev \
-  qt6-l10n-tools \
-  qt6-tools-dev-tools \
-  libqt6svg6-dev \
-  libglu1-mesa-dev \
-  libssl-dev \
   pkg-config \
+  cmake \
   libpcsclite-dev \
-  libgtest-dev
+  libssl-dev \
+  libgtest-dev \
+  libqt6svg6-dev \
+  qt6-tools-dev \
+  qt6-tools-dev-tools \
+  qt6-l10n-tools \
+  devscripts \
+  debhelper \
+  libglu1-mesa-dev
 ```
 
-### Windows
+### Ubuntu Linux Building and testing
+
+    git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
+    cd web-eid-app
+    ./build.sh
+    ./test.sh
+    ./build/src/app/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
+
+### macOS setup
+
+- Install _Homebrew_ if not already installed:
+
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+- Install _CMake_, _Google Test_, _OpenSSL_ and _Qt_ with _Homebrew_:
+
+      brew install cmake web-eid/gtest/gtest openssl qt@6 node
+
+### macOS building and testing
+
+      git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
+      cd web-eid-app
+      ./build.zsh clean
+      ./build/src/app/web-eid.app/Contents/MacOS/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
+
+### Windows setup
 
 - Download Visual Studio 2022 community installer from https://visualstudio.microsoft.com/ and install _Desktop C++ Development_
 - Download and install Git for Windows from https://git-scm.com/download/win
@@ -288,30 +314,6 @@ sudo apt install \
   - _MSVC 2022 64-bit_ — for building the x64 binary
   - _MSVC 2022 ARM64_ — for building the ARM64 binary natively on an ARM64 host
   - _MSVC 2022 ARM64 (cross-compiled)_ — for building the ARM64 binary on an x64 host
-
-### macOS
-
-- Install _Homebrew_ if not already installed:
-
-      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-- Install _CMake_, _Google Test_, _OpenSSL_ and _Qt_ with _Homebrew_:
-
-      brew install cmake web-eid/gtest/gtest openssl qt@6 node
-
-- Create symlink to _OpenSSL_ location and setup environment variables required
-  by _CMake_:
-
-      export OPENSSL_ROOT_DIR=/usr/local/opt/openssl@3.0
-      export QT_DIR=/usr/local/opt/qt6/lib/cmake/Qt6
-
-## Building and testing
-
-    git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
-    cd web-eid-app
-    ./build.sh
-    ./test.sh
-    ./build/src/app/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
 
 ### Building and testing in Windows
 
@@ -333,6 +335,9 @@ above, install the following:
       wix extension -g add WixToolset.BootstrapperApplications.wixext/6.0.2
 
 Then run in Powershell:
+
+    git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
+    cd web-eid-app
 
     $QT_ROOT = "C:\Qt\6.11.1\msvc2022_64"   # adjust arch suffix as needed
     $VCPKG_ROOT = "C:\vcpkg"
