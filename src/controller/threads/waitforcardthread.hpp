@@ -36,7 +36,7 @@ public:
 
 signals:
     void cardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& eids);
-    void statusUpdate(const RetriableError status);
+    void statusUpdate(RetriableError status);
 
 private:
     void doRun() override
@@ -59,22 +59,17 @@ private:
                 emit failure(QString(__func__) + ": empty available supported card list");
             }
         } catch (const electronic_id::AutoSelectFailed& failure) {
-            emit statusUpdate(toRetriableError(failure.reason()));
+            emit statusUpdate(RetriableError(failure.reason()));
             return false;
-        }
-        CATCH_PCSC_CPP_RETRIABLE_ERRORS(return warnAndEmitStatusUpdate)
-        CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(return warnAndEmitStatusUpdate)
-        catch (const std::exception& error)
-        {
+        } catch (const std::exception& error) {
+            if (auto errorCode = RetriableError::catchRetriableError();
+                errorCode != RetriableError::UNKNOWN_ERROR) {
+                WARN_RETRIABLE_ERROR(commandType(), errorCode, error);
+                emit statusUpdate(errorCode);
+                return false;
+            }
             emit failure(error.what());
         }
         return true;
-    }
-
-    bool warnAndEmitStatusUpdate(const RetriableError errorCode, const std::exception& error)
-    {
-        WARN_RETRIABLE_ERROR(commandType(), errorCode, error);
-        emit statusUpdate(errorCode);
-        return false;
     }
 };

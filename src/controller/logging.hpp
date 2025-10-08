@@ -26,17 +26,13 @@
 
 void setupLogging();
 
-inline QDebug operator<<(QDebug out, const std::string& s)
+#if QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
+template <typename...Args>
+inline QDebug operator<<(QDebug out, const std::basic_string<char, Args...> &s)
 {
-    out << QString::fromStdString(s);
-    return out;
+    return out << QUtf8StringView(s);
 }
-
-inline QDebug operator<<(QDebug out, const std::wstring& s)
-{
-    out << QString::fromStdWString(s);
-    return out;
-}
+#endif
 
 inline QDebug operator<<(QDebug out, const std::exception& e)
 {

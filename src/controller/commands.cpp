@@ -22,7 +22,7 @@
 
 #include "commands.hpp"
 
-#include "magic_enum/magic_enum.hpp"
+#include <QMetaEnum>
 
 #include <stdexcept>
 #include <map>
@@ -51,5 +51,5 @@ CommandType commandNameToCommandType(const QString& cmdName)
 
 CommandType::operator std::string() const
 {
-    return std::string(magic_enum::enum_name(value));
+    return QMetaEnum::fromType<CommandType::CommandTypeEnum>().valueToKey(value);
 }

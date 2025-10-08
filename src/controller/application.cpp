@@ -184,7 +184,6 @@ CommandWithArgumentsPtr Application::parseArgs()
 
 void Application::registerMetatypes()
 {
-    qRegisterMetaType<electronic_id::AutoSelectFailed::Reason>();
     qRegisterMetaType<electronic_id::ElectronicID::ptr>();
     qRegisterMetaType<std::vector<electronic_id::ElectronicID::ptr>>();
     qRegisterMetaType<electronic_id::VerifyPinFailed::Status>();

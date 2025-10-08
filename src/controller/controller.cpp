@@ -233,7 +233,7 @@ void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
         _result = res;
         writeResponseToStdOut(isInStdinMode, res, commandHandler->commandType());
     } catch (const std::exception& error) {
-        qCritical() << "Command" << std::string(commandType())
+        qCritical() << "Command" << commandType()
                     << "fatal error while writing response to stdout:" << error;
     }
 
@@ -288,8 +288,7 @@ void Controller::onDialogCancel()
 void Controller::onCriticalFailure(const QString& error)
 {
     emit stopCardEventMonitorThread();
-    qCritical() << "Exiting due to command" << std::string(commandType())
-                << "fatal error:" << error;
+    qCritical() << "Exiting due to command" << commandType() << "fatal error:" << error;
     _result =
         makeErrorObject(RESP_TECH_ERROR, QStringLiteral("Technical error, see application logs"));
     disposeUI();

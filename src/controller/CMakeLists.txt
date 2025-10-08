@@ -22,7 +22,6 @@ add_library(controller STATIC
     logging.cpp
     logging.hpp
     qeid.hpp
-    retriableerror.cpp
     retriableerror.hpp
     threads/cardeventmonitorthread.hpp
     threads/commandhandlerconfirmthread.hpp

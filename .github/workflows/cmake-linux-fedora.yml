@@ -20,7 +20,7 @@ jobs:
       - name: Install Deps
         run: dnf install -y --setopt=install_weak_deps=False git gcc-c++ cmake rpm-build openssl-devel pcsc-lite-devel qt6-qtsvg-devel qt6-qttools-devel gtest-devel
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
           persist-credentials: false
