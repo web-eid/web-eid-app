@@ -29,35 +29,34 @@
 
 class CommandType
 {
+    Q_GADGET
 public:
-    enum CommandTypeEnum {
+    enum CommandTypeEnum : quint8 {
+        NONE,
         INSERT_CARD,
         GET_SIGNING_CERTIFICATE,
         AUTHENTICATE,
         SIGN,
         QUIT,
         ABOUT,
-        NONE = -1
     };
+    Q_ENUM(CommandTypeEnum)
 
-    CommandType() noexcept = default;
-    constexpr CommandType(const CommandTypeEnum _value) noexcept : value(_value) {}
+    constexpr CommandType(CommandTypeEnum _value = NONE) noexcept : value(_value) { }
+    explicit CommandType(const QString& cmdName);
 
-    constexpr bool operator==(CommandTypeEnum other) const { return value == other; }
-    constexpr bool operator!=(CommandTypeEnum other) const { return value != other; }
-    constexpr operator CommandTypeEnum() const { return value; }
+    constexpr bool operator==(CommandTypeEnum other) const noexcept { return value == other; }
+    constexpr operator CommandTypeEnum() const noexcept { return value; }
 
     operator std::string() const;
 
 private:
-    CommandTypeEnum value = NONE;
+    CommandTypeEnum value;
 };
 
 extern const QString CMDLINE_GET_SIGNING_CERTIFICATE;
 extern const QString CMDLINE_AUTHENTICATE;
 extern const QString CMDLINE_SIGN;
-
-CommandType commandNameToCommandType(const QString& cmdName);
 
 using CommandWithArguments = std::pair<CommandType, QVariantMap>;
 using CommandWithArgumentsPtr = std::unique_ptr<CommandWithArguments>;

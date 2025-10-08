@@ -266,8 +266,7 @@ try {
 void Controller::onCriticalFailure(const QString& error) noexcept
 try {
     emit stopCardEventMonitorThread();
-    qCritical() << "Exiting due to command" << std::string(commandType())
-                << "fatal error:" << error;
+    qCritical() << "Exiting due to command" << commandType() << "fatal error:" << error;
     _result =
         makeErrorObject(RESP_TECH_ERROR, QStringLiteral("Technical error, see application logs"));
     disposeUI();
