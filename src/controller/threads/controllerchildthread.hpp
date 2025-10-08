@@ -23,9 +23,8 @@
 #pragma once
 
 #include "commandhandler.hpp"
-#include "retriableerror.hpp"
-#include "qeid.hpp"
 #include "logging.hpp"
+#include "retriableerror.hpp"
 
 #include <QCoreApplication>
 #include <QMutexLocker>
@@ -51,11 +50,7 @@ public:
 
         } catch (const CommandHandlerVerifyPinFailed& error) {
             qWarning() << "Command" << commandType() << "PIN verification failed:" << error;
-        }
-        CATCH_PCSC_CPP_RETRIABLE_ERRORS(warnAndEmitRetry)
-        CATCH_LIBELECTRONIC_ID_RETRIABLE_ERRORS(warnAndEmitRetry)
-        catch (const electronic_id::VerifyPinFailed& error)
-        {
+        } catch (const electronic_id::VerifyPinFailed& error) {
             switch (error.status()) {
                 using enum electronic_id::VerifyPinFailed::Status;
             case PIN_ENTRY_CANCEL:
@@ -76,11 +71,15 @@ public:
                 qCritical() << "Command" << commandType() << "fatal error:" << error;
                 emit failure(error.what());
             }
-        }
-        catch (const std::exception& error)
-        {
-            qCritical() << "Command" << commandType() << "fatal error:" << error;
-            emit failure(error.what());
+        } catch (const std::exception& error) {
+            if (RetriableError errorCode(std::current_exception());
+                errorCode != RetriableError::UNKNOWN_ERROR) {
+                WARN_RETRIABLE_ERROR(commandType(), errorCode, error);
+                emit retry(errorCode);
+            } else {
+                qCritical() << "Command" << commandType() << "fatal error:" << error;
+                emit failure(error.what());
+            }
         }
     }
 
@@ -88,12 +87,12 @@ public:
 
 signals:
     void cancel();
-    void retry(const RetriableError error);
+    void retry(RetriableError error);
     void failure(const QString& error);
 
 protected:
-    explicit ControllerChildThread(std::string _cmdType, QObject* parent) noexcept :
-        QThread(parent), cmdType(std::move(_cmdType))
+    explicit ControllerChildThread(CommandType _cmdType, QObject* parent) noexcept :
+        QThread(parent), cmdType(_cmdType)
     {
         // When the thread is finished call deleteLater() on it to free the thread object. Although
         // the thread objects are freed through the Qt object tree ownership system anyway, it is
@@ -104,17 +103,11 @@ protected:
         });
     }
 
-    const std::string& commandType() const { return cmdType; }
+    CommandType commandType() const { return cmdType; }
 
     static QMutex controllerChildThreadMutex;
 
 private:
     virtual void doRun() = 0;
-    const std::string cmdType;
-
-    void warnAndEmitRetry(const RetriableError errorCode, const std::exception& error)
-    {
-        WARN_RETRIABLE_ERROR(commandType(), errorCode, error);
-        emit retry(errorCode);
-    }
+    const CommandType cmdType;
 };

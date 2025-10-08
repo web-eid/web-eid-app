@@ -128,7 +128,7 @@
             const auto argumentJson =
                 QJsonDocument::fromJson(QByteArray::fromNSData(req[@"arguments"]));
             Controller controller(std::make_unique<CommandWithArguments>(
-                commandNameToCommandType(QString::fromNSString(req[@"command"])),
+                CommandType(QString::fromNSString(req[@"command"])),
                 argumentJson.object().toVariantMap()));
             controller.run();
             QEventLoop e;

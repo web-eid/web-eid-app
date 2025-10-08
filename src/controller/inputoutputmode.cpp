@@ -101,6 +101,6 @@ CommandWithArgumentsPtr readCommandFromStdin()
                                     "contain a 'command' string and 'arguments' object");
     }
 
-    return std::make_unique<CommandWithArguments>(commandNameToCommandType(command.toString()),
+    return std::make_unique<CommandWithArguments>(CommandType(command.toString()),
                                                   arguments.toObject().toVariantMap());
 }

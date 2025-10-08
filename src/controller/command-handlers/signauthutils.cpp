@@ -26,6 +26,8 @@
 #include "ui.hpp"
 #include "commandhandler.hpp"
 
+#include "pcsc-cpp/pcsc-cpp-utils.hpp"
+
 using namespace electronic_id;
 
 // Take argument names by copy/move as they will be modified.

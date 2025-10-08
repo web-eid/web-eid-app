@@ -22,7 +22,7 @@
 
 #include "commands.hpp"
 
-#include "magic_enum/magic_enum.hpp"
+#include <QMetaEnum>
 
 #include <stdexcept>
 #include <map>
@@ -33,7 +33,7 @@ const QString CMDLINE_SIGN = QStringLiteral("sign");
 // A special command for stdin mode for quitting the application after sending the version.
 const QString STDINMODE_QUIT = QStringLiteral("quit");
 
-CommandType commandNameToCommandType(const QString& cmdName)
+CommandType::CommandType(const QString& cmdName)
 {
     static const std::map<QString, CommandType> SUPPORTED_COMMANDS {
         {CMDLINE_GET_SIGNING_CERTIFICATE, CommandType::GET_SIGNING_CERTIFICATE},
@@ -43,7 +43,7 @@ CommandType commandNameToCommandType(const QString& cmdName)
     };
 
     try {
-        return SUPPORTED_COMMANDS.at(cmdName);
+        value = SUPPORTED_COMMANDS.at(cmdName);
     } catch (const std::out_of_range&) {
         throw std::invalid_argument("Command '" + cmdName.toStdString() + "' is not supported");
     }
@@ -51,5 +51,5 @@ CommandType commandNameToCommandType(const QString& cmdName)
 
 CommandType::operator std::string() const
 {
-    return std::string(magic_enum::enum_name(value));
+    return QMetaEnum::fromType<CommandType::CommandTypeEnum>().valueToKey(value);
 }

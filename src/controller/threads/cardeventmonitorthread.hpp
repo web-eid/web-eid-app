@@ -32,8 +32,8 @@ public:
     using eid_ptr = electronic_id::ElectronicID::ptr;
     using eid_ptr_vector = std::vector<electronic_id::ElectronicID::ptr>;
 
-    CardEventMonitorThread(QObject* parent, std::string commandType) :
-        ControllerChildThread(std::move(commandType), parent)
+    CardEventMonitorThread(QObject* parent, CommandType commandType) :
+        ControllerChildThread(commandType, parent)
     {
     }
 

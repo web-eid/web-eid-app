@@ -24,6 +24,8 @@
 
 #include "signauthutils.hpp"
 
+#include "pcsc-cpp/pcsc-cpp-utils.hpp"
+
 #include <QApplication>
 #include <QJsonObject>
 #include <QJsonArray>

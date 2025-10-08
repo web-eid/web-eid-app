@@ -167,7 +167,7 @@ CommandWithArgumentsPtr Application::parseArgs()
         if (command == CMDLINE_GET_SIGNING_CERTIFICATE || command == CMDLINE_AUTHENTICATE
             || command == CMDLINE_SIGN) {
             // TODO: add command-specific argument validation
-            return std::make_unique<CommandWithArguments>(commandNameToCommandType(command),
+            return std::make_unique<CommandWithArguments>(CommandType(command),
                                                           parseArgumentJson(arguments));
         }
         throw ArgumentError("The command has to be one of " + COMMANDS.toStdString());
@@ -193,7 +193,6 @@ CommandWithArgumentsPtr Application::parseArgs()
 
 void Application::registerMetatypes()
 {
-    qRegisterMetaType<electronic_id::AutoSelectFailed::Reason>();
     qRegisterMetaType<electronic_id::ElectronicID::ptr>();
     qRegisterMetaType<std::vector<electronic_id::ElectronicID::ptr>>();
     qRegisterMetaType<electronic_id::VerifyPinFailed::Status>();
