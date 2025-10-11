@@ -70,6 +70,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     // close() deletes the dialog automatically if the Qt::WA_DeleteOnClose flag is set.
     setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
+    ui->lockedWarning->hide();
     if (Application::isDarkTheme()) {
         QFile f(QStringLiteral(":dark.qss"));
         if (f.open(QFile::ReadOnly | QFile::Text)) {
@@ -426,7 +427,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         return;
     }
 
-    if (certAndPinInfo.pinInfo.pinIsBlocked) {
+    if (certAndPinInfo.pinInfo.pinIsBlocked()) {
         displayPinBlockedError();
     } else if (certAndPinInfo.certInfo.isExpired || certAndPinInfo.certInfo.notEffective) {
         ui->pinTitleLabel->hide();
@@ -525,7 +526,7 @@ bool WebEidDialog::event(QEvent* event)
         }
         break;
     case QEvent::Resize:
-        ui->langButton->move(width() - ui->langButton->width() - 20, 5);
+        ui->langButton->move(width() - ui->langButton->width() - 20, ui->pageStack->pos().y() - 20);
         break;
     default:
         break;
@@ -623,6 +624,7 @@ void WebEidDialog::setupPinPrompt(PinInfo pinInfo)
 
 void WebEidDialog::setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinInfo& certAndPin)
 {
+    ui->lockedWarning->setHidden(certAndPin.cardActive);
     setupPinPrompt(certAndPin.pinInfo);
     hide();
     setWindowFlag(Qt::WindowCloseButtonHint, false);
@@ -650,6 +652,7 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinI
 
 void WebEidDialog::setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo)
 {
+    ui->lockedWarning->setHidden(certAndPinInfo.cardActive);
     setupPinPrompt(certAndPinInfo.pinInfo);
     // The allowed character ranges are from the SafeNet eToken guide:
     // 1. English uppercase letters (ASCII 0x41...0x5A).
