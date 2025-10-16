@@ -70,6 +70,10 @@
         <translation>Unos PIN1 za identifikaciju</translation>
     </message>
     <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>About Web eID</source>
         <translation>O Web eID</translation>
     </message>
@@ -99,7 +103,7 @@
     </message>
     <message>
         <source>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</source>
-        <translation type="unfinished">https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
+        <translation>https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/</translation>
     </message>
     <message>
         <source>Time remaining: &lt;b&gt;%1&lt;/b&gt;</source>
@@ -176,6 +180,10 @@
             <numerusform>PIN je unesen neispravno više puta. Preostalo %n pokušaj/a.</numerusform>
             <numerusform>PIN je unesen neispravno više puta. Preostalo %n pokušaj/a.</numerusform>
         </translation>
+    </message>
+    <message>
+        <source>PIN entry disabled</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>PIN is locked. Unblock and try again.</source>
@@ -259,15 +267,15 @@
     </message>
     <message>
         <source>The inserted ID-card does not contain a certificate for the requested operation. Please insert an ID-card that supports the requested operation.</source>
-        <translation type="unfinished">Umetnuta iskaznica ne sadrži potvrdu za traženu operaciju. Molimo umetnite osobnu iskaznicu koja podržava traženu operaciju.</translation>
+        <translation>Umetnuta iskaznica ne sadrži potvrdu za traženu operaciju. Molimo umetnite osobnu iskaznicu koja podržava traženu operaciju.</translation>
     </message>
     <message>
         <source>Please enter PIN for authentication in the PIN dialog window that opens.</source>
-        <translation type="unfinished">Unesite PIN za autentifikaciju u dijaloški prozor PIN-a koji se otvara.</translation>
+        <translation>Unesite PIN za autentifikaciju u dijaloški prozor PIN-a koji se otvara.</translation>
     </message>
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
-        <translation type="unfinished">Unesite PIN za prijavu u dijaloški prozor PIN-a koji se otvara.</translation>
+        <translation>Unesite PIN za prijavu u dijaloški prozor PIN-a koji se otvara.</translation>
     </message>
     <message>
         <source>EN</source>

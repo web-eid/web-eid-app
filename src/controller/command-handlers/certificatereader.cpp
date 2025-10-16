@@ -50,7 +50,7 @@ EidCertificateAndPinInfo getCertificateWithStatusAndInfo(const ElectronicID::ptr
     auto serialNumber = certificate.subjectInfo(QSslCertificate::SerialNumber).join(' ');
 
     // http://www.etsi.org/deliver/etsi_en/319400_319499/31941201/01.01.01_60/en_31941201v010101p.pdf
-    if (serialNumber.size() > 6 && serialNumber.startsWith(QStringLiteral("PNO"))
+    if (serialNumber.size() > 6 && serialNumber.startsWith(QLatin1String("PNO"))
         && serialNumber[5] == '-')
         serialNumber.remove(0, 6);
 
@@ -61,16 +61,29 @@ EidCertificateAndPinInfo getCertificateWithStatusAndInfo(const ElectronicID::ptr
     CertificateInfo certInfo {
         certificateType, certificate.expiryDate() < QDateTime::currentDateTimeUtc(),
         certificate.effectiveDate() > QDateTime::currentDateTimeUtc(), std::move(subject)};
-    PinInfo pinInfo {certificateType.isAuthentication() ? eid->authPinMinMaxLength()
-                                                        : eid->signingPinMinMaxLength(),
-                     certificateType.isAuthentication() ? eid->authPinRetriesLeft()
-                                                        : eid->signingPinRetriesLeft(),
-                     eid->smartcard().readerHasPinPad()};
-    if (pinInfo.pinRetriesCount.first == 0) {
-        pinInfo.pinIsBlocked = true;
+    auto info = certificateType.isAuthentication() ? eid->authPinInfo() : eid->signingPinInfo();
+    PinInfo pinInfo {.pinMinMaxLength = certificateType.isAuthentication()
+                         ? eid->authPinMinMaxLength()
+                         : eid->signingPinMinMaxLength(),
+                     .pinRetriesCount {
+                         info.retryCount,
+                         info.maxRetry,
+                     },
+                     .readerHasPinPad = eid->smartcard().readerHasPinPad()};
+    bool cardActivated = info.pinActive;
+    if (certificateType == CertificateType::AUTHENTICATION && eid->type() == ElectronicID::EstEID
+        && eid->name() == "EstEIDThales") {
+        cardActivated = eid->signingPinInfo().pinActive;
     }
 
-    return {eid, std::move(certificateDer), certificate, std::move(certInfo), std::move(pinInfo)};
+    return {
+        .eid = eid,
+        .certificateBytesInDer = std::move(certificateDer),
+        .certificate = certificate,
+        .certInfo = std::move(certInfo),
+        .pinInfo = std::move(pinInfo),
+        .cardActive = cardActivated,
+    };
 }
 
 } // namespace

@@ -14,7 +14,7 @@ jobs:
     container: fedora:${{ matrix.container }}
     strategy:
       matrix:
-        container: [41, 42]
+        container: [41, 42, 43]
 
     steps:
       - name: Install Deps
