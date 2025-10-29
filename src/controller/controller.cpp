@@ -93,6 +93,15 @@ void Controller::run()
 
         commandHandler = getCommandHandler(*command);
 
+        // When the command handler run thread retrieves certificates successfully, call
+        // onCertificatesLoaded() that starts card event monitoring while user enters the PIN.
+        connect(commandHandler.get(), &CommandHandler::singleCertificateReady, this,
+                &Controller::onCertificatesLoaded);
+        connect(commandHandler.get(), &CommandHandler::multipleCertificatesReady, this,
+                &Controller::onCertificatesLoaded);
+        connect(commandHandler.get(), &CommandHandler::verifyPinFailed, this,
+                &Controller::onCertificatesLoaded);
+
         startCommandExecution();
 
     } catch (const std::exception& error) {
@@ -160,25 +169,14 @@ void Controller::onCardsAvailable(
     }
 }
 
-void Controller::runCommandHandler(const std::vector<ElectronicID::ptr>& availableEids)
-{
-    try {
-        auto* commandHandlerRunThread =
-            new CommandHandlerRunThread(this, *commandHandler, availableEids);
-        connectRetry(commandHandlerRunThread);
-
-        // When the command handler run thread retrieves certificates successfully, call
-        // onCertificatesLoaded() that starts card event monitoring while user enters the PIN.
-        connect(commandHandler.get(), &CommandHandler::singleCertificateReady, this,
-                &Controller::onCertificatesLoaded);
-        connect(commandHandler.get(), &CommandHandler::multipleCertificatesReady, this,
-                &Controller::onCertificatesLoaded);
-
-        commandHandlerRunThread->start();
-
-    } catch (const std::exception& error) {
-        onCriticalFailure(error.what());
-    }
+void Controller::runCommandHandler(std::vector<ElectronicID::ptr> availableEids) noexcept
+try {
+    auto* commandHandlerRunThread =
+        new CommandHandlerRunThread(this, *commandHandler, std::move(availableEids));
+    connectRetry(commandHandlerRunThread);
+    commandHandlerRunThread->start();
+} catch (const std::exception& error) {
+    onCriticalFailure(error.what());
 }
 
 void Controller::onCertificatesLoaded()
@@ -202,22 +200,20 @@ void Controller::disposeUI()
     }
 }
 
-void Controller::onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo)
-{
+void Controller::onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo) noexcept
+try {
     emit stopCardEventMonitorThread();
 
-    try {
-        auto* commandHandlerConfirmThread =
-            new CommandHandlerConfirmThread(this, *commandHandler, window, certAndPinInfo);
-        connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
-                &Controller::onCommandHandlerConfirmCompleted);
-        connectRetry(commandHandlerConfirmThread);
+    auto* commandHandlerConfirmThread =
+        new CommandHandlerConfirmThread(this, *commandHandler, window, certAndPinInfo);
+    connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
+            &Controller::onCommandHandlerConfirmCompleted);
+    connectRetry(commandHandlerConfirmThread);
 
-        commandHandlerConfirmThread->start();
+    commandHandlerConfirmThread->start();
 
-    } catch (const std::exception& error) {
-        onCriticalFailure(error.what());
-    }
+} catch (const std::exception& error) {
+    onCriticalFailure(error.what());
 }
 
 void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res)
@@ -258,7 +254,7 @@ void Controller::onRetry()
     }
 }
 
-void Controller::connectRetry(const ControllerChildThread* childThread)
+void Controller::connectRetry(const ControllerChildThread* childThread) const
 {
     REQUIRE_NON_NULL(childThread)
     connect(childThread, &ControllerChildThread::failure, this, &Controller::onCriticalFailure);

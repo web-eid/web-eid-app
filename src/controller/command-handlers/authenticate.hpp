@@ -35,10 +35,6 @@ public:
     QVariantMap onConfirm(WebEidUI* window,
                           const EidCertificateAndPinInfo& certAndPinInfo) override;
 
-signals:
-    void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const qint8 retriesLeft);
-
 private:
     QString challengeNonce;
 };

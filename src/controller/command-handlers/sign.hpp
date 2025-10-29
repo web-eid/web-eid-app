@@ -37,8 +37,6 @@ public:
 
 signals:
     void signingCertificateMismatch();
-    void verifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
-                         const qint8 retriesLeft);
 
 private:
     void
