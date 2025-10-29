@@ -52,7 +52,7 @@ public: // slots
     void onCertificatesLoaded();
 
     // Called either directly from onDialogOK().
-    void onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo);
+    void onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo) noexcept;
 
     // Called from CommandHandlerConfirm thread.
     void onCommandHandlerConfirmCompleted(const QVariantMap& result);
@@ -69,8 +69,8 @@ public: // slots
 
 private:
     void startCommandExecution();
-    void runCommandHandler(const std::vector<electronic_id::ElectronicID::ptr>& availableEids);
-    void connectRetry(const ControllerChildThread* childThread);
+    void runCommandHandler(std::vector<electronic_id::ElectronicID::ptr> availableEids) noexcept;
+    void connectRetry(const ControllerChildThread* childThread) const;
     void createWindow();
     void disposeUI();
     void exit();
