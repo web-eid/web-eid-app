@@ -22,6 +22,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           submodules: recursive
+          persist-credentials: false
 
       - name: Cache vcpkg
         uses: actions/cache@v4
@@ -74,7 +75,7 @@ jobs:
         run: ctest -V -C ${env:BUILD_TYPE} --test-dir build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: web-eid-app-windows-build-${{matrix.arch}}-${{github.run_number}}
           path: |

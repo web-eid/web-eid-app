@@ -11,7 +11,10 @@ elseif($ENV{CI_PIPELINE_IID})
 else()
     set(BUILD_NUMBER 0)
 endif()
-project(web-eid VERSION 2.8.0.${BUILD_NUMBER})
+project(web-eid VERSION 2.9.0.${BUILD_NUMBER}
+    DESCRIPTION "Web eID browser extension helper application"
+    HOMEPAGE_URL https://github.com/web-eid/web-eid-app
+)
 
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION_TWEAK})

@@ -27,6 +27,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          persist-credentials: false
 
       - name: Configure CMake
         run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build -S .
@@ -40,7 +41,7 @@ jobs:
       - name: Test package
         run: lintian build/*.deb
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: web-eid-app-ubuntu-build-ubuntu${{matrix.container}}-${{ matrix.arch }}-${{github.run_number}}
           path: build/*.*deb
