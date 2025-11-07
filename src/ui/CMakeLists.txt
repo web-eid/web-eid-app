@@ -16,7 +16,11 @@ qt_add_resources(ui resources BASE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX / FILES
     ${FONTS}
 )
 file(GLOB TRANSLATIONS translations/*.ts)
-qt_add_translations(ui TS_FILES ${TRANSLATIONS} RESOURCE_PREFIX /translations)
+qt_add_translations(ui
+    TS_FILES ${TRANSLATIONS}
+    RESOURCE_PREFIX /translations
+    LUPDATE_OPTIONS -locations none
+)
 set_target_properties(ui PROPERTIES
     AUTORCC ON
     AUTOUIC ON

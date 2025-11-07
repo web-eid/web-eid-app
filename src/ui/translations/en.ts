@@ -2,6 +2,17 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>Application</name>
+    <message>
+        <source>&amp;File</source>
+        <translation>&amp;File</translation>
+    </message>
+    <message>
+        <source>&amp;About</source>
+        <translation>&amp;About</translation>
+    </message>
+</context>
+<context>
     <name>CertificateButton</name>
     <message>
         <source>%1 Issuer: %2 Valid: %3 to %4</source>

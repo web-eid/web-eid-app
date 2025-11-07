@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           submodules: recursive
+          persist-credentials: false
 
       - name: Cache
         uses: actions/cache@v4
@@ -64,7 +65,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.9.3
+          version: 6.10.0
           arch: clang_64
 
       - name: Configure
@@ -80,7 +81,7 @@ jobs:
       #  run: ctest -V -C ${BUILD_TYPE} --test-dir ${BUILD_DIR}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: web-eid-app-macos-build-${{github.run_number}}
           path: |
