@@ -31,17 +31,17 @@ using namespace electronic_id;
 namespace
 {
 
-CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& card,
-                                                          const CertificateType certificateType)
+EidCertificateAndPinInfo getCertificateWithStatusAndInfo(const ElectronicID::ptr& eid,
+                                                         const CertificateType certificateType)
 {
-    const auto certificateBytes = card->eid().getCertificate(certificateType);
+    const auto certificateBytes = eid->getCertificate(certificateType);
 
     QByteArray certificateDer(reinterpret_cast<const char*>(certificateBytes.data()),
                               int(certificateBytes.size()));
     QSslCertificate certificate(certificateDer, QSsl::Der);
     if (certificate.isNull()) {
         THROW(SmartCardChangeRequiredError,
-              "Invalid certificate returned by electronic ID " + card->eid().name());
+              "Invalid certificate returned by electronic ID " + eid->name());
     }
 
     auto subject = certificate.subjectInfo(QSslCertificate::CommonName).join(' ');
@@ -50,7 +50,7 @@ CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& c
     auto serialNumber = certificate.subjectInfo(QSslCertificate::SerialNumber).join(' ');
 
     // http://www.etsi.org/deliver/etsi_en/319400_319499/31941201/01.01.01_60/en_31941201v010101p.pdf
-    if (serialNumber.size() > 6 && serialNumber.startsWith(QStringLiteral("PNO"))
+    if (serialNumber.size() > 6 && serialNumber.startsWith(QLatin1String("PNO"))
         && serialNumber[5] == '-')
         serialNumber.remove(0, 6);
 
@@ -61,16 +61,29 @@ CardCertificateAndPinInfo getCertificateWithStatusAndInfo(const CardInfo::ptr& c
     CertificateInfo certInfo {
         certificateType, certificate.expiryDate() < QDateTime::currentDateTimeUtc(),
         certificate.effectiveDate() > QDateTime::currentDateTimeUtc(), std::move(subject)};
-    PinInfo pinInfo {certificateType.isAuthentication() ? card->eid().authPinMinMaxLength()
-                                                        : card->eid().signingPinMinMaxLength(),
-                     certificateType.isAuthentication() ? card->eid().authPinRetriesLeft()
-                                                        : card->eid().signingPinRetriesLeft(),
-                     card->eid().smartcard().readerHasPinPad()};
-    if (pinInfo.pinRetriesCount.first == 0) {
-        pinInfo.pinIsBlocked = true;
+    auto info = certificateType.isAuthentication() ? eid->authPinInfo() : eid->signingPinInfo();
+    PinInfo pinInfo {.pinMinMaxLength = certificateType.isAuthentication()
+                         ? eid->authPinMinMaxLength()
+                         : eid->signingPinMinMaxLength(),
+                     .pinRetriesCount {
+                         info.retryCount,
+                         info.maxRetry,
+                     },
+                     .readerHasPinPad = eid->smartcard().readerHasPinPad()};
+    bool cardActivated = info.pinActive;
+    if (certificateType == CertificateType::AUTHENTICATION && eid->type() == ElectronicID::EstEID
+        && eid->name() == "EstEIDThales") {
+        cardActivated = eid->signingPinInfo().pinActive;
     }
 
-    return {card, std::move(certificateDer), certificate, std::move(certInfo), std::move(pinInfo)};
+    return {
+        .eid = eid,
+        .certificateBytesInDer = std::move(certificateDer),
+        .certificate = certificate,
+        .certInfo = std::move(certInfo),
+        .pinInfo = std::move(pinInfo),
+        .cardActive = cardActivated,
+    };
 }
 
 } // namespace
@@ -83,27 +96,27 @@ CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandH
     }
 }
 
-void CertificateReader::run(const std::vector<CardInfo::ptr>& cards)
+void CertificateReader::run(const std::vector<ElectronicID::ptr>& eids)
 {
-    REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(cards)
+    REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(eids)
 
     certificateType = command.first == CommandType::AUTHENTICATE ? CertificateType::AUTHENTICATION
                                                                  : CertificateType::SIGNING;
 
-    std::vector<CardCertificateAndPinInfo> certInfos;
-    certInfos.reserve(cards.size());
-    for (const auto& card : cards) {
+    std::vector<EidCertificateAndPinInfo> certAndPinInfos;
+    certAndPinInfos.reserve(eids.size());
+    for (const auto& eid : eids) {
         try {
-            certInfos.push_back(getCertificateWithStatusAndInfo(card, certificateType));
+            certAndPinInfos.push_back(getCertificateWithStatusAndInfo(eid, certificateType));
         } catch (const WrongCertificateTypeError&) {
             // Ignore eIDs that don't support the given ceritifcate type.
         }
     }
 
-    if (certInfos.empty()) {
+    if (certAndPinInfos.empty()) {
         emit retry(RetriableError::NO_VALID_CERTIFICATE_AVAILABLE);
     } else {
-        emitCertificatesReady(certInfos);
+        emitCertificatesReady(certAndPinInfos);
     }
 }
 
@@ -117,12 +130,12 @@ void CertificateReader::connectSignals(const WebEidUI* window)
 }
 
 void CertificateReader::emitCertificatesReady(
-    const std::vector<CardCertificateAndPinInfo>& certInfos)
+    const std::vector<EidCertificateAndPinInfo>& certAndPinInfos)
 {
-    if (certInfos.size() == 1) {
-        emit singleCertificateReady(origin, certInfos[0]);
+    if (certAndPinInfos.size() == 1) {
+        emit singleCertificateReady(origin, certAndPinInfos[0]);
     } else {
-        emit multipleCertificatesReady(origin, certInfos);
+        emit multipleCertificatesReady(origin, certAndPinInfos);
     }
 }
 

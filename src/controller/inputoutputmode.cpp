@@ -25,6 +25,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include <iostream>
+
 #ifdef Q_OS_WIN
 #include <stdio.h>
 #include <io.h>

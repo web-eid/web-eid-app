@@ -33,7 +33,7 @@ public:
 
     void connectSignals(const WebEidUI* window) override;
     QVariantMap onConfirm(WebEidUI* window,
-                          const CardCertificateAndPinInfo& cardCertAndPin) override;
+                          const EidCertificateAndPinInfo& certAndPinInfo) override;
 
 signals:
     void signingCertificateMismatch();
@@ -41,8 +41,8 @@ signals:
                          const qint8 retriesLeft);
 
 private:
-    void emitCertificatesReady(
-        const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) override;
+    void
+    emitCertificatesReady(const std::vector<EidCertificateAndPinInfo>& certAndPinInfos) override;
     void validateAndStoreDocHashAndHashAlgo(const QVariantMap& args);
 
     QByteArray docHash;

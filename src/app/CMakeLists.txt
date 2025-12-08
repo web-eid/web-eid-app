@@ -15,23 +15,17 @@ set_property(SOURCE web-eid.rc APPEND PROPERTY COMPILE_DEFINITIONS
 target_link_libraries(web-eid controller ui pcsc)
 
 if(WIN32)
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(PLATFORM x64)
-    else()
-        set(PLATFORM x86)
-    endif()
     if(OPENSSL_ROOT_DIR)
         set(SSL_PATH "${OPENSSL_ROOT_DIR}/bin")
     else()
         get_filename_component(SSL_PATH "${OPENSSL_INCLUDE_DIR}/../bin" ABSOLUTE)
     endif()
     set(WEBEID_PATH web-eid.exe)
-    set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.${PLATFORM})
+    set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.$ENV{PLATFORM})
     set(WIX_CMD wix.exe build -nologo
-        -arch ${PLATFORM}
+        -arch $ENV{PLATFORM}
         -ext WixToolset.UI.wixext
         -bv WixUIDialogBmp=${CMAKE_SOURCE_DIR}/install/dlgbmp.bmp
-        -d MSI_VERSION=${PROJECT_VERSION}
         -d ssl_path="${SSL_PATH}"
         -d qt_suffix="$<$<CONFIG:Debug>:d>"
         -d json=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
@@ -46,7 +40,7 @@ if(WIN32)
     add_custom_target(installer DEPENDS web-eid
         COMMAND ${WIX_CMD} -o "${BASE_FILE}.msi"
         #Build MSI with QT
-        COMMAND ${WIX_CMD} -d qt_path=${qtCore_install_prefix} -o "${BASE_FILE}.qt.msi"
+        COMMAND ${WIX_CMD} -d qt_path=${Qt6_DIR}/../../../bin -o "${BASE_FILE}.qt.msi"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
     add_custom_target(bundle DEPENDS installer
@@ -94,7 +88,7 @@ elseif(APPLE)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json COMPONENT chrome
         DESTINATION "/Library/Application Support/Google/Chrome/External Extensions")
     add_custom_target(macdeployqt DEPENDS web-eid
-        COMMAND ${qtCore_install_prefix}/macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
+        COMMAND Qt6::macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
     )
     add_custom_target(installer-native DEPENDS macdeployqt
         COMMAND rm -rf root_native
@@ -154,7 +148,7 @@ else()
     option(BUNDLE_XPI "Download and bundle the Firefox extension" OFF)
     include(GNUInstallDirs)
     if (BUNDLE_XPI)
-      file(DOWNLOAD ${FIREFOX_URL} ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi)
+        file(DOWNLOAD ${FIREFOX_URL} ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi)
     endif()
     set(WEBEID_PATH ${CMAKE_INSTALL_FULL_BINDIR}/web-eid)
     install(TARGETS web-eid DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -178,7 +172,7 @@ else()
     install(FILES ${CMAKE_SOURCE_DIR}/install/web-eid.desktop
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
     if (BUNDLE_XPI)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi
               DESTINATION ${CMAKE_INSTALL_DATADIR}/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384})
     endif()
     foreach(RES 16 32 128 256 512)

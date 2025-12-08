@@ -30,9 +30,9 @@ class CommandHandlerConfirmThread : public ControllerChildThread
 
 public:
     CommandHandlerConfirmThread(QObject* parent, CommandHandler& handler, WebEidUI* w,
-                                const CardCertificateAndPinInfo& cardCertAndPin) :
-        ControllerChildThread(parent), commandHandler(handler),
-        cmdType(commandHandler.commandType()), window(w), cardCertAndPinInfo(cardCertAndPin)
+                                const EidCertificateAndPinInfo& certAndPin) :
+        ControllerChildThread(handler.commandType(), parent), commandHandler(handler), window(w),
+        certAndPinInfo(certAndPin)
     {
     }
 
@@ -42,15 +42,12 @@ signals:
 private:
     void doRun() override
     {
-        const auto result = commandHandler.onConfirm(window, cardCertAndPinInfo);
-        cardCertAndPinInfo.cardInfo->eid().release();
+        const auto result = commandHandler.onConfirm(window, certAndPinInfo);
+        certAndPinInfo.eid->release();
         emit completed(result);
     }
 
-    const std::string& commandType() const override { return cmdType; }
-
     CommandHandler& commandHandler;
-    const std::string cmdType;
     WebEidUI* window;
-    CardCertificateAndPinInfo cardCertAndPinInfo;
+    EidCertificateAndPinInfo certAndPinInfo;
 };

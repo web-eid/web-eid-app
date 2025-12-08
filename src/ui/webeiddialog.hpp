@@ -48,6 +48,8 @@ public:
     explicit WebEidDialog(QWidget* parent = nullptr);
     ~WebEidDialog() final;
 
+    void forceClose() final;
+
     void showWaitingForCardPage(const CommandType commandType) final;
     QString getPin() final;
 
@@ -56,11 +58,11 @@ public:
 
     // slots
     void onSmartCardStatusUpdate(const RetriableError status) final;
-    void onMultipleCertificatesReady(
-        const QUrl& origin,
-        const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) final;
+    void
+    onMultipleCertificatesReady(const QUrl& origin,
+                                const std::vector<EidCertificateAndPinInfo>& certAndPinInfos) final;
     void onSingleCertificateReady(const QUrl& origin,
-                                  const CardCertificateAndPinInfo& cardCertAndPinInfo) final;
+                                  const EidCertificateAndPinInfo& certAndPinInfo) final;
 
     void onRetry(const RetriableError error) final;
 
@@ -90,21 +92,23 @@ private:
         }
     }
 
-    void connectOkToCachePinAndEmitSelectedCertificate(const CardCertificateAndPinInfo& certAndPin);
+    void
+    connectOkToCachePinAndEmitSelectedCertificate(const EidCertificateAndPinInfo& certAndPinInfo);
 
     template <typename Text>
     void onRetryImpl(Text text);
     template <typename Text>
     void setTrText(QWidget* label, Text text) const;
     void
-    setupCertificateAndPinInfo(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos);
-    void setupPinPrompt(PinInfo pinInfo);
-    void setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin);
-    void setupPinInput(const CardCertificateAndPinInfo& certAndPin);
+    setupCertificateAndPinInfo(const std::vector<EidCertificateAndPinInfo>& cardCertAndPinInfos);
+    void setupPinPrompt(PinInfo pinInfo, bool cardActive);
+    void setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinInfo& certAndPinInfo);
+    void setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo);
     template <typename Func>
     void setupOK(Func func, const char* text = {}, bool enabled = false);
     void displayPinBlockedError();
-    void displayFatalError(std::function<QString()> message);
+    template <typename Text>
+    void displayFatalError(Text message);
 
     void showPinInputWarning(bool show);
     void resizeHeight();

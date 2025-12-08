@@ -13,24 +13,21 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
     container: ubuntu:${{matrix.container}}
     strategy:
       matrix:
-        container: ['20.04', '22.04', '24.04']
+        container: ['22.04', '24.04', '25.04', '25.10']
+        arch: ['amd64', 'arm64']
 
     steps:
       - name: Install dependencies
-        if: matrix.container == '20.04'
-        run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper lintian pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libqt5svg5-dev qttools5-dev-tools qttools5-dev
-
-      - name: Install dependencies
-        if: matrix.container != '20.04'
-        run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper lintian pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools libqt6core5compat6-dev
+        run: apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper lintian pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          persist-credentials: false
 
       - name: Configure CMake
         run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build -S .
@@ -44,7 +41,7 @@ jobs:
       - name: Test package
         run: lintian build/*.deb
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
-          name: web-eid-app-ubuntu-build-ubuntu${{matrix.container}}-${{github.run_number}}
+          name: web-eid-app-ubuntu-build-ubuntu${{matrix.container}}-${{ matrix.arch }}-${{github.run_number}}
           path: build/*.*deb

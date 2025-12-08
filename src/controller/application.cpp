@@ -185,12 +185,12 @@ CommandWithArgumentsPtr Application::parseArgs()
 void Application::registerMetatypes()
 {
     qRegisterMetaType<electronic_id::AutoSelectFailed::Reason>();
-    qRegisterMetaType<electronic_id::CardInfo::ptr>();
-    qRegisterMetaType<std::vector<electronic_id::CardInfo::ptr>>();
+    qRegisterMetaType<electronic_id::ElectronicID::ptr>();
+    qRegisterMetaType<std::vector<electronic_id::ElectronicID::ptr>>();
     qRegisterMetaType<electronic_id::VerifyPinFailed::Status>();
 
-    qRegisterMetaType<CardCertificateAndPinInfo>();
-    qRegisterMetaType<std::vector<CardCertificateAndPinInfo>>();
+    qRegisterMetaType<EidCertificateAndPinInfo>();
+    qRegisterMetaType<std::vector<EidCertificateAndPinInfo>>();
 
     qRegisterMetaType<RetriableError>();
 }

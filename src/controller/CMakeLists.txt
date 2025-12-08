@@ -49,10 +49,10 @@ set_property(SOURCE application.cpp APPEND PROPERTY COMPILE_DEFINITIONS PROJECT_
 target_include_directories(controller PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(controller
     electronic-id
-    Qt${QT_VERSION_MAJOR}::Network
-    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt6::Network
+    Qt6::Widgets
 )
 
 # %{function}:%{file}:%{line} works in Qt log message pattern only if code
 # is compiled in debug mode or if QT_MESSAGELOGCONTEXT is set in compiler flags.
-target_compile_definitions(controller PUBLIC QT_MESSAGELOGCONTEXT)
+target_compile_definitions(controller PUBLIC QT_MESSAGELOGCONTEXT QT_WARN_DEPRECATED_UP_TO=060200)

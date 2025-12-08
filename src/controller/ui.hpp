@@ -52,22 +52,25 @@ public:
     virtual QString getPin() = 0;
 
 signals:
-    void waitingForPinPad(const CardCertificateAndPinInfo& cardCertAndPinInfo);
-    void accepted(const CardCertificateAndPinInfo& cardCertAndPinInfo);
+    void waitingForPinPad(const EidCertificateAndPinInfo& certAndPinInfo);
+    void accepted(const EidCertificateAndPinInfo& certAndPinInfo);
     void retry();
     void failure(const QString& error);
 
 public: // slots
     virtual void quit() = 0;
     virtual void onSmartCardStatusUpdate(const RetriableError status) = 0;
-    virtual void onMultipleCertificatesReady(
-        const QUrl& origin, const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos) = 0;
+    virtual void
+    onMultipleCertificatesReady(const QUrl& origin,
+                                const std::vector<EidCertificateAndPinInfo>& certAndPinInfos) = 0;
     virtual void onSingleCertificateReady(const QUrl& origin,
-                                          const CardCertificateAndPinInfo& cardCertAndPinInfo) = 0;
+                                          const EidCertificateAndPinInfo& certAndPinInfo) = 0;
 
     virtual void onRetry(const RetriableError error) = 0;
 
     virtual void onSigningCertificateMismatch() = 0;
     virtual void onVerifyPinFailed(const electronic_id::VerifyPinFailed::Status status,
                                    const qint8 retriesLeft) = 0;
+
+    virtual void forceClose() { close(); }
 };

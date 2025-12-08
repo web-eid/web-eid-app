@@ -25,8 +25,7 @@
 
 WebEidUI* WebEidUI::createAndShowDialog(const CommandType)
 {
-    static MockUI instance;
-    return &instance;
+    return new MockUI;
 }
 
 void WebEidUI::showAboutPage() {}

@@ -2,6 +2,17 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>Application</name>
+    <message>
+        <source>&amp;File</source>
+        <translation>&amp;File</translation>
+    </message>
+    <message>
+        <source>&amp;About</source>
+        <translation>&amp;About</translation>
+    </message>
+</context>
+<context>
     <name>CertificateButton</name>
     <message>
         <source>%1 Issuer: %2 Valid: %3 to %4</source>
@@ -156,6 +167,10 @@
         <translation>Operation failed</translation>
     </message>
     <message>
+        <source>PIN entry disabled</source>
+        <translation>PIN entry disabled</translation>
+    </message>
+    <message>
         <source>Card driver error. Please try again.</source>
         <translation>Card driver error. Please try again.</translation>
     </message>
@@ -190,6 +205,10 @@
     <message>
         <source>Try again</source>
         <translation>Try again</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
+        <translation>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Cancel</source>

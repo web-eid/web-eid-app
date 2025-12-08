@@ -6,55 +6,63 @@ env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
   CMAKE_BUILD_PARALLEL_LEVEL: 4
+  VCPKG_INSTALLED_DIR: ${{ github.workspace }}/build/vcpkg_installed
+  # Use libelectronic-id vcpkg manifest for dependencies
+  VCPKG_MANIFEST_DIR: ./lib/libelectronic-id/.github
 
 jobs:
   build:
-    runs-on: ${{ matrix.image }}
+    runs-on: windows-2025
     strategy:
       matrix:
-        vcver: [142, 143]
-        include:
-        - vcver: 142
-          image: windows-2019
-        - vcver: 143
-          image: windows-2022
+        arch: [x64, arm64]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
+          persist-credentials: false
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/vcpkg_cache
+          key: vcpkg-${{ matrix.arch }}-${{ hashFiles(format('{0}/vcpkg.json', env.VCPKG_MANIFEST_DIR)) }}
 
       - name: Prepare vcpkg and libraries
-        uses: lukka/run-vcpkg@v7
+        uses: lukka/run-vcpkg@v11
         with:
-          vcpkgArguments: gtest openssl
-          vcpkgTriplet: x64-windows
-          vcpkgGitCommitId: 1f619be01b436b796dab797dd1e1721c5676f8ac
+          vcpkgJsonGlob: ${{ env.VCPKG_MANIFEST_DIR }}/vcpkg.json
+          runVcpkgInstall: true
+        env:
+          VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
+          VCPKG_DEFAULT_TRIPLET: ${{ matrix.arch }}-windows
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.7.2
-          arch: win64_msvc2019_64
+          version: 6.9.3
+          arch: ${{ matrix.arch == 'arm64' && 'win64_msvc2022_arm64_cross_compiled' || 'win64_msvc2022_64' }}
 
       - name: Setup MS Visual C++ dev env
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: x64
+          arch: ${{ matrix.arch == 'arm64' && 'amd64_arm64' || 'amd64' }}
 
       - name: Install WiX
         run: |
-          dotnet tool install --global wix --version 5.0.1
-          wix extension -g add WixToolset.UI.wixext/5.0.1
-          wix extension -g add WixToolset.Util.wixext/5.0.1
-          wix extension -g add WixToolset.BootstrapperApplications.wixext/5.0.1
+          dotnet tool install --global wix --version 6.0.2
+          wix extension -g add WixToolset.UI.wixext/6.0.2
+          wix extension -g add WixToolset.Util.wixext/6.0.2
+          wix extension -g add WixToolset.BootstrapperApplications.wixext/6.0.2
 
       - name: Configure
         run: |
           cmake "-GNinja" -S . -B build `
             "-DCMAKE_TOOLCHAIN_FILE=${env:RUNVCPKG_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
-            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}"
+            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" `
+            "-DVCPKG_MANIFEST_DIR=${{ env.VCPKG_MANIFEST_DIR }}"
 
       - name: Build
         run: |
@@ -63,12 +71,13 @@ jobs:
           cmake --build build --config ${env:BUILD_TYPE} --target bundle
 
       - name: Test
+        if: ${{ matrix.arch == 'x64' }}
         run: ctest -V -C ${env:BUILD_TYPE} --test-dir build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
-          name: web-eid-app-windows-build-VC${{matrix.vcver}}-${{github.run_number}}
+          name: web-eid-app-windows-build-${{matrix.arch}}-${{github.run_number}}
           path: |
             build/src/app/*.msi
             build/src/app/*.exe

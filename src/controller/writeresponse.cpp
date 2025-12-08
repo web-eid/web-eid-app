@@ -27,6 +27,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include <iostream>
+
 namespace
 {
 

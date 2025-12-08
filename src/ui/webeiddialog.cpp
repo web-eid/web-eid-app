@@ -70,6 +70,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     // close() deletes the dialog automatically if the Qt::WA_DeleteOnClose flag is set.
     setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
+    ui->lockedWarning->hide();
     if (Application::isDarkTheme()) {
         QFile f(QStringLiteral(":dark.qss"));
         if (f.open(QFile::ReadOnly | QFile::Text)) {
@@ -119,7 +120,10 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
         menu->setObjectName("langMenu");
         auto* layout = new QGridLayout(menu);
         layout->setContentsMargins(1, 1, 1, 1);
-        layout->setSpacing(1);
+        layout->setHorizontalSpacing(1);
+#ifndef Q_OS_DARWIN
+        layout->setVerticalSpacing(1);
+#endif
         layout->setSizeConstraint(QLayout::SetFixedSize);
         auto* langGroup = new QButtonGroup(menu);
         langGroup->setExclusive(true);
@@ -164,6 +168,11 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     connect(ui->selectionGroup, qOverload<QAbstractButton*>(&QButtonGroup::buttonClicked), this,
             [this] {
                 ui->okButton->setEnabled(true);
+                if (auto* button =
+                        qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
+                    ui->lockedWarning->setHidden(button->certificateInfo().cardActive);
+                    ui->okButton->setEnabled(currentCommand == CommandType::AUTHENTICATE || button->certificateInfo().cardActive);
+                }
                 ui->okButton->setFocus();
             });
     connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::reject);
@@ -233,6 +242,13 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 WebEidDialog::~WebEidDialog()
 {
     delete ui;
+}
+
+void WebEidDialog::forceClose()
+{
+    ui->pinTimeoutTimer->stop();
+    ui->pinEntryTimeoutProgressBar->hide();
+    close();
 }
 
 void WebEidDialog::showAboutPage()
@@ -318,10 +334,10 @@ void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
  * authenticate continues to onSingleCertificateReady().
  */
 void WebEidDialog::onMultipleCertificatesReady(
-    const QUrl& origin, const std::vector<CardCertificateAndPinInfo>& certificateAndPinInfos)
+    const QUrl& origin, const std::vector<EidCertificateAndPinInfo>& certAndPinInfos)
 {
     ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
-    setupCertificateAndPinInfo(certificateAndPinInfos);
+    setupCertificateAndPinInfo(certAndPinInfos);
 
     switch (currentCommand) {
     case CommandType::GET_SIGNING_CERTIFICATE:
@@ -338,12 +354,12 @@ void WebEidDialog::onMultipleCertificatesReady(
         break;
     case CommandType::AUTHENTICATE:
         ui->selectAnotherCertificate->disconnect();
-        ui->selectAnotherCertificate->setVisible(certificateAndPinInfos.size() > 1);
+        ui->selectAnotherCertificate->setVisible(certAndPinInfos.size() > 1);
         connect(ui->selectAnotherCertificate, &QPushButton::clicked, this,
-                [this, origin, certificateAndPinInfos] {
+                [this, origin, certAndPinInfos] {
                     // We set pinInput to empty text instead of clear() to also reset undo buffer
                     ui->pinInput->setText({});
-                    onMultipleCertificatesReady(origin, certificateAndPinInfos);
+                    onMultipleCertificatesReady(origin, certAndPinInfos);
                 });
         setupOK([this, origin] {
             ui->okButton->setDisabled(true);
@@ -372,24 +388,24 @@ void WebEidDialog::onMultipleCertificatesReady(
  * All of the commands exit the flow on OK with the selected certificate from here.
  */
 void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
-                                            const CardCertificateAndPinInfo& certAndPin)
+                                            const EidCertificateAndPinInfo& certAndPinInfo)
 {
     ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
     ui->pinInputOriginLabel->setText(ui->selectCertificateOriginLabel->text());
-    const bool useExternalPinDialog = certAndPin.cardInfo->eid().providesExternalPinDialog();
+    const bool useExternalPinDialog = certAndPinInfo.eid->providesExternalPinDialog();
 
     switch (currentCommand) {
     case CommandType::GET_SIGNING_CERTIFICATE:
-        setupCertificateAndPinInfo({certAndPin});
-        setupOK([this, certAndPin] {
+        setupCertificateAndPinInfo({certAndPinInfo});
+        setupOK([this, certAndPinInfo] {
             ui->okButton->setDisabled(true);
-            emit accepted(certAndPin);
+            emit accepted(certAndPinInfo);
         });
         ui->selectionGroup->buttons().at(0)->click();
         ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
         return;
     case CommandType::AUTHENTICATE:
-        ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
+        ui->pinInputCertificateInfo->setCertificateInfo(certAndPinInfo);
         setTrText(ui->pinInputPageTitleLabel, QT_TR_NOOP("Authenticate"));
         setTrText(ui->pinInputDescriptionLabel,
                   QT_TR_NOOP("By authenticating, I agree to the transfer of my name and personal "
@@ -402,7 +418,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
                 : QT_TR_NOOP("Enter PIN1 for authentication"));
         break;
     case CommandType::SIGN:
-        ui->pinInputCertificateInfo->setCertificateInfo(certAndPin);
+        ui->pinInputCertificateInfo->setCertificateInfo(certAndPinInfo);
         setTrText(ui->pinInputPageTitleLabel, QT_TR_NOOP("Signing"));
         setTrText(
             ui->pinInputDescriptionLabel,
@@ -419,17 +435,17 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
         return;
     }
 
-    if (certAndPin.pinInfo.pinIsBlocked) {
+    if (certAndPinInfo.pinInfo.pinIsBlocked()) {
         displayPinBlockedError();
-    } else if (certAndPin.certInfo.isExpired || certAndPin.certInfo.notEffective) {
+    } else if (certAndPinInfo.certInfo.isExpired || certAndPinInfo.certInfo.notEffective) {
         ui->pinTitleLabel->hide();
     } else if (useExternalPinDialog) {
-        connectOkToCachePinAndEmitSelectedCertificate(certAndPin);
+        connectOkToCachePinAndEmitSelectedCertificate(certAndPinInfo);
         ui->okButton->setEnabled(true);
-    } else if (certAndPin.pinInfo.readerHasPinPad) {
-        setupPinPadProgressBarAndEmitWait(certAndPin);
+    } else if (certAndPinInfo.pinInfo.readerHasPinPad) {
+        setupPinPadProgressBarAndEmitWait(certAndPinInfo);
     } else {
-        setupPinInput(certAndPin);
+        setupPinInput(certAndPinInfo);
     }
 
     ui->pageStack->setCurrentIndex(int(Page::PIN_INPUT));
@@ -478,7 +494,7 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
         break;
     case Status::UNKNOWN_ERROR:
         message = [] { return tr("Technical error"); };
-        displayFatalError(message);
+        displayFatalError(std::move(message));
         return;
     }
 
@@ -518,7 +534,7 @@ bool WebEidDialog::event(QEvent* event)
         }
         break;
     case QEvent::Resize:
-        ui->langButton->move(width() - ui->langButton->width() - 20, 5);
+        ui->langButton->move(width() - ui->langButton->width() - 20, ui->pageStack->pos().y() - 20);
         break;
     default:
         break;
@@ -552,7 +568,7 @@ void WebEidDialog::setTrText(QWidget* label, Text text) const
 }
 
 void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
-    const CardCertificateAndPinInfo& certAndPin)
+    const EidCertificateAndPinInfo& certAndPin)
 {
     setupOK([this, certAndPin] {
         ui->pinInput->hide();
@@ -578,10 +594,10 @@ void WebEidDialog::connectOkToCachePinAndEmitSelectedCertificate(
 }
 
 void WebEidDialog::setupCertificateAndPinInfo(
-    const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos)
+    const std::vector<EidCertificateAndPinInfo>& cardCertAndPinInfos)
 {
     qDeleteAll(ui->selectCertificatePage->findChildren<CertificateButton*>());
-    for (const CardCertificateAndPinInfo& certAndPin : cardCertAndPinInfos) {
+    for (const EidCertificateAndPinInfo& certAndPin : cardCertAndPinInfos) {
         QWidget* previous = ui->selectCertificateOriginLabel;
         if (!ui->selectionGroup->buttons().isEmpty()) {
             previous = ui->selectionGroup->buttons().last();
@@ -595,13 +611,14 @@ void WebEidDialog::setupCertificateAndPinInfo(
     }
 }
 
-void WebEidDialog::setupPinPrompt(PinInfo pinInfo)
+void WebEidDialog::setupPinPrompt(PinInfo pinInfo, bool cardActive)
 {
-    ui->okButton->setHidden(pinInfo.readerHasPinPad);
-    ui->cancelButton->setHidden(pinInfo.readerHasPinPad);
-    ui->pinInput->setHidden(pinInfo.readerHasPinPad);
-    ui->pinTimeRemaining->setVisible(pinInfo.readerHasPinPad);
-    ui->pinEntryTimeoutProgressBar->setVisible(pinInfo.readerHasPinPad);
+    ui->okButton->setHidden(pinInfo.readerHasPinPad || !cardActive);
+    ui->cancelButton->setHidden(pinInfo.readerHasPinPad && cardActive);
+    ui->pinTitleLabel->setVisible(cardActive);
+    ui->pinInput->setHidden(pinInfo.readerHasPinPad || !cardActive);
+    ui->pinTimeRemaining->setVisible(pinInfo.readerHasPinPad && cardActive);
+    ui->pinEntryTimeoutProgressBar->setVisible(pinInfo.readerHasPinPad && cardActive);
     bool showPinError = pinInfo.pinRetriesCount.second != -1
         && pinInfo.pinRetriesCount.first != pinInfo.pinRetriesCount.second;
     ui->pinErrorLabel->setVisible(showPinError);
@@ -614,9 +631,14 @@ void WebEidDialog::setupPinPrompt(PinInfo pinInfo)
     }
 }
 
-void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPinInfo& certAndPin)
+void WebEidDialog::setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinInfo& certAndPin)
 {
-    setupPinPrompt(certAndPin.pinInfo);
+    ui->lockedWarning->setHidden(certAndPin.cardActive);
+    bool cardActive = currentCommand == CommandType::AUTHENTICATE || certAndPin.cardActive;
+    setupPinPrompt(certAndPin.pinInfo, cardActive);
+    if (!cardActive) {
+        return;
+    }
     hide();
     setWindowFlag(Qt::WindowCloseButtonHint, false);
     show();
@@ -641,9 +663,10 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const CardCertificateAndPin
     emit waitingForPinPad(certAndPin);
 }
 
-void WebEidDialog::setupPinInput(const CardCertificateAndPinInfo& certAndPin)
+void WebEidDialog::setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo)
 {
-    setupPinPrompt(certAndPin.pinInfo);
+    ui->lockedWarning->setHidden(certAndPinInfo.cardActive);
+    setupPinPrompt(certAndPinInfo.pinInfo, currentCommand == CommandType::AUTHENTICATE || certAndPinInfo.cardActive);
     // The allowed character ranges are from the SafeNet eToken guide:
     // 1. English uppercase letters (ASCII 0x41...0x5A).
     // 2. English lowercase letters (ASCII 0x61...0x7A).
@@ -652,16 +675,16 @@ void WebEidDialog::setupPinInput(const CardCertificateAndPinInfo& certAndPin)
     //    (ASCII 0x20...0x2F, space../ + 0x3A...0x40, :..@ + 0x5B...0x60, [..` + 0x7B...0x7F, {..~).
     // 5. We additionally allow uppercase and lowercase Unicode letters.
     const auto& regexpWithOrWithoutLetters =
-        certAndPin.cardInfo->eid().allowsUsingLettersAndSpecialCharactersInPin()
+        certAndPinInfo.eid->allowsUsingLettersAndSpecialCharactersInPin()
         ? QStringLiteral("[0-9 -/:-@[-`{-~\\p{L}]{%1,%2}")
         : QStringLiteral("[0-9]{%1,%2}");
     const QRegularExpression numericMinMaxRegexp(
-        regexpWithOrWithoutLetters.arg(certAndPin.pinInfo.pinMinMaxLength.first)
-            .arg(certAndPin.pinInfo.pinMinMaxLength.second));
+        regexpWithOrWithoutLetters.arg(certAndPinInfo.pinInfo.pinMinMaxLength.first)
+            .arg(certAndPinInfo.pinInfo.pinMinMaxLength.second));
     ui->pinInputValidator->setRegularExpression(numericMinMaxRegexp);
-    ui->pinInput->setMaxLength(int(certAndPin.pinInfo.pinMinMaxLength.second));
+    ui->pinInput->setMaxLength(int(certAndPinInfo.pinInfo.pinMinMaxLength.second));
     ui->pinInput->setFocus();
-    connectOkToCachePinAndEmitSelectedCertificate(certAndPin);
+    connectOkToCachePinAndEmitSelectedCertificate(certAndPinInfo);
 }
 
 template <typename Func>
@@ -682,14 +705,15 @@ void WebEidDialog::displayPinBlockedError()
     displayFatalError([] { return tr("PIN is locked. Unblock and try again."); });
 }
 
-void WebEidDialog::displayFatalError(std::function<QString()> message)
+template <typename Text>
+void WebEidDialog::displayFatalError(Text message)
 {
     ui->pinTitleLabel->hide();
     ui->pinInput->hide();
     ui->pinTimeoutTimer->stop();
     ui->pinTimeRemaining->hide();
     ui->pinEntryTimeoutProgressBar->hide();
-    setTrText(ui->pinErrorLabel, message);
+    setTrText(ui->pinErrorLabel, std::forward<Text>(message));
     ui->pinErrorLabel->show();
     ui->okButton->hide();
     ui->cancelButton->setEnabled(true);

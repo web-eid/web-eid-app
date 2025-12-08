@@ -69,14 +69,14 @@ Sign::Sign(const CommandWithArguments& cmd) : CertificateReader(cmd)
     validateAndStoreOrigin(arguments);
 }
 
-void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& cardCertAndPinInfos)
+void Sign::emitCertificatesReady(const std::vector<EidCertificateAndPinInfo>& certAndPinInfos)
 {
-    const CardCertificateAndPinInfo* cardWithCertificateFromArgs = nullptr;
+    const EidCertificateAndPinInfo* cardWithCertificateFromArgs = nullptr;
 
-    for (const auto& cardCertAndPin : cardCertAndPinInfos) {
+    for (const auto& certAndPinInfo : certAndPinInfos) {
         // Check if the certificate read from the eID matches the certificate provided as argument.
-        if (cardCertAndPin.certificate.toDer() == userEidCertificateFromArgs) {
-            cardWithCertificateFromArgs = &cardCertAndPin;
+        if (certAndPinInfo.certificate.toDer() == userEidCertificateFromArgs) {
+            cardWithCertificateFromArgs = &certAndPinInfo;
         }
     }
 
@@ -86,24 +86,27 @@ void Sign::emitCertificatesReady(const std::vector<CardCertificateAndPinInfo>& c
         return;
     }
 
-    if (!cardWithCertificateFromArgs->cardInfo->eid().isSupportedSigningHashAlgorithm(hashAlgo)) {
+    if (!cardWithCertificateFromArgs->eid->isSupportedSigningHashAlgorithm(hashAlgo)) {
         THROW(ArgumentFatalError,
-              "Electronic ID " + cardWithCertificateFromArgs->cardInfo->eid().name()
+              "Electronic ID " + cardWithCertificateFromArgs->eid->name()
                   + " does not support hash algorithm " + std::string(hashAlgo));
     }
 
     emit singleCertificateReady(origin, *cardWithCertificateFromArgs);
 }
 
-QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& cardCertAndPin)
+QVariantMap Sign::onConfirm(WebEidUI* window, const EidCertificateAndPinInfo& certAndPinInfo)
 {
     try {
         pcsc_cpp::byte_vector pin;
-        pin.reserve(5 + 16); // Avoid realloc: apdu + pin padding
-        getPin(pin, cardCertAndPin.cardInfo->eid(), window);
-        const auto signature = signHash(cardCertAndPin.cardInfo->eid(), std::move(pin), docHash, hashAlgo);
-        return {{QStringLiteral("signature"), signature.first},
-                {QStringLiteral("signatureAlgorithm"), signature.second}};
+        // Reserve space for APDU overhead (5 bytes) + PIN padding (16 bytes) to prevent PIN memory
+        // reallocation. The 16-byte limit comes from the max PIN length of 12 bytes across all card
+        // implementations in lib/libelectronic-id/src/electronic-ids/pcsc/.
+        pin.reserve(5 + 16);
+        getPin(pin, *certAndPinInfo.eid, window);
+        auto signature = signHash(*certAndPinInfo.eid, std::move(pin), docHash, hashAlgo);
+        return {{QStringLiteral("signature"), std::move(signature.first)},
+                {QStringLiteral("signatureAlgorithm"), std::move(signature.second)}};
 
     } catch (const VerifyPinFailed& failure) {
         switch (failure.status()) {

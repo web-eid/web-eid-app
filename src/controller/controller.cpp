@@ -28,10 +28,10 @@
 #include "threads/waitforcardthread.hpp"
 
 #include "utils/utils.hpp"
+
+#include "application.hpp"
 #include "inputoutputmode.hpp"
 #include "writeresponse.hpp"
-
-#include <QApplication>
 
 using namespace pcsc_cpp;
 using namespace electronic_id;
@@ -44,19 +44,11 @@ const QString RESP_USER_CANCEL = QStringLiteral("ERR_WEBEID_USER_CANCELLED");
 
 QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessage)
 {
-    const auto errorBody = QVariantMap {
-        {QStringLiteral("code"), errorCode},
-        {QStringLiteral("message"), errorMessage},
-    };
-    return {{QStringLiteral("error"), errorBody}};
-}
-
-void interruptThread(QThread* thread)
-{
-    qDebug() << "Interrupting thread" << uintptr_t(thread);
-    thread->disconnect();
-    thread->requestInterruption();
-    ControllerChildThread::waitForControllerNotify.wakeAll();
+    return {{QStringLiteral("error"),
+             QVariantMap {
+                 {QStringLiteral("code"), errorCode},
+                 {QStringLiteral("message"), errorMessage},
+             }}};
 }
 
 } // namespace
@@ -67,7 +59,8 @@ void Controller::run()
     const bool isInCommandLineMode = bool(command);
     isInStdinMode = !isInCommandLineMode;
 
-    qInfo() << qApp->applicationName() << "app" << qApp->applicationVersion() << "running in"
+    qInfo() << QCoreApplication::applicationName() << "app"
+            << QCoreApplication::applicationVersion() << "running in"
             << (isInStdinMode ? "stdin/stdout" : "command-line") << "mode";
 
     try {
@@ -75,9 +68,10 @@ void Controller::run()
         if (isInStdinMode) {
             // In stdin/stdout mode we first output the version as required by the WebExtension
             // and then wait for the actual command.
-            writeResponseToStdOut(isInStdinMode,
-                                  {{QStringLiteral("version"), qApp->applicationVersion()}},
-                                  "get-version");
+            writeResponseToStdOut(
+                isInStdinMode,
+                {{QStringLiteral("version"), QCoreApplication::applicationVersion()}},
+                "get-version");
 
             command = readCommandFromStdin();
         }
@@ -111,69 +105,47 @@ void Controller::startCommandExecution()
     REQUIRE_NON_NULL(commandHandler)
 
     // Reader monitor thread setup.
-    WaitForCardThread* waitForCardThread = new WaitForCardThread(this);
+    auto* waitForCardThread = new WaitForCardThread(this);
+    connect(this, &Controller::stopCardEventMonitorThread, waitForCardThread,
+            &WaitForCardThread::requestInterruption);
+    connect(waitForCardThread, &ControllerChildThread::failure, this,
+            &Controller::onCriticalFailure);
     connect(waitForCardThread, &WaitForCardThread::statusUpdate, this, &Controller::statusUpdate);
     connect(waitForCardThread, &WaitForCardThread::cardsAvailable, this,
             &Controller::onCardsAvailable);
-    saveChildThreadPtrAndConnectFailureFinish(waitForCardThread);
 
     // UI setup.
-    window = WebEidUI::createAndShowDialog(commandHandler->commandType());
-    connect(this, &Controller::statusUpdate, window, &WebEidUI::onSmartCardStatusUpdate);
-    connectOkCancelWaitingForPinPad();
+    createWindow();
 
     // Finally, start the thread to wait for card insertion after everything is wired up.
     waitForCardThread->start();
 }
 
-void Controller::saveChildThreadPtrAndConnectFailureFinish(ControllerChildThread* childThread)
+void Controller::createWindow()
 {
-    REQUIRE_NON_NULL(childThread)
-    // Save the thread pointer in child thread tracking map to request interruption and wait for
-    // it to quit in waitForChildThreads().
-    childThreads[uintptr_t(childThread)] = childThread;
-
-    connect(childThread, &ControllerChildThread::failure, this, &Controller::onCriticalFailure);
-
-    // When the thread is finished, remove the pointer from the tracking map and call deleteLater()
-    // on it to free the thread object. Although the thread objects are freed through the Qt object
-    // tree ownership system anyway, it is better to delete them immediately when they finish.
-    connect(childThread, &ControllerChildThread::finished, this, [this, childThread]() {
-        QScopedPointer<ControllerChildThread, QScopedPointerDeleteLater> deleteLater {childThread};
-
-        const auto threadPtrAddress = uintptr_t(childThread);
-        if (childThreads.count(threadPtrAddress) && childThreads[threadPtrAddress]) {
-            childThreads[threadPtrAddress] = nullptr;
-            childThread->wait();
-            qDebug() << "Thread" << threadPtrAddress << "finished";
-        } else {
-            qWarning() << "Controller child thread" << childThread
-                       << "is missing or null in finish slot";
-        }
-    });
-}
-
-void Controller::connectOkCancelWaitingForPinPad()
-{
-    REQUIRE_NON_NULL(window)
-
+    window = WebEidUI::createAndShowDialog(commandHandler->commandType());
+    connect(this, &Controller::statusUpdate, window, &WebEidUI::onSmartCardStatusUpdate);
+    connect(this, &Controller::retry, window, &WebEidUI::onRetry);
+    connect(window, &WebEidUI::retry, this, &Controller::onRetry);
     connect(window, &WebEidUI::accepted, this, &Controller::onDialogOK);
     connect(window, &WebEidUI::rejected, this, &Controller::onDialogCancel);
     connect(window, &WebEidUI::failure, this, &Controller::onCriticalFailure);
     connect(window, &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
+    connect(window, &WebEidUI::destroyed, this, [this] { window = nullptr; });
 }
 
-void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr>& availableCards)
+void Controller::onCardsAvailable(
+    const std::vector<electronic_id::ElectronicID::ptr>& availableEids)
 {
     try {
         REQUIRE_NON_NULL(commandHandler)
         REQUIRE_NON_NULL(window)
-        REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableCards)
+        REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableEids)
 
-        for (const auto& card : availableCards) {
+        for (const auto& card : availableEids) {
             const auto protocol =
-                card->eid().smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
-            qInfo() << "Card" << card->eid().name() << "in reader" << card->reader().name
+                card->smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
+            qInfo() << "Card" << card->name() << "in reader" << card->smartcard().readerName()
                     << "using protocol" << protocol;
         }
 
@@ -181,19 +153,18 @@ void Controller::onCardsAvailable(const std::vector<electronic_id::CardInfo::ptr
 
         commandHandler->connectSignals(window);
 
-        runCommandHandler(availableCards);
+        runCommandHandler(availableEids);
 
     } catch (const std::exception& error) {
         onCriticalFailure(error.what());
     }
 }
 
-void Controller::runCommandHandler(const std::vector<electronic_id::CardInfo::ptr>& availableCards)
+void Controller::runCommandHandler(const std::vector<ElectronicID::ptr>& availableEids)
 {
     try {
-        CommandHandlerRunThread* commandHandlerRunThread =
-            new CommandHandlerRunThread(this, *commandHandler, availableCards);
-        saveChildThreadPtrAndConnectFailureFinish(commandHandlerRunThread);
+        auto* commandHandlerRunThread =
+            new CommandHandlerRunThread(this, *commandHandler, availableEids);
         connectRetry(commandHandlerRunThread);
 
         // When the command handler run thread retrieves certificates successfully, call
@@ -212,51 +183,34 @@ void Controller::runCommandHandler(const std::vector<electronic_id::CardInfo::pt
 
 void Controller::onCertificatesLoaded()
 {
-    CardEventMonitorThread* cardEventMonitorThread =
-        new CardEventMonitorThread(this, std::string(commandType()));
-    saveChildThreadPtrAndConnectFailureFinish(cardEventMonitorThread);
-    cardEventMonitorThreadKey = uintptr_t(cardEventMonitorThread);
+    auto* cardEventMonitorThread = new CardEventMonitorThread(this, commandType());
+    connect(this, &Controller::stopCardEventMonitorThread, cardEventMonitorThread,
+            &CardEventMonitorThread::requestInterruption);
+    connect(cardEventMonitorThread, &ControllerChildThread::failure, this,
+            &Controller::onCriticalFailure);
     connect(cardEventMonitorThread, &CardEventMonitorThread::cardEvent, this, &Controller::onRetry);
     cardEventMonitorThread->start();
-}
-
-void Controller::stopCardEventMonitorThread()
-{
-    if (cardEventMonitorThreadKey) {
-        try {
-            auto cardEventMonitorThread = childThreads.at(cardEventMonitorThreadKey);
-            cardEventMonitorThreadKey = 0;
-            if (cardEventMonitorThread) {
-                interruptThread(cardEventMonitorThread);
-            }
-        } catch (const std::out_of_range&) {
-            qWarning() << "Card event monitor thread" << cardEventMonitorThreadKey
-                       << "is missing from childThreads map in stopCardEventMonitorThread()";
-            cardEventMonitorThreadKey = 0;
-        }
-    }
 }
 
 void Controller::disposeUI()
 {
     if (window) {
         window->disconnect();
-        // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
-        window->close();
+        window->forceClose();
+        window->deleteLater();
         window = nullptr;
     }
 }
 
-void Controller::onConfirmCommandHandler(const CardCertificateAndPinInfo& cardCertAndPinInfo)
+void Controller::onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo)
 {
-    stopCardEventMonitorThread();
+    emit stopCardEventMonitorThread();
 
     try {
-        CommandHandlerConfirmThread* commandHandlerConfirmThread =
-            new CommandHandlerConfirmThread(this, *commandHandler, window, cardCertAndPinInfo);
+        auto* commandHandlerConfirmThread =
+            new CommandHandlerConfirmThread(this, *commandHandler, window, certAndPinInfo);
         connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
                 &Controller::onCommandHandlerConfirmCompleted);
-        saveChildThreadPtrAndConnectFailureFinish(commandHandlerConfirmThread);
         connectRetry(commandHandlerConfirmThread);
 
         commandHandlerConfirmThread->start();
@@ -307,84 +261,66 @@ void Controller::onRetry()
 void Controller::connectRetry(const ControllerChildThread* childThread)
 {
     REQUIRE_NON_NULL(childThread)
-    REQUIRE_NON_NULL(window)
-
-    disconnect(window, &WebEidUI::retry, nullptr, nullptr);
-
-    connect(childThread, &ControllerChildThread::retry, window, &WebEidUI::onRetry);
+    connect(childThread, &ControllerChildThread::failure, this, &Controller::onCriticalFailure);
+    connect(childThread, &ControllerChildThread::retry, this, &Controller::retry);
     // This connection handles cancel events from PIN pad.
-    connect(childThread, &ControllerChildThread::cancel, this, &Controller::onPinPadCancel);
-    connect(window, &WebEidUI::retry, this, &Controller::onRetry);
+    connect(childThread, &ControllerChildThread::cancel, this, &Controller::onDialogCancel);
 }
 
-void Controller::onDialogOK(const CardCertificateAndPinInfo& cardCertAndPinInfo)
+void Controller::onDialogOK(const EidCertificateAndPinInfo& certAndPinInfo)
 {
     if (commandHandler) {
-        onConfirmCommandHandler(cardCertAndPinInfo);
+        onConfirmCommandHandler(certAndPinInfo);
     } else {
         // This should not happen, and when it does, OK should be equivalent to cancel.
-        onPinPadCancel();
+        onDialogCancel();
     }
 }
 
 void Controller::onDialogCancel()
 {
-    REQUIRE_NON_NULL(window)
-
     qDebug() << "User cancelled";
-
-    // Schedule application exit when the UI dialog is destroyed.
-    connect(window, &WebEidUI::destroyed, this, &Controller::exit);
-
     _result = makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled"));
     writeResponseToStdOut(isInStdinMode, _result, commandType());
-}
-
-void Controller::onPinPadCancel()
-{
-    REQUIRE_NON_NULL(window)
-
-    onDialogCancel();
-    window->quit();
+    exit();
 }
 
 void Controller::onCriticalFailure(const QString& error)
 {
+    emit stopCardEventMonitorThread();
     qCritical() << "Exiting due to command" << std::string(commandType())
                 << "fatal error:" << error;
     _result =
         makeErrorObject(RESP_TECH_ERROR, QStringLiteral("Technical error, see application logs"));
-    writeResponseToStdOut(isInStdinMode, _result, commandType());
     disposeUI();
+    if (qApp->isSafariExtensionContainingApp()) {
+        writeResponseToStdOut(isInStdinMode, _result, commandType());
+    }
     WebEidUI::showFatalError();
+    if (!qApp->isSafariExtensionContainingApp()) {
+        // Write the error response to stdout after showing the fatal error dialog. Chrome will
+        // close the application immediately after this, so the UI dialog may not be visible to the
+        // user.
+        writeResponseToStdOut(isInStdinMode, _result, commandType());
+    }
     exit();
 }
 
 void Controller::exit()
 {
-    if (window) {
-        window->disconnect();
-        window = nullptr;
-    }
+    disposeUI();
     waitForChildThreads();
     emit quit();
 }
 
 void Controller::waitForChildThreads()
 {
-    // Waiting for child threads must not happen in destructor.
-    // See https://tombarta.wordpress.com/2008/07/10/gcc-pure-virtual-method-called/ for details.
-    for (const auto& childThread : childThreads) {
-        auto thread = childThread.second;
-        if (thread) {
-            interruptThread(thread);
-            // Waiting for PIN input on PIN pad may take a long time, call processEvents() so that
-            // the UI doesn't freeze.
-            while (thread->isRunning()) {
-                thread->wait(100); // in milliseconds
-                QCoreApplication::processEvents();
-            }
-        }
+    for (auto* thread : findChildren<QThread*>()) {
+        qDebug() << "Interrupting thread" << uintptr_t(thread);
+        thread->disconnect();
+        thread->requestInterruption();
+        ControllerChildThread::waitForControllerNotify.wakeAll();
+        thread->wait();
     }
 }
 

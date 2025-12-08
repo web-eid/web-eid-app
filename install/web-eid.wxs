@@ -8,10 +8,10 @@
 <?define VCVER = "142" ?>
 <?endif?>
 
-<?if $(sys.BUILDARCH) = x64 ?>
-  <?define ssl_suffix = "-x64" ?>
-<?else?>
+<?if $(sys.BUILDARCH) = x86 ?>
   <?define ssl_suffix = "" ?>
+<?else?>
+  <?define ssl_suffix = "-$(sys.BUILDARCH)" ?>
 <?endif?>
 
 <?if $(var.qt_suffix) = "d" ?>
@@ -23,7 +23,7 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <Package Name="Web eID software" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
-      Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="RIA" InstallerVersion="500">
+      Language="1033" Version="!(bind.FileVersion.App)" Manufacturer="RIA">
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
     <Icon Id="web_eid.exe" SourceFile="$(var.app_path)" />
     <Property Id="ARPPRODUCTICON" Value="web_eid.exe" />
@@ -69,7 +69,7 @@
 
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="INSTALLFOLDER" Name="Web eID">
-        <File Source="$(var.app_path)" />
+        <File Id="App" Source="$(var.app_path)" />
 <?ifdef var.qt_path ?>
         <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll" />
         <File Source="$(var.VCPATH)\msvcp140_1$(var.qt_suffix).dll" />
@@ -85,21 +85,15 @@
         <File Source="$(var.qt_path)\Qt6Network$(var.qt_suffix).dll" />
         <File Source="$(var.qt_path)\Qt6Svg$(var.qt_suffix).dll" />
         <File Source="$(var.qt_path)\Qt6Widgets$(var.qt_suffix).dll" />
+        <File Source="$(var.qt_path)\Qt6SvgWidgets$(var.qt_suffix).dll" />
+<?if $(sys.BUILDARCH) != arm64 ?>
         <File Source="$(var.qt_path)\D3DCompiler_47.dll" />
         <File Source="$(var.qt_path)\opengl32sw.dll" />
-        <File Source="$(var.qt_path)\Qt6SvgWidgets$(var.qt_suffix).dll" />
-        <Directory Id="platforms" Name="platforms">
-          <File Source="$(var.qt_path)\..\plugins\platforms\qwindows$(var.qt_suffix).dll" />
-        </Directory>
-        <Directory Id="styles" Name="styles">
-          <File Source="$(var.qt_path)\..\plugins\styles\qmodernwindowsstyle$(var.qt_suffix).dll" />
-        </Directory>
-        <Directory Id="imageformats" Name="imageformats">
-          <File Source="$(var.qt_path)\..\plugins\imageformats\qsvg$(var.qt_suffix).dll" />
-        </Directory>
-        <Directory Id="tls" Name="tls">
-          <File Source="$(var.qt_path)\..\plugins\tls\qopensslbackend$(var.qt_suffix).dll" />
-        </Directory>
+<?endif?>
+        <File Subdirectory="platforms" Source="$(var.qt_path)\..\plugins\platforms\qwindows$(var.qt_suffix).dll" />
+        <File Subdirectory="styles" Source="$(var.qt_path)\..\plugins\styles\qmodernwindowsstyle$(var.qt_suffix).dll" />
+        <File Subdirectory="imageformats" Source="$(var.qt_path)\..\plugins\imageformats\qsvg$(var.qt_suffix).dll" />
+        <File Subdirectory="tls" Source="$(var.qt_path)\..\plugins\tls\qopensslbackend$(var.qt_suffix).dll" />
 <?endif?>
         <Component Id="ChromeEdge" Transitive="yes" Condition="(CHROMEINSTALL = 1 OR EDGEINSTALL = 1)">
           <File Source="$(var.json)" />
