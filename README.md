@@ -266,13 +266,13 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 
 ### Windows
 
-- Download Visual Studio 2019 community installer from https://visualstudio.microsoft.com/ and install _Desktop C++ Development_
+- Download Visual Studio 2022 community installer from https://visualstudio.microsoft.com/ and install _Desktop C++ Development_
 - Install WIX toolset
 
-      dotnet tool install --global wix --version 5.0.0
-      wix extension -g add WixToolset.UI.wixext/5.0.0
-      wix extension -g add WixToolset.Util.wixext/5.0.0
-      wix extension -g add WixToolset.Bal.wixext/5.0.0
+      dotnet tool install --global wix --version 6.0.2
+      wix extension -g add WixToolset.UI.wixext/6.0.2
+      wix extension -g add WixToolset.Util.wixext/6.0.2
+      wix extension -g add WixToolset.Bal.wixext/6.0.2
 
 - Download and install Git for Windows from https://git-scm.com/download/win
 - Download and install CMake from https://cmake.org/download/
@@ -283,12 +283,8 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
       .\bootstrap-vcpkg.bat
       .\vcpkg integrate install
 
-- Install _Google Test_ and _OpenSSL_ with _vcpkg_:
-
-      .\vcpkg install --recurse --triplet x64-windows --clean-after-build gtest openssl
-
 - Install _Qt_ with the official [_Qt Online Installer_](https://www.qt.io/download-qt-installer),
-  choose _Custom installation > Qt 6.6.3 > MSVC 2019 64-bit_.
+  choose _Custom installation > Qt 6.10.0 > MSVC 2022 64-bit_.
 
 ### macOS
 
@@ -303,7 +299,7 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 - Create symlink to _OpenSSL_ location and setup environment variables required
   by _CMake_:
 
-      export OPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1
+      export OPENSSL_ROOT_DIR=/usr/local/opt/openssl@3.0
       export QT_DIR=/usr/local/opt/qt6/lib/cmake/Qt6
 
 ## Building and testing
@@ -320,7 +316,7 @@ Use _Powershell_ to run the following commands to build the project.
 
 - Set the _Qt_ installation directory variable:
 
-      $QT_ROOT = "C:\Qt\6.2.4\msvc2019_64"
+      $QT_ROOT = "C:\Qt\6.10.0\msvc2022_64"
 
 - Set the _vcpkg_ installation directory variable:
 
@@ -332,11 +328,11 @@ Use _Powershell_ to run the following commands to build the project.
 
 - Run _CMake_:
 
-Optionally, WIX Toolset v3 is required for the installer, and the WIX environment variable should be set for the installed target.
-
-      cmake "-DCMAKE_PREFIX_PATH=${QT_ROOT}" `
+      cmake -A x64 -B build -S .
+          "-DCMAKE_PREFIX_PATH=${QT_ROOT}" `
           "-DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
-          "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" -A x64 -B build -S .
+          "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" `
+          "-DVCPKG_MANIFEST_DIR=lib/libelectronic-id/.github"
 
 - Run the build and installer build:
 
@@ -353,9 +349,9 @@ Optionally, WIX Toolset v3 is required for the installer, and the WIX environmen
 
 ## Adding and updating translations
 
-You can use the free [Qt Linguist application](https://doc.qt.io/qt-5/qtlinguist-index.html)
+You can use the free [Qt Linguist application](https://doc.qt.io/qt-6/qtlinguist-index.html)
 to add and edit translations.
 
 Run the following command to update Qt Linguist TS files:
 
-      lupdate src/ -ts ./src/ui/translations/*.ts
+      cmake --build build --config ${BUILD_TYPE} --target update_translations

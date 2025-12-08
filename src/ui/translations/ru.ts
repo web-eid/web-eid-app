@@ -2,6 +2,17 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>Application</name>
+    <message>
+        <source>&amp;File</source>
+        <translation>&amp;Файл</translation>
+    </message>
+    <message>
+        <source>&amp;About</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CertificateButton</name>
     <message>
         <source>%1 Issuer: %2 Valid: %3 to %4</source>
@@ -158,6 +169,10 @@
         <translation>Операция не удалась</translation>
     </message>
     <message>
+        <source>PIN entry disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Card driver error. Please try again.</source>
         <translation>Ошибка драйвера карты. Пожалуйста, попробуйте еще раз.</translation>
     </message>
@@ -192,6 +207,10 @@
     <message>
         <source>Try again</source>
         <translation>Попробуйте еще раз</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
+        <translation>Подписание с помощью ID-карты ещё невозможно. Чтобы подписывать, необходимо изменить PIN2 в приложении DigiDoc4. &lt;a href=&quot;https://www.id.ee/ru/artikkel/poryadok-izmeneniya-pin-kodov-i-puk-koda-id-karty/&quot;&gt;Дополнительная информация&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Cancel</source>

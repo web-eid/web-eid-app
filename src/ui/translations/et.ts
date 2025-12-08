@@ -2,6 +2,17 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="et_EE">
 <context>
+    <name>Application</name>
+    <message>
+        <source>&amp;File</source>
+        <translation>&amp;Fail</translation>
+    </message>
+    <message>
+        <source>&amp;About</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CertificateButton</name>
     <message>
         <source>%1 Issuer: %2 Valid: %3 to %4</source>
@@ -108,6 +119,10 @@
         <translation>PIN-koodi sisestamine katkestati.</translation>
     </message>
     <message>
+        <source>PIN entry disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Launch the Smart Card service</source>
         <translation>Käivita Kiipkaardi teenus</translation>
     </message>
@@ -190,6 +205,10 @@
     <message>
         <source>Try again</source>
         <translation>Proovi uuesti</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
+        <translation>ID-kaardiga allkirjastamine ei ole veel võimalik. Allkirjastamiseks tuleb DigiDoc4 rakenduses PIN2-koodi muuta. &lt;a href=&quot;https://www.id.ee/artikkel/id-kaardi-pin-ja-puk-koodide-muutmine/&quot;&gt;Lisainfo&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Cancel</source>
