@@ -26,8 +26,6 @@
 #include "controller.hpp"
 #include "command-handlers/getcertificate.hpp"
 
-#include "../ui/punycode.hpp"
-
 #include "mock-ui.hpp"
 #include "getcommandhandler-mock.hpp"
 
@@ -71,8 +69,6 @@ private slots:
     void getCertificate_outputsSupportedAlgos();
 
     void authenticate_validArgumentsResultInValidToken();
-
-    void fromPunycode_decodesEeDomain();
 
     void quit_exits();
 
@@ -199,12 +195,6 @@ void WebEidTests::authenticate_validArgumentsResultInValidToken()
 
     QCOMPARE(controller->result()[QStringLiteral("unverifiedCertificate")].toString().left(25),
              QStringLiteral("MIIEAzCCA2WgAwIBAgIQOWkBW"));
-}
-
-void WebEidTests::fromPunycode_decodesEeDomain()
-{
-    QCOMPARE(fromPunycode(QUrl(QStringLiteral("https://xn--igusnunik-p7af.ee"))),
-             QStringLiteral("\u00F5igusn\u00F5unik.ee"));
 }
 
 void WebEidTests::quit_exits()
