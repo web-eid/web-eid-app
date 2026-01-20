@@ -496,6 +496,9 @@ border-radius: 4px;</string>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
+           <property name="textFormat">
+            <enum>Qt::PlainText</enum>
+           </property>
           </widget>
          </item>
         </layout>
@@ -568,6 +571,9 @@ border-radius: 4px;</string>
           <widget class="QLabel" name="pinInputOriginLabel">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::PlainText</enum>
            </property>
           </widget>
          </item>
