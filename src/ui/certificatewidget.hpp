@@ -41,12 +41,10 @@ protected:
     explicit CertificateWidgetInfo(QWidget* self);
     Q_DISABLE_COPY_MOVE(CertificateWidgetInfo)
 
-    void drawWarnIcon();
     std::tuple<QString, QString, QString, QString> certData() const;
 
     QLabel* icon;
     QLabel* info;
-    QLabel* warnIcon;
     QLabel* warn;
     EidCertificateAndPinInfo certAndPinInfo;
 };
@@ -59,7 +57,6 @@ public:
     explicit CertificateWidget(QWidget* parent);
 
 private:
-    bool eventFilter(QObject* object, QEvent* event) final;
     void paintEvent(QPaintEvent* event) final;
 };
 
@@ -71,7 +68,6 @@ public:
     CertificateButton(const EidCertificateAndPinInfo& certAndPinInfo, QWidget* parent);
 
 private:
-    bool eventFilter(QObject* object, QEvent* event) final;
     void setCertificateInfo(const EidCertificateAndPinInfo& certAndPinInfo) final;
     void paintEvent(QPaintEvent* event) final;
 };
