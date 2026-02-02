@@ -43,42 +43,43 @@ signals:
     void stopCardEventMonitorThread();
 
 public: // slots
-    void run();
+    void run() noexcept;
 
     // Called either directly from run() or from the monitor thread when cards are available.
-    void onCardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& availableEids);
+    void
+    onCardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& availableEids) noexcept;
 
     // Called when CommandHandlerRunThread finishes execution.
-    void onCertificatesLoaded();
+    void onCertificatesLoaded() noexcept;
 
     // Called either directly from onDialogOK().
-    void onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo);
+    void onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo) noexcept;
 
     // Called from CommandHandlerConfirm thread.
-    void onCommandHandlerConfirmCompleted(const QVariantMap& result);
+    void onCommandHandlerConfirmCompleted(const QVariantMap& result) noexcept;
 
     // Called from the dialog when user chooses to retry errors that have occured in child threads.
-    void onRetry();
+    void onRetry() noexcept;
 
     // User events from the dialog.
-    void onDialogOK(const EidCertificateAndPinInfo& certAndPinInfo);
-    void onDialogCancel();
+    void onDialogOK(const EidCertificateAndPinInfo& certAndPinInfo) noexcept;
+    void onDialogCancel() noexcept;
 
     // Failure handler, reports the error and quits the application.
-    void onCriticalFailure(const QString& error);
+    void onCriticalFailure(const QString& error) noexcept;
 
 private:
     void startCommandExecution();
     void runCommandHandler(const std::vector<electronic_id::ElectronicID::ptr>& availableEids);
     void connectRetry(const ControllerChildThread* childThread);
-    void createWindow();
-    void disposeUI();
-    void exit();
-    void waitForChildThreads();
-    CommandType commandType();
+    void createWindow() noexcept;
+    void disposeUI() noexcept;
+    void exit() noexcept;
+    void waitForChildThreads() noexcept;
+    CommandType commandType() const noexcept;
 
     CommandWithArgumentsPtr command;
-    CommandHandler::ptr commandHandler = nullptr;
+    CommandHandler::ptr commandHandler;
     // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
     observer_ptr<WebEidUI> window = nullptr;
     QVariantMap _result;
