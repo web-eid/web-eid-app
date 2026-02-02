@@ -45,6 +45,7 @@ signals:
     void multipleCertificatesReady(const QUrl& origin,
                                    const std::vector<EidCertificateAndPinInfo>& certAndPinInfos);
     void singleCertificateReady(const QUrl& origin, const EidCertificateAndPinInfo& certAndPinInfo);
+    void verifyPinFailed(electronic_id::VerifyPinFailed::Status status, qint8 retriesLeft);
 
 protected:
     CommandHandler(const CommandWithArguments& cmd) : command(cmd) {}

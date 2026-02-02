@@ -171,7 +171,8 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
                 if (auto* button =
                         qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
                     ui->lockedWarning->setHidden(button->certificateInfo().cardActive);
-                    ui->okButton->setEnabled(currentCommand == CommandType::AUTHENTICATE || button->certificateInfo().cardActive);
+                    ui->okButton->setEnabled(currentCommand == CommandType::AUTHENTICATE
+                                             || button->certificateInfo().cardActive);
                 }
                 ui->okButton->setFocus();
             });
@@ -666,7 +667,8 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinI
 void WebEidDialog::setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo)
 {
     ui->lockedWarning->setHidden(certAndPinInfo.cardActive);
-    setupPinPrompt(certAndPinInfo.pinInfo, currentCommand == CommandType::AUTHENTICATE || certAndPinInfo.cardActive);
+    setupPinPrompt(certAndPinInfo.pinInfo,
+                   currentCommand == CommandType::AUTHENTICATE || certAndPinInfo.cardActive);
     // The allowed character ranges are from the SafeNet eToken guide:
     // 1. English uppercase letters (ASCII 0x41...0x5A).
     // 2. English lowercase letters (ASCII 0x61...0x7A).

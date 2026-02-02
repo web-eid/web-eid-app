@@ -346,7 +346,7 @@ Use _Powershell_ to run the following commands to build the project.
           "-DCMAKE_PREFIX_PATH=${QT_ROOT}" `
           "-DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
           "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" `
-          "-DVCPKG_MANIFEST_DIR=lib/libelectronic-id/.github"
+          "-DVCPKG_MANIFEST_DIR=lib/libelectronic-id"
 
 - Run the build and installer build:
 
