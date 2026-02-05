@@ -93,15 +93,6 @@ void Controller::run()
 
         commandHandler = getCommandHandler(*command);
 
-        // When the command handler run thread retrieves certificates successfully, call
-        // onCertificatesLoaded() that starts card event monitoring while user enters the PIN.
-        connect(commandHandler.get(), &CommandHandler::singleCertificateReady, this,
-                &Controller::onCertificatesLoaded);
-        connect(commandHandler.get(), &CommandHandler::multipleCertificatesReady, this,
-                &Controller::onCertificatesLoaded);
-        connect(commandHandler.get(), &CommandHandler::verifyPinFailed, this,
-                &Controller::onCertificatesLoaded);
-
         startCommandExecution();
 
     } catch (const std::exception& error) {
@@ -122,6 +113,14 @@ void Controller::startCommandExecution()
     connect(waitForCardThread, &WaitForCardThread::statusUpdate, this, &Controller::statusUpdate);
     connect(waitForCardThread, &WaitForCardThread::cardsAvailable, this,
             &Controller::onCardsAvailable);
+    // When the command handler run thread retrieves certificates successfully, call
+    // onCertificatesLoaded() that starts card event monitoring while user enters the PIN.
+    connect(commandHandler.get(), &CommandHandler::singleCertificateReady, this,
+            &Controller::onCertificatesLoaded);
+    connect(commandHandler.get(), &CommandHandler::multipleCertificatesReady, this,
+            &Controller::onCertificatesLoaded);
+    connect(commandHandler.get(), &CommandHandler::verifyPinFailed, this,
+            &Controller::onCertificatesLoaded);
 
     // UI setup.
     createWindow();
