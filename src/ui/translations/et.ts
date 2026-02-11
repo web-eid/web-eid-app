@@ -130,12 +130,16 @@
         <translation>PinPad lugeja toiming aegus.</translation>
     </message>
     <message>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
+        <translation>ID-kaardiga isikutuvastamine ja allkirjastamine ei ole veel võimalik. ID-kaardi kasutamiseks tuleb see aktiveerida Politsei- ja Piirivalveameti iseteeninduses. &lt;a href=&quot;https://www.politsei.ee/et/iseteenindus&quot;&gt;Aktiveeri ID-kaart&lt;/a&gt;</translation>
+    </message>
+    <message>
         <source>PIN entry cancelled.</source>
         <translation>PIN-koodi sisestamine katkestati.</translation>
     </message>
     <message>
         <source>PIN entry disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN&apos;i sisestamine on keelatud</translation>
     </message>
     <message>
         <source>Launch the Smart Card service</source>
@@ -305,10 +309,6 @@
         <source>EN</source>
         <comment>Active language</comment>
         <translation>ET</translation>
-    </message>
-    <message>
-        <source>PIN entry disabled</source>
-        <translation>PIN'i sisestamine on keelatud.</translation>
     </message>
     <message>
         <source>English</source>

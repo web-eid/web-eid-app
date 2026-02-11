@@ -182,6 +182,10 @@
         <translation>Operation failed</translation>
     </message>
     <message>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
+        <translation>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</translation>
+    </message>
+    <message>
         <source>PIN entry disabled</source>
         <translation>PIN entry disabled</translation>
     </message>
@@ -305,10 +309,6 @@
         <source>EN</source>
         <comment>Active language</comment>
         <translation>EN</translation>
-    </message>
-    <message>
-        <source>PIN entry disabled</source>
-        <translation>PIN entry disabled</translation>
     </message>
     <message>
         <source>English</source>

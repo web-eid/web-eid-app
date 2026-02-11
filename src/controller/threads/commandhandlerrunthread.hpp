@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    void doRun() override { commandHandler.run(eids); }
+    void doRun() override { commandHandler.run(std::move(eids)); }
 
     CommandHandler& commandHandler;
     std::vector<electronic_id::ElectronicID::ptr> eids;

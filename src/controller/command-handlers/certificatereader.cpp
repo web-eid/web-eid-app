@@ -31,7 +31,7 @@ using namespace electronic_id;
 namespace
 {
 
-EidCertificateAndPinInfo getCertificateWithStatusAndInfo(const ElectronicID::ptr& eid,
+EidCertificateAndPinInfo getCertificateWithStatusAndInfo(ElectronicID::ptr&& eid,
                                                          const CertificateType certificateType)
 {
     const auto certificateBytes = eid->getCertificate(certificateType);
@@ -70,19 +70,24 @@ EidCertificateAndPinInfo getCertificateWithStatusAndInfo(const ElectronicID::ptr
                          info.maxRetry,
                      },
                      .readerHasPinPad = eid->smartcard().readerHasPinPad()};
-    bool cardActivated = info.pinActive;
-    if (certificateType == CertificateType::AUTHENTICATION && eid->type() == ElectronicID::EstEID
+    bool pin1Active = true;
+    bool pin2Active = true;
+    if (certificateType.isAuthentication() && eid->type() == ElectronicID::EstEID
         && eid->name() == "EstEIDThales") {
-        cardActivated = eid->signingPinInfo().pinActive;
+        auto infoOther =
+            certificateType.isAuthentication() ? eid->signingPinInfo() : eid->authPinInfo();
+        pin1Active = certificateType.isAuthentication() ? info.pinActive : infoOther.pinActive;
+        pin2Active = certificateType.isAuthentication() ? infoOther.pinActive : info.pinActive;
     }
 
     return {
-        .eid = eid,
+        .eid = std::move(eid),
         .certificateBytesInDer = std::move(certificateDer),
         .certificate = certificate,
         .certInfo = std::move(certInfo),
         .pinInfo = std::move(pinInfo),
-        .cardActive = cardActivated,
+        .pin1Active = pin1Active,
+        .pin2Active = pin2Active,
     };
 }
 
@@ -96,7 +101,7 @@ CertificateReader::CertificateReader(const CommandWithArguments& cmd) : CommandH
     }
 }
 
-void CertificateReader::run(const std::vector<ElectronicID::ptr>& eids)
+void CertificateReader::run(std::vector<ElectronicID::ptr>&& eids)
 {
     REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(eids)
 
@@ -105,9 +110,10 @@ void CertificateReader::run(const std::vector<ElectronicID::ptr>& eids)
 
     std::vector<EidCertificateAndPinInfo> certAndPinInfos;
     certAndPinInfos.reserve(eids.size());
-    for (const auto& eid : eids) {
+    for (auto& eid : eids) {
         try {
-            certAndPinInfos.push_back(getCertificateWithStatusAndInfo(eid, certificateType));
+            certAndPinInfos.push_back(
+                getCertificateWithStatusAndInfo(std::move(eid), certificateType));
         } catch (const WrongCertificateTypeError&) {
             // Ignore eIDs that don't support the given ceritifcate type.
         }
