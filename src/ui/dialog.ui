@@ -23,7 +23,7 @@
    <string notr="true">QWidget {
 background-color: white;
 font-size: 14px;
-font-family: &quot;Roboto&quot;;
+font-family: Roboto, Helvetica;
 color: black;
 }
 QPushButton {
@@ -41,18 +41,23 @@ background-color: #F5EBED;
 QPushButton:pressed {
 background-color: #E1C1C6;
 }
-QPushButton::default, #helpButton {
+QPushButton:default, #helpButton {
 color: white;
 border-color: #2F70B6;
 background-color: #2F70B6;
 }
-QPushButton::default:hover, #helpButton:hover {
+QPushButton:default:hover, QPushButton:default:focus,
+#helpButton:hover, #helpButton:focus {
 border-color: #2B66A6;
 background-color: #2B66A6;
 }
-QPushButton::default:pressed, #helpButton:pressed {
+QPushButton:default:pressed, #helpButton:pressed {
 border-color: #215081;
 background-color: #215081;
+}
+QPushButton:default:disabled {
+border-color: #82A9D3;
+background-color: #82A9D3;
 }
 #langButton {
 color: #003168;
@@ -182,7 +187,7 @@ border: none;
 border-radius: 4px;</string>
      </property>
      <property name="text">
-      <string>Signing with an ID-card isn't possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</string>
+      <string notr="true">Signing with an ID-card isn't possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

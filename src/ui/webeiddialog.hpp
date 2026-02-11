@@ -107,6 +107,7 @@ private:
     void setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo);
     template <typename Func>
     void setupOK(Func func, const char* text = {}, bool enabled = false);
+    void setupWarning(const EidCertificateAndPinInfo& certAndPinInfo);
     void displayPinBlockedError();
     template <typename Text>
     void displayFatalError(Text message);
@@ -114,6 +115,7 @@ private:
     void showPinInputWarning(bool show);
     void resizeHeight();
 
+    bool isCardActive(const EidCertificateAndPinInfo& certAndPinInfo) const noexcept;
     static QPixmap pixmap(QLatin1String name);
     constexpr static std::tuple<const char*, const char*, QLatin1String>
     retriableErrorToTextTitleAndIcon(RetriableError error) noexcept;
