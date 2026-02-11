@@ -33,7 +33,7 @@ class CertificateReader : public CommandHandler
 public:
     explicit CertificateReader(const CommandWithArguments& cmd);
 
-    void run(const std::vector<electronic_id::ElectronicID::ptr>& eids) override;
+    void run(std::vector<electronic_id::ElectronicID::ptr>&& eids) override;
     void connectSignals(const WebEidUI* window) override;
 
 protected:
