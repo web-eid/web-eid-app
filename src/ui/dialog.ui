@@ -83,23 +83,6 @@ background-image: url(:images/down.svg);
 #langButton::hover {
 background-color: #EFEFEF;
 }
-#langMenu {
-border: 3px solid #EFEFEF;
-border-radius: 3px;
-background-color: #EFEFEF;
-}
-#langMenu &gt; QPushButton {
-color: #003168;
-border: 0px;
-max-height: 22px;
-padding-left: 7px;
-padding-right: 6px;
-font-size: 14px;
-text-align: left;
-}
-#langMenu &gt; QPushButton:checked {
-font-weight: bold;
-}
 CertificateButton, CertificateWidget {
 border: 1px solid rgba(0,49,104,0.1);
 border-radius: 4px;

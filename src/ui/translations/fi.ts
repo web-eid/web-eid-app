@@ -39,6 +39,21 @@
     </message>
 </context>
 <context>
+    <name>LanguageSelect</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Peruuta</translation>
+    </message>
+    <message>
+        <source>Select language</source>
+        <translation>Valitse kieli</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>Valitse</translation>
+    </message>
+</context>
+<context>
     <name>WebEidDialog</name>
     <message>
         <source>By choosing the certificate, I agree to the transfer of my name and personal identification code to the service provider.</source>
@@ -284,12 +299,21 @@
     </message>
     <message>
         <source>Please enter PIN for signing in the PIN dialog window that opens.</source>
-        <translation>Syötä PIN kirjautumista varten avautuvaan PIN-valintaikkunaan.</translation>
+        <translation>Syötä PIN allekirjoittamista varten avautuvaan PIN-valintaikkunaan.</translation>
     </message>
     <message>
         <source>EN</source>
         <comment>Active language</comment>
         <translation>FI</translation>
+    </message>
+    <message>
+        <source>PIN entry disabled</source>
+        <translation>PIN-koodin syöttö ei ole käytössä.</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <comment>Active language accessible</comment>
+        <translation>Suomi</translation>
     </message>
 </context>
 </TS>
