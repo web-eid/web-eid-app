@@ -55,7 +55,8 @@ struct EidCertificateAndPinInfo
     QSslCertificate certificate {};
     CertificateInfo certInfo;
     PinInfo pinInfo;
-    bool cardActive = true;
+    bool pin1Active = true;
+    bool pin2Active = true;
 };
 
 Q_DECLARE_METATYPE(EidCertificateAndPinInfo)

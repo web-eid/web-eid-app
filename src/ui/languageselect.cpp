@@ -34,7 +34,8 @@ LanguageSelect::LanguageSelect(QWidget* parent) :
 {
     ui->setupUi(this);
     if (Application::isDarkTheme()) {
-        if (QFile f(QStringLiteral(":dark-languageselect.qss")); f.open(QFile::ReadOnly | QFile::Text)) {
+        if (QFile f(QStringLiteral(":dark-languageselect.qss"));
+            f.open(QFile::ReadOnly | QFile::Text)) {
             style()->unpolish(this);
             setStyleSheet(styleSheet() + QTextStream(&f).readAll());
             style()->polish(this);
