@@ -4,7 +4,6 @@ add_library(ui STATIC
     languageselect.cpp
     languageselect.hpp
     languageselect.ui
-    punycode.hpp
     ui.cpp
     webeiddialog.cpp
     webeiddialog.hpp

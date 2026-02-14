@@ -101,6 +101,7 @@ private:
     void setTrText(QWidget* label, Text text) const;
     void
     setupCertificateAndPinInfo(const std::vector<EidCertificateAndPinInfo>& cardCertAndPinInfos);
+    void setupOrigin(const QUrl& origin);
     void setupPinPrompt(PinInfo pinInfo, bool cardActive);
     void setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinInfo& certAndPinInfo);
     void setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo);

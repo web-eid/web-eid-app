@@ -23,7 +23,6 @@
 #include "webeiddialog.hpp"
 #include "application.hpp"
 #include "languageselect.hpp"
-#include "punycode.hpp"
 
 #include "ui_dialog.h"
 
@@ -280,7 +279,7 @@ void WebEidDialog::onSmartCardStatusUpdate(const RetriableError status)
 void WebEidDialog::onMultipleCertificatesReady(
     const QUrl& origin, const std::vector<EidCertificateAndPinInfo>& certAndPinInfos)
 {
-    ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
+    setupOrigin(origin);
     setupCertificateAndPinInfo(certAndPinInfos);
 
     switch (currentCommand) {
@@ -334,7 +333,7 @@ void WebEidDialog::onMultipleCertificatesReady(
 void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
                                             const EidCertificateAndPinInfo& certAndPinInfo)
 {
-    ui->selectCertificateOriginLabel->setText(fromPunycode(origin));
+    setupOrigin(origin);
     ui->pinInputOriginLabel->setText(ui->selectCertificateOriginLabel->text());
     const bool useExternalPinDialog = certAndPinInfo.eid->providesExternalPinDialog();
 
@@ -550,6 +549,13 @@ void WebEidDialog::setupCertificateAndPinInfo(
                 [button] { button->languageChange(); });
         setTabOrder(previous, button);
     }
+}
+
+void WebEidDialog::setupOrigin(const QUrl& origin)
+{
+    const auto host = origin.host(QUrl::PrettyDecoded);
+    ui->selectCertificateOriginLabel->setText(QStringLiteral("%2%3").arg(
+        host, origin.port() == -1 ? QString() : QStringLiteral(":%1").arg(origin.port())));
 }
 
 void WebEidDialog::setupPinPrompt(PinInfo pinInfo, bool cardActive)

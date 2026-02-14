@@ -60,6 +60,15 @@ Application::Application(int& argc, char** argv, const QString& name) :
     installTranslator(translator);
     loadTranslations();
 
+    auto list = QUrl::idnWhitelist();
+    list.append({
+        QStringLiteral("fi"),
+        QStringLiteral("ee"),
+        QStringLiteral("lt"),
+        QStringLiteral("lv"),
+    });
+    QUrl::setIdnWhitelist(list);
+
     for (const QString& font : QDir(QStringLiteral(":/fonts")).entryList()) {
         QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/%1").arg(font));
     }
