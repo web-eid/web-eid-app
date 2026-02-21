@@ -9,6 +9,7 @@ find_program(NPM_EXECUTABLE NAMES npm REQUIRED)
 get_filename_component(BINPATH ${NPM_EXECUTABLE} PATH)
 set(JSPATH ${CMAKE_CURRENT_SOURCE_DIR}/js/dist/safari)
 set(EXTENSION ${JSPATH}/manifest.json ${JSPATH}/background.js ${JSPATH}/content.js ${JSPATH}/background.js.map ${JSPATH}/web-eid-icon-128.png)
+file(GLOB_RECURSE EXTENSION_DEVTOOLS "${JSPATH}/views/*")
 add_custom_command(OUTPUT ${EXTENSION}
     COMMAND ${CMAKE_COMMAND} -E env PATH="$ENV{PATH}:${BINPATH}" ${NPM_EXECUTABLE} install
     COMMAND ${CMAKE_COMMAND} -E env PATH="$ENV{PATH}:${BINPATH}" TOKEN_SIGNING_BACKWARDS_COMPATIBILITY=true ${NPM_EXECUTABLE} run clean build
@@ -17,7 +18,7 @@ add_custom_command(OUTPUT ${EXTENSION}
 )
 
 # Extension
-add_executable(web-eid-safari-extension MACOSX_BUNDLE safari-extension.mm web-eid-safari-extension.entitlements ${EXTENSION})
+add_executable(web-eid-safari-extension MACOSX_BUNDLE safari-extension.mm web-eid-safari-extension.entitlements ${EXTENSION} ${EXTENSION_DEVTOOLS})
 set_target_properties(web-eid-safari-extension PROPERTIES
     AUTOMOC OFF
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info-extension.plist.cmake
@@ -29,8 +30,10 @@ set_target_properties(web-eid-safari-extension PROPERTIES
 target_link_libraries(web-eid-safari-extension SafariServices "-framework AppKit")
 target_link_options(web-eid-safari-extension PRIVATE -e _NSExtensionMain -fapplication-extension)
 add_custom_command(TARGET web-eid-safari-extension POST_BUILD
-    COMMAND mkdir -p $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari-extension>/Resources
+    COMMAND mkdir -p $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari-extension>/Resources/views
     COMMAND cp ${EXTENSION} $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari-extension>/Resources
+    COMMAND cp ${JSPATH}/views/options.html ${JSPATH}/views/options.js ${JSPATH}/views/browser-polyfill.min.js $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari-extension>/Resources/views
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${JSPATH}/views/devtools $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari-extension>/Resources/views/devtools
 )
 
 # Application
