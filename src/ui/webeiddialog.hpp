@@ -107,6 +107,7 @@ private:
     void setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo);
     template <typename Func>
     void setupOK(Func func, const char* text = {}, bool enabled = false);
+    void setupWarning(const EidCertificateAndPinInfo& certAndPinInfo);
     void displayPinBlockedError();
     template <typename Text>
     void displayFatalError(Text message);

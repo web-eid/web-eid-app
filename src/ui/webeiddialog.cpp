@@ -112,9 +112,10 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
                 ui->okButton->setEnabled(true);
                 if (auto* button =
                         qobject_cast<CertificateButton*>(ui->selectionGroup->checkedButton())) {
-                    ui->lockedWarning->setHidden(button->certificateInfo().cardActive);
-                    ui->okButton->setEnabled(currentCommand == CommandType::AUTHENTICATE
-                                             || button->certificateInfo().cardActive);
+                    setupWarning(button->certificateInfo());
+                    ui->okButton->setEnabled((currentCommand != CommandType::AUTHENTICATE
+                                              && button->certificateInfo().pin2Active)
+                                             || button->certificateInfo().pin1Active);
                 }
                 ui->okButton->setFocus();
             });
@@ -580,8 +581,9 @@ void WebEidDialog::setupPinPrompt(PinInfo pinInfo, bool cardActive)
 
 void WebEidDialog::setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinInfo& certAndPin)
 {
-    ui->lockedWarning->setHidden(certAndPin.cardActive);
-    bool cardActive = currentCommand == CommandType::AUTHENTICATE || certAndPin.cardActive;
+    setupWarning(certAndPin);
+    bool cardActive = (currentCommand != CommandType::AUTHENTICATE && certAndPin.pin2Active)
+        || certAndPin.pin1Active;
     setupPinPrompt(certAndPin.pinInfo, cardActive);
     if (!cardActive) {
         return;
@@ -612,9 +614,10 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinI
 
 void WebEidDialog::setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo)
 {
-    ui->lockedWarning->setHidden(certAndPinInfo.cardActive);
+    setupWarning(certAndPinInfo);
     setupPinPrompt(certAndPinInfo.pinInfo,
-                   currentCommand == CommandType::AUTHENTICATE || certAndPinInfo.cardActive);
+                   (currentCommand != CommandType::AUTHENTICATE && certAndPinInfo.pin2Active)
+                       || certAndPinInfo.pin1Active);
     // The allowed character ranges are from the SafeNet eToken guide:
     // 1. English uppercase letters (ASCII 0x41...0x5A).
     // 2. English lowercase letters (ASCII 0x61...0x7A).
@@ -646,6 +649,26 @@ void WebEidDialog::setupOK(Func func, const char* text, bool enabled)
     ui->cancelButton->show();
     ui->cancelButton->setEnabled(true);
     ui->helpButton->hide();
+}
+
+void WebEidDialog::setupWarning(const EidCertificateAndPinInfo& certAndPinInfo)
+{
+    ui->lockedWarning->setHidden(certAndPinInfo.pin1Active && certAndPinInfo.pin2Active);
+    if (!certAndPinInfo.pin1Active) {
+        ui->lockedWarning->setText(
+            tr("Authentication and signing with the ID-card isn't possible yet. "
+               "ID-card must be activated in the Police and Border Guard Board’s self-service "
+               "portal in order to use it. "
+               "<a href=\"https://www.politsei.ee/en/self-service-portal\">Activate ID-card</a>"));
+    } else if (!certAndPinInfo.pin2Active) {
+        ui->lockedWarning->setText(
+            tr("Signing with an ID-card isn't possible yet. PIN2 code must be changed in DigiDoc4 "
+               "application in order to sign. "
+               "<a "
+               "href=\"https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/"
+               "\">Additional information</a>"));
+    }
+    resizeHeight();
 }
 
 void WebEidDialog::displayPinBlockedError()
