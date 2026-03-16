@@ -30,12 +30,11 @@ CertificateButton #warn,  CertificateWidget #warn {
 color: #F54A67;
 }
 QLineEdit {
-background-color: rgba(255,255,255,0.1);
-border-color: #008EEA;
+border-color: #909299;
+color: #FFFFFF;
 }
 QLineEdit[warning="true"] {
-border-color: #F54A67;
-color: #F54A67;
+border-color: #FF5C79;
 }
 QProgressBar {
 background-color: rgba(255,255,255,0.1);
@@ -52,7 +51,7 @@ color: #FFFFFF;
 color: white;
 }
 #pinErrorLabel {
-color: #F54A67;
+color: #FF5C79;
 }
 #aboutContent {
 border-color: #4E4E53;

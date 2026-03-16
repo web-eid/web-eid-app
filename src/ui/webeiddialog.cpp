@@ -62,6 +62,7 @@ using namespace electronic_id;
 class WebEidDialog::Private : public Ui::WebEidDialog
 {
 public:
+    observer_ptr<QSvgWidget> pinInputAlert;
     observer_ptr<QRegularExpressionValidator> pinInputValidator;
     observer_ptr<QTimeLine> pinTimeoutTimer;
     observer_ptr<QButtonGroup> selectionGroup;
@@ -103,6 +104,15 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     auto pinInputFont = ui->pinInput->font();
     pinInputFont.setLetterSpacing(QFont::AbsoluteSpacing, 2);
     ui->pinInput->setFont(pinInputFont);
+    ui->pinInputAlert = new QSvgWidget(ui->pinInput);
+    ui->pinInputAlert->load(Application::isDarkTheme() ? u":/images/alert_dark.svg"_s
+                                                       : u":/images/alert.svg"_s);
+    ui->pinInputAlert->setFixedSize(20, 20);
+    ui->pinInputAlert->hide();
+    auto *pinInputLayout = new QHBoxLayout(ui->pinInput);
+    pinInputLayout->setContentsMargins(10, 10, 10, 10);
+    pinInputLayout->setSpacing(0);
+    pinInputLayout->addWidget(ui->pinInputAlert, 0, Qt::AlignRight);
 
     ui->waitingSpinner->load(Application::isDarkTheme() ? u":/images/wait_dark.svg"_s
                                                         : u":/images/wait.svg"_s);
@@ -701,6 +711,7 @@ void WebEidDialog::showPinInputWarning(bool show)
 {
     style()->unpolish(ui->pinInput);
     ui->pinInput->setProperty("warning", show);
+    ui->pinInputAlert->setVisible(show);
     style()->polish(ui->pinInput);
 }
 
