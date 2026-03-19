@@ -88,24 +88,16 @@ CertificateButton #warn,  CertificateWidget #warn {
 color: #CD2541;
 }
 QLineEdit {
-border: 2px solid #113F8E;
-color: #113F8E;
-border-radius: 3px;
-min-width: 200px;
-min-height: 45px;
-max-width: 200px;
-max-height: 45px;
-font-size: 26px;
-font-weight: bold;
-padding-right: 14px;
-padding-left: 14px;
-padding-top: 0px;
-padding-bottom: 0px;
+border: 1px solid #C4CBD8;
+color: #607496;
+border-radius: 8px;
+font-size: 16px;
+padding: 10px 14px;
 lineedit-password-character: 42;
 }
 QLineEdit[warning=&quot;true&quot;] {
-border: 2px solid #CD2541;
-color: #CD2541;
+border: 1px solid #AD2A45;
+color: #07142A;
 }
 QProgressBar {
 height: 30px;
@@ -132,10 +124,12 @@ color: #003168;
 font-weight: bold;
 max-height: 20px;
 }
-#pinTitleLabel, #pinErrorLabel {
-max-height: 20px;
+#pinTitleLabel {
+font-size: 14px;
+color: #07142A;
 }
 #pinErrorLabel {
+font-size: 14px;
 color: #CD2541;
 }
 #fatalError {
@@ -569,29 +563,19 @@ border-radius: 4px;</string>
        <item>
         <layout class="QVBoxLayout" name="pinLayout">
          <property name="spacing">
-          <number>10</number>
+          <number>6</number>
          </property>
          <item>
           <widget class="QLabel" name="pinTitleLabel">
-           <property name="font">
-            <font>
-             <family>Roboto</family>
-             <pointsize>-1</pointsize>
-             <bold>true</bold>
-            </font>
-           </property>
            <property name="text">
             <string notr="true">Enter PIN1 for authentication</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
            </property>
            <property name="buddy">
             <cstring>pinInput</cstring>
            </property>
           </widget>
          </item>
-         <item alignment="Qt::AlignHCenter">
+         <item>
           <widget class="QLineEdit" name="pinInput">
            <property name="maxLength">
             <number>12</number>
@@ -603,20 +587,11 @@ border-radius: 4px;</string>
          </item>
          <item>
           <widget class="QLabel" name="pinErrorLabel">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>36</height>
-            </size>
-           </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
             <string notr="true">2 tries left</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -639,19 +614,6 @@ border-radius: 4px;</string>
             <string notr="true">Time remaining:</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="pinSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>5</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
