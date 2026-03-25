@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 add_library(mock-ui STATIC
     mock-ui.cpp
     mock-ui.hpp

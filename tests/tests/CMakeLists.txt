@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 add_executable(web-eid-tests WIN32
     changecertificatevaliduntil.hpp
     getcommandhandler-mock.cpp

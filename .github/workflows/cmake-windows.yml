@@ -67,6 +67,7 @@ jobs:
           cmake --build build --config ${env:BUILD_TYPE}
           cmake --build build --config ${env:BUILD_TYPE} --target installer
           cmake --build build --config ${env:BUILD_TYPE} --target bundle
+          cmake --install build/sbom
 
       - name: Test
         if: ${{ matrix.arch == 'x64' }}
@@ -79,6 +80,12 @@ jobs:
           path: |
             build/src/app/*.msi
             build/src/app/*.exe
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-eid-app-windows-sbom-${{matrix.arch}}-${{github.run_number}}
+          path: build/*.spdx
 
       - name: Upload debug artifacts
         uses: actions/upload-artifact@v7
