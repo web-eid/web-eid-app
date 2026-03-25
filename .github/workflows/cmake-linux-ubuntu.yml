@@ -17,7 +17,7 @@ jobs:
     container: ubuntu:${{matrix.container}}
     strategy:
       matrix:
-        container: ['22.04', '24.04', '25.04', '25.10']
+        container: ['22.04', '24.04', '25.10', '26.04']
         arch: ['amd64', 'arm64']
 
     steps:
@@ -35,6 +35,7 @@ jobs:
       - name: Build
         run: |
           cmake --build build --config $BUILD_TYPE --target installer
+          cmake --install build/sbom
           # Debian creates artifacts outside of project dir, copy them back to make them available in the build artifacts
           mv ../web-eid*.* build/
 
@@ -44,4 +45,6 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: web-eid-app-ubuntu-build-ubuntu${{matrix.container}}-${{ matrix.arch }}-${{github.run_number}}
-          path: build/*.*deb
+          path: |
+            build/*.*deb
+            build/*.spdx

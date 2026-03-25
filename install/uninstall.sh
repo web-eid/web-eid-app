@@ -1,4 +1,6 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
 
 sudo rm -rf \
   /Applications/Utilities/web-eid.app \

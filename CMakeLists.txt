@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 cmake_minimum_required(VERSION 3.22)
 
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/lib/libelectronic-id/README.md")
@@ -50,3 +53,4 @@ endif()
 enable_testing()
 add_subdirectory(tests/mock-ui)
 add_subdirectory(tests/tests)
+include(cmake/sbom.cmake)
