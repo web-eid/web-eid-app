@@ -35,7 +35,6 @@ add_library(controller STATIC
     ui.hpp
     utils/erasedata.hpp
     utils/observer_ptr.hpp
-    utils/qdisablecopymove.hpp
     utils/qt_comp.hpp
     utils/utils.hpp
     writeresponse.cpp

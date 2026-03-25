@@ -52,6 +52,7 @@ jobs:
       - name: Build
         run: |
           cmake --build build --config $BUILD_TYPE --target installer
+          cmake --install build/sbom
           # Debian creates artifacts outside of project dir, copy them back to make them available in the build artifacts
           mv ../web-eid*.* build/
 
@@ -61,4 +62,6 @@ jobs:
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: web-eid-app-ubuntu-build-ubuntu${{matrix.container}}-${{ matrix.arch }}-${{github.run_number}}
-          path: build/*.*deb
+          path: |
+            build/*.*deb
+            build/*.spdx
