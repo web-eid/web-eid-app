@@ -25,6 +25,7 @@
 #include "commandhandler.hpp"
 #include "logging.hpp"
 #include "retriableerror.hpp"
+#include "utils/qt_comp.hpp"
 
 #include <QCoreApplication>
 #include <QMutexLocker>
