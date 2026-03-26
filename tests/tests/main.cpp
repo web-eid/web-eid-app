@@ -200,8 +200,7 @@ void WebEidTests::authenticate_validArgumentsResultInValidToken()
 void WebEidTests::quit_exits()
 {
     try {
-        auto quitCmd = std::make_unique<CommandWithArguments>(CommandType::QUIT, QVariantMap {});
-        controller = std::make_unique<Controller>(std::move(quitCmd));
+        controller = std::make_unique<Controller>(CommandWithArguments {CommandType::QUIT, {}});
 
         QSignalSpy quitSpy(controller.get(), &Controller::quit);
         QTimer::singleShot(0, controller.get(), &Controller::run);
@@ -232,10 +231,10 @@ void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool w
 void WebEidTests::initGetCert()
 {
     try {
-        auto getCertCmd = std::make_unique<CommandWithArguments>(
-            CommandType::GET_SIGNING_CERTIFICATE, GET_CERTIFICATE_COMMAND_ARGUMENT);
+        CommandWithArguments getCertCmd {CommandType::GET_SIGNING_CERTIFICATE,
+                                         GET_CERTIFICATE_COMMAND_ARGUMENT};
         // GetCertificate will make an internal copy of getCertCmd.
-        g_cached_GetCertificate = std::make_unique<GetCertificate>(*getCertCmd);
+        g_cached_GetCertificate = std::make_unique<GetCertificate>(getCertCmd);
         // Controller will take ownership of getCertCmd, it will be null after this line.
         controller = std::make_unique<Controller>(std::move(getCertCmd));
 
@@ -249,10 +248,9 @@ void WebEidTests::initGetCert()
 void WebEidTests::initAuthenticate()
 {
     try {
-        auto authCmd = std::make_unique<CommandWithArguments>(CommandType::AUTHENTICATE,
-                                                              AUTHENTICATE_COMMAND_ARGUMENT);
+        CommandWithArguments authCmd {CommandType::AUTHENTICATE, AUTHENTICATE_COMMAND_ARGUMENT};
         // See comments in initGetCert() regarding authCmd lifetime.
-        g_cached_Authenticate = std::make_unique<Authenticate>(*authCmd);
+        g_cached_Authenticate = std::make_unique<Authenticate>(authCmd);
         controller = std::make_unique<Controller>(std::move(authCmd));
 
     } catch (const std::exception& e) {

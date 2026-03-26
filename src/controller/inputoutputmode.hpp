@@ -26,6 +26,6 @@
 
 #include "pcsc-cpp/pcsc-cpp.hpp"
 
-CommandWithArgumentsPtr readCommandFromStdin();
+CommandWithArguments readCommandFromStdin();
 
 void writeResponseLength(std::ostream& stream, const uint32_t responseLength);

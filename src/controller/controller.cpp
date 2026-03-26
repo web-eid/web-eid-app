@@ -56,8 +56,7 @@ QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessag
 void Controller::run() noexcept
 try {
     // If a command is passed, the application is in command-line mode, else in stdin/stdout mode.
-    const bool isInCommandLineMode = bool(command);
-    isInStdinMode = !isInCommandLineMode;
+    isInStdinMode = command.first == CommandType::NONE;
 
     qInfo() << QCoreApplication::applicationName() << "app"
             << QCoreApplication::applicationVersion() << "running in"
@@ -74,8 +73,8 @@ try {
         command = readCommandFromStdin();
     }
 
-    REQUIRE_NON_NULL(command)
-    switch (command->first) {
+    switch (command.first) {
+    case CommandType::NONE:
     case CommandType::ABOUT:
         WebEidUI::showAboutPage();
         return;
@@ -89,7 +88,7 @@ try {
         break;
     }
 
-    commandHandler = getCommandHandler(*command);
+    commandHandler = getCommandHandler(command);
 
     startCommandExecution();
 

@@ -32,7 +32,7 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    explicit Controller(CommandWithArgumentsPtr cmd) : command(std::move(cmd)) {}
+    explicit Controller(CommandWithArguments&& cmd) : command(std::move(cmd)) { }
 
     const QVariantMap& result() const { return _result; }
 
@@ -77,7 +77,7 @@ private:
     void waitForChildThreads() noexcept;
     CommandType commandType() const noexcept;
 
-    CommandWithArgumentsPtr command;
+    CommandWithArguments command;
     CommandHandler::ptr commandHandler;
     // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
     observer_ptr<WebEidUI> window = nullptr;

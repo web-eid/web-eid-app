@@ -120,7 +120,7 @@ void Application::loadTranslations(const QString& lang)
     void(translator->load(locale, QStringLiteral(":/translations/")));
 }
 
-CommandWithArgumentsPtr Application::parseArgs()
+CommandWithArguments Application::parseArgs()
 {
     // On Windows Chrome, the native messaging host is also passed a command line argument with a
     // handle to the calling Chrome native window: --parent-window=<decimal handle value>.
@@ -167,8 +167,7 @@ CommandWithArgumentsPtr Application::parseArgs()
         if (command == CMDLINE_GET_SIGNING_CERTIFICATE || command == CMDLINE_AUTHENTICATE
             || command == CMDLINE_SIGN) {
             // TODO: add command-specific argument validation
-            return std::make_unique<CommandWithArguments>(CommandType(command),
-                                                          parseArgumentJson(arguments));
+            return {CommandType(command), parseArgumentJson(arguments)};
         }
         throw ArgumentError("The command has to be one of " + COMMANDS.toStdString());
     }
@@ -177,7 +176,7 @@ CommandWithArgumentsPtr Application::parseArgs()
         qDebug() << "Parent window handle is unused" << parser.value(parentWindow);
     }
     if (parser.isSet(aboutArgument)) {
-        return std::make_unique<CommandWithArguments>(CommandType::ABOUT, QVariantMap());
+        return {CommandType::ABOUT, QVariantMap()};
     }
     // In Linux, when the application is launched via xdg-desktop-portal from a browser that runs
     // inside a Snap/Flatpack/other container, it doesn't receive the extension origin command-line
@@ -185,10 +184,10 @@ CommandWithArgumentsPtr Application::parseArgs()
     // instead of opening the about window in Linux.
 #ifndef Q_OS_LINUX
     if (arguments().size() == 1) {
-        return std::make_unique<CommandWithArguments>(CommandType::ABOUT, QVariantMap());
+        return {CommandType::ABOUT, QVariantMap()};
     }
 #endif
-    return nullptr;
+    return {CommandType::NONE, QVariantMap()};
 }
 
 void Application::registerMetatypes()

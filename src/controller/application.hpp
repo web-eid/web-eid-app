@@ -47,17 +47,17 @@ public:
 
     static bool isDarkTheme();
     void loadTranslations(const QString& lang = {});
-    static CommandWithArgumentsPtr parseArgs();
+    static CommandWithArguments parseArgs();
     static void registerMetatypes();
 
     // Methods specific to Safari web extension's containing app,
     // see class SafariApplication in src/mac/main.mm and WebEidDialog::showAboutPage().
     virtual bool isSafariExtensionContainingApp() { return false; }
-    virtual void requestSafariExtensionState() {}
+    virtual void requestSafariExtensionState() { }
 #ifdef Q_OS_MAC
     void showAbout();
 #endif
-    virtual void showSafariSettings() {}
+    virtual void showSafariSettings() { }
 
 signals:
     void safariExtensionEnabled(bool value);
