@@ -54,9 +54,9 @@ private:
     CommandTypeEnum value;
 };
 
-extern const QString CMDLINE_GET_SIGNING_CERTIFICATE;
-extern const QString CMDLINE_AUTHENTICATE;
-extern const QString CMDLINE_SIGN;
+constexpr QStringView CMDLINE_GET_SIGNING_CERTIFICATE {u"get-signing-certificate"};
+constexpr QStringView CMDLINE_AUTHENTICATE {u"authenticate"};
+constexpr QStringView CMDLINE_SIGN {u"sign"};
 
 using CommandWithArguments = std::pair<CommandType, QVariantMap>;
 using CommandWithArgumentsPtr = std::unique_ptr<CommandWithArguments>;

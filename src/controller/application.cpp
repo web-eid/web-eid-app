@@ -24,6 +24,7 @@
 #include "certandpininfo.hpp"
 #include "logging.hpp"
 #include "retriableerror.hpp"
+#include "utils/qt_comp.hpp"
 
 #include <QCommandLineParser>
 #include <QDir>
@@ -35,6 +36,11 @@
 #include <QSettings>
 #include <QStyleHints>
 #include <QTranslator>
+
+#include <algorithm>
+#include <array>
+
+using namespace Qt::Literals::StringLiterals;
 
 inline CommandWithArguments::second_type parseArgumentJson(const QString& argumentStr)
 {
@@ -51,10 +57,10 @@ Application::Application(int& argc, char** argv, const QString& name) :
     QApplication(argc, argv), translator(new QTranslator(this))
 {
     setApplicationName(name);
-    setApplicationDisplayName(QStringLiteral("Web eID"));
+    setApplicationDisplayName(u"Web eID"_s);
     setApplicationVersion(QStringLiteral(PROJECT_VERSION));
-    setOrganizationDomain(QStringLiteral("web-eid.eu"));
-    setOrganizationName(QStringLiteral("RIA"));
+    setOrganizationDomain(u"web-eid.eu"_s);
+    setOrganizationName(u"RIA"_s);
     setQuitOnLastWindowClosed(false);
 
     installTranslator(translator);
@@ -62,15 +68,15 @@ Application::Application(int& argc, char** argv, const QString& name) :
 
     auto list = QUrl::idnWhitelist();
     list.append({
-        QStringLiteral("fi"),
-        QStringLiteral("ee"),
-        QStringLiteral("lt"),
-        QStringLiteral("lv"),
+        u"fi"_s,
+        u"ee"_s,
+        u"lt"_s,
+        u"lv"_s,
     });
     QUrl::setIdnWhitelist(list);
 
-    for (const QString& font : QDir(QStringLiteral(":/fonts")).entryList()) {
-        QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/%1").arg(font));
+    for (const QString& font : QDir(u":/fonts"_s).entryList()) {
+        QFontDatabase::addApplicationFont(u":/fonts/%1"_s.arg(font));
     }
 
     registerMetatypes();
@@ -93,8 +99,7 @@ bool Application::isDarkTheme()
     // supported OS-s.
     static const bool isDarkTheme = [] {
         QProcess p;
-        p.start(QStringLiteral("gsettings"),
-                {"get", "org.gnome.desktop.interface", "color-scheme"});
+        p.start(u"gsettings"_s, {u"get"_s, u"org.gnome.desktop.interface"_s, u"color-scheme"_s});
         if (p.waitForFinished()) {
             return p.readAllStandardOutput().contains("dark");
         }
@@ -108,16 +113,14 @@ bool Application::isDarkTheme()
 
 void Application::loadTranslations(const QString& lang)
 {
-    static const QStringList SUPPORTED_LANGS {
-        QStringLiteral("en"), QStringLiteral("et"), QStringLiteral("fi"), QStringLiteral("hr"),
-        QStringLiteral("ru"), QStringLiteral("de"), QStringLiteral("fr"), QStringLiteral("nl"),
-        QStringLiteral("cs"), QStringLiteral("sk")};
+    static constexpr auto SUPPORTED_LANGS = std::to_array<QStringView>(
+        {u"en", u"et", u"fi", u"hr", u"ru", u"de", u"fr", u"nl", u"cs", u"sk"});
     QLocale locale;
-    QString langSetting = QSettings().value(QStringLiteral("lang"), lang).toString();
-    if (SUPPORTED_LANGS.contains(langSetting)) {
+    QString langSetting = QSettings().value(u"lang"_s, lang).toString();
+    if (std::ranges::find(SUPPORTED_LANGS, langSetting) != SUPPORTED_LANGS.cend()) {
         locale = QLocale(langSetting);
     }
-    void(translator->load(locale, QStringLiteral(":/translations/")));
+    void(translator->load(locale, u":/translations/"_s));
 }
 
 CommandWithArgumentsPtr Application::parseArgs()
@@ -125,39 +128,37 @@ CommandWithArgumentsPtr Application::parseArgs()
     // On Windows Chrome, the native messaging host is also passed a command line argument with a
     // handle to the calling Chrome native window: --parent-window=<decimal handle value>.
     // We don't use it, but need to support it to avoid unknown option errors.
-    QCommandLineOption parentWindow(QStringLiteral("parent-window"),
-                                    QStringLiteral("Parent window handle (unused)"),
-                                    QStringLiteral("parent-window"));
+    QCommandLineOption parentWindow(u"parent-window"_s, u"Parent window handle (unused)"_s,
+                                    u"parent-window"_s);
 
-    QCommandLineOption aboutArgument(QStringLiteral("about"),
-                                     QStringLiteral("Show Web-eID about window"));
+    QCommandLineOption aboutArgument(u"about"_s, u"Show Web-eID about window"_s);
+    QCommandLineOption commandLineMode(
+        {u"c"_s, u"command-line-mode"_s},
+        u"Command-line mode, read commands from command line arguments instead of "
+        "standard input."_s);
 
     QCommandLineParser parser;
-    parser.setApplicationDescription(QStringLiteral(
-        "Application that communicates with the Web eID browser extension via standard input and "
+    parser.setApplicationDescription(
+        u"Application that communicates with the Web eID browser extension via standard input and "
         "output, but also works standalone in command-line mode. Performs PKI cryptographic "
-        "operations with eID smart cards for signing and authentication purposes."));
+        "operations with eID smart cards for signing and authentication purposes."_s);
 
     parser.addHelpOption();
-    parser.addOptions({{{"c", "command-line-mode"},
-                        "Command-line mode, read commands from command line arguments instead of "
-                        "standard input."},
-                       aboutArgument,
-                       parentWindow});
+    parser.addVersionOption();
+    parser.addOptions({commandLineMode, aboutArgument, parentWindow});
 
-    static const auto COMMANDS = "'" + CMDLINE_GET_SIGNING_CERTIFICATE + "', '"
-        + CMDLINE_AUTHENTICATE + "', '" + CMDLINE_SIGN + "'.";
+    static const auto COMMANDS = u"'%1', '%2', '%3'."_s.arg(CMDLINE_GET_SIGNING_CERTIFICATE,
+                                                            CMDLINE_AUTHENTICATE, CMDLINE_SIGN);
 
     parser.addPositionalArgument(
-        QStringLiteral("command"),
-        QStringLiteral("The command to execute in command-line mode, any of ") + COMMANDS);
-    parser.addPositionalArgument(
-        QStringLiteral("arguments"),
-        QStringLiteral("Arguments to the given command as a JSON-encoded string."));
+        u"command"_s, u"The command to execute in command-line mode, any of "_s + COMMANDS,
+        u"(%1|%2|%3)"_s.arg(CMDLINE_GET_SIGNING_CERTIFICATE, CMDLINE_AUTHENTICATE, CMDLINE_SIGN));
+    parser.addPositionalArgument(u"arguments"_s,
+                                 u"Arguments to the given command as a JSON-encoded string."_s);
 
     parser.process(arguments());
 
-    if (parser.isSet(QStringLiteral("command-line-mode"))) {
+    if (parser.isSet(commandLineMode)) {
         const auto args = parser.positionalArguments();
         if (args.size() != 2) {
             throw ArgumentError("Provide two positional arguments in command-line mode.");
