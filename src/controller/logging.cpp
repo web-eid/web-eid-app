@@ -22,6 +22,8 @@
 
 #include "logging.hpp"
 
+#include "utils/qt_comp.hpp"
+
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
