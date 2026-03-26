@@ -23,6 +23,7 @@
 #include "webeiddialog.hpp"
 #include "application.hpp"
 #include "languageselect.hpp"
+#include "utils/qt_comp.hpp"
 
 #include "ui_dialog.h"
 
@@ -43,19 +44,7 @@
 #include <unistd.h>
 #endif
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 4, 0)
-constexpr inline QLatin1String operator"" _L1(const char* str, size_t size) noexcept
-{
-    return QLatin1String(str, int(size));
-}
-
-inline QString operator""_s(const char16_t* str, size_t size) noexcept
-{
-    return QString(QStringPrivate(nullptr, const_cast<char16_t*>(str), qsizetype(size)));
-}
-#else
 using namespace Qt::Literals::StringLiterals;
-#endif
 
 using namespace electronic_id;
 
