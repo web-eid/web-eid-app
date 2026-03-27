@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 from __future__ import unicode_literals
 from __future__ import print_function
 

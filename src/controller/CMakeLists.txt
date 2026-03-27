@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 add_library(controller STATIC
     application.cpp
     application.hpp
@@ -32,7 +35,6 @@ add_library(controller STATIC
     ui.hpp
     utils/erasedata.hpp
     utils/observer_ptr.hpp
-    utils/qdisablecopymove.hpp
     utils/utils.hpp
     writeresponse.cpp
     writeresponse.hpp
