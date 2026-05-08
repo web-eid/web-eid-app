@@ -22,19 +22,10 @@
 
 #include "controller.hpp"
 
-#include "threads/cardeventmonitorthread.hpp"
-#include "threads/commandhandlerconfirmthread.hpp"
-#include "threads/commandhandlerrunthread.hpp"
-#include "threads/waitforcardthread.hpp"
+#include "application.hpp"
+#include "nativemessagingsession.hpp"
 
 #include "utils/utils.hpp"
-
-#include "application.hpp"
-#include "inputoutputmode.hpp"
-#include "writeresponse.hpp"
-
-using namespace pcsc_cpp;
-using namespace electronic_id;
 
 namespace
 {
@@ -55,23 +46,18 @@ QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessag
 
 void Controller::run() noexcept
 try {
-    // If a command is passed, the application is in command-line mode, else in stdin/stdout mode.
-    const bool isInCommandLineMode = bool(command);
-    isInStdinMode = !isInCommandLineMode;
+    initializeResponseSink();
 
     qInfo() << QCoreApplication::applicationName() << "app"
             << QCoreApplication::applicationVersion() << "running in"
-            << (isInStdinMode ? "stdin/stdout" : "command-line") << "mode";
+            << (command ? "command-line" : "stdin/stdout") << "mode";
 
-    // TODO: cut out stdin mode separate class to avoid bugs in safari mode
-    if (isInStdinMode) {
-        // In stdin/stdout mode we first output the version as required by the WebExtension
-        // and then wait for the actual command.
-        writeResponseToStdOut(isInStdinMode,
-                              {{QStringLiteral("version"), QCoreApplication::applicationVersion()}},
-                              "get-version");
+    if (!command) {
+        auto* nativeMessagingSession = dynamic_cast<NativeMessagingSession*>(responseSink.get());
+        REQUIRE_NON_NULL(nativeMessagingSession)
 
-        command = readCommandFromStdin();
+        nativeMessagingSession->writeHandshake();
+        command = nativeMessagingSession->readCommand();
     }
 
     REQUIRE_NON_NULL(command)
@@ -80,16 +66,13 @@ try {
         WebEidUI::showAboutPage();
         return;
     case CommandType::QUIT:
-        // If quit is requested, respond with empty JSON object and quit immediately.
         qInfo() << "Quit requested, exiting";
-        writeResponseToStdOut(true, {}, "quit");
+        writeResult({}, CommandType::QUIT);
         emit quit();
         return;
     default:
         break;
     }
-
-    commandHandler = getCommandHandler(*command);
 
     startCommandExecution();
 
@@ -97,87 +80,108 @@ try {
     onCriticalFailure(error.what());
 }
 
-void Controller::startCommandExecution()
+void Controller::initializeResponseSink()
 {
-    REQUIRE_NON_NULL(commandHandler)
+    if (responseSink) {
+        return;
+    }
 
-    // Reader monitor thread setup.
-    auto* waitForCardThread = new WaitForCardThread(this);
-    connect(this, &Controller::stopCardEventMonitorThread, waitForCardThread,
-            &WaitForCardThread::requestInterruption);
-    connect(waitForCardThread, &ControllerChildThread::failure, this,
-            &Controller::onCriticalFailure);
-    connect(waitForCardThread, &WaitForCardThread::statusUpdate, this, &Controller::statusUpdate);
-    connect(waitForCardThread, &WaitForCardThread::cardsAvailable, this,
-            &Controller::onCardsAvailable);
-    // When the command handler run thread retrieves certificates successfully, call
-    // onCertificatesLoaded() that starts card event monitoring while user enters the PIN.
-    connect(commandHandler.get(), &CommandHandler::singleCertificateReady, this,
-            &Controller::onCertificatesLoaded);
-    connect(commandHandler.get(), &CommandHandler::multipleCertificatesReady, this,
-            &Controller::onCertificatesLoaded);
-    connect(commandHandler.get(), &CommandHandler::verifyPinFailed, this,
-            &Controller::onCertificatesLoaded);
-
-    // UI setup.
-    createWindow();
-
-    // Finally, start the thread to wait for card insertion after everything is wired up.
-    waitForCardThread->start();
+    // QUIT is a native-messaging-only command, but tests can inject it directly.
+    if (!command || command->first == CommandType::QUIT) {
+        responseSink = std::make_unique<NativeMessagingSession>();
+    } else {
+        responseSink = std::make_unique<CommandLineResponseSink>();
+    }
 }
 
-void Controller::createWindow()
+void Controller::startCommandExecution()
 {
-    window = WebEidUI::createAndShowDialog(commandHandler->commandType());
+    REQUIRE_NON_NULL(command)
+
+    auto commandHandler = getCommandHandler(*command);
+    const auto type = commandHandler->commandType();
+
+    createWindow(type);
+
+    commandSession = std::make_unique<CommandSession>(std::move(commandHandler), window);
+    connect(commandSession.get(), &CommandSession::statusUpdate, this, &Controller::statusUpdate);
+    connect(commandSession.get(), &CommandSession::retry, this, &Controller::retry);
+    connect(commandSession.get(), &CommandSession::completed, this,
+            &Controller::onCommandSessionCompleted);
+    connect(commandSession.get(), &CommandSession::cancelled, this,
+            &Controller::onCommandSessionCancelled);
+    connect(commandSession.get(), &CommandSession::failed, this, &Controller::onCriticalFailure);
+    connect(commandSession.get(), &CommandSession::restartRequested, this, &Controller::onRetry);
+
+    commandSession->start();
+}
+
+void Controller::createWindow(CommandType commandType)
+{
+    window = WebEidUI::createAndShowDialog(commandType);
     connect(this, &Controller::statusUpdate, window, &WebEidUI::onSmartCardStatusUpdate);
     connect(this, &Controller::retry, window, &WebEidUI::onRetry);
-    connect(window, &WebEidUI::retry, this, &Controller::onRetry);
-    connect(window, &WebEidUI::accepted, this, &Controller::onDialogOK);
-    connect(window, &WebEidUI::rejected, this, &Controller::onDialogCancel);
-    connect(window, &WebEidUI::failure, this, &Controller::onCriticalFailure);
-    connect(window, &WebEidUI::waitingForPinPad, this, &Controller::onConfirmCommandHandler);
     connect(window, &WebEidUI::destroyed, this, [this] { window = nullptr; });
 }
 
-void Controller::onCardsAvailable(
-    const std::vector<electronic_id::ElectronicID::ptr>& availableEids) noexcept
+void Controller::onCommandSessionCompleted(const QVariantMap& res) noexcept
 try {
-    REQUIRE_NON_NULL(commandHandler)
-    REQUIRE_NON_NULL(window)
-    REQUIRE_NOT_EMPTY_CONTAINS_NON_NULL_PTRS(availableEids)
+    _result = res;
+    writeResult(res, commandType());
+    exit();
+} catch (const std::exception& error) {
+    onCriticalFailure(error.what());
+}
 
-    for (const auto& card : availableEids) {
-        const auto protocol =
-            card->smartcard().protocol() == SmartCard::Protocol::T0 ? "T=0" : "T=1";
-        qInfo() << "Card" << card->name() << "in reader" << card->smartcard().readerName()
-                << "using protocol" << protocol;
-    }
+void Controller::onCommandSessionCancelled() noexcept
+try {
+    _result = makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled"));
+    writeResult(_result, commandType());
+    exit();
+} catch (const std::exception& e) {
+    onCriticalFailure(e.what());
+}
 
-    window->showWaitingForCardPage(commandHandler->commandType());
-
-    commandHandler->connectSignals(window);
-
-    auto* commandHandlerRunThread =
-        new CommandHandlerRunThread(this, *commandHandler, availableEids);
-    connectRetry(commandHandlerRunThread);
-
-    commandHandlerRunThread->start();
+void Controller::onRetry() noexcept
+try {
+    disposeCommandSession();
+    disposeUI();
+    startCommandExecution();
 
 } catch (const std::exception& error) {
     onCriticalFailure(error.what());
 }
 
-void Controller::onCertificatesLoaded() noexcept
+void Controller::onCriticalFailure(const QString& error) noexcept
 try {
-    auto* cardEventMonitorThread = new CardEventMonitorThread(this, commandType());
-    connect(this, &Controller::stopCardEventMonitorThread, cardEventMonitorThread,
-            &CardEventMonitorThread::requestInterruption);
-    connect(cardEventMonitorThread, &ControllerChildThread::failure, this,
-            &Controller::onCriticalFailure);
-    connect(cardEventMonitorThread, &CardEventMonitorThread::cardEvent, this, &Controller::onRetry);
-    cardEventMonitorThread->start();
-} catch (const std::exception& error) {
-    onCriticalFailure(error.what());
+    qCritical() << "Exiting due to command" << commandType() << "fatal error:" << error;
+    _result =
+        makeErrorObject(RESP_TECH_ERROR, QStringLiteral("Technical error, see application logs"));
+    disposeCommandSession();
+    disposeUI();
+    if (responseSink && qApp->isSafariExtensionContainingApp()) {
+        writeResult(_result, commandType());
+    }
+    WebEidUI::showFatalError();
+    if (responseSink && !qApp->isSafariExtensionContainingApp()) {
+        // Write the error response after showing the fatal error dialog. Chrome closes the
+        // application immediately after this, so the dialog may not otherwise be visible.
+        writeResult(_result, commandType());
+    }
+    exit();
+} catch (const std::exception& e) {
+    qCritical() << "Failed to write stdout" << e.what();
+    exit();
+}
+
+void Controller::disposeCommandSession() noexcept
+{
+    if (commandSession) {
+        commandSession->disconnect();
+        commandSession->stop();
+        auto* session = commandSession.release();
+        session->deleteLater();
+    }
 }
 
 void Controller::disposeUI() noexcept
@@ -190,121 +194,23 @@ void Controller::disposeUI() noexcept
     }
 }
 
-void Controller::onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo) noexcept
-try {
-    emit stopCardEventMonitorThread();
-
-    auto* commandHandlerConfirmThread =
-        new CommandHandlerConfirmThread(this, *commandHandler, window, certAndPinInfo);
-    connect(commandHandlerConfirmThread, &CommandHandlerConfirmThread::completed, this,
-            &Controller::onCommandHandlerConfirmCompleted);
-    connectRetry(commandHandlerConfirmThread);
-
-    commandHandlerConfirmThread->start();
-
-} catch (const std::exception& error) {
-    onCriticalFailure(error.what());
-}
-
-void Controller::onCommandHandlerConfirmCompleted(const QVariantMap& res) noexcept
-try {
-    qDebug() << "Command completed";
-
-    _result = res;
-    writeResponseToStdOut(isInStdinMode, res, commandHandler->commandType());
-
-    exit();
-} catch (const std::exception& error) {
-    onCriticalFailure(error.what());
-}
-
-void Controller::onRetry() noexcept
-try {
-    // Dispose the UI, it will be re-created during next execution.
-    disposeUI();
-    // Command handler signals are still connected, disconnect them so that they can be
-    // reconnected during next execution.
-    commandHandler->disconnect();
-    // Before restarting, wait until child threads finish.
-    waitForChildThreads();
-
-    startCommandExecution();
-
-} catch (const std::exception& error) {
-    onCriticalFailure(error.what());
-}
-
-void Controller::connectRetry(const ControllerChildThread* childThread) const
-{
-    REQUIRE_NON_NULL(childThread)
-    connect(childThread, &ControllerChildThread::failure, this, &Controller::onCriticalFailure);
-    connect(childThread, &ControllerChildThread::retry, this, &Controller::retry);
-    // This connection handles cancel events from PIN pad.
-    connect(childThread, &ControllerChildThread::cancel, this, &Controller::onDialogCancel);
-}
-
-void Controller::onDialogOK(const EidCertificateAndPinInfo& certAndPinInfo) noexcept
-{
-    if (commandHandler) {
-        onConfirmCommandHandler(certAndPinInfo);
-    } else {
-        // This should not happen, and when it does, OK should be equivalent to cancel.
-        onDialogCancel();
-    }
-}
-
-void Controller::onDialogCancel() noexcept
-try {
-    qDebug() << "User cancelled";
-    _result = makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled"));
-    writeResponseToStdOut(isInStdinMode, _result, commandType());
-    exit();
-} catch (const std::exception& e) {
-    onCriticalFailure(e.what());
-}
-
-void Controller::onCriticalFailure(const QString& error) noexcept
-try {
-    emit stopCardEventMonitorThread();
-    qCritical() << "Exiting due to command" << commandType() << "fatal error:" << error;
-    _result =
-        makeErrorObject(RESP_TECH_ERROR, QStringLiteral("Technical error, see application logs"));
-    disposeUI();
-    if (qApp->isSafariExtensionContainingApp()) {
-        writeResponseToStdOut(isInStdinMode, _result, commandType());
-    }
-    WebEidUI::showFatalError();
-    if (!qApp->isSafariExtensionContainingApp()) {
-        // Write the error response to stdout after showing the fatal error dialog. Chrome will
-        // close the application immediately after this, so the UI dialog may not be visible to the
-        // user.
-        writeResponseToStdOut(isInStdinMode, _result, commandType());
-    }
-    exit();
-} catch (const std::exception& e) {
-    qCritical() << "Failed to write stdout" << e.what();
-    exit();
-}
-
 void Controller::exit() noexcept
 {
+    disposeCommandSession();
     disposeUI();
-    waitForChildThreads();
     emit quit();
-}
-
-void Controller::waitForChildThreads() noexcept
-{
-    for (auto* thread : findChildren<QThread*>()) {
-        qDebug() << "Interrupting thread" << uintptr_t(thread);
-        thread->disconnect();
-        thread->requestInterruption();
-        ControllerChildThread::waitForControllerNotify.wakeAll();
-        thread->wait();
-    }
 }
 
 CommandType Controller::commandType() const noexcept
 {
-    return commandHandler ? commandHandler->commandType() : CommandType(CommandType::INSERT_CARD);
+    if (commandSession) {
+        return commandSession->commandType();
+    }
+    return command ? command->first : CommandType(CommandType::INSERT_CARD);
+}
+
+void Controller::writeResult(const QVariantMap& result, CommandType resultCommandType)
+{
+    REQUIRE_NON_NULL(responseSink)
+    responseSink->writeResult(result, resultCommandType);
 }

@@ -22,9 +22,10 @@
 
 #pragma once
 
-#include "commandhandler.hpp"
+#include "commandsession.hpp"
+#include "responsesink.hpp"
 
-class ControllerChildThread;
+#include <memory>
 
 /** Controller coordinates the execution flow and interaction between all other components. */
 class Controller : public QObject
@@ -40,47 +41,32 @@ signals:
     void quit();
     void retry(const RetriableError error);
     void statusUpdate(RetriableError status);
-    void stopCardEventMonitorThread();
 
 public: // slots
     void run() noexcept;
 
-    // Called either directly from run() or from the monitor thread when cards are available.
-    void
-    onCardsAvailable(const std::vector<electronic_id::ElectronicID::ptr>& availableEids) noexcept;
-
-    // Called when CommandHandlerRunThread finishes execution.
-    void onCertificatesLoaded() noexcept;
-
-    // Called either directly from onDialogOK().
-    void onConfirmCommandHandler(const EidCertificateAndPinInfo& certAndPinInfo) noexcept;
-
-    // Called from CommandHandlerConfirm thread.
-    void onCommandHandlerConfirmCompleted(const QVariantMap& result) noexcept;
-
-    // Called from the dialog when user chooses to retry errors that have occured in child threads.
+    // Called when CommandSession needs a fresh UI/session for the same command.
     void onRetry() noexcept;
-
-    // User events from the dialog.
-    void onDialogOK(const EidCertificateAndPinInfo& certAndPinInfo) noexcept;
-    void onDialogCancel() noexcept;
 
     // Failure handler, reports the error and quits the application.
     void onCriticalFailure(const QString& error) noexcept;
 
 private:
+    void initializeResponseSink();
     void startCommandExecution();
-    void connectRetry(const ControllerChildThread* childThread) const;
-    void createWindow();
+    void createWindow(CommandType commandType);
+    void onCommandSessionCompleted(const QVariantMap& result) noexcept;
+    void onCommandSessionCancelled() noexcept;
+    void disposeCommandSession() noexcept;
     void disposeUI() noexcept;
     void exit() noexcept;
-    void waitForChildThreads() noexcept;
     CommandType commandType() const noexcept;
+    void writeResult(const QVariantMap& result, CommandType resultCommandType);
 
     CommandWithArgumentsPtr command;
-    CommandHandler::ptr commandHandler;
+    std::unique_ptr<ResponseSink> responseSink;
+    std::unique_ptr<CommandSession> commandSession;
     // As the Qt::WA_DeleteOnClose flag is set, the dialog is deleted automatically.
     observer_ptr<WebEidUI> window = nullptr;
     QVariantMap _result;
-    bool isInStdinMode = true;
 };

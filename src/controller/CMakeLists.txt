@@ -13,6 +13,8 @@ add_library(controller STATIC
     command-handlers/signauthutils.cpp
     command-handlers/signauthutils.hpp
     commandhandler.hpp
+    commandsession.cpp
+    commandsession.hpp
     commands.cpp
     commands.hpp
     controller.cpp
@@ -21,7 +23,11 @@ add_library(controller STATIC
     inputoutputmode.hpp
     logging.cpp
     logging.hpp
+    nativemessagingsession.cpp
+    nativemessagingsession.hpp
     qeid.hpp
+    responsesink.cpp
+    responsesink.hpp
     retriableerror.hpp
     threads/cardeventmonitorthread.hpp
     threads/commandhandlerconfirmthread.hpp
