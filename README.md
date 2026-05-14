@@ -281,24 +281,13 @@ sudo apt install \
 ### Windows
 
 - Download Visual Studio 2022 community installer from https://visualstudio.microsoft.com/ and install _Desktop C++ Development_
-- Install WIX toolset
-
-      dotnet tool install --global wix --version 6.0.2
-      wix extension -g add WixToolset.UI.wixext/6.0.2
-      wix extension -g add WixToolset.Util.wixext/6.0.2
-      wix extension -g add WixToolset.Bal.wixext/6.0.2
-
 - Download and install Git for Windows from https://git-scm.com/download/win
 - Download and install CMake from https://cmake.org/download/
-- Install _vcpkg_ by running the following commands in Powershell:
-
-      git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
-      cd C:\vcpkg
-      .\bootstrap-vcpkg.bat
-      .\vcpkg integrate install
-
 - Install _Qt_ with the official [_Qt Online Installer_](https://www.qt.io/download-qt-installer),
-  choose _Custom installation > Qt 6.10.0 > MSVC 2022 64-bit_.
+  choose _Custom installation > Qt 6.11.1_ and select the architecture(s) you need:
+  - _MSVC 2022 64-bit_ — for building the x64 binary
+  - _MSVC 2022 ARM64_ — for building the ARM64 binary natively on an ARM64 host
+  - _MSVC 2022 ARM64 (cross-compiled)_ — for building the ARM64 binary on an x64 host
 
 ### macOS
 
@@ -326,40 +315,59 @@ sudo apt install \
 
 ### Building and testing in Windows
 
-Use _Powershell_ to run the following commands to build the project.
+#### Single-arch dev build
 
-- Set the _Qt_ installation directory variable:
+Use this when developing or testing for one architecture. In addition to the prerequisites
+above, install the following:
 
-      $QT_ROOT = "C:\Qt\6.10.0\msvc2022_64"
+- Install _vcpkg_:
 
-- Set the _vcpkg_ installation directory variable:
+      git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
+      C:\vcpkg\bootstrap-vcpkg.bat
 
-      $VCPKG_ROOT = "C:\vcpkg"
+- Install _WiX_ toolset:
 
-- Set the build type variable:
+      dotnet tool install --global wix --version 6.0.2
+      wix extension -g add WixToolset.UI.wixext/6.0.2
+      wix extension -g add WixToolset.Util.wixext/6.0.2
+      wix extension -g add WixToolset.BootstrapperApplications.wixext/6.0.2
 
-      $BUILD_TYPE = "RelWithDebInfo"
+Then run in Powershell:
 
-- Run _CMake_:
+    $QT_ROOT = "C:\Qt\6.11.1\msvc2022_64"   # adjust arch suffix as needed
+    $VCPKG_ROOT = "C:\vcpkg"
+    $BUILD_TYPE = "RelWithDebInfo"
 
-      cmake -A x64 -B build -S .
-          "-DCMAKE_PREFIX_PATH=${QT_ROOT}" `
-          "-DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
-          "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" `
-          "-DVCPKG_MANIFEST_DIR=lib/libelectronic-id"
+    cmake -A x64 -B build -S . `
+        "-DCMAKE_PREFIX_PATH=${QT_ROOT}" `
+        "-DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" `
+        "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" `
+        "-DVCPKG_MANIFEST_DIR=lib/libelectronic-id"
 
-- Run the build and installer build:
+    cmake --build build --config ${BUILD_TYPE} --target installer
 
-      cmake --build build --config ${BUILD_TYPE}
-      cmake --build build --config ${BUILD_TYPE} --target installer
+The resulting `.qt.msi` in `build\src\app\` can be installed directly for testing.
 
-- Add _Qt_ binary directory to path:
+To run tests:
 
-      $env:PATH += ";${QT_ROOT}\bin"
+    $env:PATH += ";${QT_ROOT}\bin"
+    ctest -V -C ${BUILD_TYPE} --test-dir build
 
-- Run tests:
+#### Dual-arch installer (x64 + ARM64)
 
-      ctest -V -C ${BUILD_TYPE} --test-dir build
+Use `build.ps1` to build both architectures and produce a combined installer bundle.
+WiX and vcpkg are installed automatically if not already present.
+
+    powershell -ExecutionPolicy ByPass -File build.ps1
+
+Key parameters (all optional, with auto-detected defaults):
+
+| Parameter       | Default              | Description                                 |
+|-----------------|----------------------|---------------------------------------------|
+| `-qt_dir`       | `C:\Qt\6.11.1`       | Qt installation base directory              |
+| `-vcpkgroot`    | `$env:VCPKG_ROOT`    | vcpkg root directory                        |
+| `-crosscompile` | auto-detected        | `$true` on x64 host, `$false` on ARM64 host |
+| `-sign`         | _(none)_             | Certificate CN for code signing             |
 
 ## Adding and updating translations
 

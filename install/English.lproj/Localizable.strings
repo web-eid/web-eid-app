@@ -1,6 +1,6 @@
 "SU_TITLE" = "Web eID Software";
 "SU_ERROR" = "Error";
-"SU_13" = "macOS version needs to be 13.0 or newer.";
+"SU_14" = "macOS version needs to be 14.0 or newer.";
 "SU_BASE" = "Base components";
 "SU_FIREFOX" = "Firefox authentication and signing support";
 "SU_CHROME" = "Chrome authentication and signing support";

@@ -10,7 +10,7 @@ env:
   GTest_ROOT: ${{ github.workspace }}/gtest-binary
   QT_QPA_PLATFORM: offscreen
   CMAKE_BUILD_PARALLEL_LEVEL: 3
-  MACOSX_DEPLOYMENT_TARGET: 13.0
+  MACOSX_DEPLOYMENT_TARGET: 14.0
 
 jobs:
   build:
@@ -65,7 +65,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.10.2
+          version: 6.10.3
           arch: clang_64
           cache: true
 

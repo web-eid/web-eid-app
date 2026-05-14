@@ -43,17 +43,6 @@ if(WIN32)
         COMMAND ${WIX_CMD} -d qt_path=${Qt6_DIR}/../../../bin -o "${BASE_FILE}.qt.msi"
         WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
     )
-    add_custom_target(bundle DEPENDS installer
-        COMMAND wix.exe build -nologo
-            -ext WixToolset.BootstrapperApplications.wixext
-            -ext WixToolset.Util.wixext
-            -d webeid="${BASE_FILE}"
-            -d MSI_VERSION=${PROJECT_VERSION}
-            -d path="${CMAKE_SOURCE_DIR}/install"
-            "${CMAKE_SOURCE_DIR}/install/plugins.wxs"
-            -o "${BASE_FILE}.exe"
-        WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
-    )
     if(SIGNCERT)
         list(APPEND SIGNCMD signtool.exe sign /a /v /s MY /n "${SIGNCERT}" /fd SHA256
             /du http://installer.id.ee /tr http://timestamp.digicert.com /td SHA256)
@@ -63,14 +52,6 @@ if(WIN32)
         )
         add_custom_command(TARGET installer POST_BUILD
             COMMAND ${SIGNCMD} "${BASE_FILE}.msi" "${BASE_FILE}.qt.msi"
-            WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
-        )
-        add_custom_command(TARGET bundle POST_BUILD
-            COMMAND wix.exe burn detach -nologo "${BASE_FILE}.exe" -engine "${BASE_FILE}.engine.exe"
-            COMMAND ${SIGNCMD} "${BASE_FILE}.engine.exe"
-            COMMAND wix.exe burn reattach -nologo "${BASE_FILE}.exe" -engine "${BASE_FILE}.engine.exe" -o "${BASE_FILE}.exe"
-            COMMAND ${SIGNCMD} "${BASE_FILE}.exe"
-            COMMAND del "${BASE_FILE}.engine.exe"
             WORKING_DIRECTORY $<TARGET_FILE_DIR:web-eid>
         )
     endif()

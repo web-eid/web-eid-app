@@ -86,6 +86,9 @@ if(SIGNCERT)
             $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/Frameworks/*.*
             $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns/*/*.dylib
         COMMAND codesign -f -s "Apple Distribution: ${SIGNCERT}"
+            --entitlements ${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-extension.entitlements
+            $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns/web-eid-safari-extension.appex
+        COMMAND codesign -f -s "Apple Distribution: ${SIGNCERT}"
             --entitlements ${ENTITLEMENTS}
             $<TARGET_BUNDLE_DIR:web-eid-safari>
     )

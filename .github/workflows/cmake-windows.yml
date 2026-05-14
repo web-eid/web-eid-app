@@ -3,18 +3,12 @@ name: CMake (Windows)
 on: [push, pull_request]
 
 env:
-  BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
   CMAKE_BUILD_PARALLEL_LEVEL: 4
-  # Use libelectronic-id vcpkg manifest for dependencies
-  VCPKG_MANIFEST_DIR: ./lib/libelectronic-id
 
 jobs:
   build:
-    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-2025' }}
-    strategy:
-      matrix:
-        arch: [x64, arm64]
+    runs-on: windows-2022
 
     steps:
       - name: Checkout code
@@ -24,64 +18,61 @@ jobs:
           persist-credentials: false
 
       - name: Cache vcpkg
-        id: cache
         uses: actions/cache@v5
         with:
           path: |
             ${{ github.workspace }}/vcpkg_cache
             ~/.dotnet/tools
             ~/.wix
-          key: vcpkg-${{ matrix.arch }}-${{ hashFiles(format('{0}/vcpkg.json', env.VCPKG_MANIFEST_DIR)) }}
+          key: vcpkg-${{ hashFiles('./lib/libelectronic-id/vcpkg.json') }}
 
-      - name: Install Qt
+      - name: Install Qt x64
         uses: jurplel/install-qt-action@v4
         with:
-          version: 6.10.2
-          arch: ${{ matrix.arch == 'arm64' && 'win64_msvc2022_arm64' || 'win64_msvc2022_64' }}
+          version: 6.11.1
+          arch: win64_msvc2022_64
           cache: true
+          aqtsource: git+https://github.com/miurahr/aqtinstall.git
 
-      - name: Setup MS Visual C++ dev env
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: ${{ matrix.arch }}
-
-      - name: Install WiX
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Save Qt base path
+        shell: pwsh
         run: |
-          dotnet tool install --global wix --version 6.0.2
-          wix extension -g add WixToolset.UI.wixext/6.0.2
-          wix extension -g add WixToolset.Util.wixext/6.0.2
-          wix extension -g add WixToolset.BootstrapperApplications.wixext/6.0.2
+          echo "QT_DIR=$(Split-Path $env:QT_ROOT_DIR)" >> $env:GITHUB_ENV
 
-      - name: Configure
+      - name: Install Qt arm64
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: 6.11.1
+          arch: win64_msvc2022_arm64_cross_compiled
+          cache: true
+          aqtsource: git+https://github.com/miurahr/aqtinstall.git
+
+      - name: Build
+        shell: pwsh
         env:
           VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
         run: |
-          cmake "-GNinja" -S . -B build `
-            "-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake" `
-            "-DCMAKE_BUILD_TYPE=${env:BUILD_TYPE}" `
-            "-DVCPKG_MANIFEST_DIR=${{ env.VCPKG_MANIFEST_DIR }}"
-
-      - name: Build
-        run: |
-          cmake --build build --config ${env:BUILD_TYPE}
-          cmake --build build --config ${env:BUILD_TYPE} --target installer
-          cmake --build build --config ${env:BUILD_TYPE} --target bundle
+          .\build.ps1 -vcpkgroot C:\vcpkg -qt_dir $env:QT_DIR
 
       - name: Test
-        if: ${{ matrix.arch == 'x64' }}
-        run: ctest -V -C ${env:BUILD_TYPE} --test-dir build
+        shell: pwsh
+        run: |
+          $env:QT_QPA_PLATFORM = 'offscreen'
+          ctest -V -C RelWithDebInfo --test-dir build\x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: web-eid-app-windows-build-${{matrix.arch}}-${{github.run_number}}
+          name: web-eid-app-windows-${{github.run_number}}
           path: |
-            build/src/app/*.msi
-            build/src/app/*.exe
+            build\*.exe
+            build\x64\src\app\**\*.msi
+            build\arm64\src\app\**\*.msi
 
       - name: Upload debug artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: web-eid-app-windows-debug-${{matrix.arch}}-${{github.run_number}}
-          path: build/**/*.pdb
+          name: web-eid-app-windows-debug-${{github.run_number}}
+          path: |
+            build\x64\**\*.pdb
+            build\arm64\**\*.pdb

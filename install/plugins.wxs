@@ -32,10 +32,21 @@
       Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido" Value="update_url" After="WebEIDInstalled" />
     <util:RegistrySearch Variable="FirefoxSupport" Condition="Installed &gt; v0.0.0.0" Result="exists" Root="HKLM"
       Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" Bitness="always64" After="WebEIDInstalled" />
+    <util:RegistrySearch Id="DetectARM64Processor" Root="HKLM" Result="value" Variable="ARCH"
+      Key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment" Value="PROCESSOR_ARCHITECTURE" />
 
     <Chain>
-      <MsiPackage Id="WebEID" InstallCondition="VersionNT64" ForcePerMachine="yes"
-          SourceFile="$(var.webeid).qt.msi" Compressed="yes">
+      <MsiPackage Id="WebEID.X64" InstallCondition="NOT ARCH=&quot;ARM64&quot;"
+          ForcePerMachine="yes" SourceFile="$(var.webeid_x64).qt.msi" Compressed="yes">
+        <MsiProperty Name="INSTALLFOLDER" Value="[ProgramFiles64Folder]Web eID" />
+        <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]" />
+        <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]" />
+        <MsiProperty Name="EDGEINSTALL" Value="[EdgeSupport]" />
+        <MsiProperty Name="EDGEPOLICY" Value="[ForceEdgeExtensionActivation]" />
+        <MsiProperty Name="FIREFOXINSTALL" Value="[FirefoxSupport]" />
+      </MsiPackage>
+      <MsiPackage Id="WebEID.ARM64" InstallCondition="ARCH=&quot;ARM64&quot;"
+          ForcePerMachine="yes" SourceFile="$(var.webeid_arm64).qt.msi" Compressed="yes">
         <MsiProperty Name="INSTALLFOLDER" Value="[ProgramFiles64Folder]Web eID" />
         <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]" />
         <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]" />
