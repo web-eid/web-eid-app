@@ -69,11 +69,17 @@ template QString validateAndGetArgument<QString>(const QString& argName, const Q
 template QByteArray validateAndGetArgument<QByteArray>(const QString& argName,
                                                        const QVariantMap& args, bool allowNull);
 
-void getPin(pcsc_cpp::byte_vector& pin, const ElectronicID& eid, WebEidUI* window)
+pcsc_cpp::byte_vector getPin(const ElectronicID& eid, WebEidUI* window)
 {
+    pcsc_cpp::byte_vector pin;
+    // Reserve space for APDU overhead (5 bytes) + PIN padding (16 bytes) to prevent PIN memory
+    // reallocation. The 16-byte limit comes from the max PIN length of 12 bytes across all card
+    // implementations in lib/libelectronic-id/src/electronic-ids/pcsc/.
+    pin.reserve(5 + 16);
+
     // If the reader has a PIN pad or when enternal PIN dialog is used, do nothing.
     if (eid.smartcard().readerHasPinPad() || eid.providesExternalPinDialog()) {
-        return;
+        return pin;
     }
 
     REQUIRE_NON_NULL(window)
@@ -91,6 +97,7 @@ void getPin(pcsc_cpp::byte_vector& pin, const ElectronicID& eid, WebEidUI* windo
     }
 
     eraseData(pinQStr);
+    return pin;
 }
 
 QVariantMap signatureAlgoToVariantMap(const SignatureAlgorithm signatureAlgo)

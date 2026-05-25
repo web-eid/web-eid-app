@@ -58,28 +58,28 @@ QVariantMap createAuthenticationToken(std::string_view signatureAlgorithm,
     };
 }
 
-QByteArray createSignature(const QString& origin, const QString& challengeNonce,
+QByteArray createSignature(const QByteArray& origin, const QString& challengeNonce,
                            const ElectronicID& eid, pcsc_cpp::byte_vector&& pin)
 {
-    static const std::map<JsonWebSignatureAlgorithm, QCryptographicHash::Algorithm>
-        SIGNATURE_ALGO_TO_HASH {
-            {JsonWebSignatureAlgorithm::RS256, QCryptographicHash::Sha256},
-            {JsonWebSignatureAlgorithm::PS256, QCryptographicHash::Sha256},
-            {JsonWebSignatureAlgorithm::ES256, QCryptographicHash::Sha256},
-            {JsonWebSignatureAlgorithm::ES384, QCryptographicHash::Sha384},
-            {JsonWebSignatureAlgorithm::ES512, QCryptographicHash::Sha512},
-        };
-
-    if (!SIGNATURE_ALGO_TO_HASH.count(eid.authSignatureAlgorithm())) {
-        THROW(ProgrammingError,
-              "Hash algorithm mapping missing for signature algorithm "
-                  + std::string(eid.authSignatureAlgorithm()));
-    }
-
-    const auto hashAlgo = SIGNATURE_ALGO_TO_HASH.at(eid.authSignatureAlgorithm());
+    const auto hashAlgo = [algo = eid.authSignatureAlgorithm()] {
+        switch (algo) {
+            using enum JsonWebSignatureAlgorithm::JsonWebSignatureAlgorithmEnum;
+        case RS256:
+        case PS256:
+        case ES256:
+            return QCryptographicHash::Sha256;
+        case ES384:
+            return QCryptographicHash::Sha384;
+        case ES512:
+            return QCryptographicHash::Sha512;
+        default:
+            THROW(ProgrammingError,
+                  "Hash algorithm mapping missing for signature algorithm " + std::string(algo));
+        }
+    }();
 
     // Take the hash of the origin and nonce to ensure field separation.
-    const auto originHash = QCryptographicHash::hash(origin.toUtf8(), hashAlgo);
+    const auto originHash = QCryptographicHash::hash(origin, hashAlgo);
     const auto challengeNonceHash = QCryptographicHash::hash(challengeNonce.toUtf8(), hashAlgo);
 
     // The value that is signed is hash(origin)+hash(challenge).
@@ -123,23 +123,19 @@ QVariantMap Authenticate::onConfirm(WebEidUI* window,
                                     const EidCertificateAndPinInfo& certAndPinInfo)
 {
     try {
-        pcsc_cpp::byte_vector pin;
-        // Reserve space for APDU overhead (5 bytes) + PIN padding (16 bytes) to prevent PIN memory
-        // reallocation. The 16-byte limit comes from the max PIN length of 12 bytes across all card
-        // implementations in lib/libelectronic-id/src/electronic-ids/pcsc/.
-        pin.reserve(5 + 16);
-        getPin(pin, *certAndPinInfo.eid, window);
-        const auto signature =
-            createSignature(origin.url(), challengeNonce, *certAndPinInfo.eid, std::move(pin));
+        auto pin = getPin(*certAndPinInfo.eid, window);
+        const auto signature = createSignature(origin.toEncoded(), challengeNonce,
+                                               *certAndPinInfo.eid, std::move(pin));
         return createAuthenticationToken(certAndPinInfo.eid->authSignatureAlgorithm(),
                                          certAndPinInfo.certificateBytesInDer, signature);
 
     } catch (const VerifyPinFailed& failure) {
         switch (failure.status()) {
-        case VerifyPinFailed::Status::PIN_ENTRY_CANCEL:
-        case VerifyPinFailed::Status::PIN_ENTRY_TIMEOUT:
+            using enum VerifyPinFailed::Status;
+        case PIN_ENTRY_CANCEL:
+        case PIN_ENTRY_TIMEOUT:
             break;
-        case VerifyPinFailed::Status::PIN_ENTRY_DISABLED:
+        case PIN_ENTRY_DISABLED:
             emit retry(RetriableError::PIN_VERIFY_DISABLED);
             break;
         default:

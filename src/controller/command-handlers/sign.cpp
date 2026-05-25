@@ -98,12 +98,7 @@ void Sign::emitCertificatesReady(const std::vector<EidCertificateAndPinInfo>& ce
 QVariantMap Sign::onConfirm(WebEidUI* window, const EidCertificateAndPinInfo& certAndPinInfo)
 {
     try {
-        pcsc_cpp::byte_vector pin;
-        // Reserve space for APDU overhead (5 bytes) + PIN padding (16 bytes) to prevent PIN memory
-        // reallocation. The 16-byte limit comes from the max PIN length of 12 bytes across all card
-        // implementations in lib/libelectronic-id/src/electronic-ids/pcsc/.
-        pin.reserve(5 + 16);
-        getPin(pin, *certAndPinInfo.eid, window);
+        auto pin = getPin(*certAndPinInfo.eid, window);
         auto signature = signHash(*certAndPinInfo.eid, std::move(pin), docHash, hashAlgo);
         return {{QStringLiteral("signature"), std::move(signature.first)},
                 {QStringLiteral("signatureAlgorithm"), std::move(signature.second)}};
