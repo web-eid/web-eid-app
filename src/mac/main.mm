@@ -164,8 +164,10 @@ public:
     void showSafariSettings() final
     {
         [SFSafariApplication showPreferencesForExtensionWithIdentifier:WebEidExtension
-                                                     completionHandler:nil];
-        quit();
+                                                     completionHandler: ^(NSError *error) {
+                                                         NSLog(@"web-eid-safari: showSafariSettings completed with error: %@", error);
+                                                         quit();
+                                                     }];
     }
 };
 
