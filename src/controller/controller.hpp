@@ -32,7 +32,7 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    explicit Controller(CommandWithArguments&& cmd) : command(std::move(cmd)) { }
+    explicit Controller(CommandWithArguments&& cmd);
 
     const QVariantMap& result() const { return _result; }
 
