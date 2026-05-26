@@ -22,7 +22,6 @@
 
 #include "application.hpp"
 #include "certandpininfo.hpp"
-#include "logging.hpp"
 #include "retriableerror.hpp"
 
 #include <QCommandLineParser>
@@ -74,7 +73,6 @@ Application::Application(int& argc, char** argv, const QString& name) :
     }
 
     registerMetatypes();
-    setupLogging();
 
 #ifdef Q_OS_MAC
     menuBar = std::make_unique<QMenuBar>();

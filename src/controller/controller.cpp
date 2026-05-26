@@ -31,6 +31,7 @@
 
 #include "application.hpp"
 #include "inputoutputmode.hpp"
+#include "logging.hpp"
 #include "writeresponse.hpp"
 
 using namespace pcsc_cpp;
@@ -52,6 +53,11 @@ QVariantMap makeErrorObject(const QString& errorCode, const QString& errorMessag
 }
 
 } // namespace
+
+Controller::Controller(CommandWithArguments&& cmd) : command(std::move(cmd))
+{
+    setupLogging();
+}
 
 void Controller::run() noexcept
 try {
