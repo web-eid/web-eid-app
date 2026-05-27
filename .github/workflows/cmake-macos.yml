@@ -77,6 +77,7 @@ jobs:
           cmake --build ${BUILD_DIR} --config ${BUILD_TYPE}
           cmake --build ${BUILD_DIR} --config ${BUILD_TYPE} --target installer
           cmake --build ${BUILD_DIR} --config ${BUILD_TYPE} --target installer-safari
+          cmake --install build/sbom
 
       #- name: Test
       #  run: ctest -V -C ${BUILD_TYPE} --test-dir ${BUILD_DIR}
@@ -88,3 +89,9 @@ jobs:
           path: |
             build/src/app/*.pkg
             build/src/app/*.dmg
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-eid-app-macos-sbom-${{github.run_number}}
+          path: build/*.spdx
