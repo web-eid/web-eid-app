@@ -37,10 +37,8 @@
     <Launch Condition="Installed OR (VersionNT &gt;= 603)" Message="[ProductName] requires Windows 8.1 or higher." />
     <ui:WixUI Id="WixUI_Minimal2" />
 
-    <!-- See https://github.com/web-eid/wix-custom-action-firefox-extension-install/blob/main/README.md and
-         https://github.com/web-eid/wix-custom-action-firefox-extension-install/blob/main/src/FirefoxAction.cs
-    -->
-    <Binary Id="FirefoxAction.CA.dll" SourceFile="$(sys.SOURCEFILEDIR)FirefoxAction.CA.dll" />
+    <!-- See install/firefox-action/FirefoxAction.cs -->
+    <Binary Id="FirefoxAction.CA.dll" SourceFile="$(var.FirefoxActionDll)" />
     <CustomAction Id="ExtensionSettingsInstall" Return="check" Execute="deferred" Impersonate="no"
       BinaryRef="FirefoxAction.CA.dll" DllEntry="ExtensionSettingsInstall" />
     <CustomAction Id="ExtensionSettingsNoInstall" Return="check" Execute="deferred" Impersonate="no"
