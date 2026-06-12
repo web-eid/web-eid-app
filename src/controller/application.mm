@@ -6,7 +6,6 @@
 #include <QUrl>
 
 #import <AppKit/AppKit.h>
-#import <Cocoa/Cocoa.h>
 
 void Application::showAbout()
 {

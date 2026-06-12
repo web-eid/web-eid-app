@@ -45,7 +45,6 @@ add_library(controller STATIC
 if(APPLE)
     target_sources(controller PRIVATE application.mm)
     set_source_files_properties(application.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc")
-    target_link_libraries(controller "-framework Cocoa" "-framework AppKit" "-fobjc-arc")
 endif()
 
 set_property(SOURCE application.cpp APPEND PROPERTY COMPILE_DEFINITIONS PROJECT_VERSION="${SEMVER_VERSION_STRING}")

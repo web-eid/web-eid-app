@@ -4,8 +4,7 @@
 # Helper
 add_library(SafariServices INTERFACE shared.hpp)
 target_compile_options(SafariServices INTERFACE -fobjc-arc)
-target_link_options(SafariServices INTERFACE -fobjc-arc -fobjc-link-runtime)
-target_link_libraries(SafariServices INTERFACE "-framework SafariServices")
+target_link_libraries(SafariServices INTERFACE $<LINK_LIBRARY:FRAMEWORK,SafariServices.framework>)
 
 # Extension JS
 find_program(NPM_EXECUTABLE NAMES npm REQUIRED)
@@ -18,6 +17,7 @@ add_custom_command(OUTPUT ${EXTENSION}
     COMMENT "Generating extension js"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/js
 )
+set_source_files_properties(${EXTENSION} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
 # Extension
 add_executable(web-eid-safari-extension MACOSX_BUNDLE safari-extension.mm web-eid-safari-extension.entitlements ${EXTENSION})
@@ -29,19 +29,15 @@ set_target_properties(web-eid-safari-extension PROPERTIES
     XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_LIST_DIR}/web-eid-safari-extension.entitlements"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "eu.web-eid.web-eid-safari.web-eid-safari-extension"
 )
-target_link_libraries(web-eid-safari-extension SafariServices "-framework AppKit")
+target_link_libraries(web-eid-safari-extension SafariServices $<LINK_LIBRARY:FRAMEWORK,AppKit>)
 target_link_options(web-eid-safari-extension PRIVATE -e _NSExtensionMain -fapplication-extension)
-add_custom_command(TARGET web-eid-safari-extension POST_BUILD
-    COMMAND mkdir -p $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari-extension>/Resources
-    COMMAND cp ${EXTENSION} $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari-extension>/Resources
-)
 
 # Application
 add_executable(web-eid-safari MACOSX_BUNDLE
     ${CMAKE_SOURCE_DIR}/install/appicon.icns
     InfoPlist.strings
     main.mm
-    ../app/getCommandHandler.cpp
+    ../app/getcommandhandler.cpp
     web-eid-safari.entitlements
 )
 set_source_files_properties(${CMAKE_SOURCE_DIR}/install/appicon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
@@ -51,12 +47,16 @@ set_target_properties(web-eid-safari PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info-app.plist.cmake
     XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_LIST_DIR}/web-eid-safari.entitlements"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "eu.web-eid.web-eid-safari"
+    XCODE_EMBED_APP_EXTENSIONS web-eid-safari-extension
 )
-target_link_libraries(web-eid-safari SafariServices controller ui pcsc "-framework Cocoa")
-add_custom_command(TARGET web-eid-safari POST_BUILD
-    COMMAND mkdir -p $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns
-    COMMAND cp -a $<TARGET_BUNDLE_DIR:web-eid-safari-extension> $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns
-)
+target_link_libraries(web-eid-safari SafariServices controller ui pcsc)
+add_dependencies(web-eid-safari web-eid-safari-extension)
+if(NOT XCODE)
+    add_custom_command(TARGET web-eid-safari POST_BUILD
+        COMMAND mkdir -p $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns
+        COMMAND cp -a $<TARGET_BUNDLE_DIR:web-eid-safari-extension> $<TARGET_BUNDLE_CONTENT_DIR:web-eid-safari>/PlugIns
+    )
+endif()
 
 add_custom_target(macdeployqt-safari DEPENDS web-eid-safari
     COMMAND Qt6::macdeployqt $<TARGET_BUNDLE_DIR:web-eid-safari> -appstore-compliant
