@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>PayloadType</key>
+            <string>com.apple.system.logging</string>
+            <key>PayloadIdentifier</key>
+            <string>eu.web-eid.web-eid-safari.logging</string>
+            <key>PayloadUUID</key>
+            <string>4F8A1B2C-3D4E-5F6A-7B8C-9D0E1F2A3B4C</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <key>Enable-Private-Data</key>
+            <true/>
+        </dict>
+    </array>
+    <key>PayloadDisplayName</key>
+    <string>web-eid Debug Logging</string>
+    <key>PayloadDescription</key>
+    <string>Enables private data in os_log output system-wide. Install for debugging only; remove when done.</string>
+    <key>PayloadIdentifier</key>
+    <string>eu.web-eid.debug-logging-profile</string>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>5A9B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+</dict>
+</plist>
