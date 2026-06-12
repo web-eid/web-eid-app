@@ -224,6 +224,25 @@ The application writes logs to
 - `~/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Application\ Support/RIA/web-eid-safari/web-eid-safari.log` of Safari in macOS
 - `C:/Users/<USER>/AppData/Local/RIA/web-eid/web-eid.log` in Windows.
 
+The Safari extension and its containing app also emit structured log messages via the macOS unified
+logging system. To stream them live:
+
+    log stream --predicate 'subsystem BEGINSWITH "eu.web-eid.web-eid-safari"' --level debug
+
+To query past messages (e.g. the last hour):
+
+    log show --predicate 'subsystem BEGINSWITH "eu.web-eid.web-eid-safari"' --last 1h
+
+By default, request and response payloads are redacted in the log output. To reveal them, sign and
+install `src/mac/web-eid-debug-logging.mobileconfig`:
+
+    security cms -S -N "Apple Development: your@email.com (TEAMID)" \
+      -i src/mac/web-eid-debug-logging.mobileconfig \
+      -o /tmp/web-eid-debug-logging-signed.mobileconfig
+
+Open the signed file, then install it in System Settings → General → Device Management. The profile
+enables private data only for the Web eID Safari app and extension subsystems; remove it when done.
+
 ## Internal design
 
 The Web eID native application is built with the [Qt](https://www.qt.io/) framework. It consists of

@@ -72,3 +72,4 @@ jobs:
           path: |
             build/src/app/*.pkg
             build/src/app/*.dmg
+            build/src/mac/*.pkg
