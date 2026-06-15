@@ -41,9 +41,12 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-inline CommandWithArguments::second_type parseArgumentJson(const QString& argumentStr)
+inline CommandWithArguments::second_type parseArgumentJson(const QByteArray& argumentBytes)
 {
-    const auto argumentJson = QJsonDocument::fromJson(argumentStr.toUtf8());
+    if (argumentBytes.size() > 8192) {
+        throw ArgumentError("Command argument JSON length exceeds maximum allowed 8192 bytes");
+    }
+    const auto argumentJson = QJsonDocument::fromJson(argumentBytes);
 
     if (!argumentJson.isObject()) {
         throw ArgumentError("parseArgument: Invalid JSON, not an object");
@@ -166,7 +169,7 @@ CommandWithArguments Application::parseArgs()
         if (command == CMDLINE_GET_SIGNING_CERTIFICATE || command == CMDLINE_AUTHENTICATE
             || command == CMDLINE_SIGN) {
             // TODO: add command-specific argument validation
-            return {CommandType(command), parseArgumentJson(arguments)};
+            return {CommandType(command), parseArgumentJson(arguments.toUtf8())};
         }
         throw ArgumentError("The command has to be one of " + COMMANDS.toStdString());
     }
