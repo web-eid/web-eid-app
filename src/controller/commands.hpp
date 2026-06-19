@@ -27,7 +27,7 @@ public:
     constexpr bool operator==(CommandTypeEnum other) const noexcept { return value == other; }
     constexpr operator CommandTypeEnum() const noexcept { return value; }
 
-    operator std::string() const;
+    operator std::string_view() const;
 
 private:
     CommandTypeEnum value;

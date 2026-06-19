@@ -4,7 +4,8 @@
 #pragma once
 
 #include <QVariantMap>
-#include <string>
+
+#include <string_view>
 
 void writeResponseToStdOut(bool isInStdinMode, const QVariantMap& result,
-                           const std::string& commandType);
+                           std::string_view commandType);

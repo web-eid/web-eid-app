@@ -27,7 +27,7 @@ CommandType::CommandType(const QString& cmdName)
     }
 }
 
-CommandType::operator std::string() const
+CommandType::operator std::string_view() const
 {
     return QMetaEnum::fromType<CommandType::CommandTypeEnum>().valueToKey(value);
 }
