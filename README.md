@@ -287,6 +287,10 @@ sudo apt install \
     ./test.sh
     ./build/src/app/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
 
+To build the Debian package installer, run:
+
+    ./build.sh installer
+
 ### macOS setup
 
 - Install _Homebrew_ if not already installed:
@@ -334,7 +338,7 @@ above, install the following:
       wix extension -g add WixToolset.Util.wixext/6.0.2
       wix extension -g add WixToolset.BootstrapperApplications.wixext/6.0.2
 
-Then run in Powershell:
+Open _x64 Native Tools Command Prompt for VS 2022_, run `powershell` from that prompt and then run the following commands. This sets `PLATFORM=x64`, which the WiX installer target uses:
 
     git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
     cd web-eid-app
@@ -349,6 +353,7 @@ Then run in Powershell:
         "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" `
         "-DVCPKG_MANIFEST_DIR=lib/libelectronic-id"
 
+    cmake --build build --config ${BUILD_TYPE}
     cmake --build build --config ${BUILD_TYPE} --target installer
 
 The resulting `.qt.msi` in `build\src\app\` can be installed directly for testing.
