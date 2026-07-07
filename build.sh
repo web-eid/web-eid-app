@@ -15,5 +15,8 @@ if [[ ${1:-} == 'clean' ]]; then
 fi
 
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -B build -S .
-cmake --build build --config RelWithDebInfo
-cmake --build build --config RelWithDebInfo --target installer # -- VERBOSE=1
+cmake --build build --config RelWithDebInfo # -- VERBOSE=1
+
+if [[ ${1:-} == 'installer' ]]; then
+  cmake --build build --config RelWithDebInfo --target installer
+fi
