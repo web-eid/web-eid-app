@@ -35,11 +35,13 @@
 #include <QMessageBox>
 #include <QMutexLocker>
 #include <QRegularExpressionValidator>
+#include <QScopeGuard>
 #include <QSettings>
 #include <QStyle>
 #include <QTimeLine>
 
 #ifdef Q_OS_LINUX
+#include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
 #endif
@@ -118,28 +120,27 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 #ifdef Q_OS_LINUX
         // Launching Chrome in Linux causes the message "Opening in existing browser session." to be
         // printed to stdout, which ruins the browser-app communication channel. Redirect stdout to
-        // pipe before launching the browser and restore it after to avoid this.
-        std::array<int, 2> unusedPipe {};
-        int pipeFailed = pipe(unusedPipe.data());
-        int savedStdout {};
-        if (!pipeFailed) {
-            savedStdout = dup(1); // Save the original stdout.
-            dup2(unusedPipe[1], 1); // Redirect stdout to pipe.
+        // /dev/null before launching the browser and restore it after to avoid this. Unlike an
+        // unread anonymous pipe, /dev/null never blocks the writer.
+        int savedStdout = ::dup(STDOUT_FILENO); // Save the original stdout.
+        bool stdoutRedirected = false;
+        auto restoreStdout = qScopeGuard([&] {
+            if (stdoutRedirected) {
+                fflush(stdout);
+                ::dup2(savedStdout, STDOUT_FILENO); // Restore the original stdout.
+            }
+            if (savedStdout >= 0) {
+                ::close(savedStdout);
+            }
+        });
+        int devNull = ::open("/dev/null", O_WRONLY);
+        if (devNull >= 0) {
+            stdoutRedirected = ::dup2(devNull, STDOUT_FILENO) >= 0; // Redirect stdout to /dev/null.
+            ::close(devNull);
         }
 #endif
         QDesktopServices::openUrl(
             tr("https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/"));
-#ifdef Q_OS_LINUX
-        if (!pipeFailed) {
-            fflush(stdout);
-            if (savedStdout >= 0) {
-                dup2(savedStdout, 1); // Restore the original stdout.
-                ::close(savedStdout);
-            }
-            ::close(unusedPipe[1]);
-            ::close(unusedPipe[0]);
-        }
-#endif
     });
 
     // Hide PIN-related widgets by default.
