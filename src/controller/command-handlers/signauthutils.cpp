@@ -28,6 +28,12 @@
 
 #include "pcsc-cpp/pcsc-cpp-utils.hpp"
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#elif defined(Q_OS_UNIX)
+#include <sys/mman.h>
+#endif
+
 using namespace electronic_id;
 
 // Take argument names by copy/move as they will be modified.
@@ -83,6 +89,21 @@ pcsc_cpp::byte_vector getPin(const ElectronicID& eid, WebEidUI* window)
     }
 
     REQUIRE_NON_NULL(window)
+
+    // Lock the reserved buffer's pages in physical memory so the PIN is never written to the
+    // swap/page file under normal memory pressure. This does NOT protect against suspend-to-disk
+    // hibernation, which snapshots all of RAM -- including locked pages -- to disk regardless;
+    // that can only be mitigated at the OS level (e.g. encrypted hibernation image).
+    // The buffer never grows past the capacity reserved above (enforced by CommandApdu::verify(),
+    // which throws rather than let the vector holding the PIN reallocate), so the locked address
+    // range stays valid for the buffer's whole lifetime, including after it is moved into the
+    // smart card call chain. The process exits shortly after each command, which releases the
+    // lock, so no matching unlock call is needed.
+#ifdef Q_OS_WIN
+    VirtualLock(pin.data(), pin.capacity());
+#elif defined(Q_OS_UNIX)
+    mlock(pin.data(), pin.capacity());
+#endif
 
     QString pinQStr = window->getPin();
     if (pinQStr.isEmpty()) {
