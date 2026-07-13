@@ -97,7 +97,8 @@ bool Application::isDarkTheme()
     // supported OS-s.
     static const bool isDarkTheme = [] {
         QProcess p;
-        p.start(u"gsettings"_s, {u"get"_s, u"org.gnome.desktop.interface"_s, u"color-scheme"_s});
+        p.start(u"/usr/bin/gsettings"_s,
+                {u"get"_s, u"org.gnome.desktop.interface"_s, u"color-scheme"_s});
         if (p.waitForFinished()) {
             return p.readAllStandardOutput().contains("dark");
         }
