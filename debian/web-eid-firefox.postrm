@@ -9,6 +9,9 @@ if [ ! -f ${POLICIES}/policies.json ]; then
 else
     JQARGS=${POLICIES}/policies.json;
 fi
+# Block the extension so it can't be reinstalled from AMO without the native app, avoiding a
+# dangling, non-functional extension. Reinstalling web-eid-firefox overwrites this back to
+# "normal_installed" (see debian/web-eid-firefox.postinst), so this is not a permanent block.
 jq '.policies.ExtensionSettings["{e68418bc-f2b0-4459-a9ea-3e72b6751b07}"] = {"installation_mode": "blocked"}' ${JQARGS} > ${POLICIES}/policies.tmp
 mv ${POLICIES}/policies.tmp ${POLICIES}/policies.json
 

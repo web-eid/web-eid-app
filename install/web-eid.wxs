@@ -63,6 +63,10 @@
         Condition="FIREFOXINSTALL=1 AND NOT REMOVE=&quot;ALL&quot;" />
       <Custom Action="ExtensionSettingsNoInstall" Before="InstallFinalize"
         Condition="FIREFOXINSTALL=0 AND NOT REMOVE=&quot;ALL&quot;" />
+      <!-- ExtensionSettingsRemove blocks the extension so it can't be reinstalled from AMO
+           without the native app, avoiding a dangling, non-functional extension. Reinstalling
+           Web eID runs ExtensionSettingsInstall above, which overwrites this back to allowed, so
+           this is not a permanent block. -->
       <Custom Action="ExtensionSettingsRemove" Before="InstallFinalize"
         Condition="REMOVE=&quot;ALL&quot; AND NOT UPGRADINGPRODUCTCODE" />
     </InstallExecuteSequence>
@@ -110,12 +114,23 @@
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic"
           Value="https://clients2.google.com/service/update2/crx" />
-        <!-- Block chrome-token-signing extension to avoid conflicts -->
+        <!-- Block chrome-token-signing extension to avoid conflicts. Chromium's registry policy
+             loader (RegistryDict::ConvertToJSON in registry_dict.cc) only reads list-policy
+             entries whose value NAME is numeric (IsKeyNumeric) - non-numeric names are silently
+             ignored - so this can't be replaced with a collision-free unique string (e.g. a hash
+             of the extension ID) as one might expect. The name must stay a bare number, which
+             means it can theoretically collide with another vendor's installer using the same
+             number under this list; there's no registry-level namespacing for this policy.
+             Worst case on collision is that this entry is silently overwritten/ignored, i.e. the
+             legacy extension isn't blocked - a compatibility nicety, not a security control - so
+             this is accepted as-is rather than solved with a heavier enumerate-and-pick-next-free-
+             slot custom action. -->
         <RegistryValue Root="HKLM" Type="string" Name="56791"
           Key="SOFTWARE\Policies\Google\Chrome\ExtensionInstallBlocklist"
           Value="ckjefchnfjhjfedoccjbhjpbncimppeg" />
       </Component>
       <Component Id="ChromePolicy" Transitive="yes" Condition="(CHROMEINSTALL = 1 AND CHROMEPOLICY = 1)" Bitness="always32">
+        <!-- Same hardcoded-numeric-name caveat as the Blocklist entry above applies here. -->
         <RegistryValue Root="HKLM" Type="string" Name="56790"
           Key="SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist"
           Value="ncibgoaomkmdpilpocfeponihegamlic" />
@@ -124,12 +139,15 @@
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
           Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido"
           Value="https://edge.microsoft.com/extensionwebstorebase/v1/crx" />
-        <!-- Block chrome-token-signing extension to avoid conflicts -->
+        <!-- Block chrome-token-signing extension to avoid conflicts. Same hardcoded-numeric-name
+             caveat as the Chrome Blocklist entry above applies here (Edge's registry policy
+             loader is Chromium-derived and behaves the same way). -->
         <RegistryValue Root="HKLM" Type="string" Name="56791"
           Key="SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallBlocklist"
           Value="fofaekogmodbjplbmlbmjiglndceaajh" />
       </Component>
       <Component Id="EdgePolicy" Transitive="yes" Condition="(EDGEINSTALL = 1 AND EDGEPOLICY = 1)" Bitness="always32">
+        <!-- Same hardcoded-numeric-name caveat as the Blocklist entries above applies here. -->
         <RegistryValue Root="HKLM" Type="string" Name="56790"
           Key="SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist"
           Value="gnmckgbandlkacikdndelhfghdejfido" />
