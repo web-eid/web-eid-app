@@ -310,7 +310,7 @@ To build the Debian package installer, run:
 
 ### Windows setup
 
-- Download Visual Studio 2022 community installer from https://visualstudio.microsoft.com/ and install _Desktop C++ Development_
+- Download Visual Studio 2022 community installer from https://visualstudio.microsoft.com/ and install the _Desktop development with C++_ workload. Under _Individual components_ also select the latest _.NET SDK_ (required by the WiX toolset — the C++ workload does not include it)
 - Download and install Git for Windows from https://git-scm.com/download/win
 - Download and install CMake from https://cmake.org/download/
 - Install _Qt_ with the official [_Qt Online Installer_](https://www.qt.io/download-qt-installer),
