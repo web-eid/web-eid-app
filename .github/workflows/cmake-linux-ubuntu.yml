@@ -2,6 +2,13 @@ name: CMake (Ubuntu Linux)
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
@@ -14,6 +21,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}
+    timeout-minutes: 120
     container: ubuntu:${{matrix.container}}
     strategy:
       matrix:
@@ -31,7 +39,7 @@ jobs:
           echo 'path-exclude=/usr/share/doc-base/*' >> /etc/dpkg/dpkg.cfg.d/99-nodocs
           apt update -qq && apt install --no-install-recommends -y git lsb-release fakeroot build-essential devscripts debhelper lintian pkg-config cmake libpcsclite-dev libssl-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: recursive
           persist-credentials: false
@@ -48,7 +56,7 @@ jobs:
       - name: Test package
         run: lintian build/*.deb
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: web-eid-app-ubuntu-build-ubuntu${{matrix.container}}-${{ matrix.arch }}-${{github.run_number}}
           path: build/*.*deb

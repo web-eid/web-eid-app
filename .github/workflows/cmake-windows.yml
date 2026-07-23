@@ -2,6 +2,13 @@ name: CMake (Windows)
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   BUILD_NUMBER: ${{github.run_number}}
   CMAKE_BUILD_PARALLEL_LEVEL: 4
@@ -9,30 +16,31 @@ env:
 jobs:
   build:
     runs-on: windows-2022
+    timeout-minutes: 120
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: recursive
           persist-credentials: false
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ${{ github.workspace }}/vcpkg_cache
             ~/.dotnet/tools
             ~/.wix
-          key: vcpkg-${{ hashFiles('./lib/libelectronic-id/vcpkg.json') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{ hashFiles('./lib/libelectronic-id/vcpkg.json') }}
 
       - name: Install Qt x64
-        uses: jurplel/install-qt-action@v4
+        uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
         with:
           version: 6.11.1
           arch: win64_msvc2022_64
           cache: true
-          aqtsource: git+https://github.com/miurahr/aqtinstall.git
+          aqtsource: git+https://github.com/miurahr/aqtinstall.git@16db45a70b5905ad596941b223469bc86a56901e
 
       - name: Save Qt base path
         shell: pwsh
@@ -40,12 +48,12 @@ jobs:
           echo "QT_DIR=$(Split-Path $env:QT_ROOT_DIR)" >> $env:GITHUB_ENV
 
       - name: Install Qt arm64
-        uses: jurplel/install-qt-action@v4
+        uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
         with:
           version: 6.11.1
           arch: win64_msvc2022_arm64_cross_compiled
           cache: true
-          aqtsource: git+https://github.com/miurahr/aqtinstall.git
+          aqtsource: git+https://github.com/miurahr/aqtinstall.git@16db45a70b5905ad596941b223469bc86a56901e
 
       - name: Build
         shell: pwsh
@@ -61,7 +69,7 @@ jobs:
           ctest -V -C RelWithDebInfo --test-dir build\x64
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: web-eid-app-windows-${{github.run_number}}
           path: |
@@ -70,7 +78,7 @@ jobs:
             build\arm64\src\app\**\*.msi
 
       - name: Upload debug artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: web-eid-app-windows-debug-${{github.run_number}}
           path: |

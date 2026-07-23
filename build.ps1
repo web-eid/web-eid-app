@@ -24,7 +24,9 @@ Try { & wix > $null } Catch {
 
 if(!(Test-Path -Path $vcpkgroot)) {
   $vcpkgroot = "$webeid\vcpkg"
-  & git clone https://github.com/microsoft/vcpkg $vcpkgroot
+  $vcpkgBaseline = (Get-Content -Raw "$webeid\lib\libelectronic-id\vcpkg.json" | ConvertFrom-Json).'builtin-baseline'
+  & git clone --filter=blob:none --no-checkout https://github.com/microsoft/vcpkg $vcpkgroot
+  & git -C $vcpkgroot checkout --detach $vcpkgBaseline
   & $vcpkgroot\bootstrap-vcpkg.bat
 }
 

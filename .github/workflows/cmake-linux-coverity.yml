@@ -3,13 +3,16 @@ name: Coverity code analysis
 on:
   push:
     branches: [ coverity_scan ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ coverity_scan ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   BUILD_TYPE: RelWithDebInfo
-  TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
   PROJECTNAME: web-eid/web-eid-app
   CMAKE_BUILD_PARALLEL_LEVEL: 3
 
@@ -18,12 +21,13 @@ jobs:
     name: Run Coverity tests
     if: github.repository == 'web-eid/web-eid-app'
     runs-on: ubuntu-latest
+    timeout-minutes: 120
 
     steps:
     - name: Install dependencies
       run: sudo apt update -qq && sudo apt install --no-install-recommends -y cmake libpcsclite-dev libgtest-dev libgl-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         submodules: recursive
         persist-credentials: false
@@ -33,25 +37,39 @@ jobs:
 
     - name: Download Coverity Build Tool
       working-directory: ${{github.workspace}}/build
+      env:
+        TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
       run: |
-        curl --silent --data "token=$TOKEN&project=$PROJECTNAME" -o cov-analysis-linux64.tar.gz https://scan.coverity.com/download/cxx/linux64
-        mkdir cov-analysis-linux64
-        tar xzf cov-analysis-linux64.tar.gz --strip 1 -C cov-analysis-linux64
+        curl --fail-with-body --show-error --silent --location \
+          --proto '=https' \
+          --proto-redir '=https' \
+          --retry 3 \
+          --data-urlencode "token=$TOKEN" \
+          --data-urlencode "project=$PROJECTNAME" \
+          --output cov-analysis-linux64.tar.gz \
+          https://scan.coverity.com/download/cxx/linux64
 
     - name: Build
+      working-directory: ${{github.workspace}}/build
       run: |
-        export PATH=$PWD/build/cov-analysis-linux64/bin:$PATH
-        cov-build --dir build/cov-int cmake --build build --config $BUILD_TYPE
+        mkdir cov-analysis-linux64
+        tar xzf cov-analysis-linux64.tar.gz --strip 1 -C cov-analysis-linux64
+        export PATH=$PWD/cov-analysis-linux64/bin:$PATH
+        cov-build --dir cov-int cmake --build . --config $BUILD_TYPE
+        tar czvf upload.tgz cov-int
 
     - name: Submit the result to Coverity Scan
       working-directory: ${{github.workspace}}/build
+      env:
+        TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
       run: |
-        tar czvf upload.tgz cov-int
-        curl --silent \
-          --form project=$PROJECTNAME \
-          --form token=$TOKEN \
-          --form email=eid-teenusehaldus@ria.ee \
-          --form file=@upload.tgz \
-          --form version=master \
-          --form description="Github Actions CI build" \
+        curl --fail-with-body --show-error --silent --location \
+          --proto '=https' \
+          --proto-redir '=https' \
+          --form "project=$PROJECTNAME" \
+          --form "token=$TOKEN" \
+          --form "email=eid-teenusehaldus@ria.ee" \
+          --form "file=@upload.tgz" \
+          --form "version=master" \
+          --form "description=Github Actions CI build" \
           https://scan.coverity.com/builds?project=$PROJECTNAME
