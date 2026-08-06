@@ -24,7 +24,7 @@
 background-color: white;
 font-size: 14px;
 font-family: Roboto, Helvetica;
-color: black;
+color: #07142A;
 }
 QPushButton {
 color: #AD2A45;
@@ -68,21 +68,26 @@ font-size: 14px;
 padding: 8px;
 }
 CertificateButton, CertificateWidget {
-border: 1px solid rgba(0,49,104,0.1);
+border: 1px solid transparent;
 border-radius: 4px;
 min-height: 70px;
 }
 CertificateButton {
-background-color: #F5F5F5;
+background-color: white;
+border-color: #E7EAEF;
+}
+CertificateButton:disabled {
+background-color: #F3F5F7;
 }
 CertificateButton:checked {
-border: 2px solid #113F8E;
+border: 1px solid #003168;
+background-color: #EAF1F8;
 }
 CertificateButton QWidget, CertificateWidget QWidget {
 background-color: transparent;
 }
 CertificateButton QWidget:disabled, CertificateWidget QWidget:disabled {
-color: #76767B;
+color: #07142A;
 }
 #certificateName {
 font-weight: 700;
@@ -116,14 +121,13 @@ color: #07142A;
 }
 QProgressBar {
 height: 30px;
-background-color: #EFEFEF;
-border: 1px solid #DEDEDE;
+background-color: #F3F5F7;
+border: 1px solid #C4CBD8;
 border-radius: 4px;
 padding: 2px;
 }
 QProgressBar::chunk {
-background-color: #113F8E;
-border: 1px solid #003168;
+background-color: #2F70B6;
 border-radius: 2px;
 }
 #waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel, #aboutPageLabel {
@@ -135,9 +139,12 @@ font-weight: bold;
 max-height: 40px;
 }
 #selectCertificateOriginLabel, #pinInputOriginLabel {
-color: #003168;
-font-weight: bold;
-max-height: 20px;
+color: #607496;
+background-color: #F3F5F7;
+border: 1px solid #C4CBD8;
+border-radius: 8px;
+font-size: 16px;
+padding: 10px 14px;
 }
 #pinTitleLabel {
 font-size: 14px;
@@ -146,6 +153,12 @@ color: #07142A;
 #pinErrorLabel {
 font-size: 14px;
 color: #AD2A45;
+}
+#pinTimeRemaining, #aboutVersion {
+font-size: 12px;
+}
+#pinTimeRemaining {
+color: #526068;
 }
 #fatalError {
 border: 1px solid rgba(240,78,35,0.1);
