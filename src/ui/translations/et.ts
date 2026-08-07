@@ -107,10 +107,6 @@
         <source>Select a certificate</source>
         <translation>Vali sertifikaat</translation>
     </message>
-    <message>
-        <source>PIN is locked. Unblock and try again.</source>
-        <translation>PIN-kood on lukus. Tühista blokeering ja proovi uuesti.</translation>
-    </message>
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
@@ -134,16 +130,54 @@
         <translation>PinPad lugeja toiming aegus.</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation>ID-kaardiga isikutuvastamine ja allkirjastamine ei ole veel võimalik. ID-kaardi kasutamiseks tuleb see aktiveerida Politsei- ja Piirivalveameti iseteeninduses. &lt;a href=&quot;https://www.politsei.ee/et/iseteenindus&quot;&gt;Aktiveeri ID-kaart&lt;/a&gt;</translation>
-    </message>
-    <message>
         <source>PIN entry cancelled.</source>
         <translation>PIN-koodi sisestamine katkestati.</translation>
     </message>
     <message>
         <source>PIN entry disabled</source>
         <translation>PIN&apos;i sisestamine on keelatud</translation>
+    </message>
+    <message>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
+        <translation>ID-kaardiga isikutuvastamine ja allkirjastamine ei ole veel võimalik. ID-kaardi kasutamiseks tuleb see aktiveerida Politsei- ja Piirivalveameti iseteeninduses.</translation>
+    </message>
+    <message>
+        <source>Activate ID-card</source>
+        <translation>Aktiveeri ID-kaart</translation>
+    </message>
+    <message>
+        <source>https://www.politsei.ee/en/self-service-portal</source>
+        <translation>https://www.politsei.ee/et/iseteenindus</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
+        <translation>ID-kaardiga allkirjastamine ei ole veel võimalik. Allkirjastamiseks tuleb DigiDoc4 rakenduses PIN2-koodi muuta.</translation>
+    </message>
+    <message>
+        <source>Additional information</source>
+        <translation>Lisainfo</translation>
+    </message>
+    <message>
+        <source>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</source>
+        <translation>https://www.id.ee/artikkel/id-kaardi-pin-ja-puk-koodide-muutmine/</translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN1 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN1 on blokeeritud, kuna PIN1-koodi on sisestatud %n kord valesti.</numerusform>
+            <numerusform>PIN1 on blokeeritud, kuna PIN1-koodi on sisestatud %n korda valesti.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN2 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN2 on blokeeritud, kuna PIN2-koodi on sisestatud %n kord valesti.</numerusform>
+            <numerusform>PIN2 on blokeeritud, kuna PIN2-koodi on sisestatud %n korda valesti.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Cancel blocking</source>
+        <translation>Tühista blokeering</translation>
     </message>
     <message>
         <source>Launch the Smart Card service</source>
@@ -228,10 +262,6 @@
     <message>
         <source>Try again</source>
         <translation>Proovi uuesti</translation>
-    </message>
-    <message>
-        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
-        <translation>ID-kaardiga allkirjastamine ei ole veel võimalik. Allkirjastamiseks tuleb DigiDoc4 rakenduses PIN2-koodi muuta. &lt;a href=&quot;https://www.id.ee/artikkel/id-kaardi-pin-ja-puk-koodide-muutmine/&quot;&gt;Lisainfo&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Cancel</source>

@@ -100,10 +100,6 @@
         <translation>Unos PIN1 za identifikaciju</translation>
     </message>
     <message>
-        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>About Web eID</source>
         <translation>O Web eID</translation>
     </message>
@@ -212,16 +208,52 @@
         </translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PIN entry disabled</source>
         <translation>Unos PIN-a onemogućen</translation>
     </message>
     <message>
-        <source>PIN is locked. Unblock and try again.</source>
-        <translation>PIN je zaključan. Odblokirajte ga i pokušajte ponovo.</translation>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
+        <translation>Autentifikacija i potpisivanje osobnom iskaznicom još nisu mogući. Osobnu iskaznicu potrebno je aktivirati putem sustava samoposluživanja Policijske i granične uprave da bi se mogla koristiti.</translation>
+    </message>
+    <message>
+        <source>Activate ID-card</source>
+        <translation>Aktiviraj osobnu iskaznicu</translation>
+    </message>
+    <message>
+        <source>https://www.politsei.ee/en/self-service-portal</source>
+        <translation>https://www.politsei.ee/en/self-service-portal</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
+        <translation>Potpisivanje osobnom iskaznicom još nije moguće. Za potpisivanje je potrebno promijeniti PIN2 kôd u aplikaciji DigiDoc4.</translation>
+    </message>
+    <message>
+        <source>Additional information</source>
+        <translation>Dodatne informacije</translation>
+    </message>
+    <message>
+        <source>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</source>
+        <translation>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN1 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN1 je blokiran jer je unesen pogrešno %n put/a.</numerusform>
+            <numerusform>PIN1 je blokiran jer je unesen pogrešno %n put/a.</numerusform>
+            <numerusform>PIN1 je blokiran jer je unesen pogrešno %n put/a.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN2 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN2 je blokiran jer je unesen pogrešno %n put/a.</numerusform>
+            <numerusform>PIN2 je blokiran jer je unesen pogrešno %n put/a.</numerusform>
+            <numerusform>PIN2 je blokiran jer je unesen pogrešno %n put/a.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Cancel blocking</source>
+        <translation>Ukloni blokadu</translation>
     </message>
     <message>
         <source>The smart card service required to use the ID-card is not running. Please start the smart card service and try again.</source>
