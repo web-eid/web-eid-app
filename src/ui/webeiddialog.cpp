@@ -47,7 +47,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     // close() deletes the dialog automatically if the Qt::WA_DeleteOnClose flag is set.
     setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
-    ui->lockedWarning->hide();
+    ui->warningBar->hide();
     if (Application::isDarkTheme()) {
         if (QFile f(u":dark.qss"_s); f.open(QFile::ReadOnly | QFile::Text)) {
             setStyleSheet(styleSheet() + QTextStream(&f).readAll());
@@ -82,7 +82,7 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
                                                        : u":/images/alert.svg"_s);
     ui->pinInputAlert->setFixedSize(20, 20);
     ui->pinInputAlert->hide();
-    auto *pinInputLayout = new QHBoxLayout(ui->pinInput);
+    auto* pinInputLayout = new QHBoxLayout(ui->pinInput);
     pinInputLayout->setContentsMargins(14, 10, 14, 10);
     pinInputLayout->setSpacing(0);
     pinInputLayout->addWidget(ui->pinInputAlert, 0, Qt::AlignRight);
@@ -109,30 +109,12 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
     connect(ui->cancelButton, &QPushButton::clicked, this, &WebEidDialog::reject);
     connect(ui->helpButton, &QPushButton::clicked, this, [this] {
         ui->helpButton->setDown(false);
-#ifdef Q_OS_LINUX
-        // Launching Chrome in Linux causes the message "Opening in existing browser session." to be
-        // printed to stdout, which ruins the browser-app communication channel. Redirect stdout to
-        // /dev/null before launching the browser and restore it after to avoid this. Unlike an
-        // unread anonymous pipe, /dev/null never blocks the writer.
-        int savedStdout = ::dup(STDOUT_FILENO); // Save the original stdout.
-        bool stdoutRedirected = false;
-        auto restoreStdout = qScopeGuard([&] {
-            if (stdoutRedirected) {
-                fflush(stdout);
-                ::dup2(savedStdout, STDOUT_FILENO); // Restore the original stdout.
-            }
-            if (savedStdout >= 0) {
-                ::close(savedStdout);
-            }
-        });
-        int devNull = ::open("/dev/null", O_WRONLY);
-        if (devNull >= 0) {
-            stdoutRedirected = ::dup2(devNull, STDOUT_FILENO) >= 0; // Redirect stdout to /dev/null.
-            ::close(devNull);
-        }
-#endif
-        QDesktopServices::openUrl(
+        openUrl(
             tr("https://www.id.ee/en/article/how-to-check-that-your-id-card-reader-is-working/"));
+    });
+    connect(ui->warningAction, &QPushButton::clicked, this, [this] {
+        ui->warningAction->setDown(false);
+        openUrl(tr(warningActionUrl));
     });
 
     // Hide PIN-related widgets by default.
@@ -370,7 +352,7 @@ void WebEidDialog::onSingleCertificateReady(const QUrl& origin,
     }
 
     if (certAndPinInfo.pinInfo.pinIsBlocked()) {
-        displayPinBlockedError();
+        displayPinBlockedError(certAndPinInfo.pinInfo.pinRetriesCount.second);
     } else if (certAndPinInfo.certInfo.isExpired || certAndPinInfo.certInfo.notEffective) {
         ui->pinTitleLabel->hide();
     } else if (useExternalPinDialog) {
@@ -412,7 +394,7 @@ void WebEidDialog::onVerifyPinFailed(const VerifyPinFailed::Status status, const
         showPinInputWarning(true);
         break;
     case Status::PIN_BLOCKED:
-        displayPinBlockedError();
+        displayPinBlockedError(currentPinMaxRetries);
         return;
     case Status::INVALID_PIN_LENGTH:
         message = [] { return tr("Invalid PIN length"); };
@@ -465,7 +447,9 @@ bool WebEidDialog::event(QEvent* event)
         resizeHeight();
         break;
     case QEvent::Resize:
-        ui->langButton->move(width() - ui->langButton->width() - 20, ui->pageStack->pos().y() - 20);
+        ui->dialogContent->layout()->activate();
+        ui->langButton->move(width() - ui->langButton->width() - 20,
+                             ui->pageStack->mapTo(this, QPoint(0, 0)).y() - 20);
         break;
     default:
         break;
@@ -572,6 +556,7 @@ void WebEidDialog::setupPinPrompt(PinInfo pinInfo, bool cardActive)
 void WebEidDialog::setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinInfo& certAndPin)
 {
     setupWarning(certAndPin);
+    currentPinMaxRetries = certAndPin.pinInfo.pinRetriesCount.second;
     bool cardActive = isCardActive(certAndPin);
     setupPinPrompt(certAndPin.pinInfo, cardActive);
     if (!cardActive) {
@@ -604,6 +589,7 @@ void WebEidDialog::setupPinPadProgressBarAndEmitWait(const EidCertificateAndPinI
 void WebEidDialog::setupPinInput(const EidCertificateAndPinInfo& certAndPinInfo)
 {
     setupWarning(certAndPinInfo);
+    currentPinMaxRetries = certAndPinInfo.pinInfo.pinRetriesCount.second;
     setupPinPrompt(certAndPinInfo.pinInfo, isCardActive(certAndPinInfo));
     // The allowed character ranges are from the SafeNet eToken guide:
     // 1. English uppercase letters (ASCII 0x41...0x5A).
@@ -640,23 +626,42 @@ void WebEidDialog::setupOK(Func func, const char* text, bool enabled)
 
 void WebEidDialog::setupWarning(const EidCertificateAndPinInfo& certAndPinInfo)
 {
-    ui->lockedWarning->setHidden(certAndPinInfo.pin2Active);
+    ui->warningBar->setHidden(certAndPinInfo.pin2Active);
     if (!certAndPinInfo.pin2Active) {
-        setTrText(
-            ui->lockedWarning,
-            QT_TR_NOOP(
-                "Signing with an ID-card isn't possible yet. PIN2 code must be changed in DigiDoc4 "
-                "application in order to sign. "
-                "<a "
-                "href=\"https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/"
-                "\">Additional information</a>"));
+        setTrText(ui->warningLabel,
+                  QT_TR_NOOP("Signing with an ID-card isn't possible yet. PIN2 code must be "
+                             "changed in DigiDoc4 application in order to sign."));
+        setTrText(ui->warningAction, QT_TR_NOOP("Additional information"));
+        warningActionUrl =
+            QT_TR_NOOP("https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/");
     }
     resizeHeight();
 }
 
-void WebEidDialog::displayPinBlockedError()
+void WebEidDialog::displayPinBlockedError(int8_t maxRetries)
 {
-    displayFatalError([] { return tr("PIN is locked. Unblock and try again."); });
+    ui->pinTitleLabel->hide();
+    ui->pinInput->hide();
+    ui->pinTimeoutTimer->stop();
+    ui->pinTimeRemaining->hide();
+    ui->pinEntryTimeoutProgressBar->hide();
+    ui->okButton->hide();
+    ui->cancelButton->setEnabled(true);
+    ui->cancelButton->show();
+    ui->helpButton->show();
+
+    const bool isPin1 = currentCommand == CommandType::AUTHENTICATE;
+    setTrText(ui->warningLabel, [isPin1, maxRetries]() -> QString {
+        return isPin1 ? tr("PIN1 is blocked because it was entered incorrectly %n times.", nullptr,
+                           maxRetries)
+                      : tr("PIN2 is blocked because it was entered incorrectly %n times.", nullptr,
+                           maxRetries);
+    });
+    setTrText(ui->warningAction, QT_TR_NOOP("Cancel blocking"));
+    warningActionUrl =
+        QT_TR_NOOP("https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/");
+    ui->warningBar->show();
+    resizeHeight();
 }
 
 template <typename Text>
@@ -688,6 +693,33 @@ void WebEidDialog::resizeHeight()
 {
     ui->pageStack->setFixedHeight(ui->pageStack->currentWidget()->sizeHint().height());
     adjustSize();
+}
+
+void WebEidDialog::openUrl(const QString& url)
+{
+#ifdef Q_OS_LINUX
+    // Launching Chrome in Linux causes the message "Opening in existing browser session." to be
+    // printed to stdout, which ruins the browser-app communication channel. Redirect stdout to
+    // /dev/null before launching the browser and restore it after to avoid this. Unlike an
+    // unread anonymous pipe, /dev/null never blocks the writer.
+    int savedStdout = ::dup(STDOUT_FILENO); // Save the original stdout.
+    bool stdoutRedirected = false;
+    auto restoreStdout = qScopeGuard([&] {
+        if (stdoutRedirected) {
+            fflush(stdout);
+            ::dup2(savedStdout, STDOUT_FILENO); // Restore the original stdout.
+        }
+        if (savedStdout >= 0) {
+            ::close(savedStdout);
+        }
+    });
+    int devNull = ::open("/dev/null", O_WRONLY);
+    if (devNull >= 0) {
+        stdoutRedirected = ::dup2(devNull, STDOUT_FILENO) >= 0; // Redirect stdout to /dev/null.
+        ::close(devNull);
+    }
+#endif
+    QDesktopServices::openUrl(url);
 }
 
 bool WebEidDialog::isCardActive(const EidCertificateAndPinInfo& certAndPinInfo) const noexcept

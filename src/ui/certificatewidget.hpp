@@ -37,6 +37,7 @@ class CertificateWidget final : public QWidget, public CertificateWidgetInfo
 
 public:
     explicit CertificateWidget(QWidget* parent);
+    void setCertificateInfo(const EidCertificateAndPinInfo& certAndPinInfo) final;
 
 private:
     void paintEvent(QPaintEvent* event) final;
