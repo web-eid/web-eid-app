@@ -37,7 +37,7 @@ public:
     const QVariantMap& result() const { return _result; }
 
 signals:
-    void quit();
+    void finished();
     void retry(const RetriableError error);
     void statusUpdate(RetriableError status);
     void stopCardEventMonitorThread();
@@ -65,7 +65,7 @@ public: // slots
     void onDialogOK(const EidCertificateAndPinInfo& certAndPinInfo) noexcept;
     void onDialogCancel() noexcept;
 
-    // Failure handler, reports the error and quits the application.
+    // Failure handler, reports the error and finishes the operation.
     void onCriticalFailure(const QString& error) noexcept;
 
 private:
@@ -73,7 +73,7 @@ private:
     void connectRetry(const ControllerChildThread* childThread) const;
     void createWindow();
     void disposeUI() noexcept;
-    void exit() noexcept;
+    void finish() noexcept;
     void waitForChildThreads() noexcept;
     CommandType commandType() const noexcept;
 

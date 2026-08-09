@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     try {
         Controller controller(app.parseArgs());
 
-        QObject::connect(&controller, &Controller::quit, &app, &QApplication::quit);
+        QObject::connect(&controller, &Controller::finished, &app, &Application::requestQuit);
         // Pass control to Controller::run() when the event loop starts.
         QTimer::singleShot(0, &controller, &Controller::run);
 

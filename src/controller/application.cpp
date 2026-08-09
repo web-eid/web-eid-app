@@ -88,6 +88,11 @@ Application::Application(int& argc, char** argv, const QString& name) :
 #endif
 }
 
+void Application::requestQuit() noexcept
+{
+    QMetaObject::invokeMethod(this, [] { QCoreApplication::quit(); }, Qt::QueuedConnection);
+}
+
 bool Application::isDarkTheme()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)

@@ -60,13 +60,13 @@ public: // slots
     void onSmartCardStatusUpdate(const RetriableError) override
     {
         emit rejected();
-        // Schedule invoking Controller::exit().
+        // Schedule invoking Controller::finish().
         emit destroyed();
     }
 
     void quit() final
     {
-        // Schedule invoking Controller::exit().
+        // Schedule invoking Controller::finish().
         emit destroyed();
     }
 };

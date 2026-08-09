@@ -85,10 +85,10 @@ try {
         WebEidUI::showAboutPage();
         return;
     case CommandType::QUIT:
-        // If quit is requested, respond with empty JSON object and quit immediately.
-        qInfo() << "Quit requested, exiting";
+        // If quit is requested, respond with empty JSON object and finish immediately.
+        qInfo() << "Quit requested, finishing";
         writeResponseToStdOut(true, {}, "quit");
-        emit quit();
+        finish();
         return;
     default:
         break;
@@ -218,7 +218,7 @@ try {
     _result = res;
     writeResponseToStdOut(isInStdinMode, res, commandHandler->commandType());
 
-    exit();
+    finish();
 } catch (const std::exception& error) {
     onCriticalFailure(error.what());
 }
@@ -263,7 +263,7 @@ try {
     qDebug() << "User cancelled";
     _result = makeErrorObject(RESP_USER_CANCEL, QStringLiteral("User cancelled"));
     writeResponseToStdOut(isInStdinMode, _result, commandType());
-    exit();
+    finish();
 } catch (const std::exception& e) {
     onCriticalFailure(e.what());
 }
@@ -285,17 +285,17 @@ try {
         // user.
         writeResponseToStdOut(isInStdinMode, _result, commandType());
     }
-    exit();
+    finish();
 } catch (const std::exception& e) {
     qCritical() << "Failed to write stdout" << e.what();
-    exit();
+    finish();
 }
 
-void Controller::exit() noexcept
+void Controller::finish() noexcept
 {
     disposeUI();
     waitForChildThreads();
-    emit quit();
+    emit finished();
 }
 
 void Controller::waitForChildThreads() noexcept

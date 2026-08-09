@@ -70,10 +70,10 @@ private slots:
 
     void authenticate_validArgumentsResultInValidToken();
 
-    void quit_exits();
+    void quit_finishes();
 
 private:
-    void runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool waitForQuit = true);
+    void runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool waitForFinish = true);
     void initGetCert();
     void initAuthenticate();
     void initCard(bool withSigningScript = true);
@@ -197,34 +197,33 @@ void WebEidTests::authenticate_validArgumentsResultInValidToken()
              QStringLiteral("MIIEAzCCA2WgAwIBAgIQOWkBW"));
 }
 
-void WebEidTests::quit_exits()
+void WebEidTests::quit_finishes()
 {
     try {
         controller = std::make_unique<Controller>(CommandWithArguments {CommandType::QUIT, {}});
 
-        QSignalSpy quitSpy(controller.get(), &Controller::quit);
+        QSignalSpy finishedSpy(controller.get(), &Controller::finished);
         QTimer::singleShot(0, controller.get(), &Controller::run);
-        QVERIFY(quitSpy.wait());
+        QVERIFY(finishedSpy.wait());
 
     } catch (const std::exception& e) {
-        QFAIL(QStringLiteral("WebEidTests::quit_exits() failed with exception: %s")
+        QFAIL(QStringLiteral("WebEidTests::quit_finishes() failed with exception: %s")
                   .arg(QLatin1String(e.what()))
                   .toUtf8());
     }
 }
 
-void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool waitForQuit)
+void WebEidTests::runEventLoopVerifySignalsEmitted(QSignalSpy& actionSpy, bool waitForFinish)
 {
-    // Waits until Controller emits quit.
-    QSignalSpy quitSpy(controller.get(), &Controller::quit);
+    QSignalSpy finishedSpy(controller.get(), &Controller::finished);
 
     // Pass control to Controller::run() when the event loop starts.
     QTimer::singleShot(0, controller.get(), &Controller::run);
 
     // Run the event loop, verify that signals were emitted.
     QVERIFY(actionSpy.wait());
-    if (waitForQuit && quitSpy.count() < 1) {
-        QVERIFY(quitSpy.wait());
+    if (waitForFinish && finishedSpy.count() < 1) {
+        QVERIFY(finishedSpy.wait());
     }
 }
 
