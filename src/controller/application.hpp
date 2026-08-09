@@ -45,6 +45,8 @@ class Application : public QApplication
 public:
     Application(int& argc, char** argv, const QString& name);
 
+    void requestQuit() noexcept;
+
     static bool isDarkTheme();
     void loadTranslations(const QString& lang = {});
     static CommandWithArguments parseArgs();

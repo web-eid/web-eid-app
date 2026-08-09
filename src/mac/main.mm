@@ -130,9 +130,9 @@
             Controller controller({
                 CommandType(QString::fromNSString(req[@"command"])),
                 argumentJson.object().toVariantMap()});
-            controller.run();
             QEventLoop e;
-            QObject::connect(&controller, &Controller::quit, &e, &QEventLoop::quit);
+            QObject::connect(&controller, &Controller::finished, &e, &QEventLoop::quit);
+            QTimer::singleShot(0, &controller, &Controller::run);
             e.exec();
             resp = [NSApplication toNSDictionary:controller.result()];
         } catch (const std::exception& error) {
@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
 
         Controller controller(std::move(args));
 
-        QObject::connect(&controller, &Controller::quit, &app, &QApplication::quit);
+        QObject::connect(&controller, &Controller::finished, &app, &Application::requestQuit);
         // Pass control to Controller::run() when the event loop starts.
         QTimer::singleShot(0, &controller, &Controller::run);
 

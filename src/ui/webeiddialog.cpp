@@ -208,7 +208,7 @@ void WebEidDialog::showAboutPage()
     d->ui->pageStack->setCurrentIndex(int(Page::ABOUT));
     d->resizeHeight();
     d->open();
-    connect(d, &WebEidDialog::finished, qApp, &QApplication::quit);
+    connect(d, &WebEidDialog::finished, qApp, &Application::requestQuit);
 }
 
 void WebEidDialog::showFatalErrorPage()
