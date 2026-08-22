@@ -2,7 +2,9 @@
 <?define qt_suffix="" ?>
 <?endif?>
 
-<?if $(env.VisualStudioVersion) = "17.0" ?>
+<?if $(env.VisualStudioVersion) = "18.0" ?>
+<?define VCVER = "145" ?>
+<?elseif $(env.VisualStudioVersion) = "17.0" ?>
 <?define VCVER = "143" ?>
 <?elseif $(env.VisualStudioVersion) = "16.0" ?>
 <?define VCVER = "142" ?>
@@ -25,8 +27,8 @@
   <Package Name="Web eID software" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
       Language="1033" Version="!(bind.FileVersion.App)" Manufacturer="RIA">
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
-    <Icon Id="web_eid.exe" SourceFile="$(var.app_path)" />
-    <Property Id="ARPPRODUCTICON" Value="web_eid.exe" />
+    <Icon Id="web_eid.ico" SourceFile="$(sys.SOURCEFILEDIR)appicon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="web_eid.ico" />
     <Property Id="CHROMEINSTALL" Value="1" />
     <Property Id="CHROMEPOLICY" Value="0" />
     <Property Id="EDGEINSTALL" Value="1" />

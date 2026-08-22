@@ -11,3 +11,4 @@ target_include_directories(web-eid-tests PRIVATE
 target_link_libraries(web-eid-tests controller mock-ui pcsc-mock Qt6::Test)
 
 add_test(web-eid-tests web-eid-tests)
+set_tests_properties(web-eid-tests PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
