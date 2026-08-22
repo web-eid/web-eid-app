@@ -12,7 +12,6 @@ concurrency:
 env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
-  QT_QPA_PLATFORM: offscreen
   DEBIAN_FRONTEND: noninteractive
   DEBFULLNAME: GitHub build
   DEBEMAIL: github-action@github.com

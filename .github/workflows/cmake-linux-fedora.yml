@@ -12,7 +12,6 @@ concurrency:
 env:
   BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
-  QT_QPA_PLATFORM: offscreen
   CMAKE_BUILD_PARALLEL_LEVEL: 3
 
 jobs:
