@@ -25,19 +25,19 @@ jobs:
           submodules: recursive
           persist-credentials: false
 
-      - name: Cache vcpkg
+      - name: Cache vcpkg and WiX
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ${{ github.workspace }}/vcpkg_cache
             ~/.dotnet/tools
             ~/.wix
-          key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{ hashFiles('./lib/libelectronic-id/vcpkg.json') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{ hashFiles('./lib/libelectronic-id/vcpkg.json') }}-wix-7.0.0
 
       - name: Install Qt x64
         uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
         with:
-          version: 6.11.1
+          version: 6.11.2
           arch: win64_msvc2022_64
           cache: true
           aqtsource: git+https://github.com/miurahr/aqtinstall.git@16db45a70b5905ad596941b223469bc86a56901e
@@ -50,7 +50,7 @@ jobs:
       - name: Install Qt arm64
         uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
         with:
-          version: 6.11.1
+          version: 6.11.2
           arch: win64_msvc2022_arm64_cross_compiled
           cache: true
           aqtsource: git+https://github.com/miurahr/aqtinstall.git@16db45a70b5905ad596941b223469bc86a56901e
@@ -60,12 +60,11 @@ jobs:
         env:
           VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
         run: |
-          .\build.ps1 -vcpkgroot C:\vcpkg -qt_dir $env:QT_DIR
+          .\build.ps1 -vcpkgroot C:\vcpkg -qt_dir $env:QT_DIR -acceptWixEULA
 
       - name: Test
         shell: pwsh
         run: |
-          $env:QT_QPA_PLATFORM = 'offscreen'
           ctest -V -C RelWithDebInfo --test-dir build\x64
 
       - name: Upload artifacts

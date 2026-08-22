@@ -3,7 +3,6 @@
 set -e
 set -u
 
-export QT_QPA_PLATFORM=offscreen
 export DEBIAN_FRONTEND=noninteractive
 
 if [[ ${1:-} == 'clean' ]]; then

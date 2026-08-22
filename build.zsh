@@ -6,7 +6,6 @@ set -u
 export OPENSSL_ROOT_DIR=$(brew --prefix openssl@3)
 export GTest_ROOT=$(brew --prefix gtest)
 export CMAKE_BUILD_PARALLEL_LEVEL=3
-export QT_QPA_PLATFORM=offscreen
 export MACOSX_DEPLOYMENT_TARGET=14.0
 
 BUILD_TYPE=RelWithDebInfo
