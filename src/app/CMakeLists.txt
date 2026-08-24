@@ -22,6 +22,20 @@ if(WIN32)
     endif()
     set(WEBEID_PATH web-eid.exe)
     set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.$ENV{PLATFORM})
+    find_program(MSBUILD msbuild)
+    set(FIREFOX_ACTION_DLL ${CMAKE_CURRENT_BINARY_DIR}/FirefoxAction.CA.dll)
+    add_custom_command(
+        OUTPUT ${FIREFOX_ACTION_DLL}
+        COMMAND ${MSBUILD} ${CMAKE_SOURCE_DIR}/install/firefox-action/FirefoxAction.csproj
+            /restore /t:rebuild /property:Configuration=Release
+            "/property:OutDir=${CMAKE_CURRENT_BINARY_DIR}/"
+        DEPENDS
+            ${CMAKE_SOURCE_DIR}/install/firefox-action/FirefoxAction.cs
+            ${CMAKE_SOURCE_DIR}/install/firefox-action/FirefoxAction.csproj
+            ${CMAKE_SOURCE_DIR}/install/firefox-action/CustomAction.config
+        COMMENT "Building Firefox custom action DLL"
+    )
+    add_custom_target(firefox-action DEPENDS ${FIREFOX_ACTION_DLL})
     set(WIX_CMD wix.exe build -nologo
         -arch $ENV{PLATFORM}
         -ext WixToolset.UI.wixext
@@ -32,12 +46,13 @@ if(WIN32)
         -d jsonfirefox=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
         -d FIREFOX_URL="${FIREFOX_URL}"
         -d FIREFOX_UUID="${FIREFOX_UUID}"
+        -d FirefoxActionDll=${FIREFOX_ACTION_DLL}
         -d app_path=$<TARGET_FILE:web-eid>
         ${CMAKE_SOURCE_DIR}/install/web-eid.wxs
         ${CMAKE_SOURCE_DIR}/install/WelcomeDlg.wxs
         ${CMAKE_SOURCE_DIR}/install/WixUI_Minimal.wxs
     )
-    add_custom_target(installer DEPENDS web-eid
+    add_custom_target(installer DEPENDS web-eid firefox-action
         COMMAND ${WIX_CMD} -o "${BASE_FILE}.msi"
         #Build MSI with QT
         COMMAND ${WIX_CMD} -d qt_path=${Qt6_DIR}/../../../bin -o "${BASE_FILE}.qt.msi"
@@ -49,6 +64,9 @@ if(WIN32)
         add_custom_command(TARGET web-eid POST_BUILD
             COMMAND ${SIGNCMD} "$<$<BOOL:${CROSSSIGNCERT}>:/ph;/ac;${CROSSSIGNCERT}>" $<TARGET_FILE:web-eid>
             COMMAND_EXPAND_LISTS
+        )
+        add_custom_command(TARGET firefox-action POST_BUILD
+            COMMAND ${SIGNCMD} ${FIREFOX_ACTION_DLL}
         )
         add_custom_command(TARGET installer POST_BUILD
             COMMAND ${SIGNCMD} "${BASE_FILE}.msi" "${BASE_FILE}.qt.msi"
