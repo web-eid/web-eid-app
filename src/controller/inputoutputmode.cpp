@@ -51,13 +51,6 @@ void setIoStreamsToBinaryMode()
 
 using namespace pcsc_cpp;
 
-uint32_t readMessageLength(std::istream& input)
-{
-    uint32_t messageLength = 0;
-    input.read(reinterpret_cast<char*>(&messageLength), sizeof(messageLength));
-    return messageLength;
-}
-
 void writeResponseLength(std::ostream& stream, const uint32_t responseLength)
 {
     stream.write(reinterpret_cast<const char*>(&responseLength), sizeof(responseLength));
@@ -70,7 +63,11 @@ CommandWithArguments readCommandFromStdin()
     setIoStreamsToBinaryMode();
 #endif
 
-    const auto messageLength = readMessageLength(std::cin);
+    uint32_t messageLength = 0;
+    std::cin.read(reinterpret_cast<char*>(&messageLength), sizeof(messageLength));
+    if (std::cin.gcount() != sizeof(messageLength) || !std::cin.good()) {
+        throw std::runtime_error("readCommandFromStdin: Failed to read message length from stdin");
+    }
 
     if (messageLength < 5) {
         throw std::invalid_argument("readCommandFromStdin: Message length is "
@@ -83,8 +80,11 @@ CommandWithArguments readCommandFromStdin()
                                     + " exceeds maximum allowed length 8192");
     }
 
-    auto message = QByteArray(int(messageLength), '\0');
+    auto message = QByteArray(qsizetype(messageLength), '\0');
     std::cin.read(message.data(), messageLength);
+    if (std::cin.gcount() != messageLength || !std::cin.good()) {
+        throw std::runtime_error("readCommandFromStdin: Failed to read the expected number of bytes from stdin");
+    }
 
     const auto json = QJsonDocument::fromJson(message);
 
