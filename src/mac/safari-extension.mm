@@ -25,6 +25,9 @@
 #include "shared.hpp"
 
 #import <AppKit/AppKit.h>
+#import <os/log.h>
+
+static os_log_t logger = os_log_create("eu.web-eid.web-eid-safari.web-eid-safari-extension", "extension");
 
 @interface SafariWebExtensionHandler : NSObject <NSExtensionRequestHandling> {
     NSMutableDictionary<NSString *, NSExtensionContext *> *contexts;
@@ -35,8 +38,11 @@
 
 - (id)init {
     if (self = [super init]) {
-        NSLog(@"web-eid-safari-extension: starting");
+        os_log(logger, "starting");
         contexts = [[NSMutableDictionary<NSString *, NSExtensionContext *> alloc] init];
+        // Sender is not authenticated; DNCF is system-wide. This is intentional: the notification
+        // is a wake-up signal only — payload is read from the App Group NSUserDefaults, which is
+        // gated by team-ID entitlement and inaccessible to other processes.
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(notificationEvent:) name:WebEidExtension object:nil];
     }
     return self;
@@ -44,7 +50,7 @@
 
 - (void)dealloc
 {
-    NSLog(@"web-eid-safari-extension: stopping");
+    os_log(logger, "stopping");
     [NSDistributedNotificationCenter.defaultCenter removeObserver:self name:WebEidExtension object:nil];
 }
 
@@ -53,14 +59,19 @@
     // Received notification from App
     NSString *nonce = notification.object;
     NSDictionary *resp = takeValue(nonce);
-    NSLog(@"web-eid-safari-extension: from app nonce (%@) request: %@", nonce, resp);
+    os_log(logger, "from app nonce (%{public}@) request: %@", nonce, resp);
     if (resp == nil) {
         return;
     }
 
+    // Wait for the app to fully exit before returning the response to the page.
+    // The app is single-shot and calls QCoreApplication::quit() after posting the response.
+    // If we return early and the page immediately sends a follow-up request, execNativeApp
+    // would race with the still-shutting-down instance: launchApplication may no-op against
+    // it and the WebEidStarting handshake in Loop 1 would then time out.
     for (int i = 0; i < 20 && [NSRunningApplication runningApplicationsWithBundleIdentifier:WebEidApp].count > 0; ++i) {
         [NSThread sleepForTimeInterval:0.5];
-        NSLog(@"web-eid-safari-extension: web-eid-safari is still running");
+        os_log(logger, "web-eid-safari is still running");
     }
 
     // Forward to background script
@@ -75,31 +86,31 @@
 {
     NSURL *appURL = [NSWorkspace.sharedWorkspace URLForApplicationWithBundleIdentifier:WebEidApp];
     if (appURL == nil) {
-        NSLog(@"web-eid-safari-extension: failed to get app url");
+        os_log_error(logger, "failed to get app url");
         return NO;
     }
     setValue(WebEidStarting, @(true));
     if (![NSWorkspace.sharedWorkspace launchApplication:appURL.path]) {
-        NSLog(@"web-eid-safari-extension: failed to start app");
+        os_log_error(logger, "failed to start app");
         return NO;
     }
-    NSLog(@"web-eid-safari-extension: started app");
+    os_log(logger, "started app");
     for (int i = 0; i < 20 && [getUserDefaults() boolForKey:WebEidStarting]; ++i) {
         [NSThread sleepForTimeInterval:0.5];
-        NSLog(@"web-eid-safari-extension: waiting to be running %@", [getUserDefaults() objectForKey:WebEidStarting]);
+        os_log(logger, "waiting to be running %{public}@", [getUserDefaults() objectForKey:WebEidStarting]);
     }
     if ([(NSNumber*)takeValue(WebEidStarting) boolValue]) {
-        NSLog(@"web-eid-safari-extension: timeout to start app");
+        os_log_error(logger, "timeout to start app");
         return NO;
     }
-    NSLog(@"web-eid-safari-extension: app executed");
+    os_log(logger, "app executed");
     return YES;
 }
 
 - (void)beginRequestWithExtensionContext:(NSExtensionContext*)context
 {
     id message = [context.inputItems.firstObject userInfo][SFExtensionMessageKey];
-    NSLog(@"web-eid-safari-extension: msg from background.js %@", message);
+    os_log(logger, "msg from background.js %@", message);
 
     if ([@"status" isEqualToString:message[@"command"]]) {
         NSString *version = [NSString stringWithFormat:@"%@+%@",
@@ -119,7 +130,7 @@
         return;
     }
 
-    NSLog(@"web-eid-safari-extension: sending message to app %@", message);
+    os_log(logger, "sending message to app %@", message);
 
     // Save context
     NSString *nonce = [[[NSUUID alloc] init] UUIDString];
