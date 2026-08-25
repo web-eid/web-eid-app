@@ -38,6 +38,19 @@
 namespace
 {
 
+constexpr qint64 MAX_LOG_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+void rotateLogFileIfTooLarge(const QString& logFilePath)
+{
+    QFile existingLogFile {logFilePath};
+    if (existingLogFile.size() <= MAX_LOG_FILE_SIZE) {
+        return;
+    }
+    const auto rotatedLogFilePath = logFilePath + QStringLiteral(".1");
+    QFile::remove(rotatedLogFilePath);
+    existingLogFile.rename(rotatedLogFilePath);
+}
+
 bool openLogFile(QFile& logFile)
 {
     const auto logFilePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
@@ -52,6 +65,7 @@ bool openLogFile(QFile& logFile)
         return false;
     }
     logFile.setFileName(logFileDir.filePath(QStringLiteral("%1.log").arg(qApp->applicationName())));
+    rotateLogFileIfTooLarge(logFile.fileName());
     if (!logFile.open(QIODevice::Append | QIODevice::Text)) {
         std::cerr << "Unable to open logfile '" << logFile.fileName().toStdString() << '\''
                   << std::endl;
