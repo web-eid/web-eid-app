@@ -38,14 +38,15 @@ public:
     void languageChange();
 
 protected:
-    explicit CertificateWidgetInfo(QWidget* self);
+    CertificateWidgetInfo(QWidget* self, int contentMargin);
     Q_DISABLE_COPY_MOVE(CertificateWidgetInfo)
 
     std::tuple<QString, QString, QString, QString> certData() const;
 
     QLabel* icon;
     QLabel* info;
-    QLabel* warn;
+    QLabel* issuer;
+    QLabel* status;
     EidCertificateAndPinInfo certAndPinInfo;
 };
 
