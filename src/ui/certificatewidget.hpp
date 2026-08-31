@@ -45,7 +45,8 @@ protected:
 
     QLabel* icon;
     QLabel* info;
-    QLabel* warn;
+    QLabel* issuer;
+    QLabel* status;
     EidCertificateAndPinInfo certAndPinInfo;
 };
 

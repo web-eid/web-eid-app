@@ -25,39 +25,36 @@
 #include "application.hpp"
 
 #include <QEvent>
-#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QPainter>
 #include <QStyleOption>
-
-namespace
-{
-
-inline QString displayInRed(const QString& text)
-{
-    return QStringLiteral("<span style=\"color: #CD2541\">%1</span>").arg(text);
-}
-
-} // namespace
 
 // We use two separate widgets, CertificateWidget and CertificateButton, for accessibility, to
 // support screen readers.
 
 CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
-    icon(new QLabel(self)), info(new QLabel(self)),
-    warn(new QLabel(CertificateWidget::tr("Pin locked"), self))
+    icon(new QLabel(self)), info(new QLabel(self)), issuer(new QLabel(self)),
+    status(new QLabel(self))
 {
-    warn->setObjectName(QStringLiteral("warn"));
-    warn->hide();
-    auto* layout = new QHBoxLayout(self);
-    layout->setContentsMargins(20, 0, 20, 0);
-    layout->setSpacing(10);
-    layout->addWidget(icon);
-    layout->addWidget(info, 1);
-    auto* warnLayout = new QHBoxLayout;
-    warnLayout->setSpacing(6);
-    warnLayout->addWidget(warn);
-    layout->addItem(warnLayout);
+    info->setObjectName(QStringLiteral("certificateName"));
+    info->setTextFormat(Qt::PlainText);
+    info->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    issuer->setObjectName(QStringLiteral("certificateIssuer"));
+    issuer->setTextFormat(Qt::PlainText);
+    issuer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    status->setObjectName(QStringLiteral("certificateStatus"));
+    status->setTextFormat(Qt::PlainText);
+    status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    auto* layout = new QGridLayout(self);
+    layout->setContentsMargins(16, 16, 16, 16);
+    layout->setHorizontalSpacing(16);
+    layout->setVerticalSpacing(2);
+    layout->addWidget(icon, 0, 0, 3, 1, Qt::AlignVCenter);
+    layout->addWidget(info, 0, 1);
+    layout->addWidget(issuer, 1, 1);
+    layout->addWidget(status, 2, 1, Qt::AlignLeft);
+    layout->setColumnStretch(1, 1);
 }
 
 EidCertificateAndPinInfo CertificateWidgetInfo::certificateInfo() const
@@ -67,42 +64,38 @@ EidCertificateAndPinInfo CertificateWidgetInfo::certificateInfo() const
 
 std::tuple<QString, QString, QString, QString> CertificateWidgetInfo::certData() const
 {
-    return {certAndPinInfo.certInfo.subject.toHtmlEscaped(),
-            certAndPinInfo.certificate.issuerInfo(QSslCertificate::CommonName)
-                .join(' ')
-                .toHtmlEscaped(),
+    return {certAndPinInfo.certInfo.subject,
+            certAndPinInfo.certificate.issuerInfo(QSslCertificate::CommonName).join(' '),
             certAndPinInfo.certificate.effectiveDate().date().toString(Qt::ISODate),
             certAndPinInfo.certificate.expiryDate().date().toString(Qt::ISODate)};
 }
 
 void CertificateWidgetInfo::setCertificateInfo(const EidCertificateAndPinInfo& cardCertPinInfo)
 {
-    warn->setText(CertificateWidget::tr("Pin locked"));
     certAndPinInfo = cardCertPinInfo;
     const auto& certInfo = cardCertPinInfo.certInfo;
     QString warning;
-    auto [subject, issuer, effectiveDate, expiryDate] = certData();
+    const auto& [subject, issuerName, effectiveDate, expiryDate] = certData();
+    Q_UNUSED(effectiveDate)
     bool isError =
         certInfo.notEffective || certInfo.isExpired || cardCertPinInfo.pinInfo.pinIsBlocked();
     if (certInfo.notEffective) {
-        effectiveDate = displayInRed(effectiveDate);
-        warning = displayInRed(CertificateWidget::tr(" (Not effective)"));
+        warning = CertificateWidget::tr(" (Not effective)");
     }
     if (certInfo.isExpired) {
-        expiryDate = displayInRed(expiryDate);
-        warning = displayInRed(CertificateWidget::tr(" (Expired)"));
+        warning = CertificateWidget::tr(" (Expired)");
     }
-    info->setText(CertificateWidget::tr("<b>%1</b><br />Issuer: %2<br />Valid: %3 to %4%5")
-                      .arg(subject, issuer, effectiveDate, expiryDate, warning));
+    info->setText(subject);
+    issuer->setText(CertificateWidget::tr("Issuer: %1").arg(issuerName));
+    status->setText(cardCertPinInfo.pinInfo.pinIsBlocked()
+                        ? CertificateWidget::tr("Pin locked")
+                        : CertificateWidget::tr("Valid until: %1%2").arg(expiryDate, warning));
+    status->setProperty("warning", isError);
+    status->style()->unpolish(status);
+    status->style()->polish(status);
     info->parentWidget()->setDisabled(isError);
-    warn->setVisible(warning.isEmpty() && cardCertPinInfo.pinInfo.pinIsBlocked());
-    if (isError) {
-        icon->setPixmap(Application::isDarkTheme() ? QStringLiteral(":/images/id-card-err_dark.svg")
-                                                   : QStringLiteral(":/images/id-card-err.svg"));
-    } else {
-        icon->setPixmap(Application::isDarkTheme() ? QStringLiteral(":/images/id-card_dark.svg")
-                                                   : QStringLiteral(":/images/id-card.svg"));
-    }
+    icon->setPixmap(Application::isDarkTheme() ? QStringLiteral(":/images/id-card_dark.svg")
+                                               : QStringLiteral(":/images/id-card.svg"));
 }
 
 void CertificateWidgetInfo::languageChange()
@@ -132,14 +125,16 @@ CertificateButton::CertificateButton(const EidCertificateAndPinInfo& cardCertPin
     setAutoExclusive(true);
     CertificateWidgetInfo::icon->setAttribute(Qt::WA_TransparentForMouseEvents);
     info->setAttribute(Qt::WA_TransparentForMouseEvents);
+    issuer->setAttribute(Qt::WA_TransparentForMouseEvents);
     setCertificateInfo(cardCertPinInfo);
 }
 
 void CertificateButton::setCertificateInfo(const EidCertificateAndPinInfo& cardCertPinInfo)
 {
     CertificateWidgetInfo::setCertificateInfo(cardCertPinInfo);
-    auto [subject, issuer, effectiveDate, expiryDate] = certData();
-    setText(tr("%1 Issuer: %2 Valid: %3 to %4").arg(subject, issuer, effectiveDate, expiryDate));
+    auto [subject, issuerName, effectiveDate, expiryDate] = certData();
+    setText(
+        tr("%1 Issuer: %2 Valid: %3 to %4").arg(subject, issuerName, effectiveDate, expiryDate));
 }
 
 void CertificateButton::paintEvent(QPaintEvent* /*event*/)

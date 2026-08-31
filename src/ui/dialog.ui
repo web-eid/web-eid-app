@@ -24,7 +24,7 @@
 background-color: white;
 font-size: 14px;
 font-family: Roboto, Helvetica;
-color: black;
+color: #07142A;
 }
 QPushButton {
 color: #AD2A45;
@@ -68,55 +68,66 @@ font-size: 14px;
 padding: 8px;
 }
 CertificateButton, CertificateWidget {
-border: 1px solid rgba(0,49,104,0.1);
+border: 1px solid transparent;
 border-radius: 4px;
 min-height: 70px;
 }
 CertificateButton {
-background-color: #F5F5F5;
+background-color: white;
+border-color: #E7EAEF;
+}
+CertificateButton:disabled {
+background-color: #F3F5F7;
 }
 CertificateButton:checked {
-border: 2px solid #113F8E;
+border: 1px solid #003168;
+background-color: #EAF1F8;
 }
 CertificateButton QWidget, CertificateWidget QWidget {
 background-color: transparent;
 }
 CertificateButton QWidget:disabled, CertificateWidget QWidget:disabled {
-color: #76767B;
+color: #07142A;
 }
-CertificateButton #warn,  CertificateWidget #warn {
-color: #CD2541;
+#certificateName {
+font-weight: 700;
+}
+#certificateIssuer {
+font-size: 12px;
+}
+#certificateStatus {
+color: #091A36;
+background-color: #F3F5F7;
+border-radius: 8px;
+font-size: 12px;
+font-weight: 400;
+padding: 2px 8px;
+}
+#certificateStatus[warning=&quot;true&quot;] {
+color: #AD2A45;
+background-color: #F5EBED;
 }
 QLineEdit {
-border: 2px solid #113F8E;
-color: #113F8E;
-border-radius: 3px;
-min-width: 200px;
-min-height: 45px;
-max-width: 200px;
-max-height: 45px;
-font-size: 26px;
-font-weight: bold;
-padding-right: 14px;
-padding-left: 14px;
-padding-top: 0px;
-padding-bottom: 0px;
+border: 1px solid #C4CBD8;
+color: #607496;
+border-radius: 8px;
+font-size: 16px;
+padding: 10px 14px;
 lineedit-password-character: 42;
 }
 QLineEdit[warning=&quot;true&quot;] {
-border: 2px solid #CD2541;
-color: #CD2541;
+border: 1px solid #BE7884;
+color: #07142A;
 }
 QProgressBar {
 height: 30px;
-background-color: #EFEFEF;
-border: 1px solid #DEDEDE;
+background-color: #F3F5F7;
+border: 1px solid #C4CBD8;
 border-radius: 4px;
 padding: 2px;
 }
 QProgressBar::chunk {
-background-color: #113F8E;
-border: 1px solid #003168;
+background-color: #2F70B6;
 border-radius: 2px;
 }
 #waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel, #aboutPageLabel {
@@ -128,15 +139,26 @@ font-weight: bold;
 max-height: 40px;
 }
 #selectCertificateOriginLabel, #pinInputOriginLabel {
-color: #003168;
-font-weight: bold;
-max-height: 20px;
+color: #607496;
+background-color: #F3F5F7;
+border: 1px solid #C4CBD8;
+border-radius: 8px;
+font-size: 16px;
+padding: 10px 14px;
 }
-#pinTitleLabel, #pinErrorLabel {
-max-height: 20px;
+#pinTitleLabel {
+font-size: 14px;
+color: #07142A;
 }
 #pinErrorLabel {
-color: #CD2541;
+font-size: 14px;
+color: #AD2A45;
+}
+#pinTimeRemaining, #aboutVersion {
+font-size: 12px;
+}
+#pinTimeRemaining {
+color: #526068;
 }
 #fatalError {
 border: 1px solid rgba(240,78,35,0.1);
@@ -569,29 +591,19 @@ border-radius: 4px;</string>
        <item>
         <layout class="QVBoxLayout" name="pinLayout">
          <property name="spacing">
-          <number>10</number>
+          <number>6</number>
          </property>
          <item>
           <widget class="QLabel" name="pinTitleLabel">
-           <property name="font">
-            <font>
-             <family>Roboto</family>
-             <pointsize>-1</pointsize>
-             <bold>true</bold>
-            </font>
-           </property>
            <property name="text">
             <string notr="true">Enter PIN1 for authentication</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
            </property>
            <property name="buddy">
             <cstring>pinInput</cstring>
            </property>
           </widget>
          </item>
-         <item alignment="Qt::AlignHCenter">
+         <item>
           <widget class="QLineEdit" name="pinInput">
            <property name="maxLength">
             <number>12</number>
@@ -603,20 +615,11 @@ border-radius: 4px;</string>
          </item>
          <item>
           <widget class="QLabel" name="pinErrorLabel">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>36</height>
-            </size>
-           </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
             <string notr="true">2 tries left</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -639,19 +642,6 @@ border-radius: 4px;</string>
             <string notr="true">Time remaining:</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="pinSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>5</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
