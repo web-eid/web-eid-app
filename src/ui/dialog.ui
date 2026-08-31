@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
+    <width>500</width>
     <height>512</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>550</width>
+    <width>500</width>
     <height>0</height>
    </size>
   </property>
@@ -70,11 +70,11 @@ padding: 8px;
 CertificateButton, CertificateWidget {
 border: 1px solid transparent;
 border-radius: 4px;
-min-height: 70px;
 }
 CertificateButton {
 background-color: white;
 border-color: #E7EAEF;
+min-height: 70px;
 }
 CertificateButton:disabled {
 background-color: #F3F5F7;
@@ -132,7 +132,7 @@ border-radius: 2px;
 }
 #waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel, #aboutPageLabel {
 color: #003168;
-font-size: 32px;
+font-size: 20px;
 font-weight: bold;
 }
 #selectCertificateDescriptionLabel, #pinInputDescriptionLabel {
@@ -196,6 +196,7 @@ background-color: transparent;
 font-family: Roboto, Helvetica;
 font-size: 14px;
 font-weight: 400;
+padding: 0px;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="WebEidDialogOuterLayout">
@@ -280,19 +281,19 @@ font-weight: 400;
     <widget class="QWidget" name="dialogContent" native="true">
      <layout class="QVBoxLayout" name="WebEidDialogLayout">
       <property name="spacing">
-       <number>30</number>
+       <number>40</number>
       </property>
       <property name="leftMargin">
-       <number>20</number>
+       <number>40</number>
       </property>
       <property name="topMargin">
-       <number>25</number>
+       <number>32</number>
       </property>
       <property name="rightMargin">
-       <number>20</number>
+       <number>40</number>
       </property>
       <property name="bottomMargin">
-       <number>20</number>
+       <number>32</number>
       </property>
       <item>
        <widget class="QStackedWidget" name="pageStack">
@@ -302,7 +303,7 @@ font-weight: 400;
         <widget class="QWidget" name="waitingPage">
          <layout class="QVBoxLayout" name="waitingPageLayout">
           <property name="spacing">
-           <number>20</number>
+           <number>40</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -373,7 +374,7 @@ font-weight: 400;
         <widget class="QWidget" name="messagePage">
          <layout class="QVBoxLayout" name="messagePageLayout">
           <property name="spacing">
-           <number>20</number>
+           <number>40</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -403,7 +404,7 @@ font-weight: 400;
           <item>
            <layout class="QHBoxLayout" name="messageInfoLayout" stretch="0,1">
             <property name="spacing">
-             <number>10</number>
+             <number>16</number>
             </property>
             <item alignment="Qt::AlignTop">
              <widget class="QLabel" name="cardChipIcon">
@@ -501,7 +502,7 @@ font-weight: 400;
         <widget class="QWidget" name="selectCertificatePage">
          <layout class="QVBoxLayout" name="selectCertificatePageLayout">
           <property name="spacing">
-           <number>20</number>
+           <number>40</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -528,14 +529,14 @@ font-weight: 400;
           <item>
            <layout class="QVBoxLayout" name="selectCertificateLabelLayout">
             <property name="spacing">
-             <number>10</number>
+             <number>8</number>
             </property>
             <item>
              <widget class="QLabel" name="selectCertificateDescriptionLabel">
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>60</height>
+                <height>0</height>
                </size>
               </property>
               <property name="focusPolicy">
@@ -567,7 +568,7 @@ font-weight: 400;
           <item>
            <layout class="QVBoxLayout" name="selectCertificateInfo">
             <property name="spacing">
-             <number>6</number>
+             <number>16</number>
             </property>
            </layout>
           </item>
@@ -576,7 +577,7 @@ font-weight: 400;
         <widget class="QWidget" name="pinInputPage">
          <layout class="QVBoxLayout" name="pinInputPageLayout">
           <property name="spacing">
-           <number>20</number>
+           <number>40</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -603,7 +604,7 @@ font-weight: 400;
           <item>
            <layout class="QVBoxLayout" name="pinInputLabelLayout">
             <property name="spacing">
-             <number>10</number>
+             <number>8</number>
             </property>
             <item>
              <widget class="QLabel" name="pinInputDescriptionLabel">
@@ -666,7 +667,7 @@ font-weight: 400;
           <item>
            <layout class="QVBoxLayout" name="pinLayout">
             <property name="spacing">
-             <number>6</number>
+             <number>8</number>
             </property>
             <item>
              <widget class="QLabel" name="pinTitleLabel">
@@ -853,7 +854,7 @@ font-weight: 400;
       <item>
        <layout class="QHBoxLayout" name="buttonLayout">
         <property name="spacing">
-         <number>6</number>
+         <number>8</number>
         </property>
         <item>
          <widget class="QPushButton" name="cancelButton">
