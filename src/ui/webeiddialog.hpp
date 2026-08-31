@@ -108,12 +108,13 @@ private:
     template <typename Func>
     void setupOK(Func func, const char* text = {}, bool enabled = false);
     void setupWarning(const EidCertificateAndPinInfo& certAndPinInfo);
-    void displayPinBlockedError();
+    void displayPinBlockedError(int8_t maxRetries);
     template <typename Text>
     void displayFatalError(Text message);
 
     void showPinInputWarning(bool show);
     void resizeHeight();
+    static void openUrl(const QString& url);
 
     bool isCardActive(const EidCertificateAndPinInfo& certAndPinInfo) const noexcept;
     static QPixmap pixmap(QLatin1String name);
@@ -125,5 +126,7 @@ private:
 
     CommandType currentCommand = CommandType::NONE;
     QString pin;
+    int8_t currentPinMaxRetries = -1;
+    const char* warningActionUrl = nullptr;
     bool closeUnconditionally = false;
 };

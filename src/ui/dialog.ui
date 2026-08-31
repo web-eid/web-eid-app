@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>510</height>
+    <height>512</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -24,7 +24,7 @@
 background-color: white;
 font-size: 14px;
 font-family: Roboto, Helvetica;
-color: black;
+color: #07142A;
 }
 QPushButton {
 color: #AD2A45;
@@ -68,55 +68,66 @@ font-size: 14px;
 padding: 8px;
 }
 CertificateButton, CertificateWidget {
-border: 1px solid rgba(0,49,104,0.1);
+border: 1px solid transparent;
 border-radius: 4px;
 min-height: 70px;
 }
 CertificateButton {
-background-color: #F5F5F5;
+background-color: white;
+border-color: #E7EAEF;
+}
+CertificateButton:disabled {
+background-color: #F3F5F7;
 }
 CertificateButton:checked {
-border: 2px solid #113F8E;
+border: 1px solid #003168;
+background-color: #EAF1F8;
 }
 CertificateButton QWidget, CertificateWidget QWidget {
 background-color: transparent;
 }
 CertificateButton QWidget:disabled, CertificateWidget QWidget:disabled {
-color: #76767B;
+color: #07142A;
 }
-CertificateButton #warn,  CertificateWidget #warn {
-color: #CD2541;
+#certificateName {
+font-weight: 700;
+}
+#certificateIssuer {
+font-size: 12px;
+}
+#certificateStatus {
+color: #091A36;
+background-color: #F3F5F7;
+border-radius: 8px;
+font-size: 12px;
+font-weight: 400;
+padding: 2px 8px;
+}
+#certificateStatus[warning=&quot;true&quot;] {
+color: #AD2A45;
+background-color: #F5EBED;
 }
 QLineEdit {
-border: 2px solid #113F8E;
-color: #113F8E;
-border-radius: 3px;
-min-width: 200px;
-min-height: 45px;
-max-width: 200px;
-max-height: 45px;
-font-size: 26px;
-font-weight: bold;
-padding-right: 14px;
-padding-left: 14px;
-padding-top: 0px;
-padding-bottom: 0px;
+border: 1px solid #C4CBD8;
+color: #607496;
+border-radius: 8px;
+font-size: 16px;
+padding: 10px 14px;
 lineedit-password-character: 42;
 }
 QLineEdit[warning=&quot;true&quot;] {
-border: 2px solid #CD2541;
-color: #CD2541;
+border: 1px solid #BE7884;
+color: #07142A;
 }
 QProgressBar {
 height: 30px;
-background-color: #EFEFEF;
-border: 1px solid #DEDEDE;
+background-color: #F3F5F7;
+border: 1px solid #C4CBD8;
 border-radius: 4px;
 padding: 2px;
 }
 QProgressBar::chunk {
-background-color: #113F8E;
-border: 1px solid #003168;
+background-color: #2F70B6;
 border-radius: 2px;
 }
 #waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel, #aboutPageLabel {
@@ -128,15 +139,26 @@ font-weight: bold;
 max-height: 40px;
 }
 #selectCertificateOriginLabel, #pinInputOriginLabel {
-color: #003168;
-font-weight: bold;
-max-height: 20px;
+color: #607496;
+background-color: #F3F5F7;
+border: 1px solid #C4CBD8;
+border-radius: 8px;
+font-size: 16px;
+padding: 10px 14px;
 }
-#pinTitleLabel, #pinErrorLabel {
-max-height: 20px;
+#pinTitleLabel {
+font-size: 14px;
+color: #07142A;
 }
 #pinErrorLabel {
-color: #CD2541;
+font-size: 14px;
+color: #AD2A45;
+}
+#pinTimeRemaining, #aboutVersion {
+font-size: 12px;
+}
+#pinTimeRemaining {
+color: #526068;
 }
 #fatalError {
 border: 1px solid rgba(240,78,35,0.1);
@@ -157,705 +179,751 @@ color: #76767B;
 color: #113F8E;
 border: 0px;
 height: 24px;
-}</string>
-  </property>
-  <layout class="QVBoxLayout" name="WebEidDialogLayout">
-   <property name="spacing">
-    <number>30</number>
-   </property>
-   <property name="leftMargin">
-    <number>20</number>
-   </property>
-   <property name="topMargin">
-    <number>25</number>
-   </property>
-   <property name="rightMargin">
-    <number>20</number>
-   </property>
-   <property name="bottomMargin">
-    <number>20</number>
-   </property>
-   <item>
-    <widget class="QLabel" name="lockedWarning">
-     <property name="styleSheet">
-      <string notr="true">background-color: #FAE7C9;
+}
+#warningBar {
+background-color: #FAE7C9;
+}
+#warningLabel {
 color: #003168;
 font-family: Roboto, Helvetica;
 font-size: 14px;
-padding: 10px;
+background-color: transparent;
+}
+#warningAction {
+color: #003168;
 border: none;
-border-radius: 4px;</string>
-     </property>
-     <property name="text">
-      <string notr="true">Signing with an ID-card isn't possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
+background-color: transparent;
+font-family: Roboto, Helvetica;
+font-size: 14px;
+font-weight: 400;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="WebEidDialogOuterLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="warningBar" native="true">
+     <layout class="QHBoxLayout" name="warningBarLayout" stretch="1,0">
+      <property name="spacing">
+       <number>12</number>
+      </property>
+      <property name="leftMargin">
+       <number>24</number>
+      </property>
+      <property name="topMargin">
+       <number>12</number>
+      </property>
+      <property name="rightMargin">
+       <number>24</number>
+      </property>
+      <property name="bottomMargin">
+       <number>12</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="warningLabel">
+        <property name="text">
+         <string notr="true">Signing with an ID-card isn't possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignVCenter">
+       <widget class="QPushButton" name="warningAction">
+        <property name="font">
+         <font>
+          <underline>true</underline>
+         </font>
+        </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string notr="true">Additional information</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>:/images/link_navy.svg</normaloff>:/images/link_navy.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>17</width>
+          <height>15</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
-    <widget class="QStackedWidget" name="pageStack">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="waitingPage">
-      <layout class="QVBoxLayout" name="waitingPageLayout">
-       <property name="spacing">
-        <number>20</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="waitingPageTitleLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string>Waiting for card</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="waitingSpacerTop">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item alignment="Qt::AlignHCenter">
-        <widget class="QSvgWidget" name="waitingSpinner" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>80</width>
-           <height>80</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>80</width>
-           <height>80</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="waitingSpacerBottom">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="messagePage">
-      <layout class="QVBoxLayout" name="messagePageLayout">
-       <property name="spacing">
-        <number>20</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="messagePageTitleLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string notr="true">Insert the ID-card</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="messageInfoLayout" stretch="0,1">
-         <property name="spacing">
-          <number>10</number>
-         </property>
-         <item alignment="Qt::AlignTop">
-          <widget class="QLabel" name="cardChipIcon">
-           <property name="minimumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="web-eid-resources.qrc">:/images/no-id-card.svg</pixmap>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="connectCardLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string notr="true">Insert a smart card</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QWidget" name="fatalError" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="spacing">
-           <number>8</number>
-          </property>
-          <property name="leftMargin">
-           <number>10</number>
-          </property>
-          <property name="topMargin">
-           <number>10</number>
-          </property>
-          <property name="rightMargin">
-           <number>10</number>
-          </property>
-          <property name="bottomMargin">
-           <number>10</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="fatalErrorLabel">
-            <property name="focusPolicy">
-             <enum>Qt::TabFocus</enum>
-            </property>
-            <property name="text">
-             <string>Operation failed. More detailed information can be found in the log files.</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="fatalHelp">
-         <property name="text">
-          <string>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</string>
-         </property>
-         <property name="openExternalLinks">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="messagePageSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="selectCertificatePage">
-      <layout class="QVBoxLayout" name="selectCertificatePageLayout">
-       <property name="spacing">
-        <number>20</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="selectCertificatePageTitleLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string>Select a certificate</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="selectCertificateLabelLayout">
-         <property name="spacing">
-          <number>10</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="selectCertificateDescriptionLabel">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>60</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string>By choosing the certificate, I agree to the transfer of my name and personal identification code to the service provider.</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="selectCertificateOriginLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="textFormat">
-            <enum>Qt::PlainText</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="selectCertificateInfo">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="pinInputPage">
-      <layout class="QVBoxLayout" name="pinInputPageLayout">
-       <property name="spacing">
-        <number>20</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="pinInputPageTitleLabel">
-         <property name="focusPolicy">
-          <enum>Qt::TabFocus</enum>
-         </property>
-         <property name="text">
-          <string notr="true">Authenticate</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="pinInputLabelLayout">
-         <property name="spacing">
-          <number>10</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="pinInputDescriptionLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string notr="true">By authenticating, I agree to the transfer of my name and personal identification code to the service provider.</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="pinInputOriginLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="textFormat">
-            <enum>Qt::PlainText</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="pinInputPageContentLayout">
-         <property name="horizontalSpacing">
-          <number>0</number>
-         </property>
-         <property name="verticalSpacing">
-          <number>8</number>
-         </property>
-         <item row="0" column="0" colspan="2">
-          <widget class="CertificateWidget" name="pinInputCertificateInfo" native="true"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QToolButton" name="selectAnotherCertificate">
-           <property name="text">
-            <string>Select another certificate</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <spacer name="selectAnotherCertificateSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="pinLayout">
-         <property name="spacing">
-          <number>10</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="pinTitleLabel">
-           <property name="font">
-            <font>
-             <family>Roboto</family>
-             <pointsize>-1</pointsize>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string notr="true">Enter PIN1 for authentication</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-           <property name="buddy">
-            <cstring>pinInput</cstring>
-           </property>
-          </widget>
-         </item>
-         <item alignment="Qt::AlignHCenter">
-          <widget class="QLineEdit" name="pinInput">
-           <property name="maxLength">
-            <number>12</number>
-           </property>
-           <property name="echoMode">
-            <enum>QLineEdit::Password</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="pinErrorLabel">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string notr="true">2 tries left</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QProgressBar" name="pinEntryTimeoutProgressBar">
-           <property name="value">
-            <number>50</number>
-           </property>
-           <property name="textVisible">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="pinTimeRemaining">
-           <property name="text">
-            <string notr="true">Time remaining:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="pinSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>5</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="aboutPage">
-      <layout class="QVBoxLayout" name="aboutPageLayout">
-       <property name="spacing">
-        <number>20</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QGridLayout" name="aboutTitleLayout">
-         <property name="horizontalSpacing">
-          <number>20</number>
-         </property>
-         <property name="verticalSpacing">
-          <number>2</number>
-         </property>
-         <item row="0" column="0" rowspan="2">
-          <widget class="QLabel" name="aboutLogo">
-           <property name="minimumSize">
-            <size>
-             <width>60</width>
-             <height>60</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>60</width>
-             <height>60</height>
-            </size>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="web-eid-resources.qrc">:/install/appicon_128.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="aboutPageLabel">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string>About Web eID</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="aboutVersion">
-           <property name="text">
-            <string notr="true">Version: 1.0.0</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QWidget" name="aboutContent" native="true">
-         <layout class="QVBoxLayout" name="aboutContentLayout">
+    <widget class="QWidget" name="dialogContent" native="true">
+     <layout class="QVBoxLayout" name="WebEidDialogLayout">
+      <property name="spacing">
+       <number>30</number>
+      </property>
+      <property name="leftMargin">
+       <number>20</number>
+      </property>
+      <property name="topMargin">
+       <number>25</number>
+      </property>
+      <property name="rightMargin">
+       <number>20</number>
+      </property>
+      <property name="bottomMargin">
+       <number>20</number>
+      </property>
+      <item>
+       <widget class="QStackedWidget" name="pageStack">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="waitingPage">
+         <layout class="QVBoxLayout" name="waitingPageLayout">
           <property name="spacing">
            <number>20</number>
           </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
-           <widget class="QLabel" name="aboutAlert">
+           <widget class="QLabel" name="waitingPageTitleLabel">
             <property name="focusPolicy">
              <enum>Qt::TabFocus</enum>
             </property>
             <property name="text">
-             <string>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
+             <string>Waiting for card</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="aboutText">
-            <property name="focusPolicy">
-             <enum>Qt::TabFocus</enum>
+           <spacer name="waitingSpacerTop">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
-            <property name="text">
-             <string>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</string>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
             </property>
-            <property name="wordWrap">
-             <bool>true</bool>
+           </spacer>
+          </item>
+          <item alignment="Qt::AlignHCenter">
+           <widget class="QSvgWidget" name="waitingSpinner" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>80</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>80</height>
+             </size>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer name="waitingSpacerBottom">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="aboutHelp">
-         <property name="text">
-          <string>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</string>
-         </property>
-         <property name="openExternalLinks">
-          <bool>true</bool>
-         </property>
+        <widget class="QWidget" name="messagePage">
+         <layout class="QVBoxLayout" name="messagePageLayout">
+          <property name="spacing">
+           <number>20</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="messagePageTitleLabel">
+            <property name="focusPolicy">
+             <enum>Qt::TabFocus</enum>
+            </property>
+            <property name="text">
+             <string notr="true">Insert the ID-card</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="messageInfoLayout" stretch="0,1">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <item alignment="Qt::AlignTop">
+             <widget class="QLabel" name="cardChipIcon">
+              <property name="minimumSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="pixmap">
+               <pixmap>:/images/no-id-card.svg</pixmap>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="connectCardLabel">
+              <property name="focusPolicy">
+               <enum>Qt::TabFocus</enum>
+              </property>
+              <property name="text">
+               <string notr="true">Insert a smart card</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QWidget" name="fatalError" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="spacing">
+              <number>8</number>
+             </property>
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>10</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="fatalErrorLabel">
+               <property name="focusPolicy">
+                <enum>Qt::TabFocus</enum>
+               </property>
+               <property name="text">
+                <string>Operation failed. More detailed information can be found in the log files.</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="fatalHelp">
+            <property name="text">
+             <string>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="messagePageSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </widget>
-       </item>
-       <item>
-        <spacer name="aboutSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
+        <widget class="QWidget" name="selectCertificatePage">
+         <layout class="QVBoxLayout" name="selectCertificatePageLayout">
+          <property name="spacing">
+           <number>20</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="selectCertificatePageTitleLabel">
+            <property name="focusPolicy">
+             <enum>Qt::TabFocus</enum>
+            </property>
+            <property name="text">
+             <string>Select a certificate</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="selectCertificateLabelLayout">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="selectCertificateDescriptionLabel">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>60</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::TabFocus</enum>
+              </property>
+              <property name="text">
+               <string>By choosing the certificate, I agree to the transfer of my name and personal identification code to the service provider.</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="selectCertificateOriginLabel">
+              <property name="focusPolicy">
+               <enum>Qt::TabFocus</enum>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="selectCertificateInfo">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="pinInputPage">
+         <layout class="QVBoxLayout" name="pinInputPageLayout">
+          <property name="spacing">
+           <number>20</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="pinInputPageTitleLabel">
+            <property name="focusPolicy">
+             <enum>Qt::TabFocus</enum>
+            </property>
+            <property name="text">
+             <string notr="true">Authenticate</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="pinInputLabelLayout">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="pinInputDescriptionLabel">
+              <property name="focusPolicy">
+               <enum>Qt::TabFocus</enum>
+              </property>
+              <property name="text">
+               <string notr="true">By authenticating, I agree to the transfer of my name and personal identification code to the service provider.</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="pinInputOriginLabel">
+              <property name="focusPolicy">
+               <enum>Qt::TabFocus</enum>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="pinInputPageContentLayout">
+            <property name="horizontalSpacing">
+             <number>0</number>
+            </property>
+            <property name="verticalSpacing">
+             <number>8</number>
+            </property>
+            <item row="0" column="0" colspan="2">
+             <widget class="CertificateWidget" name="pinInputCertificateInfo" native="true"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QToolButton" name="selectAnotherCertificate">
+              <property name="text">
+               <string>Select another certificate</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <spacer name="selectAnotherCertificateSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="pinLayout">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="pinTitleLabel">
+              <property name="text">
+               <string notr="true">Enter PIN1 for authentication</string>
+              </property>
+              <property name="buddy">
+               <cstring>pinInput</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="pinInput">
+              <property name="maxLength">
+               <number>12</number>
+              </property>
+              <property name="echoMode">
+               <enum>QLineEdit::Password</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="pinErrorLabel">
+              <property name="focusPolicy">
+               <enum>Qt::TabFocus</enum>
+              </property>
+              <property name="text">
+               <string notr="true">2 tries left</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QProgressBar" name="pinEntryTimeoutProgressBar">
+              <property name="value">
+               <number>50</number>
+              </property>
+              <property name="textVisible">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="pinTimeRemaining">
+              <property name="text">
+               <string notr="true">Time remaining:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="aboutPage">
+         <layout class="QVBoxLayout" name="aboutPageLayout">
+          <property name="spacing">
+           <number>20</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QGridLayout" name="aboutTitleLayout">
+            <property name="horizontalSpacing">
+             <number>20</number>
+            </property>
+            <property name="verticalSpacing">
+             <number>2</number>
+            </property>
+            <item row="0" column="0" rowspan="2">
+             <widget class="QLabel" name="aboutLogo">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>60</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>60</height>
+               </size>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="web-eid-resources.qrc">:/install/appicon_128.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="aboutPageLabel">
+              <property name="focusPolicy">
+               <enum>Qt::TabFocus</enum>
+              </property>
+              <property name="text">
+               <string>About Web eID</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="aboutVersion">
+              <property name="text">
+               <string notr="true">Version: 1.0.0</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QWidget" name="aboutContent" native="true">
+            <layout class="QVBoxLayout" name="aboutContentLayout">
+             <property name="spacing">
+              <number>20</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="aboutAlert">
+               <property name="focusPolicy">
+                <enum>Qt::TabFocus</enum>
+               </property>
+               <property name="text">
+                <string>Web eID extension is disabled. The extension must be enabled in the web browser to authenticate and sign with an ID-card.</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="aboutText">
+               <property name="focusPolicy">
+                <enum>Qt::TabFocus</enum>
+               </property>
+               <property name="text">
+                <string>&lt;b&gt;This is a companion application to the Web eID browser extension&lt;/b&gt; and cannot be used independently. To uninstall the extension, remove this application.</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="aboutHelp">
+            <property name="text">
+             <string>Get help here: &lt;a href=&quot;https://www.id.ee&quot;&gt;id.ee&lt;/a&gt;</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="aboutSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="buttonLayout">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="cancelButton">
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>Cancel</string>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="buttonSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="helpButton">
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string>Help</string>
+          </property>
+          <property name="icon">
+           <iconset resource="web-eid-resources.qrc">
+            <normaloff>:/images/link.svg</normaloff>:/images/link.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="default">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="okButton">
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>Confirm</string>
+          </property>
+          <property name="default">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="buttonLayout">
-     <property name="spacing">
-      <number>6</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="cancelButton">
-       <property name="cursor">
-        <cursorShape>PointingHandCursor</cursorShape>
-       </property>
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="buttonSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="helpButton">
-       <property name="cursor">
-        <cursorShape>PointingHandCursor</cursorShape>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string>Help</string>
-       </property>
-       <property name="icon">
-        <iconset resource="web-eid-resources.qrc">
-         <normaloff>:/images/link.svg</normaloff>:/images/link.svg</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="okButton">
-       <property name="cursor">
-        <cursorShape>PointingHandCursor</cursorShape>
-       </property>
-       <property name="text">
-        <string>Confirm</string>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>

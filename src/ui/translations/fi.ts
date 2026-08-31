@@ -30,8 +30,12 @@
         <translation> (Voimassaoloaika päättynyt)</translation>
     </message>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Myöntäjä: %2&lt;br /&gt;Voimassa: %3 – %4%5</translation>
+        <source>Issuer: %1</source>
+        <translation>Myöntäjä: %1</translation>
+    </message>
+    <message>
+        <source>Valid until: %1%2</source>
+        <translation>Voimassa %1 asti%2</translation>
     </message>
     <message>
         <source>Pin locked</source>
@@ -99,10 +103,6 @@
         <source>Select a certificate</source>
         <translation>Valitse varmenne</translation>
     </message>
-    <message>
-        <source>PIN is locked. Unblock and try again.</source>
-        <translation>PIN koodi on lukittu. Poista esto ja yritä uudelleen.</translation>
-    </message>
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
@@ -162,12 +162,50 @@
         <translation>Toiminto epäonnistui</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PIN entry disabled</source>
         <translation>PIN-koodin syöttö ei ole käytössä</translation>
+    </message>
+    <message>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
+        <translation>Henkilökortilla tunnistautuminen ja allekirjoittaminen eivät ole vielä mahdollisia. Henkilökortti on aktivoitava Poliisin ja Rajavartiolaitoksen itsepalveluportaalissa, jotta sitä voi käyttää.</translation>
+    </message>
+    <message>
+        <source>Activate ID-card</source>
+        <translation>Aktivoi henkilökortti</translation>
+    </message>
+    <message>
+        <source>https://www.politsei.ee/en/self-service-portal</source>
+        <translation>https://www.politsei.ee/en/self-service-portal</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
+        <translation>Henkilökortilla allekirjoittaminen ei ole vielä mahdollista. Allekirjoittamista varten PIN2-koodi on vaihdettava DigiDoc4-sovelluksessa.</translation>
+    </message>
+    <message>
+        <source>Additional information</source>
+        <translation>Lisätietoa</translation>
+    </message>
+    <message>
+        <source>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</source>
+        <translation>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN1 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN1 on lukittu, koska se on syötetty väärin %n kerran.</numerusform>
+            <numerusform>PIN1 on lukittu, koska se on syötetty väärin %n kertaa.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN2 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN2 on lukittu, koska se on syötetty väärin %n kerran.</numerusform>
+            <numerusform>PIN2 on lukittu, koska se on syötetty väärin %n kertaa.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Cancel blocking</source>
+        <translation>Poista esto</translation>
     </message>
     <message>
         <source>Card driver error. Please try again.</source>
@@ -196,10 +234,6 @@
     <message>
         <source>Try again</source>
         <translation>Yritä uudelleen</translation>
-    </message>
-    <message>
-        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
