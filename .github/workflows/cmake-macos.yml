@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 name: CMake (macOS)
 
 on: [push, pull_request]
@@ -14,7 +17,6 @@ env:
   BUILD_DIR: build
   BUILD_NUMBER: ${{github.run_number}}
   CMAKE_BUILD_PARALLEL_LEVEL: 3
-  MACOSX_DEPLOYMENT_TARGET: 14.0
 
 jobs:
   build:

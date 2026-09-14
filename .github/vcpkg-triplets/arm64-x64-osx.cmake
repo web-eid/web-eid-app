@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+#
+# Based on vcpkg's arm64-osx triplet (MIT), https://github.com/microsoft/vcpkg
+# Differs in building a universal binary and pinning the 14.0 deployment target.
+
 set(VCPKG_TARGET_ARCHITECTURE arm64 x86_64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)

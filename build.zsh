@@ -1,4 +1,6 @@
 #!/usr/bin/env zsh
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
 
 set -e
 set -u
@@ -6,7 +8,6 @@ set -u
 export OPENSSL_ROOT_DIR=$(brew --prefix openssl@3)
 export GTest_ROOT=$(brew --prefix gtest)
 export CMAKE_BUILD_PARALLEL_LEVEL=3
-export MACOSX_DEPLOYMENT_TARGET=14.0
 
 BUILD_TYPE=RelWithDebInfo
 BUILD_DIR=build
