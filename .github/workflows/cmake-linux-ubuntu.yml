@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 name: CMake (Ubuntu Linux)
 
 on: [push, pull_request]
@@ -24,7 +27,7 @@ jobs:
     container: ubuntu:${{matrix.container}}
     strategy:
       matrix:
-        container: ['22.04', '24.04', '26.04']
+        container: ['22.04', '24.04', '26.04', '26.10']
         arch: ['amd64', 'arm64']
 
     steps:

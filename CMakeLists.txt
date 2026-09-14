@@ -1,8 +1,13 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 cmake_minimum_required(VERSION 3.22)
 
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/lib/libelectronic-id/README.md")
     message(FATAL_ERROR "libelectronic-id submodule directory empty, did you 'git clone --recursive'?")
 endif()
+
+set(CMAKE_OSX_DEPLOYMENT_TARGET 14.0 CACHE STRING "Minimum macOS version (Apple only)")
 
 if($ENV{BUILD_NUMBER})
     set(BUILD_NUMBER $ENV{BUILD_NUMBER})
