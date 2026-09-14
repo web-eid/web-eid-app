@@ -1,4 +1,6 @@
 #!/usr/bin/env zsh
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
 
 set -e
 set -u

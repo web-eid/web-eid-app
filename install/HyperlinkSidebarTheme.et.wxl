@@ -1,4 +1,7 @@
-﻿<WixLocalization Culture="et-ee" Language="1061" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+﻿<!-- Copyright (c) .NET Foundation and contributors. All rights reserved. Licensed under the Microsoft Reciprocal License. See LICENSE.TXT file in the project root for full license information. -->
+<!-- SPDX-FileCopyrightText: Estonian Information System Authority -->
+<!-- SPDX-License-Identifier: MS-RL -->
+<WixLocalization Culture="et-ee" Language="1061" xmlns="http://wixtoolset.org/schemas/v4/wxl">
   <String Id="Caption" Value="Web eID tarkvara paigaldus" />
   <String Id="Title" Value="Web eID tarkvara" />
   <String Id="CheckingForUpdatesLabel" Value="Checking for updates" />

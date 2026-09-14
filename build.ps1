@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
 #powershell -ExecutionPolicy ByPass -File build.ps1
 param(
   [string]$webeid = $PSScriptRoot,
