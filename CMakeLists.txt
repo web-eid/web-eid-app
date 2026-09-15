@@ -11,7 +11,7 @@ elseif($ENV{CI_PIPELINE_IID})
 else()
     set(BUILD_NUMBER 0)
 endif()
-project(web-eid VERSION 2.10.0.${BUILD_NUMBER}
+project(web-eid VERSION 2.11.0.${BUILD_NUMBER}
     DESCRIPTION "Web eID browser extension helper application"
     HOMEPAGE_URL https://github.com/web-eid/web-eid-app
 )
