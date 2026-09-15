@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 add_executable(web-eid WIN32 MACOSX_BUNDLE
     ${CMAKE_SOURCE_DIR}/install/appicon.icns
     getcommandhandler.cpp

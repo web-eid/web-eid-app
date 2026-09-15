@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Estonian Information System Authority
+# SPDX-License-Identifier: MIT
+
 # Helper
 add_library(SafariServices INTERFACE shared.hpp)
 target_compile_options(SafariServices INTERFACE -fobjc-arc)

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Estonian Information System Authority
+// SPDX-License-Identifier: MIT
+
 #include <winver.h>
 
 #define VER_STR_HELPER(x)	#x

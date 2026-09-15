@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Estonian Information System Authority
+// SPDX-License-Identifier: MIT
+
 #pragma once
 
 // Q_DISABLE_COPY_MOVE is available since Qt 5.13, define it for earlier versions.
