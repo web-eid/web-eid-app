@@ -8,7 +8,7 @@ permissions:
 jobs:
   copyright:
     name: Check copyright headers
-    uses: web-eid/.github/.github/workflows/copyright.yml@9ea5bd0c816309493524bce9f96024ed3cc6ff1d # main
+    uses: web-eid/.github/.github/workflows/copyright.yml@8b93396c49e03b9b6ef7ef44fc9b89422d95450b # main
     with:
       # JSON manifests have no comment syntax; src/ui/translations/*.ts are Qt
       # translation sources that lupdate rewrites, not TypeScript

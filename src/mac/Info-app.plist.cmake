@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-FileCopyrightText: 2000-2026 Kitware, Inc. and Contributors -->
 <!-- SPDX-FileCopyrightText: Estonian Information System Authority -->
-<!-- SPDX-License-Identifier: MIT -->
+<!-- SPDX-License-Identifier: BSD-3-Clause -->
+<!-- Based on CMake's Modules/MacOSXBundleInfo.plist.in,
+     https://gitlab.kitware.com/cmake/cmake -->
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
