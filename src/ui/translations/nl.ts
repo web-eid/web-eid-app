@@ -186,18 +186,6 @@
         <translation>PIN-invoer uitgeschakeld</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
-        <translation>Authenticatie en ondertekenen met de ID-kaart is nog niet mogelijk. De ID-kaart moet worden geactiveerd in het zelfbedieningsportaal van de Politie- en Grensbewakingsraad om deze te kunnen gebruiken.</translation>
-    </message>
-    <message>
-        <source>Activate ID-card</source>
-        <translation>ID-kaart activeren</translation>
-    </message>
-    <message>
-        <source>https://www.politsei.ee/en/self-service-portal</source>
-        <translation>https://www.politsei.ee/en/self-service-portal</translation>
-    </message>
-    <message>
         <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
         <translation>Ondertekenen met de ID-kaart is nog niet mogelijk. Om te ondertekenen moet de PIN2-code worden gewijzigd in de DigiDoc4-toepassing.</translation>
     </message>

@@ -188,18 +188,6 @@
         <translation>Ввод PIN запрещён</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
-        <translation>Идентификация и подписание документов с помощью ID карты пока невозможны. Для использования удостоверения личности его необходимо активировать в системе самообслуживания Управления полиции и пограничной охраны.</translation>
-    </message>
-    <message>
-        <source>Activate ID-card</source>
-        <translation>Активировать ID карту</translation>
-    </message>
-    <message>
-        <source>https://www.politsei.ee/en/self-service-portal</source>
-        <translation>https://www.politsei.ee/ru/samoobsluzhivanie</translation>
-    </message>
-    <message>
         <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
         <translation>Подписание с помощью ID-карты ещё невозможно. Чтобы подписывать, необходимо изменить PIN2 в приложении DigiDoc4.</translation>
     </message>
