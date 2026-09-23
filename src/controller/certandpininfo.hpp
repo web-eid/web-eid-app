@@ -36,7 +36,6 @@ struct EidCertificateAndPinInfo
     QSslCertificate certificate {};
     CertificateInfo certInfo;
     PinInfo pinInfo;
-    bool pin1Active = true;
     bool pin2Active = true;
 };
 

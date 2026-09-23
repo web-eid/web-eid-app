@@ -212,10 +212,6 @@
         </translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PIN entry disabled</source>
         <translation>Unos PIN-a onemogućen</translation>
     </message>
