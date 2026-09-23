@@ -34,8 +34,12 @@
         <translation> (Isteklo)</translation>
     </message>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Izdavatelj: %2&lt;br /&gt;Vrijedi: %3 do %4%5</translation>
+        <source>Issuer: %1</source>
+        <translation>Izdavatelj: %1</translation>
+    </message>
+    <message>
+        <source>Valid until: %1%2</source>
+        <translation>Vrijedi do: %1%2</translation>
     </message>
 </context>
 <context>
