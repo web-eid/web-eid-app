@@ -640,16 +640,8 @@ void WebEidDialog::setupOK(Func func, const char* text, bool enabled)
 
 void WebEidDialog::setupWarning(const EidCertificateAndPinInfo& certAndPinInfo)
 {
-    ui->lockedWarning->setHidden(certAndPinInfo.pin1Active && certAndPinInfo.pin2Active);
-    if (!certAndPinInfo.pin1Active) {
-        setTrText(
-            ui->lockedWarning,
-            QT_TR_NOOP(
-                "Authentication and signing with the ID-card isn't possible yet. "
-                "ID-card must be activated in the Police and Border Guard Board’s self-service "
-                "portal in order to use it. "
-                "<a href=\"https://www.politsei.ee/en/self-service-portal\">Activate ID-card</a>"));
-    } else if (!certAndPinInfo.pin2Active) {
+    ui->lockedWarning->setHidden(certAndPinInfo.pin2Active);
+    if (!certAndPinInfo.pin2Active) {
         setTrText(
             ui->lockedWarning,
             QT_TR_NOOP(
@@ -700,9 +692,6 @@ void WebEidDialog::resizeHeight()
 
 bool WebEidDialog::isCardActive(const EidCertificateAndPinInfo& certAndPinInfo) const noexcept
 {
-    if (!certAndPinInfo.pin1Active) {
-        return false;
-    }
     return currentCommand == CommandType::AUTHENTICATE || certAndPinInfo.pin2Active;
 }
 

@@ -188,10 +188,6 @@
         <translation>Операция не удалась</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation>Идентификация и подписание документов с помощью ID карты пока невозможны. Для использования удостоверения личности его необходимо активировать в системе самообслуживания Управления полиции и пограничной охраны. &lt;a href=&quot;https://www.politsei.ee/ru/samoobsluzhivanie&quot;&gt;Активировать ID карту&lt;/a&gt;</translation>
-    </message>
-    <message>
         <source>PIN entry disabled</source>
         <translation>Ввод PIN запрещён</translation>
     </message>
