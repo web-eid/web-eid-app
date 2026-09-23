@@ -186,18 +186,6 @@
         <translation>PIN entry disabled</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
-        <translation>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</translation>
-    </message>
-    <message>
-        <source>Activate ID-card</source>
-        <translation>Activate ID-card</translation>
-    </message>
-    <message>
-        <source>https://www.politsei.ee/en/self-service-portal</source>
-        <translation>https://www.politsei.ee/en/self-service-portal</translation>
-    </message>
-    <message>
         <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
         <translation>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</translation>
     </message>

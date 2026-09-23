@@ -186,18 +186,6 @@
         <translation>Saisie du code PIN désactivée</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
-        <translation>L&apos;authentification et la signature avec la carte d&apos;identité ne sont pas encore possibles. La carte d&apos;identité doit être activée sur le portail libre-service de la Police et des Gardes-frontières afin de pouvoir l&apos;utiliser.</translation>
-    </message>
-    <message>
-        <source>Activate ID-card</source>
-        <translation>Activer la carte d&apos;identité</translation>
-    </message>
-    <message>
-        <source>https://www.politsei.ee/en/self-service-portal</source>
-        <translation>https://www.politsei.ee/en/self-service-portal</translation>
-    </message>
-    <message>
         <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
         <translation>La signature avec la carte d&apos;identité n&apos;est pas encore possible. Pour signer, le code PIN2 doit être modifié dans l&apos;application DigiDoc4.</translation>
     </message>
