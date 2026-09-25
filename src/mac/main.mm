@@ -12,8 +12,11 @@
 
 #import <Cocoa/Cocoa.h>
 #import <SafariServices/SafariServices.h>
+#import <os/log.h>
 
 #include "shared.hpp"
+
+static os_log_t logger = os_log_create("eu.web-eid.web-eid-safari", "app");
 
 #include <iostream>
 
@@ -95,7 +98,7 @@
 {
     NSString *nonce = notification.object;
     NSDictionary *req = takeValue(nonce);
-    NSLog(@"web-eid-safari: msg from extension nonce (%@) request: %@", nonce, req);
+    os_log(logger, "msg from extension nonce (%{public}@) request: %@", nonce, req);
     if (req == nil) {
         return;
     }
@@ -122,7 +125,7 @@
         }
     }
 
-    NSLog(@"web-eid-safari: msg to extension nonce (%@) request: %@", nonce, resp);
+    os_log(logger, "msg to extension nonce (%{public}@) response: %@", nonce, resp);
     setValue(nonce, resp);
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:WebEidExtension object:nonce userInfo:nil deliverImmediately:YES];
     QCoreApplication::quit();
@@ -157,6 +160,9 @@ int main(int argc, char* argv[])
     SafariApplication app(argc, argv, QStringLiteral("web-eid-safari"));
     auto appPtr = &app;
 
+    // Sender is not authenticated; DNCF is system-wide. This is intentional: the notification
+    // is a wake-up signal only — payload is read from the App Group NSUserDefaults, which is
+    // gated by team-ID entitlement and inaccessible to other processes.
     [NSDistributedNotificationCenter.defaultCenter addObserver:NSApp selector:@selector(notificationEvent:) name:WebEidApp object:nil];
 
     id starting = [getUserDefaults() objectForKey:WebEidStarting];
