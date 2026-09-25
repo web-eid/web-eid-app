@@ -39,9 +39,6 @@ EidCertificateAndPinInfo getCertificateWithStatusAndInfo(ElectronicID::ptr&& eid
         subject = QStringLiteral("%1, %2, %3").arg(surName, givenName, serialNumber);
     }
 
-    CertificateInfo certInfo {
-        certificateType, certificate.expiryDate() < QDateTime::currentDateTimeUtc(),
-        certificate.effectiveDate() > QDateTime::currentDateTimeUtc(), std::move(subject)};
     auto info = certificateType.isAuthentication() ? eid->authPinInfo() : eid->signingPinInfo();
     PinInfo pinInfo {.pinMinMaxLength = certificateType.isAuthentication()
                          ? eid->authPinMinMaxLength()
@@ -51,12 +48,10 @@ EidCertificateAndPinInfo getCertificateWithStatusAndInfo(ElectronicID::ptr&& eid
                          info.maxRetry,
                      },
                      .readerHasPinPad = eid->smartcard().readerHasPinPad()};
-    bool pin1Active = true;
     bool pin2Active = true;
     if (eid->type() == ElectronicID::EstEID && eid->name() == "EstEIDThales") {
         auto infoOther =
             certificateType.isAuthentication() ? eid->signingPinInfo() : eid->authPinInfo();
-        pin1Active = certificateType.isAuthentication() ? info.pinActive : infoOther.pinActive;
         pin2Active = certificateType.isAuthentication() ? infoOther.pinActive : info.pinActive;
     }
 
@@ -64,9 +59,14 @@ EidCertificateAndPinInfo getCertificateWithStatusAndInfo(ElectronicID::ptr&& eid
         .eid = std::move(eid),
         .certificateBytesInDer = std::move(certificateDer),
         .certificate = certificate,
-        .certInfo = std::move(certInfo),
+        .certInfo =
+            {
+                .type = certificateType,
+                .isExpired = certificate.expiryDate() < QDateTime::currentDateTimeUtc(),
+                .notEffective = certificate.effectiveDate() > QDateTime::currentDateTimeUtc(),
+                .subject = std::move(subject),
+            },
         .pinInfo = std::move(pinInfo),
-        .pin1Active = pin1Active,
         .pin2Active = pin2Active,
     };
 }
