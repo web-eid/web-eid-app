@@ -30,8 +30,12 @@
         <translation> (Platnosť vypršala)</translation>
     </message>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Vydavateľ: %2&lt;br /&gt;Platný: %3 až %4%5</translation>
+        <source>Issuer: %1</source>
+        <translation>Vydavateľ: %1</translation>
+    </message>
+    <message>
+        <source>Valid until: %1%2</source>
+        <translation>Platný do: %1%2</translation>
     </message>
     <message>
         <source>Pin locked</source>
@@ -102,10 +106,6 @@
     <message>
         <source>Select a certificate</source>
         <translation>Vyberte certifikát</translation>
-    </message>
-    <message>
-        <source>PIN is locked. Unblock and try again.</source>
-        <translation>PIN je uzamknutý. Odblokujte ho a skúste operáciu znova.</translation>
     </message>
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
@@ -184,12 +184,52 @@
         <translation>Operácia zlyhala</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PIN entry disabled</source>
         <translation>Zadávanie PIN je zakázané</translation>
+    </message>
+    <message>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
+        <translation>Autentizácia a podpisovanie pomocou ID karty ešte nie sú možné. Na použitie ID karty je potrebné ju aktivovať v samoobslužnom portáli Policajného a pohraničného zboru.</translation>
+    </message>
+    <message>
+        <source>Activate ID-card</source>
+        <translation>Aktivovať ID kartu</translation>
+    </message>
+    <message>
+        <source>https://www.politsei.ee/en/self-service-portal</source>
+        <translation>https://www.politsei.ee/en/self-service-portal</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
+        <translation>Podpisovanie pomocou ID karty ešte nie je možné. Na podpisovanie je potrebné zmeniť kód PIN2 v aplikácii DigiDoc4.</translation>
+    </message>
+    <message>
+        <source>Additional information</source>
+        <translation>Ďalšie informácie</translation>
+    </message>
+    <message>
+        <source>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</source>
+        <translation>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN1 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN1 je blokovaný, pretože bol zadaný nesprávne %n raz.</numerusform>
+            <numerusform>PIN1 je blokovaný, pretože bol zadaný nesprávne %n razy.</numerusform>
+            <numerusform>PIN1 je blokovaný, pretože bol zadaný nesprávne %n razov.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN2 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN2 je blokovaný, pretože bol zadaný nesprávne %n raz.</numerusform>
+            <numerusform>PIN2 je blokovaný, pretože bol zadaný nesprávne %n razy.</numerusform>
+            <numerusform>PIN2 je blokovaný, pretože bol zadaný nesprávne %n razov.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Cancel blocking</source>
+        <translation>Zrušiť blokovanie</translation>
     </message>
     <message>
         <source>Card driver error. Please try again.</source>
@@ -226,10 +266,6 @@
     <message>
         <source>Try again</source>
         <translation>Skúste to znova</translation>
-    </message>
-    <message>
-        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>

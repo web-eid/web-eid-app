@@ -30,8 +30,12 @@
         <translation> (Истекший)</translation>
     </message>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Выдавший: %2&lt;br /&gt;Действительно: с %3 до %4%5</translation>
+        <source>Issuer: %1</source>
+        <translation>Выдавший: %1</translation>
+    </message>
+    <message>
+        <source>Valid until: %1%2</source>
+        <translation>Действителен до: %1%2</translation>
     </message>
     <message>
         <source>Pin locked</source>
@@ -102,10 +106,6 @@
     <message>
         <source>Select a certificate</source>
         <translation>Выберите сертификат</translation>
-    </message>
-    <message>
-        <source>PIN is locked. Unblock and try again.</source>
-        <translation>PIN-код заблокирован. Разблокируйте и попробуйте еще раз.</translation>
     </message>
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
@@ -184,12 +184,52 @@
         <translation>Операция не удалась</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation>Идентификация и подписание документов с помощью ID карты пока невозможны. Для использования удостоверения личности его необходимо активировать в системе самообслуживания Управления полиции и пограничной охраны. &lt;a href=&quot;https://www.politsei.ee/ru/samoobsluzhivanie&quot;&gt;Активировать ID карту&lt;/a&gt;</translation>
-    </message>
-    <message>
         <source>PIN entry disabled</source>
         <translation>Ввод PIN запрещён</translation>
+    </message>
+    <message>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
+        <translation>Идентификация и подписание документов с помощью ID карты пока невозможны. Для использования удостоверения личности его необходимо активировать в системе самообслуживания Управления полиции и пограничной охраны.</translation>
+    </message>
+    <message>
+        <source>Activate ID-card</source>
+        <translation>Активировать ID карту</translation>
+    </message>
+    <message>
+        <source>https://www.politsei.ee/en/self-service-portal</source>
+        <translation>https://www.politsei.ee/ru/samoobsluzhivanie</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
+        <translation>Подписание с помощью ID-карты ещё невозможно. Чтобы подписывать, необходимо изменить PIN2 в приложении DigiDoc4.</translation>
+    </message>
+    <message>
+        <source>Additional information</source>
+        <translation>Дополнительная информация</translation>
+    </message>
+    <message>
+        <source>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</source>
+        <translation>https://www.id.ee/ru/artikkel/poryadok-izmeneniya-pin-kodov-i-puk-koda-id-karty/</translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN1 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN1 заблокирован, так как был введён неверно %n раз.</numerusform>
+            <numerusform>PIN1 заблокирован, так как был введён неверно %n раза.</numerusform>
+            <numerusform>PIN1 заблокирован, так как был введён неверно %n раз.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN2 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN2 заблокирован, так как был введён неверно %n раз.</numerusform>
+            <numerusform>PIN2 заблокирован, так как был введён неверно %n раза.</numerusform>
+            <numerusform>PIN2 заблокирован, так как был введён неверно %n раз.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Cancel blocking</source>
+        <translation>Отменить блокировку</translation>
     </message>
     <message>
         <source>Card driver error. Please try again.</source>
@@ -226,10 +266,6 @@
     <message>
         <source>Try again</source>
         <translation>Попробуйте еще раз</translation>
-    </message>
-    <message>
-        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
-        <translation>Подписание с помощью ID-карты ещё невозможно. Чтобы подписывать, необходимо изменить PIN2 в приложении DigiDoc4. &lt;a href=&quot;https://www.id.ee/ru/artikkel/poryadok-izmeneniya-pin-kodov-i-puk-koda-id-karty/&quot;&gt;Дополнительная информация&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Cancel</source>
