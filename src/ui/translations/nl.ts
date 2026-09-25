@@ -30,8 +30,12 @@
         <translation> (Vervallen)</translation>
     </message>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Uitgever: %2&lt;br /&gt;Geldig: %3 tot %4%5</translation>
+        <source>Issuer: %1</source>
+        <translation>Uitgever: %1</translation>
+    </message>
+    <message>
+        <source>Valid until: %1%2</source>
+        <translation>Geldig tot: %1%2</translation>
     </message>
     <message>
         <source>Pin locked</source>
@@ -102,10 +106,6 @@
     <message>
         <source>Select a certificate</source>
         <translation>Selecteer een certificaat</translation>
-    </message>
-    <message>
-        <source>PIN is locked. Unblock and try again.</source>
-        <translation>PIN is geblokkeerd. Deblokkeer en probeer het opnieuw.</translation>
     </message>
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
@@ -182,12 +182,50 @@
         <translation>Bewerking mislukt</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PIN entry disabled</source>
         <translation>PIN-invoer uitgeschakeld</translation>
+    </message>
+    <message>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
+        <translation>Authenticatie en ondertekenen met de ID-kaart is nog niet mogelijk. De ID-kaart moet worden geactiveerd in het zelfbedieningsportaal van de Politie- en Grensbewakingsraad om deze te kunnen gebruiken.</translation>
+    </message>
+    <message>
+        <source>Activate ID-card</source>
+        <translation>ID-kaart activeren</translation>
+    </message>
+    <message>
+        <source>https://www.politsei.ee/en/self-service-portal</source>
+        <translation>https://www.politsei.ee/en/self-service-portal</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
+        <translation>Ondertekenen met de ID-kaart is nog niet mogelijk. Om te ondertekenen moet de PIN2-code worden gewijzigd in de DigiDoc4-toepassing.</translation>
+    </message>
+    <message>
+        <source>Additional information</source>
+        <translation>Meer informatie</translation>
+    </message>
+    <message>
+        <source>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</source>
+        <translation>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN1 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN1 is geblokkeerd omdat de code %n keer verkeerd is ingevoerd.</numerusform>
+            <numerusform>PIN1 is geblokkeerd omdat de code %n keer verkeerd is ingevoerd.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN2 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN2 is geblokkeerd omdat de code %n keer verkeerd is ingevoerd.</numerusform>
+            <numerusform>PIN2 is geblokkeerd omdat de code %n keer verkeerd is ingevoerd.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Cancel blocking</source>
+        <translation>Blokkering opheffen</translation>
     </message>
     <message>
         <source>Card driver error. Please try again.</source>
@@ -224,10 +262,6 @@
     <message>
         <source>Try again</source>
         <translation>Probeer opnieuw</translation>
-    </message>
-    <message>
-        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
