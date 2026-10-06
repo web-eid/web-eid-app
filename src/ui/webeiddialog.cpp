@@ -457,11 +457,34 @@ bool WebEidDialog::event(QEvent* event)
         emit languageChange();
         resizeHeight();
         break;
-    case QEvent::Resize:
+    case QEvent::Resize: {
         ui->dialogContent->layout()->activate();
-        ui->langButton->move(width() - ui->langButton->width() - 20,
-                             ui->pageStack->mapTo(this, QPoint(0, 0)).y() - 20);
+        QWidget* title = nullptr;
+        switch (Page(ui->pageStack->currentIndex())) {
+        case Page::WAITING:
+            title = ui->waitingPageTitleLabel;
+            break;
+        case Page::ALERT:
+            title = ui->messagePageTitleLabel;
+            break;
+        case Page::SELECT_CERTIFICATE:
+            title = ui->selectCertificatePageTitleLabel;
+            break;
+        case Page::PIN_INPUT:
+            title = ui->pinInputPageTitleLabel;
+            break;
+        case Page::ABOUT:
+            title = ui->aboutPageLabel;
+            break;
+        }
+        if (title) {
+            const QPoint titlePosition = title->mapTo(this, QPoint(0, 0));
+            ui->langButton->move(width() - ui->langButton->width() - 40,
+                                 titlePosition.y()
+                                     + (title->height() - ui->langButton->height()) / 2);
+        }
         break;
+    }
     default:
         break;
     }

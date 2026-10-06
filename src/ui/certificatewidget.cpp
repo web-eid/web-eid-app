@@ -33,7 +33,7 @@
 // We use two separate widgets, CertificateWidget and CertificateButton, for accessibility, to
 // support screen readers.
 
-CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
+CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self, int contentMargin) :
     icon(new QLabel(self)), info(new QLabel(self)), issuer(new QLabel(self)),
     status(new QLabel(self))
 {
@@ -47,7 +47,7 @@ CertificateWidgetInfo::CertificateWidgetInfo(QWidget* self) :
     status->setTextFormat(Qt::PlainText);
     status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     auto* layout = new QGridLayout(self);
-    layout->setContentsMargins(16, 16, 16, 16);
+    layout->setContentsMargins(contentMargin, contentMargin, contentMargin, contentMargin);
     layout->setHorizontalSpacing(16);
     layout->setVerticalSpacing(2);
     layout->addWidget(icon, 0, 0, 3, 1, Qt::AlignVCenter);
@@ -103,7 +103,8 @@ void CertificateWidgetInfo::languageChange()
     setCertificateInfo(certAndPinInfo);
 }
 
-CertificateWidget::CertificateWidget(QWidget* parent) : QWidget(parent), CertificateWidgetInfo(this)
+CertificateWidget::CertificateWidget(QWidget* parent) :
+    QWidget(parent), CertificateWidgetInfo(this, 0)
 {
     info->setFocusPolicy(Qt::TabFocus);
 }
@@ -119,7 +120,7 @@ void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
 
 CertificateButton::CertificateButton(const EidCertificateAndPinInfo& cardCertPinInfo,
                                      QWidget* parent) :
-    QAbstractButton(parent), CertificateWidgetInfo(this)
+    QAbstractButton(parent), CertificateWidgetInfo(this, 16)
 {
     setCheckable(true);
     setAutoExclusive(true);
