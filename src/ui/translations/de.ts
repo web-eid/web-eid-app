@@ -107,10 +107,6 @@
         <source>Select a certificate</source>
         <translation>Wählen Sie ein Zertifikat aus</translation>
     </message>
-    <message>
-        <source>PIN is locked. Unblock and try again.</source>
-        <translation>PIN ist gesperrt. Entsperren Sie und versuchen Sie es erneut.</translation>
-    </message>
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
@@ -186,12 +182,50 @@
         <translation>Der Vorgang ist fehlgeschlagen</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PIN entry disabled</source>
         <translation>PIN-Eingabe deaktiviert</translation>
+    </message>
+    <message>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
+        <translation>Authentifizierung und Signierung mit der ID-Karte sind noch nicht möglich. Die ID-Karte muss im Self-Service-Portal der Polizei- und Grenzschutzbehörde aktiviert werden, um sie verwenden zu können.</translation>
+    </message>
+    <message>
+        <source>Activate ID-card</source>
+        <translation>ID-Karte aktivieren</translation>
+    </message>
+    <message>
+        <source>https://www.politsei.ee/en/self-service-portal</source>
+        <translation>https://www.politsei.ee/en/self-service-portal</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
+        <translation>Signieren mit der ID-Karte ist noch nicht möglich. Um zu signieren, muss der PIN2-Code in der DigiDoc4-Anwendung geändert werden.</translation>
+    </message>
+    <message>
+        <source>Additional information</source>
+        <translation>Weitere Informationen</translation>
+    </message>
+    <message>
+        <source>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</source>
+        <translation>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN1 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN1 ist gesperrt, da die PIN %n Mal falsch eingegeben wurde.</numerusform>
+            <numerusform>PIN1 ist gesperrt, da die PIN %n Mal falsch eingegeben wurde.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN2 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>PIN2 ist gesperrt, da die PIN %n Mal falsch eingegeben wurde.</numerusform>
+            <numerusform>PIN2 ist gesperrt, da die PIN %n Mal falsch eingegeben wurde.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Cancel blocking</source>
+        <translation>Sperrung aufheben</translation>
     </message>
     <message>
         <source>Card driver error. Please try again.</source>
@@ -228,10 +262,6 @@
     <message>
         <source>Try again</source>
         <translation>Versuch es noch einmal</translation>
-    </message>
-    <message>
-        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>

@@ -107,10 +107,6 @@
         <source>Select a certificate</source>
         <translation>Sélectionnez un certificat</translation>
     </message>
-    <message>
-        <source>PIN is locked. Unblock and try again.</source>
-        <translation>Le code PIN est verrouillé. Débloquez et réessayez.</translation>
-    </message>
     <message numerus="yes">
         <source>The PIN has been entered incorrectly at least once. %n attempts left.</source>
         <translation>
@@ -186,12 +182,50 @@
         <translation>L&apos;opération a échoué</translation>
     </message>
     <message>
-        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it. &lt;a href=&quot;https://www.politsei.ee/en/self-service-portal&quot;&gt;Activate ID-card&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PIN entry disabled</source>
         <translation>Saisie du code PIN désactivée</translation>
+    </message>
+    <message>
+        <source>Authentication and signing with the ID-card isn&apos;t possible yet. ID-card must be activated in the Police and Border Guard Board’s self-service portal in order to use it.</source>
+        <translation>L&apos;authentification et la signature avec la carte d&apos;identité ne sont pas encore possibles. La carte d&apos;identité doit être activée sur le portail libre-service de la Police et des Gardes-frontières afin de pouvoir l&apos;utiliser.</translation>
+    </message>
+    <message>
+        <source>Activate ID-card</source>
+        <translation>Activer la carte d&apos;identité</translation>
+    </message>
+    <message>
+        <source>https://www.politsei.ee/en/self-service-portal</source>
+        <translation>https://www.politsei.ee/en/self-service-portal</translation>
+    </message>
+    <message>
+        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign.</source>
+        <translation>La signature avec la carte d&apos;identité n&apos;est pas encore possible. Pour signer, le code PIN2 doit être modifié dans l&apos;application DigiDoc4.</translation>
+    </message>
+    <message>
+        <source>Additional information</source>
+        <translation>Informations complémentaires</translation>
+    </message>
+    <message>
+        <source>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</source>
+        <translation>https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/</translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN1 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>Le PIN1 est bloqué car il a été saisi incorrectement %n fois.</numerusform>
+            <numerusform>Le PIN1 est bloqué car il a été saisi incorrectement %n fois.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>PIN2 is blocked because it was entered incorrectly %n times.</source>
+        <translation>
+            <numerusform>Le PIN2 est bloqué car il a été saisi incorrectement %n fois.</numerusform>
+            <numerusform>Le PIN2 est bloqué car il a été saisi incorrectement %n fois.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Cancel blocking</source>
+        <translation>Annuler le blocage</translation>
     </message>
     <message>
         <source>Card driver error. Please try again.</source>
@@ -228,10 +262,6 @@
     <message>
         <source>Try again</source>
         <translation>Essayer à nouveau</translation>
-    </message>
-    <message>
-        <source>Signing with an ID-card isn&apos;t possible yet. PIN2 code must be changed in DigiDoc4 application in order to sign. &lt;a href=&quot;https://www.id.ee/en/article/changing-id-card-pin-codes-and-puk-code/&quot;&gt;Additional information&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
