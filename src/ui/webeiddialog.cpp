@@ -660,15 +660,8 @@ void WebEidDialog::setupOK(Func func, const char* text, bool enabled)
 
 void WebEidDialog::setupWarning(const EidCertificateAndPinInfo& certAndPinInfo)
 {
-    ui->warningBar->setHidden(certAndPinInfo.pin1Active && certAndPinInfo.pin2Active);
-    if (!certAndPinInfo.pin1Active) {
-        setTrText(ui->warningLabel,
-                  QT_TR_NOOP("Authentication and signing with the ID-card isn't possible yet. "
-                             "ID-card must be activated in the Police and Border Guard Board’s "
-                             "self-service portal in order to use it."));
-        setTrText(ui->warningAction, QT_TR_NOOP("Activate ID-card"));
-        warningActionUrl = QT_TR_NOOP("https://www.politsei.ee/en/self-service-portal");
-    } else if (!certAndPinInfo.pin2Active) {
+    ui->warningBar->setHidden(certAndPinInfo.pin2Active);
+    if (!certAndPinInfo.pin2Active) {
         setTrText(ui->warningLabel,
                   QT_TR_NOOP("Signing with an ID-card isn't possible yet. PIN2 code must be "
                              "changed in DigiDoc4 application in order to sign."));
@@ -766,9 +759,6 @@ void WebEidDialog::openUrl(const QString& url)
 
 bool WebEidDialog::isCardActive(const EidCertificateAndPinInfo& certAndPinInfo) const noexcept
 {
-    if (!certAndPinInfo.pin1Active) {
-        return false;
-    }
     return currentCommand == CommandType::AUTHENTICATE || certAndPinInfo.pin2Active;
 }
 
