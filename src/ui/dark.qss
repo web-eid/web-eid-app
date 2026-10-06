@@ -15,15 +15,22 @@ color: #FFFFFF;
 #langButton::hover {
 background-color: #4E4E53;
 }
-CertificateButton, CertificateWidget {
-border-color: #4E4E53;
+CertificateWidget {
+border-color: transparent;
 }
 CertificateButton {
 background-color: rgba(255,255,255,0.1);
-border-color: black;
+border-color: #749FCE;
+}
+CertificateButton:disabled {
+background-color: rgba(255,255,255,0.1);
+}
+CertificateButton QWidget:disabled, CertificateWidget QWidget:disabled {
+color: white;
 }
 CertificateButton:checked {
-border-color: #008EEA;
+border-color: #749FCE;
+background-color: #1A3E64;
 }
 /* CertificateButton QWidget:disabled, CertificateWidget QWidget:disabled */
 #certificateStatus {
@@ -53,13 +60,18 @@ border-color: #003168;
 color: #FFFFFF;
 }
 #selectCertificateOriginLabel, #pinInputOriginLabel {
-color: white;
+color: #B5BFCF;
+background-color: #091A36;
+border-color: #415982;
 }
 #pinTitleLabel {
 color: white;
 }
 #pinErrorLabel {
 color: #FF5C79;
+}
+#pinTimeRemaining {
+color: #B5BFCF;
 }
 #aboutContent {
 border-color: #4E4E53;
