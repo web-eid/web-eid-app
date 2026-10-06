@@ -26,8 +26,13 @@ CertificateButton:checked {
 border-color: #008EEA;
 }
 /* CertificateButton QWidget:disabled, CertificateWidget QWidget:disabled */
-CertificateButton #warn,  CertificateWidget #warn {
-color: #F54A67;
+#certificateStatus {
+color: white;
+background-color: #415982;
+}
+#certificateStatus[warning="true"] {
+color: #FF5C79;
+background-color: #4A2830;
 }
 QLineEdit {
 border-color: #909299;

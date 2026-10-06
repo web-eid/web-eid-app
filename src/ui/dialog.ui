@@ -84,8 +84,23 @@ background-color: transparent;
 CertificateButton QWidget:disabled, CertificateWidget QWidget:disabled {
 color: #76767B;
 }
-CertificateButton #warn,  CertificateWidget #warn {
-color: #CD2541;
+#certificateName {
+font-weight: 700;
+}
+#certificateIssuer {
+font-size: 12px;
+}
+#certificateStatus {
+color: #091A36;
+background-color: #F3F5F7;
+border-radius: 8px;
+font-size: 12px;
+font-weight: 400;
+padding: 2px 8px;
+}
+#certificateStatus[warning=&quot;true&quot;] {
+color: #AD2A45;
+background-color: #F5EBED;
 }
 QLineEdit {
 border: 1px solid #C4CBD8;

@@ -30,8 +30,12 @@
         <translation> (Aegunud)</translation>
     </message>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Väljaandja: %2&lt;br /&gt;Kehtib: %3 kuni %4%5</translation>
+        <source>Issuer: %1</source>
+        <translation>Väljaandja: %1</translation>
+    </message>
+    <message>
+        <source>Valid until: %1%2</source>
+        <translation>Kehtib kuni: %1%2</translation>
     </message>
     <message>
         <source>Pin locked</source>

@@ -30,8 +30,12 @@
         <translation> (Platnost vypršela)</translation>
     </message>
     <message>
-        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Issuer: %2&lt;br /&gt;Valid: %3 to %4%5</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;Vydavatel: %2&lt;br /&gt;Platný: %3 až %4%5</translation>
+        <source>Issuer: %1</source>
+        <translation>Vydavatel: %1</translation>
+    </message>
+    <message>
+        <source>Valid until: %1%2</source>
+        <translation>Platný do: %1%2</translation>
     </message>
     <message>
         <source>Pin locked</source>
