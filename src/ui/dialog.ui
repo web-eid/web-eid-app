@@ -133,7 +133,7 @@ border-radius: 2px;
 #waitingPageTitleLabel, #messagePageTitleLabel, #selectCertificatePageTitleLabel, #pinInputPageTitleLabel, #aboutPageLabel {
 color: #003168;
 font-size: 20px;
-font-weight: bold;
+font-weight: 700;
 }
 #selectCertificateDescriptionLabel, #pinInputDescriptionLabel {
 max-height: 40px;
