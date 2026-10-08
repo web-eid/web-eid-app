@@ -4,6 +4,7 @@
 #include "webeiddialog.hpp"
 #include "application.hpp"
 #include "languageselect.hpp"
+#include "utils/erasedata.hpp"
 #include "utils/qt_comp.hpp"
 
 #include "ui_dialog.h"
@@ -159,6 +160,11 @@ WebEidDialog::WebEidDialog(QWidget* parent) : WebEidUI(parent), ui(new Private)
 
 WebEidDialog::~WebEidDialog()
 {
+    // Zero any PIN left in the cache in case the dialog is destroyed (e.g. cancelled) before
+    // getPin() was called to consume it.
+    if (!pin.isEmpty()) {
+        eraseData(pin);
+    }
     delete ui;
 }
 
