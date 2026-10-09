@@ -6,7 +6,6 @@
 #include <QAbstractButton>
 
 #include "certandpininfo.hpp"
-#include "utils/qdisablecopymove.hpp"
 
 class QLabel;
 
