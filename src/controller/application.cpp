@@ -61,7 +61,7 @@ Application::Application(int& argc, char** argv, const QString& name) :
 
     registerMetatypes();
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
     menuBar = std::make_unique<QMenuBar>();
     QAction* about = menuBar->addMenu(tr("&File"))->addAction(tr("&About"));
     about->setMenuRole(QAction::AboutRole);

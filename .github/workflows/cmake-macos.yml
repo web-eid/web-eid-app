@@ -3,7 +3,7 @@
 
 name: CMake (macOS)
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 permissions:
   contents: read
@@ -20,7 +20,7 @@ env:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: xcode-27
     timeout-minutes: 120
 
     steps:

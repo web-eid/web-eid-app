@@ -9,7 +9,7 @@
 
 #include <stdexcept>
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 #include <QMenuBar>
 #include <memory>
 #endif
@@ -37,7 +37,7 @@ public:
     // see class SafariApplication in src/mac/main.mm and WebEidDialog::showAboutPage().
     virtual bool isSafariExtensionContainingApp() { return false; }
     virtual void requestSafariExtensionState() { }
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
     void showAbout();
 #endif
     virtual void showSafariSettings() { }
@@ -47,7 +47,7 @@ signals:
 
 private:
     QTranslator* translator;
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
     std::unique_ptr<QMenuBar> menuBar;
 #endif
 };
