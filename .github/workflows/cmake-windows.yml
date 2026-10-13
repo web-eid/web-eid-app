@@ -3,7 +3,7 @@
 
 name: CMake (Windows)
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 permissions:
   contents: read
@@ -40,7 +40,7 @@ jobs:
       - name: Install Qt x64
         uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125 # v4.4.1
         with:
-          version: 6.11.2
+          version: 6.12.0
           arch: win64_msvc2022_64
           cache: true
           aqtsource: git+https://github.com/miurahr/aqtinstall.git@16db45a70b5905ad596941b223469bc86a56901e
@@ -53,7 +53,7 @@ jobs:
       - name: Install Qt arm64
         uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125 # v4.4.1
         with:
-          version: 6.11.2
+          version: 6.12.0
           arch: win64_msvc2022_arm64_cross_compiled
           cache: true
           aqtsource: git+https://github.com/miurahr/aqtinstall.git@16db45a70b5905ad596941b223469bc86a56901e
