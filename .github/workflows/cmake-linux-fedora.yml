@@ -39,9 +39,13 @@ jobs:
         run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -B build -S .
 
       - name: Build
-        run: cmake --build build --config $BUILD_TYPE --target package
+        run: |
+          cmake --build build --config $BUILD_TYPE --target package
+          cmake --install build/sbom
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: web-eid-app-fedora-build-fedora${{matrix.container}}-${{github.run_number}}
-          path: build/*rpm
+          path: |
+            build/*rpm
+            build/*.spdx

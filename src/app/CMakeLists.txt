@@ -25,7 +25,7 @@ if(WIN32)
     endif()
     set(WEBEID_PATH web-eid.exe)
     set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION}.$ENV{PLATFORM})
-    set(WIX_CMD wix.exe build -nologo
+    set(WIX_CMD wix build -nologo
         -arch $ENV{PLATFORM}
         -ext WixToolset.UI.wixext
         -bv WixUIDialogBmp=${CMAKE_SOURCE_DIR}/install/dlgbmp.bmp

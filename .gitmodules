@@ -4,3 +4,7 @@
 [submodule "src/mac/js"]
 	path = src/mac/js
 	url = ../web-eid-webextension
+[submodule "cmake/cmake-sbom"]
+	path = cmake/cmake-sbom
+	url = https://github.com/DEMCON/cmake-sbom.git
+	branch = v1.4.0
