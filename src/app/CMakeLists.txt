@@ -62,7 +62,10 @@ elseif(APPLE)
     set(WEBEID_PATH /Applications/Utilities/web-eid.app/Contents/MacOS/web-eid)
     set_source_files_properties(${CMAKE_SOURCE_DIR}/install/appicon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     set_source_files_properties(InfoPlist.strings PROPERTIES MACOSX_PACKAGE_LOCATION Resources/en.lproj)
-    set_target_properties(web-eid PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in)
+    set_target_properties(web-eid PROPERTIES
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "eu.web-eid.web-eid"
+    )
     configure_file(${CMAKE_SOURCE_DIR}/install/macos-postinstall.in root_firefox_scripts/postinstall @ONLY)
     install(TARGETS web-eid DESTINATION /Applications/Utilities COMPONENT main)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json COMPONENT chrome
