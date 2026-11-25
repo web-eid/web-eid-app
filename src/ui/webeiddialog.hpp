@@ -4,7 +4,6 @@
 #pragma once
 
 #include "ui.hpp"
-#include "utils/qdisablecopymove.hpp"
 
 #include <QCloseEvent>
 

@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 "SU_TITLE" = "Web eID Software";
 "SU_ERROR" = "Chyba";
-"SU_14" = "verze macOS musí být 14.0 nebo novější.";
+"SU_14" = "verze macOS musí být 14.4 nebo novější.";
 "SU_BASE" = "Základní komponenty";
 "SU_FIREFOX" = "Podpora ověřování a podepisování Firefoxu";
 "SU_CHROME" = "Podpora ověřování a podepisování Chrome";

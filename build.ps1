@@ -8,7 +8,7 @@ param(
   [string]$build_number = $(if ($null -eq $env:BUILD_NUMBER) {"0"} else {$env:BUILD_NUMBER}),
   [string]$version = (Select-String -Path "$webeid/CMakeLists.txt" -Pattern 'project\(web-eid VERSION (\d+\.\d+\.\d+)').Matches[0].Groups[1].Value + ".$build_number",
   [bool]$crosscompile = ($env:PROCESSOR_ARCHITECTURE -eq "AMD64"),
-  [string]$qt_dir = "C:\Qt\6.11.2",
+  [string]$qt_dir = "C:\Qt\6.12.1",
   [string]$qt_x64 = "$qt_dir\msvc2022_64",
   [string]$qt_arm64 = $(if ($crosscompile -and (Test-Path "$qt_dir\msvc2022_arm64_cross_compiled")) { "$qt_dir\msvc2022_arm64_cross_compiled" } else { "$qt_dir\msvc2022_arm64" }),
   [string]$buildtype = "RelWithDebInfo",
@@ -20,7 +20,7 @@ $ErrorActionPreference = "Stop"
 
 $installWixExtensions = $false
 if(!(Get-Command wix -ErrorAction SilentlyContinue)) {
-  & dotnet tool install --global --version 7.0.0 wix
+  & dotnet tool install --global --version 7.0.1 wix
   $installWixExtensions = $true
 }
 
@@ -29,9 +29,9 @@ if($acceptWixEULA) {
 }
 
 if($installWixExtensions) {
-  & wix extension add -g WixToolset.UI.wixext/7.0.0
-  & wix extension add -g WixToolset.Util.wixext/7.0.0
-  & wix extension add -g WixToolset.BootstrapperApplications.wixext/7.0.0
+  & wix extension add -g WixToolset.UI.wixext/7.0.1
+  & wix extension add -g WixToolset.Util.wixext/7.0.1
+  & wix extension add -g WixToolset.BootstrapperApplications.wixext/7.0.1
 }
 
 if(!(Test-Path -Path $vcpkgroot)) {

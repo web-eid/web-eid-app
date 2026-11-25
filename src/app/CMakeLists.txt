@@ -65,8 +65,7 @@ if(WIN32)
         list(APPEND SIGNCMD signtool.exe sign /a /v /s MY /n "${SIGNCERT}" /fd SHA256
             /du http://installer.id.ee /tr http://timestamp.digicert.com /td SHA256)
         add_custom_command(TARGET web-eid POST_BUILD
-            COMMAND ${SIGNCMD} "$<$<BOOL:${CROSSSIGNCERT}>:/ph;/ac;${CROSSSIGNCERT}>" $<TARGET_FILE:web-eid>
-            COMMAND_EXPAND_LISTS
+            COMMAND ${SIGNCMD} $<TARGET_FILE:web-eid>
         )
         add_custom_command(TARGET firefox-action POST_BUILD
             COMMAND ${SIGNCMD} ${FIREFOX_ACTION_DLL}
@@ -153,35 +152,37 @@ else()
         file(DOWNLOAD ${FIREFOX_URL} ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi)
     endif()
     set(WEBEID_PATH ${CMAKE_INSTALL_FULL_BINDIR}/web-eid)
-    install(TARGETS web-eid DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS web-eid DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT native)
     if(EXISTS /etc/debian_version)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
-            DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/mozilla/native-messaging-hosts RENAME eu.webeid.json)
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/mozilla/native-messaging-hosts RENAME eu.webeid.json COMPONENT firefox)
     else()
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/mozilla/native-messaging-hosts RENAME eu.webeid.json)
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/mozilla/native-messaging-hosts RENAME eu.webeid.json COMPONENT firefox)
     endif()
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/web-eid)
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/web-eid COMPONENT chrome)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
-        DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/chromium/native-messaging-hosts)
+        DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/chromium/native-messaging-hosts COMPONENT chrome)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
-        DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/opt/chrome/native-messaging-hosts)
+        DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/opt/chrome/native-messaging-hosts COMPONENT chrome)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/google-chrome/extensions)
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/google-chrome/extensions COMPONENT chrome)
     install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/chromium/extensions)
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/chromium/extensions COMPONENT chrome)
     install(FILES ${CMAKE_SOURCE_DIR}/install/web-eid.desktop
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT native)
     if (BUNDLE_XPI)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${FIREFOX_UUID}.xpi
-              DESTINATION ${CMAKE_INSTALL_DATADIR}/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384})
+              DESTINATION ${CMAKE_INSTALL_DATADIR}/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384} COMPONENT firefox)
     endif()
+    install(FILES ${CMAKE_SOURCE_DIR}/LICENSE DESTINATION ${CMAKE_INSTALL_DOCDIR} COMPONENT meta)
     foreach(RES 16 32 128 256 512)
         install(
             FILES ${CMAKE_SOURCE_DIR}/install/appicon_${RES}.png
             DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/${RES}x${RES}/apps/
             RENAME web-eid.png
+            COMPONENT native
         )
     endforeach()
 

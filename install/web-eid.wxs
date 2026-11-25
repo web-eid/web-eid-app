@@ -93,7 +93,6 @@
         <File Source="$(var.qt_path)\Qt6Widgets$(var.qt_suffix).dll" />
         <File Source="$(var.qt_path)\Qt6SvgWidgets$(var.qt_suffix).dll" />
 <?if $(sys.BUILDARCH) != arm64 ?>
-        <File Source="$(var.qt_path)\D3DCompiler_47.dll" />
         <File Source="$(var.qt_path)\opengl32sw.dll" />
 <?endif?>
         <File Subdirectory="platforms" Source="$(var.qt_path)\..\plugins\platforms\qwindows$(var.qt_suffix).dll" />

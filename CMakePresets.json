@@ -1,0 +1,78 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Host build",
+      "description": "Builds into build/<OS>, set BUILD_SUFFIX to separate containers sharing a checkout",
+      "binaryDir": "${sourceDir}/build/${hostSystemName}$env{BUILD_SUFFIX}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "vcpkg",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_MANIFEST_DIR": "${sourceDir}/lib/libelectronic-id"
+      }
+    },
+    {
+      "name": "macos-universal",
+      "inherits": ["default", "vcpkg"],
+      "displayName": "macOS universal binary",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "environment": {
+        "BUILD_SUFFIX": "-universal"
+      },
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/.github/vcpkg-triplets",
+        "VCPKG_TARGET_TRIPLET": "arm64-x64-osx"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "default", "configurePreset": "default" },
+    { "name": "macos-universal", "configurePreset": "macos-universal" }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default",
+      "execution": { "noTestsAction": "error" },
+      "output": { "verbosity": "verbose" }
+    },
+    {
+      "name": "macos-universal",
+      "inherits": "default",
+      "configurePreset": "macos-universal"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "default",
+      "displayName": "Host build and test",
+      "steps": [
+        { "type": "configure", "name": "default" },
+        { "type": "build", "name": "default" },
+        { "type": "test", "name": "default" }
+      ]
+    },
+    {
+      "name": "macos-universal",
+      "displayName": "macOS universal build and test",
+      "steps": [
+        { "type": "configure", "name": "macos-universal" },
+        { "type": "build", "name": "macos-universal" },
+        { "type": "test", "name": "macos-universal" }
+      ]
+    }
+  ]
+}
