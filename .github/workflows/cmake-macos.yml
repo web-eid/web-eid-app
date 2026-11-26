@@ -13,8 +13,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUILD_TYPE: RelWithDebInfo
-  BUILD_DIR: build
   BUILD_NUMBER: ${{github.run_number}}
   CMAKE_BUILD_PARALLEL_LEVEL: 3
 
@@ -39,7 +37,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@b344308e4483fc892e0d27b3cd1b173ebdd95f06 # v4.5.0
         with:
-          version: 6.11.2
+          version: 6.12.1
           arch: clang_64
           cache: true
 
@@ -48,27 +46,21 @@ jobs:
           VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
         run: |
           export VCPKG_ROOT="${VCPKG_INSTALLATION_ROOT}"
-          cmake -S . -B "${BUILD_DIR}" \
-            -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
-            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
-            -DVCPKG_MANIFEST_DIR="${GITHUB_WORKSPACE}/lib/libelectronic-id" \
-            -DVCPKG_OVERLAY_TRIPLETS="${GITHUB_WORKSPACE}/.github/vcpkg-triplets" \
-            -DVCPKG_TARGET_TRIPLET=arm64-x64-osx
+          cmake --preset macos-universal -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
       - name: Build
         run: |
-          cmake --build ${BUILD_DIR} --config ${BUILD_TYPE}
-          cmake --build ${BUILD_DIR} --config ${BUILD_TYPE} --target installer
-          cmake --build ${BUILD_DIR} --config ${BUILD_TYPE} --target installer-safari
+          cmake --build --preset macos-universal
+          cmake --build --preset macos-universal --target installer
+          cmake --build --preset macos-universal --target installer-safari
 
       - name: Test
-        run: ctest -V -C ${BUILD_TYPE} --test-dir ${BUILD_DIR}
+        run: ctest --preset macos-universal
 
       - name: Upload artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: web-eid-app-macos-build-${{github.run_number}}
           path: |
-            build/src/app/*.pkg
-            build/src/app/*.dmg
+            build/Darwin-universal/src/app/*.pkg
+            build/Darwin-universal/src/app/*.dmg

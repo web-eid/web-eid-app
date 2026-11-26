@@ -1,14 +1,16 @@
 # SPDX-FileCopyrightText: Estonian Information System Authority
 # SPDX-License-Identifier: MIT
 
-name: Copyright
-on: [push, pull_request]
+name: Checks
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
 permissions:
   contents: read
 jobs:
-  copyright:
-    name: Check copyright headers
-    uses: web-eid/.github/.github/workflows/copyright.yml@8b93396c49e03b9b6ef7ef44fc9b89422d95450b # main
+  checks:
+    uses: web-eid/.github/.github/workflows/checks.yml@703c7dcfa986e75514c048c8310e8e5c6b1820e8 # main
     with:
       # JSON manifests have no comment syntax; src/ui/translations/*.ts are Qt
       # translation sources that lupdate rewrites, not TypeScript

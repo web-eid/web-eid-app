@@ -285,7 +285,7 @@ sudo apt install \
     cd web-eid-app
     ./build.sh
     ./test.sh
-    ./build/src/app/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
+    ./build/Linux/src/app/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
 
 To build the Debian package installer, run:
 
@@ -306,7 +306,16 @@ To build the Debian package installer, run:
       git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
       cd web-eid-app
       ./build.zsh clean
-      ./build/src/app/web-eid.app/Contents/MacOS/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
+      ./build/Darwin/src/app/web-eid.app/Contents/MacOS/web-eid -c get-signing-certificate '{"origin":"https://ria.ee"}'
+
+To build a universal (arm64 and x86_64) binary like the CI does, with OpenSSL and Google Test
+from [vcpkg](https://github.com/microsoft/vcpkg), set `VCPKG_ROOT` and use the
+`macos-universal` preset. It builds into `build/Darwin-universal`:
+
+      export VCPKG_ROOT=<path to vcpkg>
+      cmake --preset macos-universal -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      cmake --build --preset macos-universal
+      ctest --preset macos-universal
 
 ### Windows setup
 
@@ -314,7 +323,7 @@ To build the Debian package installer, run:
 - Download and install Git for Windows from https://git-scm.com/download/win
 - Download and install CMake from https://cmake.org/download/
 - Install _Qt_ with the official [_Qt Online Installer_](https://www.qt.io/download-qt-installer),
-  choose _Custom installation > Qt 6.11.2_ and select the architecture(s) you need:
+  choose _Custom installation > Qt 6.12.1_ and select the architecture(s) you need:
   - _MSVC 2022 64-bit_ — for building the x64 binary
   - _MSVC 2022 ARM64_ — for building the ARM64 binary natively on an ARM64 host
   - _MSVC 2022 ARM64 (cross-compiled)_ — for building the ARM64 binary on an x64 host
@@ -333,19 +342,19 @@ above, install the following:
 
 - Install _WiX_ toolset:
 
-      dotnet tool install --global wix --version 7.0.0
+      dotnet tool install --global wix --version 7.0.1
       # After reviewing and accepting the WiX Toolset EULA:
       wix eula accept wix7
-      wix extension -g add WixToolset.UI.wixext/7.0.0
-      wix extension -g add WixToolset.Util.wixext/7.0.0
-      wix extension -g add WixToolset.BootstrapperApplications.wixext/7.0.0
+      wix extension -g add WixToolset.UI.wixext/7.0.1
+      wix extension -g add WixToolset.Util.wixext/7.0.1
+      wix extension -g add WixToolset.BootstrapperApplications.wixext/7.0.1
 
 Open _x64 Native Tools Command Prompt for VS 2022_, run `powershell` from that prompt and then run the following commands. This sets `PLATFORM=x64`, which the WiX installer target uses:
 
     git clone --recurse-submodules git@github.com:web-eid/web-eid-app.git
     cd web-eid-app
 
-    $QT_ROOT = "C:\Qt\6.11.2\msvc2022_64"   # adjust arch suffix as needed
+    $QT_ROOT = "C:\Qt\6.12.1\msvc2022_64"   # adjust arch suffix as needed
     $VCPKG_ROOT = "C:\vcpkg"
     $BUILD_TYPE = "RelWithDebInfo"
 
@@ -381,7 +390,7 @@ Key parameters (all optional, with auto-detected defaults):
 
 | Parameter       | Default              | Description                                 |
 |-----------------|----------------------|---------------------------------------------|
-| `-qt_dir`       | `C:\Qt\6.11.2`       | Qt installation base directory              |
+| `-qt_dir`       | `C:\Qt\6.12.1`       | Qt installation base directory              |
 | `-vcpkgroot`    | `$env:VCPKG_ROOT`    | vcpkg root directory                        |
 | `-crosscompile` | auto-detected        | `$true` on x64 host, `$false` on ARM64 host |
 | `-sign`         | _(none)_             | Certificate CN for code signing             |
@@ -394,4 +403,4 @@ to add and edit translations.
 
 Run the following command to update Qt Linguist TS files:
 
-      cmake --build build --config ${BUILD_TYPE} --target update_translations
+      cmake --build --preset default --target update_translations

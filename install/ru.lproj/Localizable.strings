@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 "SU_TITLE" = "Web eID Software";
 "SU_ERROR" = "Error";
-"SU_14" = "macOS version needs to be 14.0 or newer.";
+"SU_14" = "macOS version needs to be 14.4 or newer.";
 "SU_BASE" = "Base components";
 "SU_FIREFOX" = "Поддержка аутентиф. и подпис. в Firefox";
 "SU_CHROME" = "Поддержка аутентиф. и подпис. в Chrome";

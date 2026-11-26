@@ -7,17 +7,20 @@ set -u
 
 export DEBIAN_FRONTEND=noninteractive
 
+# Override for a debug build, e.g. BUILD_TYPE=Debug BUILD_SUFFIX=-debug ./build.sh
+BUILD_TYPE=${BUILD_TYPE:-RelWithDebInfo}
+
+# clean: reconfigure from an empty cache and rebuild everything
+FRESH=
+CLEAN_FIRST=
 if [[ ${1:-} == 'clean' ]]; then
-  echo -n Cleaning...
-  if [[ -d "./build" ]]; then
-    cmake --build build --target clean
-  fi
-  echo DONE
+  FRESH=--fresh
+  CLEAN_FIRST=--clean-first
 fi
 
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -B build -S .
-cmake --build build --config RelWithDebInfo # -- VERBOSE=1
+cmake --preset default $FRESH -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+cmake --build --preset default $CLEAN_FIRST # -- VERBOSE=1
 
 if [[ ${1:-} == 'installer' ]]; then
-  cmake --build build --config RelWithDebInfo --target installer
+  cmake --build --preset default --target installer
 fi

@@ -13,7 +13,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUILD_TYPE: RelWithDebInfo
   BUILD_NUMBER: ${{github.run_number}}
   DEBIAN_FRONTEND: noninteractive
   DEBFULLNAME: GitHub build
@@ -47,11 +46,11 @@ jobs:
           persist-credentials: false
 
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build -S .
+        run: cmake -B build -S .
 
       - name: Build
         run: |
-          cmake --build build --config $BUILD_TYPE --target installer
+          cmake --build build --target installer
           # Debian creates artifacts outside of project dir, copy them back to make them available in the build artifacts
           mv ../web-eid*.* build/
 

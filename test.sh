@@ -13,4 +13,4 @@ $PROJECT_ROOT/build.sh
 
 # Run project tests
 
-ctest -V --test-dir build
+ctest --preset default
