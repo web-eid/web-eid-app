@@ -13,11 +13,11 @@
 namespace
 {
 
-QByteArray resultToJson(const QVariantMap& result, const std::string& commandType)
+QByteArray resultToJson(const QVariantMap& result, std::string_view commandType)
 {
     const auto json = QJsonDocument::fromVariant(result);
     if (!json.isObject()) {
-        throw std::logic_error("Controller::resultToJson: command " + commandType
+        throw std::logic_error("Controller::resultToJson: command " + std::string(commandType)
                                + " did not return a JSON object");
     }
 
@@ -27,7 +27,7 @@ QByteArray resultToJson(const QVariantMap& result, const std::string& commandTyp
 } // namespace
 
 void writeResponseToStdOut(bool isInStdinMode, const QVariantMap& result,
-                           const std::string& commandType)
+                           std::string_view commandType)
 {
     const auto response = resultToJson(result, commandType);
 
@@ -35,7 +35,7 @@ void writeResponseToStdOut(bool isInStdinMode, const QVariantMap& result,
         writeResponseLength(std::cout, uint32_t(response.size()));
     }
 
-    std::cout << response.toStdString();
+    std::cout.write(response.constData(), std::streamsize(response.size()));
 
     if (isInStdinMode) {
         std::cout.flush(); // Don't write extra newline in stdin/stdout mode.

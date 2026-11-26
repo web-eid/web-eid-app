@@ -308,8 +308,11 @@ void WebEidDialog::onMultipleCertificatesReady(
         });
         ui->pageStack->setCurrentIndex(int(Page::SELECT_CERTIFICATE));
         break;
-    default:
-        emit failure("Command %1 not allowed here"_L1.arg(QString::fromStdString(currentCommand)));
+    default: {
+        const std::string_view command = currentCommand;
+        emit failure("Command %1 not allowed here"_L1.arg(
+            QLatin1String(command.data(), qsizetype(command.size()))));
+    }
     }
 }
 
