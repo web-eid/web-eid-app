@@ -89,6 +89,12 @@ CertificateWidget::CertificateWidget(QWidget* parent) : QWidget(parent), Certifi
     info->setFocusPolicy(Qt::TabFocus);
 }
 
+void CertificateWidget::setCertificateInfo(const EidCertificateAndPinInfo& cardCertPinInfo)
+{
+    CertificateWidgetInfo::setCertificateInfo(cardCertPinInfo);
+    info->setAccessibleName(QStringList {info->text(), issuer->text(), status->text()}.join(u", "));
+}
+
 void CertificateWidget::paintEvent(QPaintEvent* /*event*/)
 {
     QPainter p(this);
